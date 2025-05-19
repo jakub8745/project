@@ -1,90 +1,55 @@
-import React, { useState, useRef, useEffect, FC } from 'react';
-
-// Types for sidebar items and dependencies
-export interface SidebarItem {
-  id: string;
-  label: string;
-  icon?: string;
-  img?: { src: string };
-  link?: string;
-  target: string;
-  content: string;
-}
-
-export interface SidebarDeps {
-  rendererMap?: { domElement: HTMLElement };
-}
+import { FC, ReactNode } from 'react';
 
 export interface SidebarProps {
+  /** Whether the sidebar is open */
+  open: boolean;
+  /** Function to toggle the sidebar open/closed */
+  onToggle: () => void;
+  /** Logo text to display at the top */
   logoText: string;
-  items: SidebarItem[];
-  deps?: SidebarDeps;
+  /** Additional elements such as the gallery grid go here */
+  children: ReactNode;
 }
 
-const Sidebar: FC<SidebarProps> = ({ logoText, items, deps }) => {
-  const [openInfoId, setOpenInfoId] = useState<string | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement>(null);
+/**
+ * Responsive Sidebar:
+ * - On small screens: width = 90vw (single column)
+ * - On medium+ screens: width = 32rem (two-column layout inside sidebar)
+ */
+const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, children }) => (
+  <>
+    {/* Toggle button always visible, sticks to sidebar edge */}
+    <button
+      onClick={onToggle}
+      className={`
+        fixed top-4 z-30 p-2 bg-blue-600 text-white rounded-r-lg shadow focus:outline-none
+        transition-all duration-300 ease-in-out
+        ${open ? 'left-[90vw] md:left-[32rem]' : 'left-0'}
+      `}
+      aria-label={open ? 'Close sidebar' : 'Open sidebar'}
+    >
+      {open ? '<' : '>'}
+    </button>
 
-  // Handle map embedding when its panel opens
-  useEffect(() => {
-    if (openInfoId && openInfoId.includes('map') && deps?.rendererMap && mapContainerRef.current) {
-      mapContainerRef.current.innerHTML = '';
-      mapContainerRef.current.appendChild(deps.rendererMap.domElement);
-    }
-  }, [openInfoId, deps]);
-
-  const toggleInfo = (targetId: string) => {
-    setOpenInfoId(prev => (prev === targetId ? null : targetId));
-  };
-
-  return (
-    <aside className="sidebar">
-      <div className="logo-details">
-        <div className="logo_name">{logoText}</div>
+    <aside
+      className={`
+        fixed inset-y-0 left-0 transform bg-gray-900 text-white overflow-y-auto
+        transition-transform duration-300 ease-in-out z-20
+        ${open ? 'translate-x-0' : '-translate-x-full'}
+        w-[90vw] md:w-[32rem]
+      `}
+    >
+      {/* Logo / header section */}
+      <div className="logo-details p-4 border-b border-gray-700">
+        <h1 className="text-2xl font-bold logo_name">{logoText}</h1>
       </div>
-      <ul className="nav-list">
-        {items.map(item => (
-          <li key={item.id} className="mb-2">
-            {item.link ? (
-              <a href={item.link} target="_blank" rel="noopener noreferrer" className="flex items-center px-2 py-1 rounded-lg hover:bg-blue-600">
-                <img
-                  src={item.img?.src || item.icon}
-                  alt={item.label}
-                  className="h-8 w-8 mr-3 rounded"
-                />
-                <span className="links_name text-blue-200 font-bold">{item.label}</span>
-              </a>
-            ) : (
-              <>
-                <button
-                  id={item.id}
-                  data-divid={item.target}
-                  onClick={() => toggleInfo(item.target)}
-                  className="flex items-center w-full px-2 py-1 rounded-lg bg-gray-800 hover:bg-blue-600"
-                >
-                  <img
-                    src={item.img?.src || item.icon}
-                    alt={item.label}
-                    className="h-8 w-8 mr-3 rounded"
-                  />
-                  <span className="links_name text-blue-200 font-bold">{item.label}</span>
-                </button>
-                <div
-                  className={`info_sidebar ${openInfoId === item.target ? 'open' : ''}`}
-                  id={item.target}
-                  ref={item.target.includes('map') ? mapContainerRef : null}
-                >
-                  {!item.target.includes('map') && (
-                    <span className="info_text text-white">{item.content}</span>
-                  )}
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+
+      {/* Container for additional content (supports two columns on medium+) */}
+      <div className="nav-list p-4 ">
+        {children}
+      </div>
     </aside>
-  );
-};
+  </>
+);
 
 export default Sidebar;

@@ -1,3 +1,5 @@
+// src/components/GalleryTile.tsx
+
 import React from 'react';
 import { GalleryConfig, useGalleryStore } from '../store/galleryStore';
 import ThreeThumbnail from './three/ThreeThumbnail';
