@@ -9,7 +9,7 @@
  */
 export function setupModal(imagesMap) {
     const modalOverlay = document.getElementById('modalOverlay');
-    const modalLoader = document.getElementById('modalLoader');
+    //const modalLoader = document.getElementById('modalLoader');
     const modalImg = document.getElementById('modalImage');
     const modalDesc = modalOverlay.querySelector('.modal-description');
     const closeBtn = document.getElementById('closeModal');
@@ -18,8 +18,10 @@ export function setupModal(imagesMap) {
     const modal = modalOverlay.querySelector('.modal');
   
     let draggableInitialized = false;
+
+    console.log("modal", modalOverlay)
   
-    modalLoader.classList.add('hidden');
+    //modalLoader.classList.add('hidden');
     modalImg.classList.add('hidden');
   
     modalOverlay.addEventListener('pointerdown', (e) => {
@@ -39,7 +41,7 @@ export function setupModal(imagesMap) {
           // 🔥 Only clear the content AFTER fade-out completes
           modalImg.src = '';
           modalDesc.textContent = '';
-          modalLoader.classList.add('hidden');
+          ///modalLoader.classList.add('hidden');
           modalImg.classList.add('hidden');
         }
         modalOverlay.removeEventListener('transitionend', handleTransitionEnd);
@@ -50,6 +52,8 @@ export function setupModal(imagesMap) {
   
     return function showModal(userData) {
       if (!userData?.name) return;
+
+      console.log("showModal", userData, modalOverlay)
   
       if (sidebar?.classList.contains('open')) {
         sidebar.classList.remove('open');
@@ -75,21 +79,21 @@ export function setupModal(imagesMap) {
         ${meta.author ? `<p><em>By ${meta.author}</em></p>` : ''}
       `;
   
-      modalLoader.classList.remove('hidden');
+      //modalLoader.classList.remove('hidden');
       modalImg.classList.add('hidden');
   
       if (meta.img) {
         modalImg.src = meta.img.src;
         modalImg.onload = () => {
-          modalLoader.classList.add('hidden');
+          //modalLoader.classList.add('hidden');
           modalImg.classList.remove('hidden');
         };
         modalImg.onerror = () => {
-          modalLoader.classList.add('hidden');
+          //modalLoader.classList.add('hidden');
           modalDesc.textContent = 'Failed to load image.';
         };
       } else {
-        modalLoader.classList.add('hidden');
+        //modalLoader.classList.add('hidden');
         modalDesc.textContent = 'Image not preloaded.';
       }
   

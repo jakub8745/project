@@ -121,6 +121,9 @@ export class PointerHandler {
 
     // Handle image popups, videos, etc.
     if (type === 'Image' && this.popupCallback) {
+
+      console.log(hit.object.userData);
+      
       this.popupCallback(hit.object.userData);
       return;
     }

@@ -75,3 +75,176 @@ canvas {
   top: 0;
   left: 0;
 }
+
+
+/* Modal Popup */
+/* Modal Popup */
+.modal-overlay {
+  pointer-events: auto;
+  /* Make sure the overlay is clickable */
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  z-index: 10999;
+
+  pointer-events: auto;
+  /* Make sure the overlay is clickable */
+
+  position: absolute;
+  /* Use absolute positioning */
+  top: 50%;
+  left: 50%;
+  transform:
+    translate(-50%, -50%) translate(var(--drag-x, 0px), var(--drag-y, 0px));
+  display: flex;
+  flex-direction: column;
+  width: 98%;
+  max-width: 90vw;
+  max-height: 95vh;
+  padding: 1em;
+  background: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 30px;
+  cursor: move;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.modal-image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background: #f9f9f9;
+  max-height: 95vh;
+  cursor: grab;
+  touch-action: none;
+}
+
+.modal img {
+  pointer-events: auto;
+  /* Make sure the overlay is clickable */
+
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal-description {
+  padding: 15px 20px;
+  font-size: 1.3em;
+  line-height: 1.5;
+  color: #333;
+  height: 120px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+
+
+/* Layout for wide screens */
+@media (orientation: landscape) {
+  .modal {
+    flex-direction: row;
+  }
+
+  .modal-image-container {
+    flex: 3;
+    justify-content: center;
+    align-items: center;
+    max-height: 95vh;
+  }
+
+  .modal img {
+    height: 95%;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .modal-description {
+    flex: 2;
+    height: auto;
+    overflow-y: auto;
+    padding: 20px;
+  }
+}
+
+/* Layout for narrow/mobile screens */
+@media (orientation: portrait) {
+  .modal {
+    flex-direction: column;
+  }
+
+  .modal-image-container {
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    max-height: 95vh;
+  }
+
+  .modal img {
+    width: 98%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .modal-description {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px 20px;
+  }
+}
+
+.modal-loader,
+.modal-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}

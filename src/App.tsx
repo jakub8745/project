@@ -44,9 +44,11 @@ export default function App() {
     <div className="modal">
       <button className="modal-close" id="closeModal">×</button>
       <div className="modal-image-container">
+        {/*
         <img id="modalLoader" className="modal-loader"
           src="https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif"
           alt="Loading…" />
+          */}
         <img id="modalImage" className="modal-image hidden" src="" alt="modal image" />
       </div>
       <div className="modal-description"></div>
