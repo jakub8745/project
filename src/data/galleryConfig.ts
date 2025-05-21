@@ -29,7 +29,7 @@ export const GALLERIES: GalleryItem[] = [{
     description: 'Wystawa z okazji 85-lecia PUNO',
     scale: 0.07,
     position: [0, 0, 0],
-    configUrl: "https://ipfs.io/ipfs/bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m/exhibit_puno85_config.json",
+    configUrl: "https://bafybeiddfkfzlb7x5fq7sn77np6cqztagqpys3rah2a6ne66tul3wnis34.ipfs.w3s.link/exhibit_puno85_config.json",
 
     "keywords": ["PUNO", "85-lecie", "Londyn", "3D art", "webgl"],
     "ogImage": "https://bluepointart.uk/preview.png",

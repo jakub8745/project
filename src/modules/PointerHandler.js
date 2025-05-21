@@ -123,12 +123,18 @@ export class PointerHandler {
     if (type === 'Image' && this.popupCallback) {
 
       console.log(hit.object.userData);
-      
+
       this.popupCallback(hit.object.userData);
       return;
     }
     if (type === 'Video') {
+
+
       const videoElement = elementID ? document.getElementById(elementID) : null;
+
+            console.log("hit: ",hit.object.userData.elementID,"videoElement: ",videoElement);
+
+
       if (videoElement) {
         videoElement.muted = false;
         if (videoElement.paused) {

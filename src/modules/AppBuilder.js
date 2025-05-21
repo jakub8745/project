@@ -41,7 +41,7 @@ export async function buildGallery(config, container = document.body) {
     params
   } = config;
 
-  console.log("containerRef", container)
+  console.log("config appbuilder", config.videos)
 
   console.log("params build gallery", params)
   // INIT renderers, scenes, cameras...
@@ -106,7 +106,7 @@ export async function buildGallery(config, container = document.body) {
   scene.add(visitor);
 
 
-  // SIDEBAR SETUP
+ // modal setup
   const popupCallback = setupModal(images);
   new PointerHandler({ camera, scene, visitor, popupCallback, deps });
 
@@ -120,7 +120,7 @@ export async function buildGallery(config, container = document.body) {
   }
 
   // VIDEO
-  createVideoMeshes(scene);
+  createVideoMeshes(scene, config);
 
   // RESET
   scene.updateMatrixWorld(true);
