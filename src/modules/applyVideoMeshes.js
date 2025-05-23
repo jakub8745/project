@@ -1,13 +1,12 @@
 import {
   VideoTexture,
+  TextureLoader,
   MeshBasicMaterial,
   DoubleSide,
   SRGBColorSpace,
-  TextureLoader,
-  Mesh,
-  Vector3,
-  Quaternion,
-  PlaneGeometry
+  PlaneGeometry,
+  //Vector3,
+  Mesh
 } from 'three';
 
 const PLAY_ICON_PATH =
@@ -41,50 +40,50 @@ function ensureVideoElement(cfg) {
   return video;
 }
 
-// Add a play/pause icon centered on the mesh
+// Add a play/pause icon overlay to the mesh
 function addPlayIcon(mesh, video) {
   const loader = new TextureLoader();
   loader.load(PLAY_ICON_PATH, iconTex => {
-    // Compute icon size as 20% of the smaller mesh scale axis
-    const scales = mesh.scale;
-    const baseSize = Math.min(scales.x, scales.y) * 0.2;
+    const baseSize = Math.min(mesh.scale.x, mesh.scale.y) * 3;
     const iconGeo = new PlaneGeometry(baseSize, baseSize);
     const iconMat = new MeshBasicMaterial({
       map: iconTex,
       transparent: true,
       depthTest: false,
-      depthWrite: false
-    });
-    const icon = new Mesh(iconGeo, iconMat);
-    icon.name = `playIcon_${video.id}`;
-    icon.position.set(0, 0, 0.01);
-    mesh.add(icon);
+      depthWrite: false,
+      side: DoubleSide
 
-    video.addEventListener('play', () => (icon.visible = false));
-    video.addEventListener('pause', () => (icon.visible = true));
-    video.addEventListener('ended', () => (icon.visible = true));
-    icon.visible = video.paused;
+    });
+    const iconMesh = new Mesh(iconGeo, iconMat);
+    iconMesh.name = `playIcon_${video.id}`;
+    iconMesh.position.set(0, 0, 0);
+    iconMesh.rotation.set(0, 0, Math.PI);
+    iconMesh.renderOrder = 999;
+    mesh.add(iconMesh);
+
+    console.log("iconMesh created");
+
+    video.addEventListener('play', () => (iconMesh.visible = false));
+    video.addEventListener('pause', () => (iconMesh.visible = true));
+    video.addEventListener('ended', () => (iconMesh.visible = true));
+    iconMesh.visible = video.paused;
   });
 }
 
 /**
- * Replace each original 'Video' mesh with a fresh one:
- * - Creates a new 1x1 plane
- * - Uses video aspect and original world scale to size it
- * - Copies position & orientation
- * - Applies a new opaque material with the video texture
- * - Adds a play/pause icon overlay
+ * Replace the original 'Video' meshes' JPG textures with live video:
+ * - Uses the existing mesh and geometry
+ * - Clones or recreates a standard material
+ * - Swaps in a VideoTexture
+ * - Ensures depthTest/write for full visibility
  */
 export function applyVideoMeshes(scene, galleryConfig) {
   const configMap = new Map((galleryConfig.videos || []).map(cfg => [cfg.id, cfg]));
 
-  // Temp variables
-  const worldPos = new Vector3();
-  const worldQuat = new Quaternion();
-  const worldScale = new Vector3();
-
   scene.traverse(obj => {
     if (!obj.isMesh || obj.userData.type !== 'Video') return;
+
+    obj.wireframe = false;
 
     const cfg = configMap.get(obj.userData.elementID);
     if (!cfg) {
@@ -96,47 +95,33 @@ export function applyVideoMeshes(scene, galleryConfig) {
     if (!video) return;
 
     video.addEventListener('loadedmetadata', () => {
-      // Prepare video texture
-      const tex = new VideoTexture(video);
-      tex.colorSpace = SRGBColorSpace;
 
-      // Determine aspect ratio
-      const aspect = video.videoWidth / video.videoHeight;
+      // Create VideoTexture
+      const texture = new VideoTexture(video);
+      texture.colorSpace = SRGBColorSpace;
 
-      // Clone world transform
-      obj.getWorldPosition(worldPos);
-      obj.getWorldQuaternion(worldQuat);
-      obj.getWorldScale(worldScale);
+      texture.flipY = false;  
 
-      // Create a unit plane and scale by aspect and original scale
-      const planeGeo = new PlaneGeometry(1, 1);
-      const mat = new MeshBasicMaterial({
-        map: tex,
-        side: DoubleSide,
-        transparent: false,
-        depthTest: true,
-        depthWrite: true
-      });
-      const videoMesh = new Mesh(planeGeo, mat);
-      videoMesh.name = `videoMesh_${video.id}`;
 
-      // Apply transforms: scale.x scaled by aspect
-      videoMesh.scale.set(worldScale.x * aspect, worldScale.y, worldScale.z);
-      videoMesh.position.copy(worldPos);
-      videoMesh.quaternion.copy(worldQuat);
+      const newMat = obj.material.clone();
 
-      // Manual adjustment: flip 180° on Y, shift X
-      videoMesh.rotateY(Math.PI);
-      videoMesh.position.x += (worldScale.x * -0.1);
+      newMat.map = texture;
+      newMat.transparent = false;
+      newMat.depthTest = true;
+      newMat.depthWrite = true;
+      newMat.needsUpdate = true;
 
-      // Add play/pause icon
-      addPlayIcon(videoMesh, video);
+      obj.material = newMat;
 
-      scene.add(videoMesh);
+      addPlayIcon(obj, video);
 
-      // Start video
-      video.play();
-      tex.needsUpdate = true;
+      video.currentTime = 0.01
+      video.pause();
+
+      texture.needsUpdate = true;
+
+      console.log(video);
+
     });
   });
 }

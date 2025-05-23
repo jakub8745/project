@@ -192,7 +192,7 @@ console.log("modelBlob, interactivesBlob");
 
     const collider = new Mesh(merged);
     collider.material.wireframe = true;
-    collider.material.opacity = 1;
+    collider.material.opacity = 0;
     collider.material.transparent = true;
     collider.material.color = 0x00ffff;
     collider.visible = true;

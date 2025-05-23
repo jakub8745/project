@@ -11,10 +11,10 @@ import { createAudioMeshes } from './createAudioMeshes.js';
 import { PointerHandler } from './PointerHandler.js';
 import { AudioListener, AmbientLight, Clock, BufferGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, WebGLRenderer, RingGeometry, DoubleSide, Vector3, Spherical, MathUtils } from 'three';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
-import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
+//import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
-import initMapRenderer from './initMapRenderer.js';
+//import initMapRenderer from './initMapRenderer.js';
 import rotateOrbit from './rotateOrbit.js';
 import { setupModal } from './setupModal.js';
 /*
@@ -125,8 +125,6 @@ export async function buildGallery(config, container = document.body) {
   // VIDEO
   applyVideoMeshes(scene, config);
 
-  // RESET
-  //scene.updateMatrixWorld(true);
 
   // now populate audio
   deps.audioObjects = createAudioMeshes(

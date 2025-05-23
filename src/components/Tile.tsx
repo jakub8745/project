@@ -7,7 +7,7 @@ import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 
 const ktx2Loader = new KTX2Loader().setTranscoderPath('/libs/basis/');
 
-export interface TestTileProps {
+export interface TileProps {
   modelUrl: string;
   title?: string;
   description?: string;
@@ -15,7 +15,7 @@ export interface TestTileProps {
   position?: [number, number, number];
 }
 
-const TestTile: React.FC<TestTileProps> = ({
+const Tile: React.FC<TileProps> = ({
   modelUrl,
   title = '3D Model',
   description = 'Loading preview…',
@@ -62,4 +62,4 @@ const TestTile: React.FC<TestTileProps> = ({
   </div>
 );
 
-export default TestTile;
+export default Tile;

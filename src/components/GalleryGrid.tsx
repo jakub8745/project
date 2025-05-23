@@ -1,7 +1,7 @@
 // src/components/GalleryGrid.tsx
 import { FC } from 'react';
 import { GALLERIES, GalleryItem } from '../data/galleryConfig';
-import TestTile from './TestTile';
+import Tile from './Tile.js';
 
 export interface GalleryGridProps {
   onSelect: (gallery: GalleryItem) => void;
@@ -33,7 +33,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
           className="cursor-pointer"
           onDoubleClick={() => handleDoubleClick(item)}
         >
-          <TestTile
+          <Tile
             modelUrl={item.url}
             title={item.title}
             description={item.description}
