@@ -18,8 +18,6 @@ export function setupModal(imagesMap) {
     const modal = modalOverlay.querySelector('.modal');
   
     let draggableInitialized = false;
-
-    console.log("modal", modalOverlay)
   
     //modalLoader.classList.add('hidden');
     modalImg.classList.add('hidden');

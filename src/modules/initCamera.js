@@ -11,7 +11,5 @@ export default function initCamera() {
   camera.position.set(10, 6, -10);
   camera.updateProjectionMatrix();
 
-
-
   return camera;
 }

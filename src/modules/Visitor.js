@@ -7,7 +7,9 @@ import {
   Box3,
   Matrix4,
   Scene,
-  MeshStandardMaterial
+  MeshStandardMaterial,
+  AudioListener
+
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
@@ -39,8 +41,8 @@ export default class Visitor extends Mesh {
     this.autoMoveSpeed = 5;
 
     this.capsuleInfo = {
-      radius: 1.5,
-      segment: new Line3(new Vector3(0, 0, 0), new Vector3(0, 1.5, 0))
+      radius: 0.5,
+      segment: new Line3(new Vector3(0, 0, 0), new Vector3(0, 0.5, 0))
     };
 
     this.fwdPressed = false;
@@ -62,6 +64,8 @@ export default class Visitor extends Mesh {
 
     this._setupInput();
     deps.visitor = this;
+
+
   }
 
   _setupInput() {
@@ -211,18 +215,20 @@ export default class Visitor extends Mesh {
 
   reset() {
 
+
     this.visitorVelocity.set(0, 0, 0);
     
     this.position.copy(this.params.visitorEnter || new Vector3(0, 10, 0));
 
     // Optional: reset capsule target or height
-    this.target.copy(this.position.clone().add(new Vector3(0, 1.5, 0)));
+    this.target.copy(this.position.clone().add(new Vector3(0, 10.5, 0)));
 
     // Update controls and camera
     const offset = this.params.heightOffset || new Vector3(0, 4.5, 0);
     const target = this.position.clone().add(offset);
     this.controls.target.copy(target);
     this.camera.position.copy(target.clone().add(new Vector3(0, 0, 5))); // fallback offset
+
   }
 
 }

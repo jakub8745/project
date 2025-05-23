@@ -6,9 +6,10 @@ import initCamera from './initCamera.js';
 import initControls from './initControls.js';
 import ModelLoader from './ModelLoader.js';
 import { setupResizeHandler } from './resizeHandler.js';
-import { createVideoMeshes } from './createVideoMeshes.js';
+import { applyVideoMeshes } from './applyVideoMeshes.js';
+import { createAudioMeshes } from './createAudioMeshes.js';
 import { PointerHandler } from './PointerHandler.js';
-import { AmbientLight, Clock, BufferGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, WebGLRenderer, RingGeometry, DoubleSide, Vector3, Spherical, MathUtils } from 'three';
+import { AudioListener, AmbientLight, Clock, BufferGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, WebGLRenderer, RingGeometry, DoubleSide, Vector3, Spherical, MathUtils } from 'three';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 import Visitor from './Visitor.js';
@@ -41,9 +42,7 @@ export async function buildGallery(config, container = document.body) {
     params
   } = config;
 
-  console.log("config appbuilder", config.videos)
 
-  console.log("params build gallery", params)
   // INIT renderers, scenes, cameras...
   const renderer = initRenderer(container);
   ktx2Loader.detectSupport(renderer);
@@ -56,15 +55,21 @@ export async function buildGallery(config, container = document.body) {
   BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
 
   const camera = initCamera();
+
+  // create & name your listener
+  const listener = new AudioListener();
+  listener.name = 'MainAudioListener';
+
+
   setupResizeHandler(renderer, camera);
 
   const controls = initControls(camera, renderer.domElement);
 
-  const rendererMap = initMapRenderer({ width: 500, height: 500 });
+  //const rendererMap = initMapRenderer({ width: 500, height: 500 });
 
-  const sceneMap = initScene(null, rendererMap, 'sceneMap');
-  sceneMap.add(new AmbientLight(0xffffff, 2));
-
+  //const sceneMap = initScene(null, rendererMap, 'sceneMap');
+  //sceneMap.add(new AmbientLight(0xffffff, 2));
+/*
   // circle pointer on sceneMap
   const circle = new Mesh(
     new RingGeometry(0.1, 1, 32),
@@ -83,32 +88,28 @@ export async function buildGallery(config, container = document.body) {
   const css2DMap = new CSS2DRenderer();
   css2DMap.setSize(500, 500);
   css2DMap.domElement.style.cssText = 'position:absolute;top:0;pointer-events:none';
-
+*/
   const deps = {
     ktx2Loader,
     camera,
+    listener,
     controls,
     scene,
-    sceneMap,
-    cameraMap,
+    //sceneMap,
+    //cameraMap,
     renderer,
-    rendererMap,
-    css2DRenderer: css2DMap,
+    //rendererMap,
+    //css2DRenderer: css2DMap,
     params,
-    visitorMapCircle: circle
+    audioObjects: []
   };
 
   //
 
-  // VISITOR 
-  const visitor = new Visitor(deps);
-  deps.visitor = visitor;
-  scene.add(visitor);
+
+  //scene.add(visitor);
 
 
- // modal setup
-  const popupCallback = setupModal(images);
-  new PointerHandler({ camera, scene, visitor, popupCallback, deps });
 
   // LOADING MODELS
   const modelLoader = new ModelLoader(deps, scene);
@@ -116,26 +117,42 @@ export async function buildGallery(config, container = document.body) {
   if (modelBlob && interactivesBlob) {
     await modelLoader.loadModelFromBlob(modelBlob, interactivesBlob);
   } else {
+    console.log("modelPath, interactivesPath");
     await modelLoader.loadModel(modelPath, interactivesPath);
   }
 
+
   // VIDEO
-  createVideoMeshes(scene, config);
+  applyVideoMeshes(scene, config);
 
   // RESET
-  scene.updateMatrixWorld(true);
-  visitor.reset();
+  //scene.updateMatrixWorld(true);
+
+  // now populate audio
+  deps.audioObjects = createAudioMeshes(
+    scene,
+    listener,
+    deps.audioObjects
+  );
 
   //
   rotateOrbit(camera, controls, -120);
-/*
-  // SIDEBAR SETUP
-  if (sidebar) {
-    buildSidebar(sidebar);
-    setupSidebarButtons(deps);
-    addSidebarListeners();
-  }
-*/
+
+  // VISITOR 
+  const visitor = new Visitor(deps);
+  deps.visitor = visitor;
+
+  // modal setup
+  const popupCallback = setupModal(images);
+  new PointerHandler({ camera, scene, visitor, popupCallback, deps });
+
+
+  //
+  camera.add(listener);
+  visitor.reset();
+  scene.add(visitor);
+
+
   // ANIMATE SCENES 
   function animate() {
     if (!scene || !camera || !renderer || !controls) return;
@@ -145,19 +162,14 @@ export async function buildGallery(config, container = document.body) {
     dt = Math.min(clock.getDelta(), 0.1);
 
     if (deps.visitor && deps.collider) deps.visitor.update(dt, deps.collider);
-    if (deps.visitorMapCircle) {
 
-      pos = deps.visitor.position.clone();
-      pos.y += 4;
-      deps.visitorMapCircle.position.copy(pos);
-    }
 
     controls.update();
     renderer.render(scene, camera);
 
   }
   //
-
+/*
   function animateMap() {
     if (!sceneMap || !cameraMap || !rendererMap || !css2DMap || !camera) return;
 
@@ -169,17 +181,17 @@ export async function buildGallery(config, container = document.body) {
     rendererMap.render(sceneMap, cameraMap);
     css2DMap.render(sceneMap, cameraMap);
   }
-
+*/
   animate();
-  animateMap();
+  //animateMap();
   hideOverlay();
 }
 
 
 function hideOverlay() {
   const overlay = document.getElementById('overlay');
-  const sidebar = document.querySelector('.sidebar');
-  const btn = document.getElementById('btn');
+  //const sidebar = document.querySelector('.sidebar');
+  //const btn = document.getElementById('btn');
 
   if (!overlay) return;
 

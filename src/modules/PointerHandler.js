@@ -39,6 +39,9 @@ export class PointerHandler {
     this.sidebar = document.querySelector('.sidebar');
     this.btn = document.getElementById('btn');
 
+    this.lastTapTime = 0;
+    this.DOUBLE_TAP_THRESHOLD = 300;
+
     // Bind handlers
     this._onPointerDown = this._onPointerDown.bind(this);
     this._onPointerMove = this._onPointerMove.bind(this);
@@ -59,13 +62,14 @@ export class PointerHandler {
     mesh.visible = false;
 
     mesh.scale.set(1, 1, 1); // INITIAL SCALE
+    /*
     mesh.onBeforeRender = () => {
       if (!mesh.visible) return;
       const t = performance.now() * 0.01; // time factor
       const s = 1 + 0.3 * Math.sin(t); // amplitude
       mesh.scale.set(s, s, s);
     };
-
+*/
     return mesh;
   }
 
@@ -81,12 +85,17 @@ export class PointerHandler {
     this.startX = event.clientX;
     this.startY = event.clientY;
     this.isDragging = false;
-    this.isPressing = true;
+    //this.isPressing = true;
 
-    this.pressTimeout = setTimeout(() => {
-      if (!this.isPressing || this.isDragging) return;
+      // DOUBLE-TAP logic:
+    const now       = performance.now();
+    const delta     = now - this.lastTapTime;
+    this.lastTapTime = now;
+
+    if (delta < this.DOUBLE_TAP_THRESHOLD && !this.isDragging) {
+      // it’s a double-click/tap!
       this._handleClick(event);
-    }, 300);
+    }
   }
 
   _onPointerMove(event) {
@@ -122,8 +131,6 @@ export class PointerHandler {
     // Handle image popups, videos, etc.
     if (type === 'Image' && this.popupCallback) {
 
-      console.log(hit.object.userData);
-
       this.popupCallback(hit.object.userData);
       return;
     }
@@ -131,9 +138,6 @@ export class PointerHandler {
 
 
       const videoElement = elementID ? document.getElementById(elementID) : null;
-
-            console.log("hit: ",hit.object.userData.elementID,"videoElement: ",videoElement);
-
 
       if (videoElement) {
         videoElement.muted = false;
@@ -179,9 +183,6 @@ export class PointerHandler {
     this.visitor.target = point.clone();
     this.visitor.isAutoMoving = true;
   }
-
-  // ... existing _moveToVideo, etc.
-
 
 
   _moveToVideo(clickedObject) {

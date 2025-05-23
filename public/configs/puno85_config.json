@@ -1,6 +1,6 @@
 {
-    "modelPath": "https://bafybeig2jactzotibwogmngbsimoqvpaoz6wlklucwjcrvjdwul3bmhxgm.ipfs.w3s.link/puno85_interior.glb",
-    "interactivesPath": "https://ipfs.io/ipfs/bafybeid3fnrw2nb25zj2xn5hqydxkpzobgojn4poxw2fap645sbuwmgopi/puno85_objects.glb",
+    "modelPath": "https://bafybeia5zjnvgzikl6bqrgyenheuab5lbkt7dieogal2kqnz2ge2omul6q.ipfs.w3s.link/exhibition_puno85_ktx.glb",
+    "interactivesPath": "https://bafybeigpdpgflogfefiprz6vw3caifcwuxitfqjqoidteoy6mepc66fgq4.ipfs.w3s.link/interactives_puno85.glb",
     "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
     "sidebar": {
       "logo": {
@@ -124,17 +124,17 @@
         }
     ],
     "params": {
-      "gravity": -10,
-      "visitorSpeed": 10,
+      "gravity": -8,
+      "visitorSpeed": 2,
       "heightOffset": {
         "x": 0,
-        "y": 3.5,
+        "y": 0.6,
         "z": 0
       },
       "visitorEnter": {
-        "x": 0,
-        "y": 10,
-        "z": 0
+        "x": 1,
+        "y": 2,
+        "z": 1
       }
     }
   }

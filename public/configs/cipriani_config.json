@@ -1,0 +1,276 @@
+{
+    "modelPath": "https://bafybeid3udgxtleb44g2k75q5kftjwqiepot5jxnhb5l52h2msei3vqste.ipfs.w3s.link/cipriani_interior.glb",
+    "interactivesPath": "https://bafybeiczc72ew6fnvkjp22baah24ymz5mnr7d76spez7tzv3xsexogcuby.ipfs.w3s.link/cipriani_objects.glb",
+    "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
+    "sidebar": {
+        "logo": {
+            "text": "Wystawa z okazji 85-lecia PUNO"
+        },
+        "items": [
+            {
+                "id": "help-icon",
+                "label": "Poruszanie się po Wystawie",
+                "icon": "https://bafybeif2rhthkwlwc5yuduarar24xans7hqv6jqdcug3ea5ajkspeqb7bq.ipfs.w3s.link/how_to_move.png",
+                "target": "how_to_move",
+                "content": "<strong>SPOSÓB PORUSZANIA SIĘ PO GALERII:</strong><br /><br /><img alt=\"Move: W, A, S, D or Arrow Keys\" style=\"display: block; margin: 0 auto 1em auto; max-width: 60%; height: auto; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg);\" src=\"https://bafybeibyn5zrmeallmsfj7noetbpy4l7pxnpza7mbcaj7xsqzz6rqidehu.ipfs.w3s.link/WASD.png\" /><br /><div style=\"display: flex; justify-content: center; gap: 1em; margin-bottom: 1em;\"><img alt=\"Rotate View: Click + Swipe\" style=\"height: 8em; translate: -2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeiemorbsojoayepbybcskwhg3n2a6qpexcsd3ip3zsekxde464lx2q.ipfs.w3s.link/swipe.png\" /><img alt=\"View Details: Click + Hold (1s)\" style=\"height: 6em; translate: 1em 2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeihn6k4kn5cpiipvtzq3o7n7f6g7fa3wv2krnbam3gwxm7rlc7w4xu.ipfs.w3s.link/hold.png\" /></div><br /><br /><br />Ruch: W, A, S, D lub strzałki<br />Obrót: Kliknij i przeciągnij<br />Wyświetlenie szczegółów: Kliknij i przytrzymaj (1 sekunda)<br /><br /><strong>Ekran dotykowy:</strong><br />Ruch: Dotknij i przytrzymaj (1 sekunda)<br />Obrót widoku: Przeciągnij palcem<br />Wyświetlenie szczegółów: Dotknij i przytrzymaj (1 sekunda)<br />Zamknij i otwórz sidebar: <img alt=\"Przełącznik Sidebara\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br /><strong>HOW TO MOVE IN THE GALLERY:</strong><br /><br />Move: W, A, S, D or Arrow Keys<br />Rotate View: Click + Swipe<br />View Details: Click + Hold (1s)<br /><br /><strong>Touchscreen:</strong><br />Move: Tap + Hold (2s)<br />Rotate View: Drag Finger<br />View Details: Tap + Hold (1s)<br />Close and Open This Sidebar: <img alt=\"Toggle Sidebar\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br />"
+            },
+            {
+                "id": "info-icon",
+                "label": "O Wystawie",
+                "icon": "https://bafybeidohr5txz3bvffklxqlddnxmya7ltmi6uiawv2c3x22lrofqzoxoa.ipfs.w3s.link/info.png",
+                "target": "info_text",
+                "content": "The exhibition invites visitors on a captivating journey into the Hutsul region, as seen through the lens of Lidio Cipriani, an Italian anthropologist and ethnologist. Featuring a selection of 39 photographs taken in 1933, the collection captures not only the picturesque landscapes of the Eastern Carpathians but also the profound harmony between humanity and nature—key themes reflected in the works of Stanisław Vincenz. Inspired by Vincenz's vision, Cipriani documented the lives of the region's inhabitants in a way that transcends traditional ethnographic studies.\nThe photographs, preserved in Cipriani's archive under the stewardship of Professor Jacopo Moggi-Cecchi from the University of Florence, have been thoughtfully described by Leszek Rymarowicz and Andrzej Wielocha. In some cases, these descriptions were consulted with local experts Ivan and Jarosław Zełenczuk. The exhibition is accompanied by a catalogue that offers insights into the multifaceted dialogue between Vincenz and Cipriani.\nThe exhibition was created through the collaboration of a curatorial team comprising Dorota Burda-Fischer, Jan Andrzej Choroszy, Justyna Gorzkowicz, and Jakub Żmidziński. The exhibition space and the concept of incorporating the interaction between Vincenz and Cipriani into the realm of digital humanities through a virtual gallery were designed by Jarosław Solecki.\nThis initiative is part of a research and exhibition project conducted between 2021 and 2024. Its aim was to promote the works of Stanisław Vincenz, highlight the multicultural heritage of the Hutsul region, and position Poland as a hub for intercultural dialogue. The exhibition invites viewers to reflect on the contemporary relevance of Vincenz's work in the context of cultural heritage preservation and fostering understanding across cultures.<br />The exhibition uses music from an album by \"Kapela CzereMosz\", recorded and released by the Carpathian Society in 2000.<br /><br /> Wystawa \"Dialogi Vincenza - spojrzenia\" zaprasza odwiedzających w fascynującą podróż po Huculszczyźnie, uchwyconej w obiektywie Lidii Ciprianiego, włoskiego antropologa i etnologa. Prezentujemy wybór 39 fotografii wykonanych w 1933 roku, które nie tylko ukazują malownicze krajobrazy Karpat Wschodnich, lecz także głęboką harmonię człowieka z naturą - idee kluczowe dla twórczości Stanisława Vincenza. Zainspirowany wizją pisarza, Cipriani stworzył wyjątkową dokumentację życia mieszkańców regionu, która wykracza poza granice tradycyjnych badań etnograficznych.\nFotografie, przechowywane w archiwum Ciprianiego pod opieką profesora Jacopo Moggi-Cecchiego z Uniwersytetu we Florencji, zostały opisane przez Leszka Rymarowicza i Andrzeja Wielochę. W niektórych przypadkach opisy te konsultowano z lokalnymi ekspertami, Iwanem i Jarosławem Zełenczukami. Wystawie towarzyszy katalog, który dostarcza wielowymiarowych interpretacji dialogu Vincenza z Ciprianim.\nWystawa powstała dzięki współpracy zespołu kuratorskiego: Doroty Burdy-Fischer, Jana Andrzeja Choroszego, Justyny Gorzkowicz i Jakuba Żmidzińskiego. Autorem wnętrz wystawienniczych oraz pomysłodawcą włączenia spotkania Vincenza z Ciprianim w przestrzeń humanistyki cyfrowej za pośrednictwem wirtualnej galerii jest Jarosław Solecki.\nPrzedsięwzięcie jest częścią projektu badawczo-wystawienniczego realizowanego w latach 2021–2024, którego celem była popularyzacja twórczości Stanisława Vincenza, promocja wielokulturowego dziedzictwa Huculszczyzny oraz ukazanie Polski jako miejsca dialogu międzykulturowego. Wystawa zaprasza do refleksji nad współczesnym znaczeniem twórczości Vincenza w kontekście ochrony dziedzictwa kulturowego i budowania porozumienia między kulturami.<br />W wystawie wykorzystano muzykę z płyty \"Kapeli CzereMosz\", nagranej i wydanej przez Towarzystwo Karpackie w 2000 roku."
+            },
+            {
+                "id": "map-icon",
+                "label": "Mapa",
+                "icon": "https://bafybeibjwpuc3f5daoqpyysxpay3x6hedp6lkkunytmqdb7typviky7fia.ipfs.w3s.link/map_exhibit.png",
+                "target": "map_text",
+                "content": ""
+            },
+            {
+                "label": "Strona Główna Blue Point Art",
+                "icon": "https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif",
+                "link": "https://bluepointart.uk"
+            }
+        ]
+    },
+    "images": {
+        "cipriani_opis": {
+            "title": "Opis Wystawy",
+            "description": "",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreihzvtqm3lt4rep6etxcnb7eiby3f4l56zl2xegrizjij2p2kdtrjm"
+        },
+        "cipriani_pic_25": {
+            "title": "",
+            "description": "Portraits of Hutsuls, unrecognised individuals. On the left, an old Hutsul who is currently considered in Hutsulshchyna to be Tanasij Urszedżuk. However, considering the year of Tanasij's death (1927) and the year the photos were taken (1933), this is impossible.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreicyy57yzdliga7jw7yc7cps6eu5ijwdenxoaj2uj3dsiqyy4z4hja"
+        },
+        "cipriani_pic_26": {
+            "title": "",
+            "description": "Ołena i Pyłyp (Ihnatiuk) Zełenczuki from Bystrec - “Fyłyp and Fyłypicha”.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreibhd7wfiwzuqcip4fcqwkgu5swfv5l5r3edr3ol62e52scuhrq27m"
+        },
+        "cipriani_pic_16": {
+            "title": "",
+            "description": "Portraits of Hutsul women from Bystrec; on the right, probably Wasyłyna Czornysz.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreidbbfoit4ttwyaanpsiiiiarmtyjftpc7yetkpv66cmndvrmchkua"
+        },
+        "cipriani_pic_17": {
+            "title": "",
+            "description": "Bystrec. A typical Hutsul house covered with wooden shingles, with a visible “zachata” on the north-western side, situated in the lower part of the Kicherka ridge and the Dietuł hamlet. In the background on the right, Munczel (1999 m a.s.l.) on the main ridge of the Czornohora range.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreid5rgay4if6kjk3qjzapa6isreyko2dxeppy47roi3fq4tjb7zi3i"
+        },
+        "cipriani_pic_18": {
+            "title": "",
+            "description": "Portraits of Hutsuls - unrecognised individuals.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreibyfvvt7fvybgcto7ecovyutndbbmatwwhyanngupsh3xvg5xvwm4"
+        },
+        "cipriani_pic_19": {
+            "title": "",
+            "description": "Bystrec. The Dietul hamlet on the Kiczerka ridge. Visible are sheds and “worynia”. On the horizon, the main range of the Czornohora with Smotrec (1896 m a.s.l.) and the ridge of Stajki and Skoruszyna extending from it.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiaremrcupdlsdpfpxb6ptzobt74sngaemwfdl5nnjyxajsirfm52q"
+        },
+        "cipriani_pic_20": {
+            "title": "",
+            "description": "Portraits of Hutsuls: on the left probably Petro Matarżuk Jurotczak, a husbandman from Bystrec, in the middle - an unknown Hutsul woman; on the right - Dmytro Płytka, the “communal emissary from Dzembronia”.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiglhqm5juojinrt65uijf3vrwrrygeidup6wyvomwus2qa2klaeau"
+        },
+        "cipriani_pic_21": {
+            "title": "",
+            "description": "Bystrec. Farm buildings on the mountain pastures in the Dietuł hamlet on the slopes of Kiczerka. In the distance, on the left, the peak Rebra (2001 m a.s.l.) in the main Czornohora ridge is visible, with the Szpyci massif (1864 m a.s.l.) in front of it and Homuł (1876 m a.s.l.) peeking from behind. On the far right is Maryszeska Wielka (1564 m a.s.l.).",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreih67jigux7nwxpf6anacbetwgcvoy4r5s623623cevinmyb6b4pay"
+        },
+        "cipriani_pic_5": {
+            "title": "",
+            "description": "The cross in the centre of Żabie-Słupejka (now Werchowyna), near the bridge over the Black Czeremosz. A kind of Hutsul agora where the latest news from the world and the region could be heard, often in the form of a song. In the background, Magura (895 m a.s.l.) is visible.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreify6dkg2qlruwlsetxgkolergrnzqgs2yn7r7z7tbyop7qqwmgcry"
+        },
+        "cipriani_pic_7": {
+            "title": "",
+            "description": "Valley of the Black Czeremosz, school in Kryworiwnia. View of the Zariczja hamlet, Łysyna reserve, Geletiwka hamlet, Łazok hamlet, and Biłe Kamini Waratyn mountain (1064 m a.s.l.).",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreif4irghmpeq7wu4tweudskhxwkphqf2kpxoheeib3ds4si6ueqzfq"
+        },
+        "cipriani_pic_14": {
+            "title": "",
+            "description": " Hutsuls from Bystrec; the central figure may be Mychajło Prociuk.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiawnlvclpzl3jzhpkmay4s5y4zmunesmixjjghtebp4jkwxdmmhge"
+        },
+        "cipriani_pic_8": {
+            "title": "",
+            "description": "Women spreading sheaves of grain to be threshed. The fruit trees and abundant grain indicate that this is not Bystrec, but rather the area surrounding Słoboda Rungurska.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreich7xjfanl4iohi2xfom743loguarnw64tkze2igs7jbmzvvkfcua"
+        },
+        "cipriani_pic_12": {
+            "title": "",
+            "description": "The valley of the Black Czeremosz above the Krasnyk (Krasny Łuh) hamlet. On the horse is Dmytro Urszedżuk (Urszega), the commissary mayor of Żabie in 1922–1923. In the background, through the mist, Smotrec (1896 m a.s.l.) is visible.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreihs7jtrynddwgwvpz25vynysuosh37fizygxnymmcgtupiwddo42a"
+        },
+        "cipriani_pic_9": {
+            "title": "",
+            "description": "Słoboda Rungurska. On the left, hidden among the fruit trees, is the Vincenz family house with a staircase leading to the upper floor apartment of Lena Vincenz, the writer’s first wife. In the background, numerous oil wells are visible on the cleared hillside.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreicl6ll2r7p65dgqgc5u5sxtwwyx7i4xl3kbiba4pcf5dar72fmzvy"
+        },
+        "cipriani_pic_11": {
+            "title": "",
+            "description": "Above: a Hutsul (probably Iwan Juruk from Bystrec) with medicinal plants dug up in the Czornohora range, including “roots of life” (dżindżory). In the background, the ridge of Szpyci (1864 m a.s.l.) is visible.Below: the same Hutsul and Petro Szekeryk-Donykiw, the mayor of Żabie, social activist, member of the Sejm of the Second Polish Republic, and writer, leaning on a stick. They are discussing the plants (Rhodiola rosea or Gentiana punctata, possibly also Geum montanum leaves).",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreihkrbxv7fgs7m7gtouujkp3zljogcvurj3foyazhqaftgywuwqknu"
+        },
+        "cipriani_pic_10": {
+            "title": "",
+            "description": "Above: the Church of the Nativity of the Most Holy Virgin Mary in Kryworiwnia, second half of 17th century. Stanisław Vincenz is leaning against the corner joint of the log structure.Below: wooden lattice bridge of the Rychter system over the Rybnica River in Kosow-Saliny, known as the “banski” bridge. Stanisław Vincenz, on the left, is standing on the bridge.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiaccerdwvcu5lddu47kyjkbje66txf22eg56s5kb6mg735b5vzb6e"
+        },
+        "cipriani_pic_13": {
+            "title": "",
+            "description": "Above: a Hutsul girl in an embroidered shirt and “kieptar” (traditional sheepskin vest) on a “carynka” (mountain pasture) protected by “worynia” (a characteristic Hutsul fence).Below: children at the entrance to a barn or pigsty. This is not a typical Hutsul cottage, but rather one from the foothills, possibly from the vicinity of Słoboda Rungurska.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreibm5nt334dtfc563qjhxn43la54sy7viem6n2337lrqxuncqzhqt4"
+        },
+        "cipriani_pic_23": {
+            "title": "",
+            "description": "Jurko Kermoszczuk - forester of the Skarbkowska Foundation.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreihyb6hs6xvpb57v7ibh4tydfbidifyghrtvlmbackm2rschw2oyxa"
+        },
+        "cipriani_pic_6": {
+            "title": "",
+            "description": "Most likely a portrait of a Hutsul woman from Bystrec.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreifsi76b7cbe2fhlf5o7vlfky4pggrjwhqfqiytyf4t52vtt22sdve"
+        },
+        "cipriani_pic_27": {
+            "title": "",
+            "description": "A Hutsul girl in an oversized “kieptar” on the steps of an unknown house.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreih34q7z7wgtwhg2ongbhvbrzqe6p74h3k4mmzvbej5hey4xbh6try"
+        },
+        "cipriani_pic_37": {
+            "title": "",
+            "description": "Three members of a Hutsul, family from Bystrec, number 96, in front of the entrance to their house.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiefcik2aojcmvgdwcomc6k7clqxbiohgbhsstbdhfsu3cdiiatw2a"
+        },
+        "cipriani_pic_28": {
+            "title": "",
+            "description": "Haymaking in Bystrec on a “carynka” enclosed by “worynia” fences. In the middle, possibly Iwan Juruk.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiauke5d4h5if7j43aevdcduvwzshhhf3qb44y5uqlnrqt57xbyleq"
+        },
+        "cipriani_pic_29": {
+            "title": "",
+            "description": "Portrait of two unknown Hutsuls, apparently taken for anthropological purposes.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreihocyhx5xk7siiap7q4vdafxpblofy7pmnafybaoy7opoavl5aav4"
+        },
+        "cipriani_pic_30": {
+            "title": "",
+            "description": "A group of Hutsuls on horseback. First on the right, without “besahs” (i.e. handwoven, two-piece pack bags, hung on the horse's back or carried on the shoulder).",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiff2y2ayysxm4xbedg4nnie4oqbhu5xshz5sb4dx3vcig44grufoi"
+        },
+        "cipriani_pic_31": {
+            "title": "",
+            "description": "Bystrec. The house and hay sheds of Petro Gotycz Danyluk, neighbour of Stanisław Vincenz.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreibvdkhzho6uhitzhqlbxzahcrlvmqhcizw2xvnivei2qt7g7u7aua"
+        },
+        "cipriani_pic_32": {
+            "title": "",
+            "description": "The courtyard of the Hutsul farmhouse of Dmytro Urszedżuk (second from left) in Żabie-Ilcia, house number 1237. Members of the household are visible. In the centre (under the cross on the door frame) is the woman previously identified as Kateryna Urszedżuk (possibly Dmytro's mother, stepmother or wife).",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiadcjeecocapbs4kcha4c3ixqki2b6us442p7yjj6djk46qujwpqa"
+        },
+        "cipriani_pic_33": {
+            "title": "",
+            "description": "Dmytro Urszedżuk (first on the left) proudly presenting his horses in his courtyard. With the horses is a boy (son or farmhand).",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreifdcg5q4av3yz3vw6dpijo4bugzctndt343mw43zpjrc2mcf2tgtq"
+        },
+        "cipriani_pic_34": {
+            "title": "",
+            "description": "Three beautifully dressed Hutsul women in the courtyard of Dmytro Urszedżuk's “grażda” (traditional farmhouse). Some of them also appear in other photographs.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreihng5lgfbknynwdqz5vlmgmdb2gy6k7pvflnaj7jgbkb2vyrxqtqy"
+        },
+        "cipriani_pic_35": {
+            "title": "",
+            "description": "Three unknown Hutsul women with a scythe. It is worth noting the unusually long blade (“klinga”) and the relatively short handle (“kosisko”). These proportions made it possible to mow downhill.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreieth2hdx7in5ygtn2ijqeivkh3dx4o5zrnliecrdzorzo6jsmpmum"
+        },
+        "cipriani_pic_36": {
+            "title": "",
+            "description": "A traditional farmhouse in Bystrec, number 96, in the hamlet of Dietuł on the Kiczerka ridge. A multi-generational Hutsul family, neighbours of Stanisław Vincenz, are visible..",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreids5dm35lgyyavpd6l47xs4thao5osaq7u7dzindgrfypebqmrwri"
+        },
+        "cipriani_pic_38": {
+            "title": "",
+            "description": "A Hutsul in a straw hat playing the “trembita” and a young man (a teenager?) sitting on the grass. The hamlet of Dietuł with a view of the valley of the Bystrec stream and the eastern end of the main Czornohora ridge with Smotrec (1896 m a.s.l.) and the ridges of Stajki and Skoruszyna extending from it.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiglloegb4uwekocjxwgpo7rgb6fyckfy7wikldobzbxkskxatkiru"
+        },
+        "cipriani_pic_40": {
+            "title": "",
+            "description": "A couple of Hutsuls by the stream – possibly at the confluence of Bystrec with Black Czeremosz, as suggested by the small bridge behind them.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreic4ckfzg7tusz4ptmda536xr6mvn3peijd7mywhnbtxl64i3x5bka"
+        },
+        "cipriani_pic_41": {
+            "title": "",
+            "description": "Dmytro Urszedżuk with a horse by the “worynia”.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreif4pp4rsxmvbbfz3dl3yfthe4zzskx5b3lqdmrdlgnldkhmbvw3uy"
+        },
+        "cipriani_pic_42": {
+            "title": "",
+            "description": "Petro Biloholowy on the ridge of Czornohora in the area of Pohane Misce. Barbed wire from the World War I can be seen. Behind him on the right is the arm of Wuchatyj Kamiń and in the background the slopes of Munczel.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreig4nysvyosejd5k6u2ag6vogaelum2sepyuujnjucdhmag6whyesa"
+        },
+        "cipriani_pic_39": {
+            "title": "",
+            "description": "Above: The Black Czeremosz in ŻabieSłupejka with a “darab” (wooden raft) tied to the bank. On the shore, a Hutsul on horseback with a “besah”, and behind him Gływka – a hill shrouded in legends of “opryszki” (Hutsul folk heroes, outlaws) in the centre of the village on the right bank of the river\n Below: Dmytro Urszedżuk standing on a rocky spur in the current of the Black Czeremosz. Visible are the reinforcements of the banks, which are regularly damaged by the water released by the sluices.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreigjpch4jsahbb3daebly5ojl7siffww4tovdscsgv43imwiquyt4e"
+        },
+        "cipriani_pic_43": {
+            "title": "",
+            "description": "Most likely a view from the Stepanets region (1650 m a.s.l.) above Dzembronia, looking east. An arm of Smotrec is visible, and in the background is the Krynta range (1359 m a.s.l.) in the Hryniaw Mountains.",
+            "author": "Lidio Cipriani",
+            "imagePath": "ipfs://bafkreiadr3xffnsmpacpngglmi4kvmmyjulnddi4htcoze55po47vwnpd4"
+        }
+    },
+    "params": {
+        "gravity": -10,
+        "visitorSpeed": 5,
+        "heightOffset": {
+            "x": 0,
+            "y": 0.57,
+            "z": 0
+        },
+        "visitorEnter": {
+            "x": 4,
+            "y": 2,
+            "z": 4
+        }
+    }
+}

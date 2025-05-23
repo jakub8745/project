@@ -44,3 +44,7 @@ ktx2Loader.load( 'diffuse.ktx2', function ( texture ) {
 ## License
 
 [Apache License 2.0](https://github.com/BinomialLLC/basis_universal/blob/master/LICENSE)
+
+
+
+    configUrl: "https://bafybeiah4cwooe6zcvkhgykxhtzwcy245qajofdy4hvyq7tmsb7mdacoja.ipfs.w3s.link/cipriani_config.json",
