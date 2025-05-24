@@ -1,27 +1,40 @@
-// src/App.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import ModularGallery from './components/ModularGallery';
+import { GALLERIES } from './data/galleryConfig';
 
+interface Gallery {
+  configUrl: string;
+}
+
+// ...your App function...
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
 
+  // On initial mount, set default gallery and run main.js
+  useEffect(() => {
+    if (!selectedConfigUrl && GALLERIES[0]?.configUrl) {
+      setSelectedConfigUrl(GALLERIES[0].configUrl);
+
+    }
+  }, []);
+
+  // On sidebar click (selection), run main.js
+  const handleGallerySelect = (gallery: Gallery) => {
+    setSelectedConfigUrl(gallery.configUrl);
+    setSidebarOpen(false);
+
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
-      <Sidebar
-        open={sidebarOpen}
-        onToggle={() => setSidebarOpen(o => !o)}
-        logoText="Blue Point Art"
-      >
+      <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(o => !o)} logoText="Blue Point Art">
         <section className="p-4">
           <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
           <GalleryGrid
-            onSelect={(gallery) => {
-              setSelectedConfigUrl(gallery.configUrl);
-              setSidebarOpen(false);
-            }}
+            onSelect={handleGallerySelect}
             sidebarOpen={sidebarOpen}
             onToggleSidebar={() => setSidebarOpen(o => !o)}
           />
@@ -40,21 +53,16 @@ export default function App() {
         </div>
       </main>
 
-       <div id="modalOverlay" className="modal-overlay hidden">
-    <div className="modal">
-      <button className="modal-close" id="closeModal">×</button>
-      <div className="modal-image-container">
-        {/*
-        <img id="modalLoader" className="modal-loader"
-          src="https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif"
-          alt="Loading…" />
-          */}
-        <img id="modalImage" className="modal-image hidden" src="" alt="modal image" />
-      </div>
-      <div className="modal-description"></div>
-    </div>
-  </div>
+      <div id="modalOverlay" className="modal-overlay hidden">
+        <div className="modal">
+          <button className="modal-close" id="closeModal">×</button>
+          <div className="modal-image-container">
 
+            <img id="modalImage" className="modal-image hidden" src="" alt="modal image" />
+          </div>
+          <div className="modal-description"></div>
+        </div>
+      </div>
     </div>
   );
 }

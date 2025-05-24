@@ -260,7 +260,7 @@
         }
     },
     "params": {
-        "gravity": -10,
+        "gravity": -8,
         "visitorSpeed": 5,
         "heightOffset": {
             "x": 0,
@@ -268,9 +268,9 @@
             "z": 0
         },
         "visitorEnter": {
-            "x": 4,
+            "x": -6,
             "y": 2,
-            "z": 4
+            "z": 3
         }
     }
 }

@@ -14,16 +14,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
   sidebarOpen: _sidebarOpen,
   onToggleSidebar: _onToggleSidebar,
 }) => {
-  const handleDoubleClick = async (item: GalleryItem) => {
-    // dynamically import your main.js module
-    try {
-      const module = await import('../modules/main.js');
-      // call its exported init (or whatever you named it)
-      module.init(item.configUrl!);
-    } catch (err) {
-      console.error('Failed to load main.js:', err);
-    }
-  };
+  
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -31,7 +22,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
         <div
           key={item.url}
           className="cursor-pointer"
-          onDoubleClick={() => handleDoubleClick(item)}
+          onDoubleClick={() => _onSelect(item)}
         >
           <Tile
             modelUrl={item.url}

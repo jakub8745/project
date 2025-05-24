@@ -1,6 +1,6 @@
 // src/modules/AppBuilder.js
 
-import initRenderer from './initRenderer';
+import initRenderer from './initRenderer.ts';
 import initScene from './initScene.js';
 import initCamera from './initCamera.js';
 import initControls from './initControls.js';
@@ -9,45 +9,86 @@ import { setupResizeHandler } from './resizeHandler.js';
 import { applyVideoMeshes } from './applyVideoMeshes.js';
 import { createAudioMeshes } from './createAudioMeshes.js';
 import { PointerHandler } from './PointerHandler.js';
-import { AudioListener, AmbientLight, Clock, BufferGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, WebGLRenderer, RingGeometry, DoubleSide, Vector3, Spherical, MathUtils } from 'three';
-import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
-//import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
+import { AudioListener, AmbientLight, Clock, BufferGeometry, Mesh } from 'three';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
-//import initMapRenderer from './initMapRenderer.js';
 import rotateOrbit from './rotateOrbit.js';
 import { setupModal } from './setupModal.js';
-/*
-import {
-  buildSidebar,
-  addSidebarListeners,
-  setupSidebarButtons
-} from './sidebar.js';
-*/
-const ktx2Loader = new KTX2Loader().setTranscoderPath('./libs/basis/')
+import ktx2Loader from '../loaders/ktx2Loader.ts'; // Adjust path as needed
+
 const clock = new Clock();
-const cameraDir = new Vector3();
-let dt, pos;
 
 export async function buildGallery(config, container = document.body) {
+  // --- Scoped resource handles ---
+  let renderer = null;
+  let scene = null;
+  let visitor = null;
+  let controls = null;
+  let animationId = null;
+  let deps = null;
+
+  // --- Disposal method ---
+  function dispose() {
+
+    console.log('🎨 Disposing gallery...');
+    // Cancel animation
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    // Controls
+    if (controls && typeof controls.dispose === 'function') {
+      controls.dispose();
+      controls = null;
+    }
+    // Visitor
+    if (visitor && typeof visitor.dispose === 'function') {
+      visitor.dispose();
+      visitor = null;
+    }
+    // Scene
+    if (scene) {
+      scene.traverse(obj => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach(mat => mat.dispose && mat.dispose());
+          } else {
+            obj.material.dispose && obj.material.dispose();
+          }
+        }
+        if (obj.texture) obj.texture.dispose();
+      });
+      scene.clear && scene.clear();
+      scene = null;
+    }
+    // Renderer
+    if (renderer) {
+      if (renderer.domElement && renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      }
+      renderer.dispose && renderer.dispose();
+      renderer.forceContextLoss && renderer.forceContextLoss();
+      renderer = null;
+    }
+    deps = null;
+  }
+
+  // --- Actually build gallery ---
+  // Always dispose previous content in the container!
+  // (If using a shared container, make sure it's empty)
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  // Start fresh!
   const {
-    modelBlob,
-    interactivesBlob,
-    backgroundImg,
-    modelPath,
-    interactivesPath,
-    backgroundTexture,
-    //sidebar,
-    images,
-    params
+    modelBlob, interactivesBlob, backgroundImg,
+    modelPath, interactivesPath, backgroundTexture, images, params
   } = config;
 
-
-  // INIT renderers, scenes, cameras...
-  const renderer = initRenderer(container);
+  renderer = initRenderer(container);
   ktx2Loader.detectSupport(renderer);
 
-  const scene = initScene(backgroundImg || backgroundTexture, ktx2Loader, 'mainScene');
+  scene = initScene(backgroundImg || backgroundTexture, ktx2Loader, 'mainScene');
   scene.add(new AmbientLight(0xffffff, 2));
 
   Mesh.prototype.raycast = acceleratedRaycast;
@@ -56,162 +97,72 @@ export async function buildGallery(config, container = document.body) {
 
   const camera = initCamera();
 
-  // create & name your listener
+  // Audio listener
   const listener = new AudioListener();
   listener.name = 'MainAudioListener';
 
-
   setupResizeHandler(renderer, camera);
 
-  const controls = initControls(camera, renderer.domElement);
+  controls = initControls(camera, renderer.domElement);
 
-  //const rendererMap = initMapRenderer({ width: 500, height: 500 });
-
-  //const sceneMap = initScene(null, rendererMap, 'sceneMap');
-  //sceneMap.add(new AmbientLight(0xffffff, 2));
-/*
-  // circle pointer on sceneMap
-  const circle = new Mesh(
-    new RingGeometry(0.1, 1, 32),
-    new MeshBasicMaterial({ color: 0xa2c7ff, side: DoubleSide, transparent: true, opacity: 0.8, depthWrite: false })
-  );
-  circle.name = 'circleMap';
-  circle.rotation.x = Math.PI / 2;
-  circle.material.depthTest = false;
-  sceneMap.add(circle);
-
-  const cameraMap = new OrthographicCamera(-40, 40, 40, -40, 0.1, 1000);
-  cameraMap.position.set(10, 50, 10);
-  cameraMap.up.set(0, 0, -1);
-  cameraMap.lookAt(0, 0, 0);
-
-  const css2DMap = new CSS2DRenderer();
-  css2DMap.setSize(500, 500);
-  css2DMap.domElement.style.cssText = 'position:absolute;top:0;pointer-events:none';
-*/
-  const deps = {
-    ktx2Loader,
-    camera,
-    listener,
-    controls,
-    scene,
-    //sceneMap,
-    //cameraMap,
-    renderer,
-    //rendererMap,
-    //css2DRenderer: css2DMap,
-    params,
-    audioObjects: []
+  deps = {
+    ktx2Loader, camera, listener, controls, renderer, params, audioObjects: []
   };
 
-  //
-
-
-  //scene.add(visitor);
-
-
-
-  // LOADING MODELS
+  // Load models
   const modelLoader = new ModelLoader(deps, scene);
 
   if (modelBlob && interactivesBlob) {
     await modelLoader.loadModelFromBlob(modelBlob, interactivesBlob);
   } else {
-    console.log("modelPath, interactivesPath");
     await modelLoader.loadModel(modelPath, interactivesPath);
   }
 
-
-  // VIDEO
+  // Video
   applyVideoMeshes(scene, config);
 
+  // Audio
+  deps.audioObjects = createAudioMeshes(scene, listener, deps.audioObjects);
 
-  // now populate audio
-  deps.audioObjects = createAudioMeshes(
-    scene,
-    listener,
-    deps.audioObjects
-  );
-
-  //
+  // Camera rotation
   rotateOrbit(camera, controls, -120);
 
-  // VISITOR 
-  const visitor = new Visitor(deps);
+  // Visitor (user avatar)
+  visitor = new Visitor(deps);
   deps.visitor = visitor;
 
-  // modal setup
+  // Modal setup and pointer handler
   const popupCallback = setupModal(images);
   new PointerHandler({ camera, scene, visitor, popupCallback, deps });
 
-
-  //
   camera.add(listener);
   visitor.reset();
   scene.add(visitor);
 
-
-  // ANIMATE SCENES 
+  // --- Animation loop ---
   function animate() {
     if (!scene || !camera || !renderer || !controls) return;
-
-    requestAnimationFrame(animate);
-
-    dt = Math.min(clock.getDelta(), 0.1);
-
+    animationId = requestAnimationFrame(animate);
+    const dt = Math.min(clock.getDelta(), 0.1);
     if (deps.visitor && deps.collider) deps.visitor.update(dt, deps.collider);
-
-
     controls.update();
     renderer.render(scene, camera);
-
   }
-  //
-/*
-  function animateMap() {
-    if (!sceneMap || !cameraMap || !rendererMap || !css2DMap || !camera) return;
-
-    requestAnimationFrame(animateMap);
-
-    camera.getWorldDirection(cameraDir);
-    sceneMap.rotation.y = -Math.atan2(cameraDir.x, cameraDir.z) + Math.PI;
-    sceneMap.updateMatrixWorld();
-    rendererMap.render(sceneMap, cameraMap);
-    css2DMap.render(sceneMap, cameraMap);
-  }
-*/
   animate();
-  //animateMap();
   hideOverlay();
+
+  // --- Return a disposer object ---
+
+console.log("disoser", dispose);
+
+  return { dispose };
 }
 
-
+// --- Util ---
 function hideOverlay() {
   const overlay = document.getElementById('overlay');
-  //const sidebar = document.querySelector('.sidebar');
-  //const btn = document.getElementById('btn');
-
   if (!overlay) return;
-
   overlay.style.transition = 'opacity 1s ease';
   overlay.style.opacity = '0';
-
-  setTimeout(() => {
-    overlay.style.display = 'none';
-    /*
-    if (sidebar && !sidebar.classList.contains('open')) {
-      sidebar.style.display = 'flex';
-      sidebar.classList.add('open');
-    }
-    if (btn && !btn.classList.contains('show')) {
-      btn.style.display = 'block';
-      btn.classList.add('show');
-    }
-    if (btn && !btn.classList.contains('open')) {
-      btn.style.display = 'block';
-      btn.classList.add('open');
-    }
-      */
-  }, 1000);
+  setTimeout(() => { overlay.style.display = 'none'; }, 1000);
 }
-

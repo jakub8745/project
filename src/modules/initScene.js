@@ -13,7 +13,7 @@ export default function initScene(backgroundTexture, ktx2Loader, name) {
     });
   }
 
-  scene.name = name
+  //scene.name = name
 
   return scene;
 }

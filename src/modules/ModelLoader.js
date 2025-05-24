@@ -1,16 +1,13 @@
 // src/modules/ModelLoader.js
 import {
   Group,
-  Mesh,
-  MathUtils,
-  AudioLoader,
-  PositionalAudio
+  Mesh
+
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { StaticGeometryGenerator, MeshBVH } from 'three-mesh-bvh';
-import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
 
 export default class ModelLoader {
   constructor(deps, scene, newFloor = null) {
@@ -20,7 +17,6 @@ export default class ModelLoader {
     this.newFloor = newFloor;
     this.environment = new Group();
     this.toMerge = {};
-    this.addToSceneMapRun = true;
     this.currentModel = 1;
     this.totalModels = 2;
 
@@ -43,9 +39,7 @@ export default class ModelLoader {
 
   async loadModel(modelPath, interactivesPath) {
 
-    if (this.scene === this.deps.sceneMap) {
-      this.addToSceneMapRun = false;
-    }
+
 
     try {
 

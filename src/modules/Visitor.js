@@ -28,7 +28,6 @@ export default class Visitor extends Mesh {
     this.deps = deps;
     this.camera = deps.camera;
     this.controls = deps.controls;
-    this.sceneMap = deps.sceneMap;
     this.params = deps.params;
 
     this.visitorVelocity = new Vector3();
@@ -216,6 +215,8 @@ export default class Visitor extends Mesh {
   reset() {
 
 
+
+
     this.visitorVelocity.set(0, 0, 0);
     
     this.position.copy(this.params.visitorEnter || new Vector3(0, 10, 0));
@@ -228,6 +229,7 @@ export default class Visitor extends Mesh {
     const target = this.position.clone().add(offset);
     this.controls.target.copy(target);
     this.camera.position.copy(target.clone().add(new Vector3(0, 0, 5))); // fallback offset
+
 
   }
 

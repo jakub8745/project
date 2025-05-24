@@ -1,59 +1,56 @@
-// src/components/ModularGallery.tsx
 import React, { useEffect, useRef } from 'react';
-import { preloadConfigAssets, buildGallery } from '@bluepointart/art-modules';
-import '/viewer/main.css?url';
+// @ts-ignore
+import { buildGallery } from '../modules/AppBuilder.js';
+// @ts-ignore
+import { preloadConfigAssets } from '../modules/preloadConfigAssets.js';
 
 interface ModularGalleryProps {
-  /** The URL of the gallery JSON to load and render */
   configUrl: string;
 }
 
-const DEFAULT_CONFIG_URL =
-  'https://bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m.ipfs.w3s.link/exhibit_puno85_config.json';
+const DEFAULT_CONFIG_URL = "/configs/puno85_config.json";
 
 const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl }) => {
-  const overlayRef   = useRef<HTMLDivElement>(null);
-  const loaderRef    = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const loaderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // decide which URL to use: prop → default
     const url = configUrl || DEFAULT_CONFIG_URL;
-
-    // grab the container synchronously
     const container = containerRef.current;
     if (!container) {
       console.error('🎨 ModularGallery: container div not mounted');
       return;
     }
-    console.log('🎨 ModularGallery: rendering into', container);
 
-    let cancelled = false;
+    let disposed = false;
+    // galleryInstance is shared between effect and cleanup
+    let galleryInstance: { dispose?: () => void } | undefined;
 
     (async () => {
       try {
-        // fetch gallery config JSON
+        // 1. Fetch config
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const config = await res.json();
 
-        // preload assets, update loader
+        // 2. Preload assets, update loader text
         await preloadConfigAssets(config, (p: number) => {
           if (loaderRef.current) {
             loaderRef.current.textContent = `${Math.floor(p * 100)}%`;
           }
         });
-        if (cancelled) return;
+        if (disposed) return;
 
-        // hide the loading overlay
+        // 3. Build the gallery, keep disposer reference
+        galleryInstance = await buildGallery(config, container);
+
+        // 4. Hide loading overlay
         if (overlayRef.current) {
           overlayRef.current.style.display = 'none';
         }
-
-        console.log('🎨 ModularGallery: loaded container', container);
-        // actually build the Three.js gallery into our container div
-        await buildGallery(config);
       } catch (err) {
+        if (disposed) return;
         console.error('⚠️ Error in ModularGallery:', err);
         if (loaderRef.current) {
           loaderRef.current.textContent = 'Error loading gallery';
@@ -62,8 +59,21 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl }) => {
     })();
 
     return () => {
-      cancelled = true;
-      // optionally dispose of Three.js renderer/scene here if buildGallery returns them
+      disposed = true;
+      // Dispose the gallery
+      if (galleryInstance && typeof galleryInstance.dispose === 'function') {
+        galleryInstance.dispose();
+      }
+      // Reset the overlay/loader for next mount
+      if (overlayRef.current) overlayRef.current.style.display = '';
+      if (loaderRef.current) loaderRef.current.textContent = '0%';
+
+      // Extra safety: Remove leftover canvas in container
+      if (containerRef.current) {
+        while (containerRef.current.firstChild) {
+          containerRef.current.removeChild(containerRef.current.firstChild);
+        }
+      }
     };
   }, [configUrl]);
 
@@ -76,7 +86,7 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl }) => {
       >
         <div ref={loaderRef} className="text-2xl text-blue-700">0%</div>
       </div>
-      {/* The div where Three.js canvas will be appended */}
+      {/* Where Three.js canvas is attached */}
       <div ref={containerRef} className="w-full h-full absolute" />
     </div>
   );

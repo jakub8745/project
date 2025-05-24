@@ -5,9 +5,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js'; // switch to examples path
+import ktx2Loader from '../loaders/ktx2Loader';
 
-const ktx2Loader = new KTX2Loader().setTranscoderPath('/libs/basis/');
 
 export interface ModelProps {
   modelUrl: string;
@@ -35,6 +34,8 @@ const Model: React.FC<ModelProps> = ({
       // must detectSupport BEFORE using the loader
       ktx2Loader.detectSupport(gl);
       loader.setKTX2Loader(ktx2Loader);
+
+      
 
       // meshopt
       loader.setMeshoptDecoder(MeshoptDecoder);

@@ -1,11 +1,13 @@
+// src/components/Tile.tsx
+
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Loader2 } from 'lucide-react';
 import Model from './Model';
-import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import ktx2Loader from '../loaders/ktx2Loader'; // Adjust path as needed
+//
 
-const ktx2Loader = new KTX2Loader().setTranscoderPath('/libs/basis/');
 
 export interface TileProps {
   modelUrl: string;

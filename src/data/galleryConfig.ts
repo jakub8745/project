@@ -38,21 +38,7 @@ export const GALLERIES: GalleryItem[] = [{
     "overlayText":
         "Wystawa z okazji<br/>85-lecia<br/>Polskiego Uniwersytetu na Obczyźnie",
 
-    "videos": [
-        {
-            "id": "animacja85",
-            "loop": true,
-            "muted": true,
-            "playsinline": true,
-            "sources": [
-                {
-                    "src": "ipfs://bafybeigmokyvn64skdaicma52xeet6n7yutqqhyzjq75nqihkwwlzjuyb4/PUNO85_compressed_480.mp4",
-                    "type": "video/mp4"
-                }
-            ]
-        }
-        // ...you could list more videos here
-    ]
+    "videos": [],
 },
 {
     url: "https://bafybeiae35vsmewlokdlbgurbvya5kf2uy23f4woteokf4p3qrvwi3xfjm.ipfs.w3s.link/preview_cipriani05.glb",
