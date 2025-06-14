@@ -1,4 +1,3 @@
-// src/components/InfoButtons.tsx
 import { useState, useEffect, FC } from 'react';
 
 export interface InfoItem {
@@ -10,45 +9,34 @@ export interface InfoItem {
 }
 
 interface InfoButtonsProps {
-  /** URL of the exhibit-config JSON to pull `sidebar.items` from */
   configUrl?: string | null;
 }
 
 export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
-  // If no configUrl yet, render nothing (avoid JSON.parse errors)
-  if (!configUrl) {
-    return null;
-  }
-
-  const [items, setItems]     = useState<InfoItem[]>([]);
-  const [openId, setOpenId]   = useState<string | null>(null);
+  // ✅ Always declare hooks first
+  const [items, setItems] = useState<InfoItem[]>([]);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!configUrl) return;
+
     setLoading(true);
     setError(null);
 
-    // Ensure leading slash for public path
     const fetchUrl = configUrl.startsWith('/') ? configUrl : `/${configUrl}`;
-    console.log('[InfoButtons] fetching sidebar JSON from:', fetchUrl);
 
     fetch(fetchUrl)
       .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        const ct = res.headers.get('content-type') || '';
-        if (!ct.includes('application/json')) {
-          throw new Error(`Expected JSON but got ${ct}`);
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then(cfg => {
         if (!cfg.sidebar?.items) {
           throw new Error(`No sidebar.items in ${fetchUrl}`);
         }
-        setItems(cfg.sidebar.items as InfoItem[]);
+        setItems(cfg.sidebar.items);
       })
       .catch(err => {
         console.error('[InfoButtons] error:', err);
@@ -57,12 +45,10 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
       .finally(() => setLoading(false));
   }, [configUrl]);
 
-  if (loading) {
-    return <div className="text-gray-400 p-4">Loading info…</div>;
-  }
-  if (error) {
-    return <div className="text-red-500 p-4">Error: {error}</div>;
-  }
+  // ✅ Conditional rendering can go *after* hook declarations
+  if (!configUrl) return null;
+  if (loading) return <div className="text-gray-400 p-4">Loading info…</div>;
+  if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
 
   return (
     <div className="flex flex-col items-center space-y-4 mt-4">
@@ -79,7 +65,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
               <span className="text-white text-xl">{item.label}</span>
             </a>
           ) : (
-            <>
+            <div>
               <button
                 onClick={() => setOpenId(openId === item.id ? null : item.id)}
                 className="w-full flex items-center p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition"
@@ -93,7 +79,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
       ))}

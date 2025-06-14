@@ -41,7 +41,7 @@ export default function App() {
       </Sidebar>
 
       <main className="flex-1 relative">
-        <div className="pt-16 h-full">
+        <div className="h-full">
           {selectedConfigUrl ? (
             <ModularGallery configUrl={selectedConfigUrl} />
           ) : (
