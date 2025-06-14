@@ -67,7 +67,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   return (
     <div className="flex flex-col items-center space-y-4 mt-4">
       {items.map(item => (
-        <div key={item.id} className="w-4/5">
+        <div key={item.id} className="w-[95%]">
           {item.link ? (
             <a
               href={item.link}
@@ -76,7 +76,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
               className="w-full flex items-center p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition no-underline"
             >
               <img src={item.icon} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
-              <span className="text-white text-lg">{item.label}</span>
+              <span className="text-white text-xl">{item.label}</span>
             </a>
           ) : (
             <>
@@ -85,11 +85,11 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
                 className="w-full flex items-center p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition"
               >
                 <img src={item.icon} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
-                <span className="text-white text-lg">{item.label}</span>
+                <span className="text-white text-2xl">{item.label}</span>
               </button>
               {openId === item.id && item.content && (
                 <div
-                  className="mt-2 p-4 bg-gray-800 rounded-lg text-white text-sm"
+                  className="mt-2 p-4 bg-gray-800 rounded-lg text-white text-lg font-light"
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
               )}

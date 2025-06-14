@@ -8,7 +8,9 @@
 
 body {
   @apply bg-gallery-dark text-gallery-text;
-  font-family: 'Inter', sans-serif;
+  font-family: Lora,serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
