@@ -148,7 +148,7 @@ export async function buildGallery(config, container = document.body) {
   visitor.reset();
   scene.add(visitor);
 
-  // --- Animation loop ---
+  // --- Animation loop ---//
   function animate() {
     if (!scene || !camera || !renderer || !controls) return;
     animationId = requestAnimationFrame(animate);
