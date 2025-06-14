@@ -1,4 +1,6 @@
 import { FC, ReactNode } from 'react';
+import { InfoButtons } from './InfoButtons';
+
 
 export interface SidebarProps {
   /** Whether the sidebar is open */
@@ -9,14 +11,16 @@ export interface SidebarProps {
   logoText: string;
   /** Additional elements such as the gallery grid go here */
   children: ReactNode;
+  configUrl: string;
 }
+
 
 /**
  * Responsive Sidebar:
  * - On small screens: width = 90vw (single column)
  * - On medium+ screens: width = 32rem (two-column layout inside sidebar)
  */
-const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, children }) => (
+const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, configUrl, children }) => (
   <>
     {/* Toggle button always visible, sticks to sidebar edge */}
     <button
@@ -45,7 +49,8 @@ const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, children }) => (
       </div>
 
       {/* Container for additional content (supports two columns on medium+) */}
-      <div className="nav-list p-4 ">
+      <div className="nav-list p-4">
+        <InfoButtons configUrl={configUrl} />
         {children}
       </div>
     </aside>

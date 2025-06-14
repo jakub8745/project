@@ -86,7 +86,6 @@ export default class ModelLoader {
 
   async loadModelFromBlob(modelBlob, interactivesBlob) {
  
-console.log("modelBlob, interactivesBlob");
     try {
       const gltfScene = await this.loadGLTFBlob(modelBlob, this.currentModel, this.totalModels);
 

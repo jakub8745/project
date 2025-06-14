@@ -71,6 +71,15 @@ export async function buildGallery(config, container = document.body) {
       renderer.forceContextLoss && renderer.forceContextLoss();
       renderer = null;
     }
+    // Remove any leftover <video> elements from this gallery
+    if (config.videos) {
+      console.log('🎨 Removing video elements...');
+      config.videos.forEach(cfg => {
+        const vid = document.getElementById(cfg.id);
+        if (vid && vid.parentNode) vid.parentNode.removeChild(vid);
+      });
+    }
+
     deps = null;
   }
 
@@ -152,8 +161,6 @@ export async function buildGallery(config, container = document.body) {
   hideOverlay();
 
   // --- Return a disposer object ---
-
-console.log("disoser", dispose);
 
   return { dispose };
 }

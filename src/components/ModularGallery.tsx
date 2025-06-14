@@ -10,10 +10,13 @@ interface ModularGalleryProps {
 
 const DEFAULT_CONFIG_URL = "/configs/puno85_config.json";
 
+
 const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl }) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  console.log("DEFAULT_CONFIG_URL", DEFAULT_CONFIG_URL, configUrl);
 
   useEffect(() => {
     const url = configUrl || DEFAULT_CONFIG_URL;

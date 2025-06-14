@@ -61,8 +61,6 @@ function addPlayIcon(mesh, video) {
     iconMesh.renderOrder = 999;
     mesh.add(iconMesh);
 
-    console.log("iconMesh created");
-
     video.addEventListener('play', () => (iconMesh.visible = false));
     video.addEventListener('pause', () => (iconMesh.visible = true));
     video.addEventListener('ended', () => (iconMesh.visible = true));
@@ -78,6 +76,7 @@ function addPlayIcon(mesh, video) {
  * - Ensures depthTest/write for full visibility
  */
 export function applyVideoMeshes(scene, galleryConfig) {
+
   const configMap = new Map((galleryConfig.videos || []).map(cfg => [cfg.id, cfg]));
 
   scene.traverse(obj => {
@@ -120,7 +119,6 @@ export function applyVideoMeshes(scene, galleryConfig) {
 
       texture.needsUpdate = true;
 
-      console.log(video);
 
     });
   });

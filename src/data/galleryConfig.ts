@@ -23,6 +23,8 @@ export interface GalleryItem {
     }[];
 }
 
+export const DEFAULT_CONFIG_URL = "./configs/puno85_config.json";
+
 export const GALLERIES: GalleryItem[] = [{
     url: "https://bafybeiec35tpnq522bma536klp5cmqwnc55qmqepxquc2mmswwj63qbygq.ipfs.w3s.link/preview_puno85.glb",
     title: '85 lat PUNO',
@@ -103,5 +105,6 @@ export const GALLERIES: GalleryItem[] = [{
     videos: []
 },
     // …add as many as you like
+    
 ];
 

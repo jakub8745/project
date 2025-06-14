@@ -3,6 +3,8 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false,
+    "resolveJsonModule": true,
+    "typeRoots": ["../public/configs"]
     // ...
   },
   "references": [
