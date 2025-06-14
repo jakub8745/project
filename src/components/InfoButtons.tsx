@@ -53,7 +53,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   return (
     <div className="flex flex-col items-center space-y-4 mt-4">
       {items.map(item => (
-        <div key={item.id} className="w-[95%]">
+        <div key={item.id || `${item.label}-${item.icon}`} className="w-[95%]">
           {item.link ? (
             <a
               href={item.link}
