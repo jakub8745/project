@@ -10,12 +10,8 @@ export default defineConfig({
   ],
 
   build: {
-    rollupOptions: {
-      input: {
-        main: 'index.html',
-        // makes /viewer/index.html a valid entry point
-        viewer: 'viewer/index.html'
-      }
-    }
+  rollupOptions: {
+    input: 'index.html'
+  }
   }
 })
