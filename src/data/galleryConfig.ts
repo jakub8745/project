@@ -32,14 +32,10 @@ export const GALLERIES: GalleryItem[] = [{
     scale: 0.07,
     position: [0, 0, 0],
     configUrl: "./configs/puno85_config.json",
-
     "keywords": ["PUNO", "85-lecie", "Londyn", "3D art", "webgl"],
     "ogImage": "https://bluepointart.uk/preview.png",
-
-
     "overlayText":
         "Wystawa z okazji<br/>85-lecia<br/>Polskiego Uniwersytetu na Obczyźnie",
-
     "videos": [],
 },
 {
@@ -55,12 +51,36 @@ export const GALLERIES: GalleryItem[] = [{
     videos: []
 },
 {
+    url: "https://bafybeigqaweptpcmauzusqfs4ifzi6dsbo6r2ogckzzmsa2wkrzji7pyku.ipfs.w3s.link/preview_lockdowns.glb",
+    title: 'Joanna Ciechanowska - Lockdowns',
+    description: 'A look back at 2020',
+    scale: 0.45,
+    position: [0, 0, 0],
+    configUrl: "./configs/lockdowns_config.json",
+    keywords: [],
+    ogImage: "",
+    overlayText: "",
+    videos: []
+},
+{
+    url: "https://bafybeib3shw4j4adxamxk2bchwnvz2t6nhoy6puosrz5iaxrp6uv2dotnq.ipfs.w3s.link/preview_wakeupcall.glb",
+    title: 'WakeUp Call',
+    description: 'Modern meets classic',
+    scale: 0.065,
+    position: [0, 0, 0],
+    configUrl: "./configs/wakeup_config.json",
+    keywords: [],
+    ogImage: "",
+    overlayText: "",
+    videos: []
+},
+{
     url: "https://bafybeibwkpikvcnrmme3tjwzvam7bzconw23fxnrk2c3b22s4lq2dtxfja.ipfs.w3s.link/preview_dystopia.glb",
     title: 'Dystopia of imitation',
     description: 'Modern meets classic',
     scale: 0.3,
     position: [0, 0, 0],
-    configUrl: "https://bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m.ipfs.w3s.link/exhibit_puno85_config.json",
+    configUrl: "./configs/puno85_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "",
@@ -73,38 +93,16 @@ export const GALLERIES: GalleryItem[] = [{
     description: 'Exploring self and society',
     scale: 0.29,
     position: [0, 0, 0],
-    configUrl: "https://bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m.ipfs.w3s.link/exhibit_puno85_config.json",
+    configUrl: "./configs/puno85_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "",
     videos: []
 },
 
-{
-    url: "https://bafybeib3shw4j4adxamxk2bchwnvz2t6nhoy6puosrz5iaxrp6uv2dotnq.ipfs.w3s.link/preview_wakeupcall.glb",
-    title: 'WakeUp Call',
-    description: 'Modern meets classic',
-    scale: 0.065,
-    position: [0, 0, 0],
-    configUrl: "https://bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m.ipfs.w3s.link/exhibit_puno85_config.json",
-    keywords: [],
-    ogImage: "",
-    overlayText: "",
-    videos: []
-},
-{
-    url: "https://bafybeigqaweptpcmauzusqfs4ifzi6dsbo6r2ogckzzmsa2wkrzji7pyku.ipfs.w3s.link/preview_lockdowns.glb",
-    title: 'Joanna Ciechanowska - Lockdowns',
-    description: 'A look back at 2020',
-    scale: 0.45,
-    position: [0, 0, 0],
-    configUrl: "https://bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m.ipfs.w3s.link/exhibit_puno85_config.json",
-    keywords: [],
-    ogImage: "",
-    overlayText: "",
-    videos: []
-},
+
+
     // …add as many as you like
-    
+
 ];
 

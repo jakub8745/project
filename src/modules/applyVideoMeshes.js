@@ -85,10 +85,15 @@ export function applyVideoMeshes(scene, galleryConfig) {
     obj.wireframe = false;
 
     const cfg = configMap.get(obj.userData.elementID);
+
+    console.log(cfg);
+    
     if (!cfg) {
       console.warn(`No video config for ID ${obj.userData.elementID}`);
       return;
     }
+
+    console.log(`Applying video mesh for ID ${obj.userData.elementID}`);
 
     const video = ensureVideoElement(cfg);
     if (!video) return;

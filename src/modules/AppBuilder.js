@@ -12,7 +12,6 @@ import { PointerHandler } from './PointerHandler.js';
 import { AudioListener, AmbientLight, Clock, BufferGeometry, Mesh } from 'three';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
-import rotateOrbit from './rotateOrbit.js';
 import { setupModal } from './setupModal.js';
 import ktx2Loader from '../loaders/ktx2Loader.ts'; // Adjust path as needed
 
@@ -26,6 +25,8 @@ export async function buildGallery(config, container = document.body) {
   let controls = null;
   let animationId = null;
   let deps = null;
+
+  console.log('🎨 Building gallery...', config)
 
   // --- Disposal method ---
   function dispose() {
@@ -97,8 +98,9 @@ export async function buildGallery(config, container = document.body) {
   renderer = initRenderer(container);
   ktx2Loader.detectSupport(renderer);
 
-  scene = initScene(backgroundImg || backgroundTexture, ktx2Loader, 'mainScene');
-  scene.add(new AmbientLight(0xffffff, 2));
+  console.log("blur", params.backgroundBlurriness);
+
+  scene = initScene(backgroundImg || backgroundTexture, ktx2Loader, 'mainScene', params.backgroundBlurriness, params.backgroundIntensity, params.lightIntensity);
 
   Mesh.prototype.raycast = acceleratedRaycast;
   BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
@@ -133,12 +135,12 @@ export async function buildGallery(config, container = document.body) {
   // Audio
   deps.audioObjects = createAudioMeshes(scene, listener, deps.audioObjects);
 
-  // Camera rotation
-  rotateOrbit(camera, controls, -120);
+ 
 
   // Visitor (user avatar)
   visitor = new Visitor(deps);
   deps.visitor = visitor;
+
 
   // Modal setup and pointer handler
   const popupCallback = setupModal(images);
@@ -147,6 +149,8 @@ export async function buildGallery(config, container = document.body) {
   camera.add(listener);
   visitor.reset();
   scene.add(visitor);
+
+ 
 
   // --- Animation loop ---//
   function animate() {

@@ -1,133 +1,134 @@
 {
-    "modelPath": "https://bafybeia5zjnvgzikl6bqrgyenheuab5lbkt7dieogal2kqnz2ge2omul6q.ipfs.w3s.link/exhibition_puno85_ktx.glb",
-    "interactivesPath": "https://bafybeid5pxiowhnobu37kcsotoqby5fcw3mkbjwzhynpwsktiaep6zd4h4.ipfs.w3s.link/interactives_puno85.glb",
-    "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
-    "sidebar": {
-      "logo": {
-        "text": "Wystawa z okazji 85-lecia PUNO"
+  "modelPath": "https://bafybeia5zjnvgzikl6bqrgyenheuab5lbkt7dieogal2kqnz2ge2omul6q.ipfs.w3s.link/exhibition_puno85_ktx.glb",
+  "interactivesPath": "https://bafybeid5pxiowhnobu37kcsotoqby5fcw3mkbjwzhynpwsktiaep6zd4h4.ipfs.w3s.link/interactives_puno85.glb",
+  "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
+  "sidebar": {
+    "logo": {
+      "text": "Wystawa z okazji 85-lecia PUNO"
+    },
+    "items": [
+      {
+        "id": "help-icon",
+        "label": "Poruszanie się po Wystawie",
+        "icon": "https://bafybeif2rhthkwlwc5yuduarar24xans7hqv6jqdcug3ea5ajkspeqb7bq.ipfs.w3s.link/how_to_move.png",
+        "target": "how_to_move",
+        "content": "<strong>SPOSÓB PORUSZANIA SIĘ PO GALERII:</strong><br /><br /><img alt=\"Move: W, A, S, D or Arrow Keys\" style=\"display: block; margin: 0 auto 1em auto; max-width: 60%; height: auto; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg);\" src=\"https://bafybeibyn5zrmeallmsfj7noetbpy4l7pxnpza7mbcaj7xsqzz6rqidehu.ipfs.w3s.link/WASD.png\" /><br /><div style=\"display: flex; justify-content: center; gap: 1em; margin-bottom: 1em;\"><img alt=\"Rotate View: Click + Swipe\" style=\"height: 8em; translate: -2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeiemorbsojoayepbybcskwhg3n2a6qpexcsd3ip3zsekxde464lx2q.ipfs.w3s.link/swipe.png\" /><img alt=\"View Details: Click + Hold (1s)\" style=\"height: 6em; translate: 1em 2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeihn6k4kn5cpiipvtzq3o7n7f6g7fa3wv2krnbam3gwxm7rlc7w4xu.ipfs.w3s.link/hold.png\" /></div><br /><br /><br />Ruch: W, A, S, D lub strzałki<br />Obrót: Kliknij i przeciągnij<br />Wyświetlenie szczegółów: Kliknij i przytrzymaj (1 sekunda)<br /><br /><strong>Ekran dotykowy:</strong><br />Ruch: Dotknij i przytrzymaj (1 sekunda)<br />Obrót widoku: Przeciągnij palcem<br />Wyświetlenie szczegółów: Dotknij i przytrzymaj (1 sekunda)<br />Zamknij i otwórz sidebar: <img alt=\"Przełącznik Sidebara\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br /><strong>HOW TO MOVE IN THE GALLERY:</strong><br /><br />Move: W, A, S, D or Arrow Keys<br />Rotate View: Click + Swipe<br />View Details: Click + Hold (1s)<br /><br /><strong>Touchscreen:</strong><br />Move: Tap + Hold (2s)<br />Rotate View: Drag Finger<br />View Details: Tap + Hold (1s)<br />Close and Open This Sidebar: <img alt=\"Toggle Sidebar\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br />"
       },
-      "items": [
+      {
+        "id": "info-icon",
+        "label": "O Wystawie",
+        "icon": "https://bafybeidohr5txz3bvffklxqlddnxmya7ltmi6uiawv2c3x22lrofqzoxoa.ipfs.w3s.link/info.png",
+        "target": "info_text",
+        "content": "Wystawa z okazji 85-lecia Polskiego Uniwersytetu na Obczyźnie w Londynie<br />Prezentowana ekspozycja jest cyfrową kontynuacją projektu artystycznego zapoczątkowanego podczas jubileuszu 80-lecia PUNO. Obecna odsłona, przygotowana z okazji 85-lecia Uczelni, została poszerzona o nowy portret prof. Włodzimierza Miera-Jędrzejowicza, obecnego Rektora PUNO, i przeniesiona do wirtualnej przestrzeni Blue Point Art Gallery. Centralnym elementem wystawy są cyfrowe kolaże portretowe, które – zestawione w środowisku 3D – tworzą spójną narrację wizualną o PUNO jako konstrukcie ideowym: miejscu wielu tożsamości i jednocześnie trwałym punkcie odniesienia dla polskiej nauki na emigracji. Integralną częścią ekspozycji jest również artystyczny wideoart Idea żyje dzięki ludziom, autorstwa Jarosława Soleckiego, poświęcony symbolicznemu ujęciu idei PUNO i jej twórców. W nowej odsłonie dzieło to zostało zaadaptowane do środowiska cyfrowego i udostępnione jako refleksja wizualna nad dziedzictwem Uczelni oraz ideą wspólnoty akademickiej budowanej na obczyźnie.<br /><br />Portret prof. Włodzimierza Miera-Jędrzejowicza, stworzony specjalnie na potrzeby tej wystawy, odwołuje się do jego biografii jako naukowca i wychowanka polskiego środowiska emigracyjnego w Wielkiej Brytanii. Urodzony w Londynie, profesor specjalizuje się w fizyce cząstek elementarnych i przestrzeni kosmicznej. Kolaż nawiązuje do jego badań nad wpływem wiatru słonecznego na ziemskie pole magnetyczne, a także do dwujęzycznego dziedzictwa i mostu kulturowego, który tworzy między tradycją a nowoczesnością. Elementy kompozycyjne odnoszą się zarówno do naukowej precyzji, jak i do wartości, jakie reprezentuje jako rektor Uczelni z tradycją migracyjną.<br /><br />Ekspozycja stanowi rozwinięcie jubileuszowej wystawy Architektura wyobrażona – 80 lat Polskiego Uniwersytetu na Obczyźnie, zaprezentowanej w październiku 2019 roku w Galerii POSK w Londynie. Tamta wystawa składała się z czterech części tematycznych: plansz typu timeline dokumentujących historię PUNO (1939–2019), gablot z dokumentami i pamiątkami historycznymi oraz projektów artystycznych – animacji oraz serii kolaży portretowych Rektorów. Towarzyszyła jej publikacja pod tym samym tytułem (red. Justyna Gorzkowicz), zawierająca refleksje nad przestrzenią symboliczną Uczelni oraz teksty poświęcone historii, sztuce i tożsamości akademickiej na emigracji. W publikacji po raz pierwszy została sformułowana koncepcja architektury wyobrażonej, autorstwa Justyny Gorzkowicz – ideowego gmachu PUNO, budowanego nie z kamienia, lecz z wartości, pamięci i ciągłości misji edukacyjnej, realizowanej w warunkach rozproszenia. Ta metafora – uniwersytetu bez murów, ale zbudowanego z trwałych relacji i biografii – znajduje swój artystyczny wyraz w cyfrowych portretach rektorów. Każdy z kolaży został zaprojektowany zgodnie z zasadą szkatułkowej narracji wizualnej – jako opowieść w opowieści, w której symboliczne detale odsyłają do życia, pracy naukowej, pasji i kulturowych odniesień danego rektora. W obrazach pojawiają się nawiązania do konkretnych miejsc (np. Jerozolima, Wilno), przedmiotów badań (np. fizyka cząstek, etnologia), osobistych symboli czy kontekstów historycznych. Tak skonstruowane portrety budują nie tylko wizualną mapę losów poszczególnych osób, ale też wspólną opowieść o sile idei akademickiej trwania na emigracji.<br /><br />Kolaże powstały w 2019 roku w ramach działalności Laboratorium Lingua-Brandingu przy Zakładzie Współczesnej Kultury Literackiej i Artystycznej Instytutu Kultury Europejskiej PUNO. Ich autorami są: dr Justyna Gorzkowicz (kuratorka wystawy), Jarosław Solecki oraz Olga Winiarczyk – wówczas doktorantka Uniwersytetu Pedagogicznego w Krakowie, uczestnicząca w projekcie w ramach programu Erasmus+. Oryginalnej wystawie towarzyszyła również seria kolekcjonerskich pocztówek i znaczków z portretami Rektorów – jako forma artystycznej „cegiełki” oraz popularyzacji dziedzictwa Uczelni.<br /><br />Wersja cyfrowa, przygotowana z okazji 85-lecia PUNO, stanowi próbę nowego odczytania tej historii i przeniesienia jej w realia wirtualnej przestrzeni wystawienniczej – z zachowaniem szacunku wobec tradycji, ale i z otwarciem na nowe formy narracji wizualnej oraz transnarodowej obecności Polskiego Uniwersytetu na Obczyźnie w kulturze XXI wieku."
+      },
+      {
+        "label": "Strona Główna Blue Point Art",
+        "icon": "https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif",
+        "link": "https://bluepointart.uk"
+      }
+    ]
+  },
+  "images": {
+    "HALECKI": {
+      "title": "prof. Oskar Halecki",
+      "description": "ur. 1891 w Wiedniu, zm. 1973 w White Plains, USA, historyk, mediewista, profesor Uniwersytetu Warszawskiego i Fordham University w Nowym Jorku; rektor i inicjator Polskiego Uniwersytetu Zagranicą 1939-1940.",
+      "author": "",
+      "imagePath": "ipfs://bafkreifwrijtx33jn2chz73pudp2rfbwqi6dtwmnztxgzgwigute2l4y3m"
+    },
+    "BRZESKI": {
+      "title": "prof. Tadeusz Brzeski",
+      "description": "ur. 1884 w Dębicy, zm. 1958 w Londynie, ekonomista i prawnik, profesor Uniwersytetu Warszawskiego; rektor PUNO 1949-1958.",
+      "author": "",
+      "imagePath": "ipfs://bafkreiapb2iw7faub3uvyrohvp27loy4zumy2verjbemlhj7itlsdw3pmi"
+    },
+    "CESARIA": {
+      "title": "prof. Cezaria Baudouin de Courtenay Ehrenkreutz Jędrzejewiczowa",
+      "description": "ur. 1885 w Dorpacie, zm. 1967 w Londynie, etnolog i historyk kultury, profesor Polskiego Instytutu Naukowego w Jerozolimie i PUNO; rektor PUNO 1958-1967",
+      "author": "",
+      "imagePath": "ipfs://bafkreih2ksufwkwd44vbptfflxu7oggxr6yd3dyhuaq25fbm6insemt4vm"
+    },
+    "SULIMIRSKI": {
+      "title": "prof. Tadeusz Józef Sulimirski",
+      "description": "ur. 1898 w Kobylanach, zm. 1983 w Londynie, archeolog i historyk starożytny, profesor Uniwersytetu Jagiellońskiego i University of London; rektor PUNO 1969-1979.",
+      "author": "",
+      "imagePath": "ipfs://bafkreibpe6hmuogc2mqsd6tpf2knxeua2hbtyx2yu5xseszjy7l5onu4xi"
+    },
+    "GAWENDA": {
+      "title": "prof. Jerzy August Odrowąz-Gawenda",
+      "description": "ur. 1917 we Lwowie, zm. 2000 w Londynie, prawnik, wicepremier i minister spraw zagranicznych Rządu RP na uchodźstwie; rektor PUNO 1978-1986.",
+      "author": "",
+      "imagePath": "ipfs://bafybeic6in7splfnjy6u75jt6sqimcw7zswfqc2xuk5tabzq3duw425gru"
+    },
+    "SKOWRONSKI-SAS": {
+      "title": "prof. Mieczysław Sas-Skowroński",
+      "description": "ur. 1920 w Szaflarach lub Stanisławowie, zm. 1996 w Londynie, inżynier i działacz emigracyjny, minister w rządach Kazimierza Sabbata; rektor PUNO 1987-1993.",
+      "author": "",
+      "imagePath": "ipfs://bafkreibhlwzixd5xywcarb34vwpmsu3fs4puubhel7dktjcyfquamasbru"
+    },
+    "DREWNOWSKI": {
+      "title": "prof. Jan Drewnowski",
+      "description": "ur. 1908 w Wilnie, zm. 2000 w Londynie, ekonomista i sowietolog, profesor Szkoły Głównej Handlowej i Institute of Social Studies w Hadze; rektor PUNO 1994-1998.",
+      "author": "",
+      "imagePath": "ipfs://bafkreiay5ynicavmmbrnnuo5ule4qyuiiewzxlrjnmz5ddobiieirdzlmi"
+    },
+    "WALASZEWSKI": {
+      "title": "prof. Zdzisław Eugeniusz Wałaszewski",
+      "description": "ur. 1922 w Lipinkach Szlacheckich, zm. 2008 w Londynie, romanista i dziennikarz, związany z PUNO; rektor PUNO 1998-2002.",
+      "author": "",
+      "imagePath": "ipfs://bafkreiczn36o32xyqidtzqmunsez45pdzft7smndbkd4kfzopngls7aayi"
+    },
+    "FALKOWSKI": {
+      "title": "prof. Wojciech Falkowski",
+      "description": "ur. 1930 w Lochwinowiczach, zm. 2015 w Ewell, lekarz psychiatra i działacz społeczny, praktykował w Wielkiej Brytanii; rektor PUNO 2002-2011.",
+      "author": "",
+      "imagePath": "ipfs://bafkreifdsp5gct57dyijbgaj2kyfeb2t6ocjenmkgpmtg2hmy7kan6feni"
+    },
+    "TABORSKA": {
+      "title": "prof. Halina Taborska",
+      "description": "ur. 1933 w Puławach, zm. 2021 w Londynie, filolog i historyk sztuki, profesor Uniwersytetu Warszawskiego i PUNO; rektor PUNO 2011-2017.",
+      "author": "",
+      "imagePath": "ipfs://bafkreihz2ndxhg6dl54ojzu467y345irt43ze4uehbfibf2z2mln2ivhaa"
+    },
+    "KAZIMIERSKI": {
+      "title": "prof. Tomasz Kaźmierski",
+      "description": "ur. 1949 w Polsce, elektronik, profesor University of Southampton, specjalista w zakresie systemów VLSI i języków opisu układów; rektor PUNO 2017-2021.",
+      "author": "",
+      "imagePath": "ipfs://bafkreidqbzth3rl6oem6xcnsrh5c7ejc65mbm6trfllbcgv43n7xjqzxpm"
+    },
+    "MIER-JEDRZEJOWICZ": {
+      "title": "prof. Włodzimierz Mier-Jędrzejowicz",
+      "description": "ur. 1949 w Londynie, fizyk cząstek elementarnych, doktor i wieloletni wykładowca Imperial College London; rektor PUNO od 2021.",
+      "author": "",
+      "imagePath": "ipfs://bafkreiapijnqndhjk74er67sk44lzwftborjz6npwxgybcn7cilewitpu4"
+    }
+  },
+  "videos": [
+    {
+      "id": "animacja85",
+      "loop": true,
+      "muted": true,
+      "playsinline": true,
+      "sources": [
         {
-          "id": "help-icon",
-          "label": "Poruszanie się po Wystawie",
-          "icon": "https://bafybeif2rhthkwlwc5yuduarar24xans7hqv6jqdcug3ea5ajkspeqb7bq.ipfs.w3s.link/how_to_move.png",
-          "target": "how_to_move",
-          "content": "<strong>SPOSÓB PORUSZANIA SIĘ PO GALERII:</strong><br /><br /><img alt=\"Move: W, A, S, D or Arrow Keys\" style=\"display: block; margin: 0 auto 1em auto; max-width: 60%; height: auto; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg);\" src=\"https://bafybeibyn5zrmeallmsfj7noetbpy4l7pxnpza7mbcaj7xsqzz6rqidehu.ipfs.w3s.link/WASD.png\" /><br /><div style=\"display: flex; justify-content: center; gap: 1em; margin-bottom: 1em;\"><img alt=\"Rotate View: Click + Swipe\" style=\"height: 8em; translate: -2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeiemorbsojoayepbybcskwhg3n2a6qpexcsd3ip3zsekxde464lx2q.ipfs.w3s.link/swipe.png\" /><img alt=\"View Details: Click + Hold (1s)\" style=\"height: 6em; translate: 1em 2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeihn6k4kn5cpiipvtzq3o7n7f6g7fa3wv2krnbam3gwxm7rlc7w4xu.ipfs.w3s.link/hold.png\" /></div><br /><br /><br />Ruch: W, A, S, D lub strzałki<br />Obrót: Kliknij i przeciągnij<br />Wyświetlenie szczegółów: Kliknij i przytrzymaj (1 sekunda)<br /><br /><strong>Ekran dotykowy:</strong><br />Ruch: Dotknij i przytrzymaj (1 sekunda)<br />Obrót widoku: Przeciągnij palcem<br />Wyświetlenie szczegółów: Dotknij i przytrzymaj (1 sekunda)<br />Zamknij i otwórz sidebar: <img alt=\"Przełącznik Sidebara\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br /><strong>HOW TO MOVE IN THE GALLERY:</strong><br /><br />Move: W, A, S, D or Arrow Keys<br />Rotate View: Click + Swipe<br />View Details: Click + Hold (1s)<br /><br /><strong>Touchscreen:</strong><br />Move: Tap + Hold (2s)<br />Rotate View: Drag Finger<br />View Details: Tap + Hold (1s)<br />Close and Open This Sidebar: <img alt=\"Toggle Sidebar\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br />"
-        },
-        {
-          "id": "info-icon",
-          "label": "O Wystawie",
-          "icon": "https://bafybeidohr5txz3bvffklxqlddnxmya7ltmi6uiawv2c3x22lrofqzoxoa.ipfs.w3s.link/info.png", 
-          "target": "info_text",
-          "content": "Wystawa z okazji 85-lecia Polskiego Uniwersytetu na Obczyźnie w Londynie<br />Prezentowana ekspozycja jest cyfrową kontynuacją projektu artystycznego zapoczątkowanego podczas jubileuszu 80-lecia PUNO. Obecna odsłona, przygotowana z okazji 85-lecia Uczelni, została poszerzona o nowy portret prof. Włodzimierza Miera-Jędrzejowicza, obecnego Rektora PUNO, i przeniesiona do wirtualnej przestrzeni Blue Point Art Gallery. Centralnym elementem wystawy są cyfrowe kolaże portretowe, które – zestawione w środowisku 3D – tworzą spójną narrację wizualną o PUNO jako konstrukcie ideowym: miejscu wielu tożsamości i jednocześnie trwałym punkcie odniesienia dla polskiej nauki na emigracji. Integralną częścią ekspozycji jest również artystyczny wideoart Idea żyje dzięki ludziom, autorstwa Jarosława Soleckiego, poświęcony symbolicznemu ujęciu idei PUNO i jej twórców. W nowej odsłonie dzieło to zostało zaadaptowane do środowiska cyfrowego i udostępnione jako refleksja wizualna nad dziedzictwem Uczelni oraz ideą wspólnoty akademickiej budowanej na obczyźnie.<br /><br />Portret prof. Włodzimierza Miera-Jędrzejowicza, stworzony specjalnie na potrzeby tej wystawy, odwołuje się do jego biografii jako naukowca i wychowanka polskiego środowiska emigracyjnego w Wielkiej Brytanii. Urodzony w Londynie, profesor specjalizuje się w fizyce cząstek elementarnych i przestrzeni kosmicznej. Kolaż nawiązuje do jego badań nad wpływem wiatru słonecznego na ziemskie pole magnetyczne, a także do dwujęzycznego dziedzictwa i mostu kulturowego, który tworzy między tradycją a nowoczesnością. Elementy kompozycyjne odnoszą się zarówno do naukowej precyzji, jak i do wartości, jakie reprezentuje jako rektor Uczelni z tradycją migracyjną.<br /><br />Ekspozycja stanowi rozwinięcie jubileuszowej wystawy Architektura wyobrażona – 80 lat Polskiego Uniwersytetu na Obczyźnie, zaprezentowanej w październiku 2019 roku w Galerii POSK w Londynie. Tamta wystawa składała się z czterech części tematycznych: plansz typu timeline dokumentujących historię PUNO (1939–2019), gablot z dokumentami i pamiątkami historycznymi oraz projektów artystycznych – animacji oraz serii kolaży portretowych Rektorów. Towarzyszyła jej publikacja pod tym samym tytułem (red. Justyna Gorzkowicz), zawierająca refleksje nad przestrzenią symboliczną Uczelni oraz teksty poświęcone historii, sztuce i tożsamości akademickiej na emigracji. W publikacji po raz pierwszy została sformułowana koncepcja architektury wyobrażonej, autorstwa Justyny Gorzkowicz – ideowego gmachu PUNO, budowanego nie z kamienia, lecz z wartości, pamięci i ciągłości misji edukacyjnej, realizowanej w warunkach rozproszenia. Ta metafora – uniwersytetu bez murów, ale zbudowanego z trwałych relacji i biografii – znajduje swój artystyczny wyraz w cyfrowych portretach rektorów. Każdy z kolaży został zaprojektowany zgodnie z zasadą szkatułkowej narracji wizualnej – jako opowieść w opowieści, w której symboliczne detale odsyłają do życia, pracy naukowej, pasji i kulturowych odniesień danego rektora. W obrazach pojawiają się nawiązania do konkretnych miejsc (np. Jerozolima, Wilno), przedmiotów badań (np. fizyka cząstek, etnologia), osobistych symboli czy kontekstów historycznych. Tak skonstruowane portrety budują nie tylko wizualną mapę losów poszczególnych osób, ale też wspólną opowieść o sile idei akademickiej trwania na emigracji.<br /><br />Kolaże powstały w 2019 roku w ramach działalności Laboratorium Lingua-Brandingu przy Zakładzie Współczesnej Kultury Literackiej i Artystycznej Instytutu Kultury Europejskiej PUNO. Ich autorami są: dr Justyna Gorzkowicz (kuratorka wystawy), Jarosław Solecki oraz Olga Winiarczyk – wówczas doktorantka Uniwersytetu Pedagogicznego w Krakowie, uczestnicząca w projekcie w ramach programu Erasmus+. Oryginalnej wystawie towarzyszyła również seria kolekcjonerskich pocztówek i znaczków z portretami Rektorów – jako forma artystycznej „cegiełki” oraz popularyzacji dziedzictwa Uczelni.<br /><br />Wersja cyfrowa, przygotowana z okazji 85-lecia PUNO, stanowi próbę nowego odczytania tej historii i przeniesienia jej w realia wirtualnej przestrzeni wystawienniczej – z zachowaniem szacunku wobec tradycji, ale i z otwarciem na nowe formy narracji wizualnej oraz transnarodowej obecności Polskiego Uniwersytetu na Obczyźnie w kulturze XXI wieku."
-        },
-        {
-          "label": "Strona Główna Blue Point Art",
-          "icon": "https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif",
-          "link": "https://bluepointart.uk"
+          "src": "ipfs://bafybeigmokyvn64skdaicma52xeet6n7yutqqhyzjq75nqihkwwlzjuyb4/PUNO85_compressed_480.mp4",
+          "type": "video/mp4"
         }
       ]
-    },
-    "images": {
-      "HALECKI": {
-        "title": "prof. Oskar Halecki",
-        "description": "ur. 1891 w Wiedniu, zm. 1973 w White Plains, USA, historyk, mediewista, profesor Uniwersytetu Warszawskiego i Fordham University w Nowym Jorku; rektor i inicjator Polskiego Uniwersytetu Zagranicą 1939-1940.",
-        "author": "",
-        "imagePath": "ipfs://bafkreifwrijtx33jn2chz73pudp2rfbwqi6dtwmnztxgzgwigute2l4y3m"
-      },
-      "BRZESKI": {
-        "title": "prof. Tadeusz Brzeski",
-        "description": "ur. 1884 w Dębicy, zm. 1958 w Londynie, ekonomista i prawnik, profesor Uniwersytetu Warszawskiego; rektor PUNO 1949-1958.",
-        "author": "",
-        "imagePath": "ipfs://bafkreiapb2iw7faub3uvyrohvp27loy4zumy2verjbemlhj7itlsdw3pmi"
-      },
-      "CESARIA": {
-        "title": "prof. Cezaria Baudouin de Courtenay Ehrenkreutz Jędrzejewiczowa",
-        "description": "ur. 1885 w Dorpacie, zm. 1967 w Londynie, etnolog i historyk kultury, profesor Polskiego Instytutu Naukowego w Jerozolimie i PUNO; rektor PUNO 1958-1967",
-        "author": "",
-        "imagePath": "ipfs://bafkreih2ksufwkwd44vbptfflxu7oggxr6yd3dyhuaq25fbm6insemt4vm"
-      },
-      "SULIMIRSKI": {
-        "title": "prof. Tadeusz Józef Sulimirski",
-        "description": "ur. 1898 w Kobylanach, zm. 1983 w Londynie, archeolog i historyk starożytny, profesor Uniwersytetu Jagiellońskiego i University of London; rektor PUNO 1969-1979.",
-        "author": "",
-        "imagePath": "ipfs://bafkreibpe6hmuogc2mqsd6tpf2knxeua2hbtyx2yu5xseszjy7l5onu4xi"
-      },
-      "GAWENDA": {
-        "title": "prof. Jerzy August Odrowąz-Gawenda",
-        "description": "ur. 1917 we Lwowie, zm. 2000 w Londynie, prawnik, wicepremier i minister spraw zagranicznych Rządu RP na uchodźstwie; rektor PUNO 1978-1986.",
-        "author": "",
-        "imagePath": "ipfs://bafybeic6in7splfnjy6u75jt6sqimcw7zswfqc2xuk5tabzq3duw425gru"
-      },
-      "SKOWRONSKI-SAS": {
-        "title": "prof. Mieczysław Sas-Skowroński",
-        "description": "ur. 1920 w Szaflarach lub Stanisławowie, zm. 1996 w Londynie, inżynier i działacz emigracyjny, minister w rządach Kazimierza Sabbata; rektor PUNO 1987-1993.",
-        "author": "",
-        "imagePath": "ipfs://bafkreibhlwzixd5xywcarb34vwpmsu3fs4puubhel7dktjcyfquamasbru"
-      },
-      "DREWNOWSKI": {
-        "title": "prof. Jan Drewnowski",
-        "description": "ur. 1908 w Wilnie, zm. 2000 w Londynie, ekonomista i sowietolog, profesor Szkoły Głównej Handlowej i Institute of Social Studies w Hadze; rektor PUNO 1994-1998.",
-        "author": "",
-        "imagePath": "ipfs://bafkreiay5ynicavmmbrnnuo5ule4qyuiiewzxlrjnmz5ddobiieirdzlmi"
-      },
-      "WALASZEWSKI": {
-        "title": "prof. Zdzisław Eugeniusz Wałaszewski",
-        "description": "ur. 1922 w Lipinkach Szlacheckich, zm. 2008 w Londynie, romanista i dziennikarz, związany z PUNO; rektor PUNO 1998-2002.",
-        "author": "",
-        "imagePath": "ipfs://bafkreiczn36o32xyqidtzqmunsez45pdzft7smndbkd4kfzopngls7aayi"
-      },
-      "FALKOWSKI": {
-        "title": "prof. Wojciech Falkowski",
-        "description": "ur. 1930 w Lochwinowiczach, zm. 2015 w Ewell, lekarz psychiatra i działacz społeczny, praktykował w Wielkiej Brytanii; rektor PUNO 2002-2011.",
-        "author": "",
-        "imagePath": "ipfs://bafkreifdsp5gct57dyijbgaj2kyfeb2t6ocjenmkgpmtg2hmy7kan6feni"
-      },
-      "TABORSKA": {
-        "title": "prof. Halina Taborska",
-        "description": "ur. 1933 w Puławach, zm. 2021 w Londynie, filolog i historyk sztuki, profesor Uniwersytetu Warszawskiego i PUNO; rektor PUNO 2011-2017.",
-        "author": "",
-        "imagePath": "ipfs://bafkreihz2ndxhg6dl54ojzu467y345irt43ze4uehbfibf2z2mln2ivhaa"
-      },
-      "KAZIMIERSKI": {
-        "title": "prof. Tomasz Kaźmierski",
-        "description": "ur. 1949 w Polsce, elektronik, profesor University of Southampton, specjalista w zakresie systemów VLSI i języków opisu układów; rektor PUNO 2017-2021.",
-        "author": "",
-        "imagePath": "ipfs://bafkreidqbzth3rl6oem6xcnsrh5c7ejc65mbm6trfllbcgv43n7xjqzxpm"
-      },
-      "MIER-JEDRZEJOWICZ": {
-        "title": "prof. Włodzimierz Mier-Jędrzejowicz",
-        "description": "ur. 1949 w Londynie, fizyk cząstek elementarnych, doktor i wieloletni wykładowca Imperial College London; rektor PUNO od 2021.",
-        "author": "",
-        "imagePath": "ipfs://bafkreiapijnqndhjk74er67sk44lzwftborjz6npwxgybcn7cilewitpu4"
-      }
-    },
-     "videos": [
-        {
-            "id": "animacja85",
-            "loop": true,
-            "muted": true,
-            "playsinline": true,
-            "sources": [
-                {
-                    "src": "ipfs://bafybeigmokyvn64skdaicma52xeet6n7yutqqhyzjq75nqihkwwlzjuyb4/PUNO85_compressed_480.mp4",
-                    "type": "video/mp4"
-                }
-            ]
-        }
-    ],
-    "params": {
-      "gravity": -8,
-      "visitorSpeed": 2,
-      "heightOffset": {
-        "x": 0,
-        "y": 0.6,
-        "z": 0
-      },
-      "visitorEnter": {
-        "x": 0,
-        "y": 2,
-        "z": 0
-      }
     }
+  ],
+  "params": {
+    "gravity": -8,
+    "visitorSpeed": 2,
+    "heightOffset": {
+      "x": 0,
+      "y": 0.6,
+      "z": 0
+    },
+    "visitorEnter": {
+      "x": 0,
+      "y": 2,
+      "z": 0
+    },
+    "rotateOrbit": -150
   }
+}

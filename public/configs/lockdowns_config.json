@@ -1,0 +1,147 @@
+{
+  "modelPath": "https://bafybeifze5a47hgujyx2seprukkdxooh4sr7semaagsglbiumyrhhyou7e.ipfs.w3s.link/exhibition_lockdowns_ktx.glb",
+  "interactivesPath": "https://bafybeidm577izibt6ixk6tjlt6has7njcyphveflsq74vbzhmkwtgipdkq.ipfs.w3s.link/interactives_lockdowns.glb",
+  "backgroundTexture": "https://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda.ipfs.w3s.link/bg_lockdowns.ktx2",
+  "sidebar": {
+    "logo": {
+      "text": "Joanna Ciechanowska's Exhibition"
+    },
+    "items": [
+      {
+        "id": "help-icon",
+        "label": "Poruszanie się po Wystawie",
+        "icon": "https://bafybeif2rhthkwlwc5yuduarar24xans7hqv6jqdcug3ea5ajkspeqb7bq.ipfs.w3s.link/how_to_move.png",
+        "target": "how_to_move",
+        "content": "<strong>SPOSÓB PORUSZANIA SIĘ PO GALERII:</strong><br /><br /><img alt=\"Move: W, A, S, D or Arrow Keys\" style=\"display: block; margin: 0 auto 1em auto; max-width: 60%; height: auto; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg);\" src=\"https://bafybeibyn5zrmeallmsfj7noetbpy4l7pxnpza7mbcaj7xsqzz6rqidehu.ipfs.w3s.link/WASD.png\" /><br /><div style=\"display: flex; justify-content: center; gap: 1em; margin-bottom: 1em;\"><img alt=\"Rotate View: Click + Swipe\" style=\"height: 8em; translate: -2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeiemorbsojoayepbybcskwhg3n2a6qpexcsd3ip3zsekxde464lx2q.ipfs.w3s.link/swipe.png\" /><img alt=\"View Details: Click + Hold (1s)\" style=\"height: 6em; translate: 1em 2em; filter: invert(37%) sepia(47%) saturate(72%) hue-rotate(167deg)\" src=\"https://bafybeihn6k4kn5cpiipvtzq3o7n7f6g7fa3wv2krnbam3gwxm7rlc7w4xu.ipfs.w3s.link/hold.png\" /></div><br /><br /><br />Ruch: W, A, S, D lub strzałki<br />Obrót: Kliknij i przeciągnij<br />Wyświetlenie szczegółów: Kliknij i przytrzymaj (1 sekunda)<br /><br /><strong>Ekran dotykowy:</strong><br />Ruch: Dotknij i przytrzymaj (1 sekunda)<br />Obrót widoku: Przeciągnij palcem<br />Wyświetlenie szczegółów: Dotknij i przytrzymaj (1 sekunda)<br />Zamknij i otwórz sidebar: <img alt=\"Przełącznik Sidebara\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br /><strong>HOW TO MOVE IN THE GALLERY:</strong><br /><br />Move: W, A, S, D or Arrow Keys<br />Rotate View: Click + Swipe<br />View Details: Click + Hold (1s)<br /><br /><strong>Touchscreen:</strong><br />Move: Tap + Hold (2s)<br />Rotate View: Drag Finger<br />View Details: Tap + Hold (1s)<br />Close and Open This Sidebar: <img alt=\"Toggle Sidebar\" style=\"top: 0.7em; position: relative;\" src=\"https://bafybeig7gxuqnop6dvrlvz2cto2hil4lanxkde5hue7frvmtofvd5hpd44.ipfs.w3s.link/CloseSidebar.png\" /><br /><br />"
+      },
+      {
+        "id": "info-icon",
+        "label": "About Exhibition",
+        "icon": "https://bafybeidohr5txz3bvffklxqlddnxmya7ltmi6uiawv2c3x22lrofqzoxoa.ipfs.w3s.link/info.png",
+        "target": "info_text",
+        "content": "Joanna Ciechanowska's works presented at the Lockdowns exhibition offer a specific understanding of isolation. They are anchored in multi-dimensional references to social and historical time, but above all - to personal time. Despite revealing fears related to participating in an unknown situation, they steer clear of catastrophism. They become the artist's inner painting and poetic journey. They are a flash of rediscovery of those few simple images in the presence of which the human heart is closedand opened for the first time."
+      },
+      {
+        "label": "Strona Główna Blue Point Art",
+        "icon": "https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif",
+        "link": "https://bluepointart.uk"
+      }
+    ]
+  },
+  "images": {
+    "LobsterPyjamas": {
+      "title": "Self Portrait in Lobster Pyjamas",
+      "description": "Oil on canvas, 100x70cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreiaaviftt46d2mnwbdhs2gf7bgfyza3w4tbdyf2mz7vpm6my7ga6fm"
+    },
+    "IndigoBlue": {
+      "title": "What Will I Do if I Run Out of Indigo Blue",
+      "description": "Oil on canvas, 100x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreihgmblguw66tovww7ibvvbqaqteeihwhg334nu4x2f4dbj2lpsmba"
+    },
+    "1000years": {
+      "title": "Who Says We’ll Live for 1000 years?",
+      "description": "Oil and collage on canvas, 100x70 cm, 2019",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreifjufm3mcmx2iuq4nn534v7vj5bwqb67r7dmjgo7c4yszsmo7wryy"
+    },
+    "BlueRain": {
+      "title": "Blue Rain",
+      "description": "Blue Rain. Oil on canvas, 76x50 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreihqtj2zzbts6taotsl2ckg6jxksv6ijv7qqkh4kcz5fofzvp4wbwy"
+    },
+    "LastEvening": {
+      "title": "The Last Evening Before Silence. The Woman",
+      "description": "Oil on canvas, 76x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreigct6oe6fbkinidzbyuqbmre45ghxgpulqyr2qlaaveetn6zgsqee"
+    },
+    "Touch": {
+      "title": "Don’t Touch Me",
+      "description": "Oil on canvas, 76x50 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreibw2a7i2bddbp4pwua657nrs5ao25pb46qk4omdmweg7xi4vsmmdy"
+    },
+    "TheMan": {
+      "title": "The Last Evening Before Silence. The Man",
+      "description": "Oil on canvas, 76x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreig6ovlsrkr7yz6sixbyw3vb7rnvukehzhffi72nt4tbwnrvalaaxm"
+    },
+    "Svalbard": {
+      "title": "Take Me to Svalbard Again",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreidyiom4ii64sucm7yd5hvtob3l5pxx7cux2nnc6mdwjqi7kp26roe"
+    },
+    "AncientFears": {
+      "title": "Ancient Fears",
+      "description": "Oil on canvas, 100x76 cm, 2009-2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreifa6k2og3b7s25pvzau65d46yae3lijq653irafi7hcde2oaxoabu"
+    },
+    "78": {
+      "title": "78 Degrees North. ",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreihd64xbtczo4flqxk67ys6givepayoxyakogsyjtrqykfdinyxsbq"
+    },
+    "LastFlight": {
+      "title": "The Last Flight",
+      "description": "Acrylic on canvas, 70x100 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreiedhzzakdipc6gzkpr34q2v7hrj2uthao5krfij4zr44bz7ka2xxe"
+    },
+    "City": {
+      "title": "Imagine a City that Never Happened",
+      "description": "Oil on canvas, 100x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreifvxxfo5p3qmhmuxkymxqzldent53sr4esm7jkb6ageb6wfek2ibq"
+    },
+    "Cauchemar": {
+      "title": "Cauchemar",
+      "description": "Oil on canvas, 60x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreihhjte6pvrdycxv3mhh2cyagva3yemkt6x3v2eyv5t5bf4ccjg3j4"
+    },
+    "Shadow": {
+      "title": "Shadow Crossing",
+      "description": "Oil on canvas, 60x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreiamalhf35nb477oe2hapaqbx3znnr442ckd5afu632ned6ozkylcm"
+    },
+    "Waves": {
+      "title": "Dreaming Waves",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreihm2fi7ob5cuphropkrvthx4q5gg75opufkzkhxanho47gz2gg4jq"
+    },
+    "Boat": {
+      "title": "I Was On that Boat, Once",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafkreibbpkde4ssopbk5tf6vig2dhi7hlamyjweurcyp3oj2o64fbvwccu"
+    }
+  },
+  "params": {
+    "gravity": -8,
+    "visitorSpeed": 2,
+    "heightOffset": {
+      "x": 0,
+      "y": 0.6,
+      "z": 0
+    },
+    "visitorEnter": {
+      "x": 3,
+      "y": 2,
+      "z": 1
+    },
+     "rotateOrbit": 30,
+     "backgroundBlurriness": 0.1,
+     "backgroundIntensity": 0.5,
+     "lightIntensity": 2.5
+  }
+}

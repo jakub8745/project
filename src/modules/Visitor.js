@@ -12,6 +12,8 @@ import {
 
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import rotateOrbit from './rotateOrbit.js';
+
 
 export default class Visitor extends Mesh {
   constructor(deps) {
@@ -93,7 +95,7 @@ export default class Visitor extends Mesh {
   }
 
   update(delta, collider) {
-    
+
     if (this.visitorIsOnGround) {
       this.visitorVelocity.y = delta * this.params.gravity;
     } else {
@@ -109,9 +111,9 @@ export default class Visitor extends Mesh {
     if (this.isAutoMoving && this.target) {
       const direction = this.target.clone().sub(this.position);
       direction.y = 0; // 🔥 Ignore vertical difference
-    
+
       const distance = direction.length();
-    
+
       if (distance > 0.1) {
         direction.normalize();
         this.position.addScaledVector(direction, this.autoMoveSpeed * delta);
@@ -119,7 +121,7 @@ export default class Visitor extends Mesh {
         this.isAutoMoving = false;
       }
     }
-    
+
 
     this.position.addScaledVector(this.visitorVelocity, delta);
     this.updateMatrixWorld();
@@ -129,7 +131,7 @@ export default class Visitor extends Mesh {
       console.warn('Visitor fell below floor. Resetting.');
       this.reset();
     }
-    
+
 
     const currentFloor = this.checkLocation();
     if (currentFloor && currentFloor.name !== this.lastFloorName) {
@@ -214,11 +216,8 @@ export default class Visitor extends Mesh {
 
   reset() {
 
-
-
-
     this.visitorVelocity.set(0, 0, 0);
-    
+
     this.position.copy(this.params.visitorEnter || new Vector3(0, 10, 0));
 
     // Optional: reset capsule target or height
@@ -230,7 +229,8 @@ export default class Visitor extends Mesh {
     this.controls.target.copy(target);
     this.camera.position.copy(target.clone().add(new Vector3(0, 0, 5))); // fallback offset
 
-
+    // Camera rotation
+    rotateOrbit(this.camera, this.controls, this.params.rotateOrbit || -120);
   }
 
 }
