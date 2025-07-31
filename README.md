@@ -1,4 +1,4 @@
-# Virtual Gallery Archive – Blue Point Art
+# Blue Point Art - Virtual Gallery Archive
 
 Welcome to the Virtual Gallery Archive for [Blue Point Art](https://bluepointart.uk) – a modular, evolving platform for curating, viewing, and experiencing digital exhibitions.
 
