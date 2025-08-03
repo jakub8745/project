@@ -93,7 +93,7 @@ export const GALLERIES: GalleryItem[] = [{
     description: 'Exploring self and society',
     scale: 0.29,
     position: [0, 0, 0],
-    configUrl: "./configs/puno85_config.json",
+    configUrl: "./configs/identity_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "",
