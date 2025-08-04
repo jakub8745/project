@@ -49,14 +49,15 @@ function addPlayIcon(mesh, video) {
     const iconMat = new MeshBasicMaterial({
       map: iconTex,
       transparent: true,
-      depthTest: false,
+      opacity: 0.7,  
+      depthTest: true,
       depthWrite: false,
       side: DoubleSide
 
     });
     const iconMesh = new Mesh(iconGeo, iconMat);
     iconMesh.name = `playIcon_${video.id}`;
-    iconMesh.position.set(0, 0, 0);
+    iconMesh.position.set(0, 0, -0.01);
     iconMesh.rotation.set(0, 0, Math.PI);
     iconMesh.renderOrder = 999;
     mesh.add(iconMesh);
@@ -87,7 +88,7 @@ export function applyVideoMeshes(scene, galleryConfig) {
     const cfg = configMap.get(obj.userData.elementID);
 
     console.log(cfg);
-    
+
     if (!cfg) {
       console.warn(`No video config for ID ${obj.userData.elementID}`);
       return;
@@ -104,7 +105,7 @@ export function applyVideoMeshes(scene, galleryConfig) {
       const texture = new VideoTexture(video);
       texture.colorSpace = SRGBColorSpace;
 
-      texture.flipY = false;  
+      texture.flipY = false;
 
 
       const newMat = obj.material.clone();
@@ -113,6 +114,8 @@ export function applyVideoMeshes(scene, galleryConfig) {
       newMat.transparent = false;
       newMat.depthTest = true;
       newMat.depthWrite = true;
+      newMat.side = DoubleSide;
+
       newMat.needsUpdate = true;
 
       obj.material = newMat;

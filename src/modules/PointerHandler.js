@@ -16,6 +16,7 @@ export class PointerHandler {
     this.camera = camera;
     this.scene = scene;
     this.visitor = visitor;
+
     this.deps = deps;
     this.params = deps.params;
     this.popupCallback = popupCallback;
@@ -35,6 +36,7 @@ export class PointerHandler {
     // Click indicator (persistent)
     this.clickIndicator = this._createClickCircle();
     this.scene.add(this.clickIndicator);
+    this.visitor.clickIndicator = this.clickIndicator;
 
     this.sidebar = document.querySelector('.sidebar');
     this.btn = document.getElementById('btn');
@@ -60,16 +62,10 @@ export class PointerHandler {
     });
     const mesh = new Mesh(geo, mat);
     mesh.visible = false;
+    mesh.name = 'clickIndicator';
 
     mesh.scale.set(1, 1, 1); // INITIAL SCALE
-    /*
-    mesh.onBeforeRender = () => {
-      if (!mesh.visible) return;
-      const t = performance.now() * 0.01; // time factor
-      const s = 1 + 0.3 * Math.sin(t); // amplitude
-      mesh.scale.set(s, s, s);
-    };
-*/
+
     return mesh;
   }
 
@@ -244,5 +240,9 @@ export class PointerHandler {
 
     const targetPos = centerWorld.clone().addScaledVector(worldNormal, distance);
     this._moveVisitor(targetPos);
+  }
+
+    setClickIndicatorPosition(x, y, z) {
+    this.clickIndicator.position.set(x, y, z);
   }
 }

@@ -40,6 +40,7 @@ export default class Visitor extends Mesh {
 
     this.isAutoMoving = false;
     this.autoMoveSpeed = 5;
+    this.clickIndicator = null;
 
     this.capsuleInfo = {
       radius: 0.5,
@@ -119,6 +120,8 @@ export default class Visitor extends Mesh {
         this.position.addScaledVector(direction, this.autoMoveSpeed * delta);
       } else {
         this.isAutoMoving = false;
+        this.clickIndicator.visible = false;
+
       }
     }
 

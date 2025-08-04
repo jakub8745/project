@@ -1,6 +1,6 @@
 {
-  "modelPath": "https://bafybeidd4soo4gdwl6mjlv3g6bgabcbzv2rw3m7joheu5skoi3puu6oyfe.ipfs.w3s.link/exhibition_identity_ktx.glb",
-  "interactivesPath": "https://bafybeiebj7quvzirh6w7rwrpd7b6h422wtnkzoxsnmuldbry6lbl7jalou.ipfs.w3s.link/interactives_identity.glb",
+  "modelPath": "public/models/exhibition_identity_ktx.glb",
+  "interactivesPath": "public/models/interactives_identity_testowe.glb",
   "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
   "sidebar": {
     "logo": {
@@ -33,55 +33,55 @@
       "title": "Eibejzyt, 190x150, 2019",
       "description": "Image of Identity Through a Creative Act",
       "author": "MAŁGORZATA WIELEK-MANDRELA",
-      "imagePath": "ipfs://bafkreifwrijtx33jn2chz73pudp2rfbwqi6dtwmnztxgzgwigute2l4y3m"
+      "imagePath": "ipfs://bafkreihhqxunne7cav3n2lx3caqdt5bx6da5qwywflftvpqj5bsuj26o34"
     },
     "WielekPalec": {
       "title": "Palec wskazujący lewej ręki, 2019",
       "description": "Image of Identity Through a Creative Act",
       "author": "MAŁGORZATA WIELEK-MANDRELA",
-      "imagePath": "ipfs://bafkreiapb2iw7faub3uvyrohvp27loy4zumy2verjbemlhj7itlsdw3pmi"
+      "imagePath": "ipfs://bafkreia6yda5nwwmwtk77s624reojtnkpzsifpfycacg7gvy4b5nxqxiha"
     },
     "WilekSchizofrenia": {
       "title": "Jedna schizofrenia, 50x40, 2020",
       "description": "Image of Identity Through a Creative Act",
       "author": "MAŁGORZATA WIELEK-MANDRELA",
-      "imagePath": "ipfs://bafkreih2ksufwkwd44vbptfflxu7oggxr6yd3dyhuaq25fbm6insemt4vm"
+      "imagePath": "ipfs://bafkreibzrmzmk3qwmso5sec2msop5vma6gnwsgjrn5w2wznb3oa323rlry"
     },
     "DreamerStarman": {
       "title": "Starman",
       "description": "A non-heteronormative identity image",
       "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafkreibpe6hmuogc2mqsd6tpf2knxeua2hbtyx2yu5xseszjy7l5onu4xi"
+      "imagePath": "ipfs://bafkreicenfni4g44lew4g4l32sagkdn3gyoeojg4zhadf25tetvhc3no7q"
     },
     "DreamerPiotr": {
       "title": "Dreamer Piotr",
       "description": "A non-heteronormative identity image",
       "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafybeic6in7splfnjy6u75jt6sqimcw7zswfqc2xuk5tabzq3duw425gru"
+      "imagePath": "ipfs://bafkreidchovcxq3fuqvjh5akb3pezt5dmloxwnywwt5fhnbgau72kpt7ri"
     },
     "DreamerSpaceman": {
       "title": "Dreamer Spaceman",
       "description": "A non-heteronormative identity image",
       "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafkreibhlwzixd5xywcarb34vwpmsu3fs4puubhel7dktjcyfquamasbru"
+      "imagePath": "ipfs://bafkreigpm23vccuwcvd37ozyuywvdj5v2jgnqx44kpkyxkumxlxopu2xwy"
     },
     "DreamerAura": {
       "title": "Dreamer Aura",
       "description": "A non-heteronormative identity image",
       "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafkreiay5ynicavmmbrnnuo5ule4qyuiiewzxlrjnmz5ddobiieirdzlmi"
+      "imagePath": "ipfs://bafkreiftv66yvlp65iraygzay7d3ci6aqa55z4obrorovajtzngwhgdopm"
     },
     "DreamerFlowerman": {
       "title": "Dreamer Flowerman",
       "description": "A non-heteronormative identity image",
       "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafkreiczn36o32xyqidtzqmunsez45pdzft7smndbkd4kfzopngls7aayi"
+      "imagePath": "ipfs://bafkreibynvdp5scjndowxniwkyigcdhd6rihzvxzi6audzs4lzystp4nva"
     },
     "Hidden": {
       "title": "Hidden",
       "description": "Dual Identity Image",
       "author": "KRZYSZTOF GIL",
-      "imagePath": "ipfs://bafkreifdsp5gct57dyijbgaj2kyfeb2t6ocjenmkgpmtg2hmy7kan6feni"
+      "imagePath": "ipfs://bafkreicmyjz2ytmmsrdjct5urbbn4is4njcmidmcmxsawjyag5xnc6qwii"
     }
   },
   "videos": [

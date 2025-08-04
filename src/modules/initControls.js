@@ -7,7 +7,7 @@ export default function initControls(camera, domElement) {
   controls.maxPolarAngle = Math.PI;
   controls.minDistance = 1e-4;
   controls.maxDistance = 1e-4;
-  controls.autoRotate = true;
+  controls.autoRotate = false;
   controls.autoRotateSpeed = 0.02;
   controls.update();
   return controls;

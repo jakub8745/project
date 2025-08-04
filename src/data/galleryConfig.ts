@@ -75,6 +75,18 @@ export const GALLERIES: GalleryItem[] = [{
     videos: []
 },
 {
+    url: "https://bafybeihlip3dvgdu7m4zf66hhktrdd2bpxkkl2s6uge5ifmhsx7ympvmdq.ipfs.w3s.link/preview_identity.glb",
+    title: 'Identity Preview',
+    description: 'Exploring self and society',
+    scale: 0.29,
+    position: [0, 0, 0],
+    configUrl: "./configs/identity_config.json",
+    keywords: [],
+    ogImage: "",
+    overlayText: "",
+    videos: []
+},
+{
     url: "https://bafybeibwkpikvcnrmme3tjwzvam7bzconw23fxnrk2c3b22s4lq2dtxfja.ipfs.w3s.link/preview_dystopia.glb",
     title: 'Dystopia of imitation',
     description: 'Modern meets classic',
@@ -87,18 +99,7 @@ export const GALLERIES: GalleryItem[] = [{
     videos: []
 },
 
-{
-    url: "https://bafybeihlip3dvgdu7m4zf66hhktrdd2bpxkkl2s6uge5ifmhsx7ympvmdq.ipfs.w3s.link/preview_identity.glb",
-    title: 'Identity Preview',
-    description: 'Exploring self and society',
-    scale: 0.29,
-    position: [0, 0, 0],
-    configUrl: "./configs/identity_config.json",
-    keywords: [],
-    ogImage: "",
-    overlayText: "",
-    videos: []
-},
+
 
 
 

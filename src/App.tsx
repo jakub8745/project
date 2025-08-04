@@ -12,10 +12,10 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
 
-  // On initial mount, fake‐click GALLERIES[1] if available
+  // On initial mount, fake‐click GALLERIES[x] if available - order of elements in galleryConfig.ts
   useEffect(() => {
-    if (!selectedConfigUrl && GALLERIES[1]?.configUrl) {
-      setSelectedConfigUrl(GALLERIES[1].configUrl);
+    if (!selectedConfigUrl && GALLERIES[0]?.configUrl) {
+      setSelectedConfigUrl(GALLERIES[0].configUrl);
       setSidebarOpen(false);
     }
   }, []); // run once

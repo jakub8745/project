@@ -117,7 +117,7 @@ export async function buildGallery(config, container = document.body) {
   controls = initControls(camera, renderer.domElement);
 
   deps = {
-    ktx2Loader, camera, listener, controls, renderer, params, audioObjects: []
+    ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [],
   };
 
   // Load models
@@ -135,7 +135,7 @@ export async function buildGallery(config, container = document.body) {
   // Audio
   deps.audioObjects = createAudioMeshes(scene, listener, deps.audioObjects);
 
- 
+
 
   // Visitor (user avatar)
   visitor = new Visitor(deps);
@@ -150,7 +150,7 @@ export async function buildGallery(config, container = document.body) {
   visitor.reset();
   scene.add(visitor);
 
- 
+
 
   // --- Animation loop ---//
   function animate() {
