@@ -1,6 +1,6 @@
 {
-  "modelPath": "public/models/exhibition_identity_ktx.glb",
-  "interactivesPath": "public/models/interactives_identity_testowe.glb",
+  "modelPath": "/models/exhibition_identity_ktx.glb",
+  "interactivesPath": "/models/interactives_identity_testowe.glb",
   "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
   "sidebar": {
     "logo": {

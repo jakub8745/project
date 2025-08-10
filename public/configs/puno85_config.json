@@ -1,6 +1,6 @@
 {
   "modelPath": "https://bafybeia5zjnvgzikl6bqrgyenheuab5lbkt7dieogal2kqnz2ge2omul6q.ipfs.w3s.link/exhibition_puno85_ktx.glb",
-  "interactivesPath": "public/models/interactives_puno85.glb",
+  "interactivesPath": "/models/interactives_puno85.glb",
   "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
   "sidebar": {
     "logo": {
