@@ -14,8 +14,8 @@ export default function App() {
 
   // On initial mount, fake‐click GALLERIES[x] if available - order of elements in galleryConfig.ts
   useEffect(() => {
-    if (!selectedConfigUrl && GALLERIES[5]?.configUrl) {
-      setSelectedConfigUrl(GALLERIES[5].configUrl);
+    if (!selectedConfigUrl && GALLERIES[0]?.configUrl) {
+      setSelectedConfigUrl(GALLERIES[0].configUrl);
       setSidebarOpen(false);
     }
   }, []); // run once
