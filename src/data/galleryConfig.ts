@@ -92,7 +92,7 @@ export const GALLERIES: GalleryItem[] = [{
     description: 'Modern meets classic',
     scale: 0.3,
     position: [0, 0, 0],
-    configUrl: "./configs/puno85_config.json",
+    configUrl: "./configs/dystopia_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "",

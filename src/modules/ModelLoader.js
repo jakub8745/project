@@ -145,7 +145,7 @@ export default class ModelLoader {
       if (obj.isMesh) {
         obj.wireframe = true;
         obj.material.transparent = true;
-        obj.material.opacity = 0;
+        obj.material.opacity = 0.5;
         obj.interactive = true;
       }
     });

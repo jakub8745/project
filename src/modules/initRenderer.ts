@@ -2,7 +2,7 @@
 import {
   WebGLRenderer,
   PCFSoftShadowMap,
-  ACESFilmicToneMapping,
+  CineonToneMapping,
   SRGBColorSpace,
 } from 'three';
 
@@ -20,7 +20,7 @@ export default function initRenderer(
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.outputColorSpace = SRGBColorSpace;
-  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.toneMapping = CineonToneMapping;
   renderer.toneMappingExposure = 1;
 
   container.appendChild(renderer.domElement);

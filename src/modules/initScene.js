@@ -10,6 +10,7 @@ export default function initScene(backgroundTexture, ktx2Loader, name, backgroun
     ktx2Loader.load(backgroundTexture, (texture) => {
       texture.mapping = EquirectangularReflectionMapping;
       texture.colorSpace = SRGBColorSpace;
+      //texture.offset.x = 0.5;
       scene.background = texture;
       scene.backgroundBlurriness = backgroundBlurriness || 0;
       scene.backgroundIntensity = backgroundIntensity || 1;
