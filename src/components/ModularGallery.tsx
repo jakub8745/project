@@ -16,8 +16,6 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl }) => {
   const loaderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  console.log("DEFAULT_CONFIG_URL", DEFAULT_CONFIG_URL, configUrl);
-
   useEffect(() => {
     const url = configUrl || DEFAULT_CONFIG_URL;
     const container = containerRef.current;

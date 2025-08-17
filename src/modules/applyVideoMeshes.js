@@ -74,7 +74,7 @@ function addPlayIcon(mesh, video) {
  * - Uses the existing mesh and geometry
  * - Clones or recreates a standard material
  * - Swaps in a VideoTexture
- * - Ensures depthTest/write for full visibility
+ * - Ensures depthTest/write for full visibility/
  */
 export function applyVideoMeshes(scene, galleryConfig) {
 

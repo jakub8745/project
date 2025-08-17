@@ -7,9 +7,9 @@ import initControls from './initControls.js';
 import ModelLoader from './ModelLoader.js';
 import { setupResizeHandler } from './resizeHandler.js';
 import { applyVideoMeshes } from './applyVideoMeshes.js';
-import { createAudioMeshes } from './createAudioMeshes.js';
+import { applyAudioMeshes } from './applyAudioMeshes.js';
 import { PointerHandler } from './PointerHandler.js';
-import { AudioListener, AmbientLight, Clock, BufferGeometry, Mesh } from 'three';
+import { AudioListener, Clock, BufferGeometry, Mesh, SpotLight, Vector3, Vector2 } from 'three';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import { setupModal } from './setupModal.js';
@@ -22,7 +22,6 @@ export async function buildGallery(config, container = document.body) {
   let renderer = null;
   let scene = null;
   let visitor = null;
-  let controls = null;
   let animationId = null;
   let deps = null;
 
@@ -114,7 +113,14 @@ export async function buildGallery(config, container = document.body) {
 
   setupResizeHandler(renderer, camera);
 
-  controls = initControls(camera, renderer.domElement);
+
+  const { orbit: controls, transform } = initControls(camera, renderer.domElement, {
+    onChange: () => renderer.render(scene, camera),
+  });
+
+
+
+
 
   deps = {
     ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [],
@@ -133,8 +139,7 @@ export async function buildGallery(config, container = document.body) {
   applyVideoMeshes(scene, config);
 
   // Audio
-  deps.audioObjects = createAudioMeshes(scene, listener, deps.audioObjects);
-
+  applyAudioMeshes(scene, config, listener);
 
 
   // Visitor (user avatar)
@@ -150,7 +155,93 @@ export async function buildGallery(config, container = document.body) {
   visitor.reset();
   scene.add(visitor);
 
+  //scene.add(transform);
 
+  const targetObj = findByUserDataType(scene, "Pitcher");
+
+
+
+  if (targetObj) {
+
+    transform.attach(targetObj);
+    transform.setMode('rotate'); // or 'translate' | 'scale'
+    transform.setSize(0.5);
+
+    const gizmo = transform.getHelper();
+    gizmo.visible = false;
+    scene.add(gizmo);
+
+
+    // re-use the internal raycaster
+    const raycaster = transform.getRaycaster();
+    const pointer = new Vector2();
+
+    function updatePointer(e) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    renderer.domElement.addEventListener('pointermove', (e) => {
+      updatePointer(e);
+
+      // use the transform's raycaster with the current mouse position
+      raycaster.setFromCamera(pointer, camera);
+
+      const intersects = raycaster.intersectObject(targetObj, true);
+      gizmo.visible = intersects.length > 0;
+    });
+
+    window.addEventListener('keydown', (e) => {
+
+
+      switch (e.key.toLowerCase()) {
+        case 'v':
+          gizmo.visible = !gizmo.visible;
+          break;
+
+        case 't':
+          transform.setMode('translate');
+          break;
+
+        case 'r':
+          transform.setMode('rotate');
+          break;
+
+      }
+    });
+
+    const spot = new SpotLight(0xffffff, 50);
+    spot.angle = Math.PI / 6;
+    spot.penumbra = 0.2;
+    spot.decay = 2;
+    spot.distance = 50;
+
+    // enable shadows on the light
+    spot.castShadow = true;
+    spot.shadow.mapSize.width = 2048;
+    spot.shadow.mapSize.height = 2048;
+    spot.shadow.bias = -0.0001; // tweak to avoid acne
+
+
+    scene.add(spot);
+    scene.add(spot.target);
+
+    const tmpPos = new Vector3();
+
+    // Update spotlight whenever transform changes
+    transform.addEventListener('change', (e) => {
+
+      targetObj.getWorldPosition(tmpPos);
+      spot.position.set(tmpPos.x, tmpPos.y + 5, tmpPos.z);
+      spot.target.position.copy(tmpPos);
+
+      gizmo.visible = e.value;
+    });
+
+  } else {
+    console.warn('No object with userData.type === "Pitcher" found.');
+  }
 
   // --- Animation loop ---//
   function animate() {
@@ -176,4 +267,15 @@ function hideOverlay() {
   overlay.style.transition = 'opacity 1s ease';
   overlay.style.opacity = '0';
   setTimeout(() => { overlay.style.display = 'none'; }, 1000);
+}
+// Find the first object with userData.type === wantedType
+function findByUserDataType(root, wantedType) {
+  let found = null;
+  root.traverse((obj) => {
+    if (found) return;
+    if (obj.userData && obj.userData.type === wantedType) {
+      found = obj;
+    }
+  });
+  return found;
 }
