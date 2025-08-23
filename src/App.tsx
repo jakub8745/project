@@ -52,6 +52,36 @@ export default function App() {
     initAppBuilder({ showModal });
   }, []);
 
+
+  useEffect(() => {
+    function handleHashChange() {
+      const slug = window.location.hash.replace('#', '');
+      if (slug) {
+        const gallery = findGalleryBySlug(slug);
+        if (gallery) {
+          setSelectedConfigUrl(gallery.configUrl);
+          setSidebarOpen(false);
+          return;
+        }
+      }
+      // fallback: default
+      if (GALLERIES[0]) {
+        setSelectedConfigUrl(GALLERIES[0].configUrl);
+        setSidebarOpen(false);
+      }
+    }
+
+    // run once on mount
+    handleHashChange();
+
+    // subscribe to hash changes
+    window.addEventListener('hashchange', handleHashChange);
+
+    // cleanup
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+
   // On gallery click, update hash
   const handleGallerySelect = (gallery: Gallery) => {
     setSelectedConfigUrl(gallery.configUrl);
