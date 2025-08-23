@@ -252,6 +252,24 @@
             "imagePath": "ipfs://bafkreiadr3xffnsmpacpngglmi4kvmmyjulnddi4htcoze55po47vwnpd4"
         }
     },
+    "audio": [
+        {
+            "id": "ciprianiAudio",
+            "name": "ciprianiAudio",
+            "url": "/audio/KapelaCzeremosz_Kołomyjka2.mp3",
+            "loop": true,
+            "refDistance": 0.08,
+            "rolloff": 2,
+            "maxDistance": 15,
+            "distanceModel": "exponential",
+            "directionalCone": [
+                45,
+                90,
+                0.3
+            ],
+            "volume": 150
+        }
+    ],
     "params": {
         "gravity": -8,
         "visitorSpeed": 5,

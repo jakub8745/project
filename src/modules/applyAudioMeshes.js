@@ -1,12 +1,27 @@
 // modules/applyAudioMeshes.js
 import { AudioLoader, PositionalAudio, MathUtils } from 'three';
 import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
+import { applyPitcherControls } from './applyPitcherControls.js';
+
+
 
 let audioButton;            // shared UI button
 let audioObjectsRef = [];   // keep track of active sounds
 let isAudioPlaying = false;
 
-export function applyAudioMeshes(scene, galleryConfig, listener) {
+export function disposeAudioMeshes() {
+  audioObjectsRef.forEach(sound => {
+    if (sound.isPlaying) sound.stop();
+    sound.disconnect();
+    sound.parent?.remove(sound);
+  });
+  audioObjectsRef = [];
+}
+
+
+//export function applyAudioMeshes(scene, galleryConfig, listener) {
+export function applyAudioMeshes(scene, galleryConfig, listener, renderer, camera, transform) {
+
   const loader = new AudioLoader();
 
   // build config map for quick lookup
@@ -27,52 +42,64 @@ export function applyAudioMeshes(scene, galleryConfig, listener) {
     //console.log(obj);
     if (obj.userData.type === 'Audio' || obj.userData.type === 'Pitcher') {
       const cfg = configMap.get(obj.userData.name);
-    if (!cfg) {
-      console.warn(`No audio config for ID ${obj.userData.name}`);
-      return;
-    }
-
-    console.log(cfg, obj.userData.name);
-
-    foundAny = true;
-
-    const sound = new PositionalAudio(listener);
-    sound.name = cfg.name || obj.userData.name || obj.name;
-
-    loader.load(cfg.url, buffer => {
-      sound.setBuffer(buffer);
-      sound.setLoop(cfg.loop ?? true);
-      sound.setRefDistance(cfg.refDistance ?? 1);
-      sound.setRolloffFactor(cfg.rolloff ?? 1);
-      sound.setVolume(cfg.volume ?? 1);
-      if (cfg.directionalCone) {
-        sound.setDirectionalCone(...cfg.directionalCone);
+      if (!cfg) {
+        console.warn(`No audio config for ID ${obj.userData.name}`);
+        return;
       }
 
-      // Optional: visualize cone
-      const helper = new PositionalAudioHelper(sound, (cfg.refDistance ?? 1) * 2);
-      sound.add(helper);
 
-      obj.add(sound);
-      audioObjectsRef.push(sound);
 
-      console.log(`🔊 PositionalAudio added to ${obj.name || obj.uuid}`);
-    });
+      console.log("dodawane audio", cfg, obj.userData.name);
 
-    // give audio meshes a little marker transform
-    obj.scale.setScalar(0.1);
-    obj.rotateX(Math.PI / 2);
-    obj.rotation.y += MathUtils.degToRad(120);
+      foundAny = true;
+
+      const sound = new PositionalAudio(listener);
+      sound.name = cfg.name || obj.userData.name || obj.name;
+
+      loader.load(cfg.url, buffer => {
+        sound.setBuffer(buffer);
+        sound.setLoop(cfg.loop ?? true);
+        sound.setRefDistance(cfg.refDistance ?? 1);
+        sound.setRolloffFactor(cfg.rolloff ?? 1);
+        sound.setMaxDistance(cfg.maxDistance ?? 5);
+        sound.setDistanceModel(cfg.distanceModel ?? 'linear');
+        sound.setVolume(cfg.volume ?? 1);
+        if (Array.isArray(cfg.directionalCone)) {
+          sound.setDirectionalCone(...cfg.directionalCone);
+        }
+
+
+        // Optional: visualize cone
+        //const helper = new PositionalAudioHelper(sound, (cfg.refDistance ?? 1) * 2);
+        //sound.add(helper);
+
+        obj.add(sound);
+        audioObjectsRef.push(sound);
+
+        console.log(`🔊 PositionalAudio added to ${obj.name || obj.uuid}`);
+      });
+
+      // give audio meshes a little marker transform
+      obj.scale.setScalar(0.1);
+      obj.rotateX(Math.PI / 2);
+      obj.rotation.y += MathUtils.degToRad(120);
     }
 
-    
+    if (obj.userData.type === 'Pitcher' && transform) {
+        console.log('🎨 ...renderer:', renderer)  ;
+
+      applyPitcherControls(obj, scene, renderer, camera, transform);
+    }
+
+
+
   });
 
   updateAudioToggleButton(foundAny, audioObjectsRef);
 }
 
 // --- UI button logic (unchanged) ---
-function updateAudioToggleButton(audioAvailable, audioObjects) {
+function updateAudioToggleButton(audioAvailable) {
   if (!audioButton) {
     audioButton = document.createElement('img');
     audioButton.id = 'audio-control-button';
@@ -92,13 +119,20 @@ function updateAudioToggleButton(audioAvailable, audioObjects) {
       display: 'none',
     });
 
-    audioButton.addEventListener('click', () => {
-      if (!audioObjects.length) return;
+    audioButton.addEventListener('click', async () => {
+      if (!audioObjectsRef.length) return;
+
+      const ctx = audioObjectsRef[0].context;
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+
+      console.log('🎵 audio button click', audioObjectsRef, isAudioPlaying);
 
       isAudioPlaying = !isAudioPlaying;
       audioButton.src = isAudioPlaying ? '/icons/ButtonPause.png' : '/icons/ButtonPlay.png';
 
-      audioObjects.forEach(audio => {
+      audioObjectsRef.forEach(audio => {
         if (isAudioPlaying && !audio.isPlaying) {
           audio.play();
         } else if (!isAudioPlaying && audio.isPlaying) {
@@ -110,11 +144,14 @@ function updateAudioToggleButton(audioAvailable, audioObjects) {
     document.body.appendChild(audioButton);
   }
 
+  // 🔧 always reset state on scene (re)load
+  isAudioPlaying = false;
+  audioButton.src = '/icons/ButtonPlay.png';
+
   if (audioAvailable) {
     audioButton.style.display = 'block';
   } else {
     audioButton.style.display = 'none';
-    isAudioPlaying = false;
-    audioButton.src = '/icons/ButtonPlay.png';
   }
 }
+

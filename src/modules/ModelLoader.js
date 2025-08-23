@@ -95,7 +95,6 @@ export default class ModelLoader {
 
       this.processExhibitObjects(exhibitObjects);
 
-           const scale=1;
       
       gltfScene.add(exhibitObjects);
 
@@ -145,7 +144,7 @@ export default class ModelLoader {
       if (obj.isMesh) {
         obj.wireframe = true;
         obj.material.transparent = true;
-        obj.material.opacity = 0.5;
+        obj.material.opacity = 0;
         obj.interactive = true;
       }
     });

@@ -2,7 +2,7 @@
   "files": [],
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": false,
+    "checkJs": true,
     "resolveJsonModule": true,
     "typeRoots": ["../public/configs"]
     // ...
@@ -16,3 +16,4 @@
     }
   ]
 }
+
