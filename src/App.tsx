@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import ModularGallery from './components/ModularGallery';
@@ -7,8 +7,6 @@ import { GALLERIES } from './data/galleryConfig';
 // src/App.tsx
 import { setupModal } from './modules/setupModal';
 import { initAppBuilder } from './modules/AppBuilder';
-
-
 
 interface Gallery {
   slug: string;
@@ -24,6 +22,13 @@ export default function App() {
   const findGalleryBySlug = (slug: string) => {
     return GALLERIES.find(g => g.slug === slug);
   };
+
+  // Handle config after ModularGallery preloads it
+  const handleConfigLoaded = useCallback((config: any) => {
+    const imagesMap = config.images || {};
+    const showModal = setupModal(imagesMap);
+    initAppBuilder({ showModal });
+  }, []);
 
   // On initial mount, check hash
   useEffect(() => {
@@ -43,16 +48,6 @@ export default function App() {
     }
   }, []);
 
-  // 🔑 Initialize modal + hand into AppBuilder
-  useEffect(() => {
-    // only run once, after the modal DOM exists
-    const imagesMap = {}; // TODO: build your metadata map here
-    const showModal = setupModal(imagesMap);
-
-    initAppBuilder({ showModal });
-  }, []);
-
-
   useEffect(() => {
     function handleHashChange() {
       const slug = window.location.hash.replace('#', '');
@@ -60,14 +55,12 @@ export default function App() {
         const gallery = findGalleryBySlug(slug);
         if (gallery) {
           setSelectedConfigUrl(gallery.configUrl);
-          setSidebarOpen(false);
           return;
         }
       }
       // fallback: default
       if (GALLERIES[0]) {
         setSelectedConfigUrl(GALLERIES[0].configUrl);
-        setSidebarOpen(false);
       }
     }
 
@@ -81,10 +74,8 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-
-  // On gallery click, update hash
+  // On gallery click, update hash and close sidebar
   const handleGallerySelect = (gallery: Gallery) => {
-    setSelectedConfigUrl(gallery.configUrl);
     window.location.hash = gallery.slug;
     setSidebarOpen(false);
   };
@@ -106,20 +97,19 @@ export default function App() {
           />
         </section>
       </Sidebar>
-
+      
       <main className="flex-1 relative">
         <div className="h-full">
-          {selectedConfigUrl ? (
-            <ModularGallery configUrl={selectedConfigUrl} />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
-              Please select an exhibit from the menu.
-            </div>
-          )}
+          <ModularGallery
+            key={selectedConfigUrl || 'empty'}
+            configUrl={selectedConfigUrl || ''}
+            onConfigLoaded={handleConfigLoaded}
+          />
         </div>
       </main>
 
-      {/* ✅ keep modal DOM inside React so setupModal can find it */}
+
+      {/* ✅ Modal DOM lives in React tree */}
       <div id="modalOverlay" className="modal-overlay hidden">
         <div className="modal">
           <button className="modal-close" id="closeModal">×</button>
