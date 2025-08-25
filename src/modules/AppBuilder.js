@@ -10,6 +10,8 @@ import { applyVideoMeshes } from './applyVideoMeshes.js';
 import { applyAudioMeshes, disposeAudioMeshes } from './applyAudioMeshes.js';
 
 import { PointerHandler } from './PointerHandler.js';
+import { VRPointerHandler } from './VRPointerHandler.js';
+
 import { AudioListener, Clock, BufferGeometry, Mesh } from 'three';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
@@ -113,9 +115,10 @@ export async function buildGallery(config, container = document.body) {
     modelPath, interactivesPath, backgroundTexture, images, params
   } = config;
 
-  renderer = initRenderer(container);
-  ktx2Loader.detectSupport(renderer);
+  // ✅ renderer with guaranteed canvas
+  renderer = await initRenderer(container);
 
+  // ✅ Scene after renderer exists
   scene = initScene(
     backgroundImg || backgroundTexture,
     ktx2Loader,
@@ -125,6 +128,7 @@ export async function buildGallery(config, container = document.body) {
     params.lightIntensity
   );
 
+  // BVH setup
   Mesh.prototype.raycast = acceleratedRaycast;
   BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
   BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -145,9 +149,37 @@ export async function buildGallery(config, container = document.body) {
     },
   }));
 
-
   deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [] };
 
+  // ✅ Visitor + PointerHandler BEFORE async loads
+  visitor = new Visitor(deps);
+
+  deps.visitor = visitor;
+  camera.add(listener);
+
+ // if (renderer?.xr?.isPresenting) {
+    // ✅ VR mode: don’t touch camera or OrbitControls
+    // The XR system updates camera pose, relative to world
+   // visitor.add(camera);
+
+ // }
+
+
+
+  visitor.reset();
+  scene.add(visitor);
+
+  // Desktop / WebGL
+  if (showModalFn) {
+    new PointerHandler({ camera, scene, visitor, popupCallback: showModalFn, deps });
+  } else {
+    console.warn("⚠️ AppBuilder: showModal not initialized, modal won't work");
+  }
+
+  // VR
+  new VRPointerHandler({ scene, visitor, renderer });
+
+  // ✅ Now do async model + media loading
   const modelLoader = new ModelLoader(deps, scene);
 
   if (modelBlob && interactivesBlob) {
@@ -157,32 +189,25 @@ export async function buildGallery(config, container = document.body) {
   }
 
   applyVideoMeshes(scene, config);
-
   applyAudioMeshes(scene, config, listener, renderer, camera, transform);
 
-  visitor = new Visitor(deps);
-  deps.visitor = visitor;
-
-  // 🔑 Use injected showModal for pointer handler
-  if (showModalFn) {
-    new PointerHandler({ camera, scene, visitor, popupCallback: showModalFn, deps });
-  } else {
-    console.warn("⚠️ AppBuilder: showModal not initialized, modal won't work");
-  }
-
-  camera.add(listener);
-  visitor.reset();
-  scene.add(visitor);
-
-  function animate() {
+  // --- Animation loop ---
+  function initLoop() {
     if (!scene || !camera || !renderer || !controls) return;
-    animationId = requestAnimationFrame(animate);
-    const dt = Math.min(clock.getDelta(), 0.1);
-    if (deps.visitor && deps.collider) deps.visitor.update(dt, deps.collider);
-    controls.update();
-    renderer.render(scene, camera);
+
+    renderer.setAnimationLoop(() => {
+      const dt = Math.min(clock.getDelta(), 0.1);
+
+      if (deps.visitor && deps.collider) {
+        deps.visitor.update(dt, deps.collider);
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    });
   }
-  animate();
+  initLoop();
+
   hideOverlay();
 
   return { dispose };

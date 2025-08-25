@@ -1,7 +1,7 @@
 // src/modules/ModelLoader.js
 import {
   Group,
-  Mesh
+  Mesh, Scene, PerspectiveCamera
 
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -20,8 +20,21 @@ export default class ModelLoader {
     this.currentModel = 1;
     this.totalModels = 2;
 
+    //this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
+    //this.ktx2Loader.detectSupport(deps.renderer); // ✅ THIS is required
+
     this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
-    this.ktx2Loader.detectSupport(deps.renderer); // ✅ THIS is required
+    // ✅ detect support only if not already done
+    if (!this.ktx2Loader._supportChecked) {
+      try {
+        deps.renderer.render(new Scene(), new PerspectiveCamera());
+        this.ktx2Loader.detectSupport(deps.renderer);
+      } catch (err) {
+        console.warn('⚠️ KTX2 detectSupport failed:', err);
+      }
+      this.ktx2Loader._supportChecked = true;
+    }
+
 
     this.manager = deps.manager || undefined;
     this.gltfLoader = new GLTFLoader(this.manager);
@@ -85,7 +98,7 @@ export default class ModelLoader {
   }
 
   async loadModelFromBlob(modelBlob, interactivesBlob) {
- 
+
     try {
       const gltfScene = await this.loadGLTFBlob(modelBlob, this.currentModel, this.totalModels);
 
@@ -95,7 +108,7 @@ export default class ModelLoader {
 
       this.processExhibitObjects(exhibitObjects);
 
-      
+
       gltfScene.add(exhibitObjects);
 
       this.processSceneObjects(gltfScene);
@@ -166,12 +179,12 @@ export default class ModelLoader {
   mergeSceneObjects() {
     for (const type in this.toMerge) {
       for (const mesh of this.toMerge[type]) {
-     
+
         this.environment.attach(mesh);
       }
     }
     this.environment.name = 'environment';
-    
+
   }
 
   createCollider() {
@@ -197,5 +210,5 @@ export default class ModelLoader {
     return collider;
   }
 
- 
+
 }

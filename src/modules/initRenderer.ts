@@ -6,7 +6,10 @@ import {
   SRGBColorSpace,
 } from 'three';
 
-export default function initRenderer(
+import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
+
+export default async function initRenderer(
   container: HTMLElement = document.body
 ) {
   const renderer = new WebGLRenderer({
@@ -23,6 +26,34 @@ export default function initRenderer(
   renderer.toneMapping = CineonToneMapping;
   renderer.toneMappingExposure = 1;
 
-  container.appendChild(renderer.domElement);
+  // Enable XR
+  renderer.xr.enabled = true;
+
+  // ✅ Append canvas first
+  if (renderer.domElement && !container.contains(renderer.domElement)) {
+    container.appendChild(renderer.domElement);
+  }
+
+  // ✅ Wait for XR feature detection before returning
+  if (navigator.xr) {
+    try {
+      const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
+      if (supportsVR) {
+        container.appendChild(VRButton.createButton(renderer));
+      }
+
+      const supportsAR = await navigator.xr.isSessionSupported('immersive-ar');
+      if (supportsAR) {
+        container.appendChild(
+          ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] })
+        );
+      }
+    } catch (err) {
+      console.warn('⚠️ XR session support check failed', err);
+    }
+  } else {
+    console.warn('⚠️ WebXR not supported in this browser');
+  }
+
   return renderer;
 }

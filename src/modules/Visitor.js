@@ -110,6 +110,9 @@ export default class Visitor extends Mesh {
     if (this.rgtPressed) this._move(1, 0, 0, angle, delta);
 
     if (this.isAutoMoving && this.target) {
+
+
+      console.log('Auto moving');
       const direction = this.target.clone().sub(this.position);
       direction.y = 0; // 🔥 Ignore vertical difference
 
@@ -144,7 +147,15 @@ export default class Visitor extends Mesh {
     return { changed: false, newFloor: null };
   }
 
+  teleportTo(point) {
+    this.position.set(point.x, this.position.y, point.z);
+    this.isAutoMoving = false;
+    this.target = null;
+  }
+
+
   _move(x, y, z, angle, delta) {
+
     this.tempVector.set(x, y, z).applyAxisAngle(this.upVector, angle);
     this.position.addScaledVector(this.tempVector, this.params.visitorSpeed * delta);
   }
@@ -157,6 +168,8 @@ export default class Visitor extends Mesh {
   }
 
   handleCollisions(delta, collider) {
+
+    console.log('handleCollisions');
     const capsule = this.capsuleInfo;
     this.tempBox.makeEmpty();
     this.tempMat.copy(collider.matrixWorld).invert();
@@ -211,6 +224,7 @@ export default class Visitor extends Mesh {
       this.visitorVelocity.set(0, 0, 0);
     }
 
+ 
     this.tempVector.copy(this.position).add(this.params.heightOffset);
     this.camera.position.sub(this.controls.target);
     this.controls.target.copy(this.tempVector);
