@@ -50,9 +50,10 @@ const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, configUrl, childr
 
       {/* Container for additional content (supports two columns on medium+) */}
       <div className="nav-list p-4">
-        <InfoButtons configUrl={configUrl} />
+        {configUrl && <InfoButtons configUrl={configUrl} />}
         {children}
       </div>
+
     </aside>
   </>
 );

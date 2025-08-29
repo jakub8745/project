@@ -45,6 +45,8 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
         // 🔑 Notify parent that config is ready (preloaded)
         if (onConfigLoaded) onConfigLoaded(config);
 
+        console.log('🎨 Config loaded:', config, "container", container);
+
         // 3. Build the gallery
         galleryInstance = await buildGallery(config, container);
 

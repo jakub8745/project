@@ -8,18 +8,55 @@ export async function preloadConfigAssets(config, onProgress) {
         return await response.blob();
     };
 
+    // List of fallback IPFS gateways
+    const ipfsGateways = [
+        "https://ipfs.io/ipfs/",
+        "https://cloudflare-ipfs.com/ipfs/",
+        "https://gateway.pinata.cloud/ipfs/",
+        "https://dweb.link/ipfs/"
+    ];
+
+    // Convert ipfs://CID to http(s):// gateway link
+    function ipfsToHttpMulti(ipfsUrl, gatewayIndex = 0) {
+        const cid = ipfsUrl.replace("ipfs://", "");
+        return ipfsGateways[gatewayIndex] + cid;
+    }
+
     const preloadImage = (url) => {
+
         return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.src = url.startsWith('ipfs://') ? ipfsToHttp(url) : url;
-            img.onload = () => {
-                loaded++;
-                if (onProgress) onProgress(loaded / total);
-                resolve(img);
+            let attempts = 0;
+            let img = new Image();
+
+            const tryLoad = () => {
+                const src = url.startsWith("ipfs://")
+                    ? ipfsToHttpMulti(url, attempts)
+                    : url;
+
+                img = new Image();
+                img.src = src;
+
+                img.onload = () => {
+                    loaded++;
+                    if (onProgress) onProgress(loaded / total);
+                    resolve(img);
+                };
+
+                img.onerror = () => {
+                    attempts++;
+                    if (url.startsWith("ipfs://") && attempts < ipfsGateways.length) {
+                        // try next gateway
+                        tryLoad();
+                    } else {
+                        reject(new Error(`Failed to load image from all gateways: ${url}`));
+                    }
+                };
             };
-            img.onerror = (e) => reject(e);
+
+            tryLoad();
         });
     };
+
 
     function ipfsToHttp(ipfsUri, gateways = ['https://ipfs.io/ipfs', 'https://cloudflare-ipfs.com/ipfs']) {
         if (ipfsUri.startsWith('ipfs://')) {

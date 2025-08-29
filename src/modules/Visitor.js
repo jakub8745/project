@@ -112,7 +112,6 @@ export default class Visitor extends Mesh {
     if (this.isAutoMoving && this.target) {
 
 
-      console.log('Auto moving');
       const direction = this.target.clone().sub(this.position);
       direction.y = 0; // 🔥 Ignore vertical difference
 
@@ -169,7 +168,6 @@ export default class Visitor extends Mesh {
 
   handleCollisions(delta, collider) {
 
-    console.log('handleCollisions');
     const capsule = this.capsuleInfo;
     this.tempBox.makeEmpty();
     this.tempMat.copy(collider.matrixWorld).invert();

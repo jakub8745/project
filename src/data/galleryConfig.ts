@@ -54,26 +54,26 @@ export const GALLERIES: GalleryItem[] = [{
     videos: []
 },
 {
-    slug: "lockdowns", 
-    url: "https://bafybeigqaweptpcmauzusqfs4ifzi6dsbo6r2ogckzzmsa2wkrzji7pyku.ipfs.w3s.link/preview_lockdowns.glb",
-    title: 'Joanna Ciechanowska - Lockdowns',
-    description: 'A look back at 2020',
+    slug: "bednarczyk", 
+    url: "/models/preview_bednarczyk.glb",
+    title: 'Unvelling the Heritage of Krystyna Bednarczyk',
+    description: '3D Documentation of the project',
     scale: 0.45,
     position: [0, 0, 0],
     configUrl: "./configs/lockdowns_config.json",
     keywords: [],
     ogImage: "",
-    overlayText: "",
+    overlayText: "ggggggg",
     videos: []
 },
 {
-    slug: "wakeupcall",
-    url: "https://bafybeib3shw4j4adxamxk2bchwnvz2t6nhoy6puosrz5iaxrp6uv2dotnq.ipfs.w3s.link/preview_wakeupcall.glb",
-    title: 'WakeUp Call',
+    slug: "dystopia",
+    url: "https://bafybeibwkpikvcnrmme3tjwzvam7bzconw23fxnrk2c3b22s4lq2dtxfja.ipfs.w3s.link/preview_dystopia.glb",
+    title: 'Dystopia of imitation',
     description: 'Modern meets classic',
-    scale: 0.065,
+    scale: 0.3,
     position: [0, 0, 0],
-    configUrl: "./configs/wakeup_config.json",
+    configUrl: "./configs/dystopia_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "",
@@ -93,18 +93,34 @@ export const GALLERIES: GalleryItem[] = [{
     videos: []
 },
 {
-    slug: "dystopia",
-    url: "https://bafybeibwkpikvcnrmme3tjwzvam7bzconw23fxnrk2c3b22s4lq2dtxfja.ipfs.w3s.link/preview_dystopia.glb",
-    title: 'Dystopia of imitation',
+    slug: "wakeupcall",
+    url: "https://bafybeib3shw4j4adxamxk2bchwnvz2t6nhoy6puosrz5iaxrp6uv2dotnq.ipfs.w3s.link/preview_wakeupcall.glb",
+    title: 'WakeUp Call',
     description: 'Modern meets classic',
-    scale: 0.3,
+    scale: 0.065,
     position: [0, 0, 0],
-    configUrl: "./configs/dystopia_config.json",
+    configUrl: "./configs/wakeup_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "",
     videos: []
 },
+{
+    slug: "lockdowns", 
+    url: "https://bafybeigqaweptpcmauzusqfs4ifzi6dsbo6r2ogckzzmsa2wkrzji7pyku.ipfs.w3s.link/preview_lockdowns.glb",
+    title: 'Joanna Ciechanowska - Lockdowns',
+    description: 'A look back at 2020',
+    scale: 0.45,
+    position: [0, 0, 0],
+    configUrl: "./configs/lockdowns_config.json",
+    keywords: [],
+    ogImage: "",
+    overlayText: "",
+    videos: []
+},
+
+
+
 
 
 

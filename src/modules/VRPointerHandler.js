@@ -75,7 +75,6 @@ export class VRPointerHandler {
 
     if (hit) {
 
-        console.log(hit);
       // Show cursor at hit point
       this.cursor.position.copy(hit.point);
       this.cursor.visible = true;

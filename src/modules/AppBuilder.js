@@ -26,18 +26,22 @@ export function initAppBuilder({ showModal }) {
 }
 
 // --- Build gallery ---
-export async function buildGallery(config, container = document.body) {
+export async function buildGallery(config, container) {
+
+  if (!container) throw new Error("No container provided to buildGallery");
+console.log(config, container);
+
+
   let renderer = null;
   let scene = null;
   let visitor = null;
   let animationId = null;
   let deps = null;
 
-  console.log('🎨 Building gallery...', config);
 
   // --- Disposal method ---
   function dispose() {
-    console.log('🎨 Disposing gallery...', controls);
+    console.log('🎨 Disposing gallery...');
 
     if (animationId) {
       cancelAnimationFrame(animationId);
@@ -97,7 +101,6 @@ export async function buildGallery(config, container = document.body) {
     }
 
     if (config.videos) {
-      console.log('🎨 Removing video elements...');
       config.videos.forEach(cfg => {
         const vid = document.getElementById(cfg.id);
         if (vid && vid.parentNode) vid.parentNode.removeChild(vid);
@@ -157,12 +160,12 @@ export async function buildGallery(config, container = document.body) {
   deps.visitor = visitor;
   camera.add(listener);
 
- // if (renderer?.xr?.isPresenting) {
-    // ✅ VR mode: don’t touch camera or OrbitControls
-    // The XR system updates camera pose, relative to world
-   // visitor.add(camera);
+  // if (renderer?.xr?.isPresenting) {
+  // ✅ VR mode: don’t touch camera or OrbitControls
+  // The XR system updates camera pose, relative to world
+  // visitor.add(camera);
 
- // }
+  // }
 
 
 
