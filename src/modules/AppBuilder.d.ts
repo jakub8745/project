@@ -6,5 +6,6 @@ export declare function initAppBuilder(deps: {
 
 export declare function buildGallery(
   config: any,
-  container?: HTMLElement
+  container?: HTMLElement,
+  options?: { onProgress?: (progressText: string) => void }
 ): Promise<{ dispose?: () => void }>;

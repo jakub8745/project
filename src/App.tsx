@@ -1,10 +1,9 @@
+// App.tsx
 import { useCallback, useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import ModularGallery from './components/ModularGallery';
 import { GALLERIES } from './data/galleryConfig';
-
-// src/App.tsx
 import { setupModal } from './modules/setupModal';
 import { initAppBuilder } from './modules/AppBuilder';
 
@@ -18,10 +17,15 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
 
+  // ✅ memoized toggle
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(o => !o);
+  }, []);
+
   // Helper: find gallery by slug
-  const findGalleryBySlug = (slug: string) => {
+  const findGalleryBySlug = useCallback((slug: string) => {
     return GALLERIES.find(g => g.slug === slug);
-  };
+  }, []);
 
   // Handle config after ModularGallery preloads it
   const handleConfigLoaded = useCallback((config: any) => {
@@ -47,33 +51,30 @@ export default function App() {
       }
     }
 
-    // run once
     handleHashChange();
-
-    // listen for future hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [findGalleryBySlug]);
 
   // On gallery click, update hash and close sidebar
-  const handleGallerySelect = (gallery: Gallery) => {
+  const handleGallerySelect = useCallback((gallery: Gallery) => {
     window.location.hash = gallery.slug;
     setSidebarOpen(false);
-  };
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
       <Sidebar
         open={sidebarOpen}
-        onToggle={() => setSidebarOpen(o => !o)}
+        onToggle={toggleSidebar}   // ✅ stable reference
         logoText="Blue Point Art"
       >
         <section className="p-4">
           <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
           <GalleryGrid
-            onSelect={handleGallerySelect}
+            onSelect={handleGallerySelect} // ✅ memoized
             sidebarOpen={sidebarOpen}
-            onToggleSidebar={() => setSidebarOpen(o => !o)}
+            onToggleSidebar={toggleSidebar} // ✅ stable reference
           />
         </section>
       </Sidebar>
@@ -82,7 +83,9 @@ export default function App() {
         <div className="h-full">
           <ModularGallery
             configUrl={selectedConfigUrl || ''}
-            onConfigLoaded={handleConfigLoaded} imagePath={''} />
+            onConfigLoaded={handleConfigLoaded}
+            imagePath={''}
+          />
         </div>
       </main>
 

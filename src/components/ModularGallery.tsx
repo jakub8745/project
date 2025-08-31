@@ -11,7 +11,7 @@ interface ModularGalleryProps {
 
 
 
-const DEFAULT_CONFIG_URL = "/configs/puno85_config.json";
+//const DEFAULT_CONFIG_URL = "/configs/puno85_config.json";
 
 const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoaded }) => {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -19,7 +19,8 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const url = configUrl || DEFAULT_CONFIG_URL;
+    const url = configUrl// || DEFAULT_CONFIG_URL;
+    if (!url) return;
     const container = containerRef.current;
     if (!container) {
       console.error('🎨 ModularGallery: container div not mounted');
@@ -41,7 +42,19 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
         // 2. Build the gallery immediately (AppBuilder/ModelLoader use raw paths)
         if (onConfigLoaded) onConfigLoaded(config);
         console.log('🎨 Config loaded:');
-        galleryInstance = await buildGallery(config, container);
+        //galleryInstance = await buildGallery(config, container);
+        galleryInstance = await buildGallery(
+          config,
+          container,
+          {
+            onProgress: (progressText: string) => {
+              if (loaderRef.current) {
+                loaderRef.current.textContent = progressText;
+              }
+            }
+          }
+        );
+
         console.log('🎨 Gallery built');
 
         // 3. Hide loading overlay
@@ -66,14 +79,13 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
           function preloadImage(url: string): Promise<HTMLImageElement> {
             return new Promise((resolve, reject) => {
               let attempts = 0;
-              let img = new Image();
+              const img = new Image();
 
               const tryLoad = () => {
                 const src = url.startsWith("ipfs://")
                   ? ipfsToHttpMulti(url, attempts)
                   : url;
 
-                img = new Image();
                 img.src = src;
 
                 img.onload = () => resolve(img);
@@ -81,7 +93,8 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
                 img.onerror = () => {
                   attempts++;
                   if (url.startsWith("ipfs://") && attempts < ipfsGateways.length) {
-                    tryLoad(); // try next gateway
+                    // retry with a short delay to avoid hammering CPU/GPU
+                    setTimeout(tryLoad, 100);
                   } else {
                     reject(new Error(`Failed to load image from all gateways: ${url}`));
                   }
@@ -91,6 +104,7 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
               tryLoad();
             });
           }
+
 
           // 👇 add type assertion here
           Object.entries(config.images as Record<string, { imagePath: string; img?: HTMLImageElement }>)
@@ -124,7 +138,7 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
       if (galleryInstance && typeof galleryInstance.dispose === 'function') {
         galleryInstance.dispose();
       }
-      if (overlayRef.current) overlayRef.current.style.display = '';
+      //if (overlayRef.current) overlayRef.current.style.display = '';
       if (loaderRef.current) loaderRef.current.textContent = '0%';
 
       if (containerRef.current) {

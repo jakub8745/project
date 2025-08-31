@@ -31,6 +31,47 @@ export function setupModal(imagesMap) {
   closeBtn.addEventListener('click', hideModal);
   modal.style.transform = '';
 
+  const ipfsGateways = [
+    "https://ipfs.io/ipfs/",
+    "https://cloudflare-ipfs.com/ipfs/",
+    "https://gateway.pinata.cloud/ipfs/",
+    "https://dweb.link/ipfs/"
+  ];
+
+  function ipfsToHttpMulti(ipfsUrl, gatewayIndex = 0) {
+    const cid = ipfsUrl.replace("ipfs://", "");
+    return ipfsGateways[gatewayIndex] + cid;
+  }
+
+  function loadImageWithFallback(url) {
+    return new Promise((resolve, reject) => {
+      let attempts = 0;
+      const img = new Image();
+
+      const tryLoad = () => {
+        const src = url.startsWith("ipfs://")
+          ? ipfsToHttpMulti(url, attempts)
+          : url;
+
+        img.src = src;
+
+        img.onload = () => resolve(img);
+
+        img.onerror = () => {
+          attempts++;
+          if (url.startsWith("ipfs://") && attempts < ipfsGateways.length) {
+            setTimeout(tryLoad, 100);
+          } else {
+            reject(new Error(`Failed to load image from all gateways: ${url}`));
+          }
+        };
+      };
+
+      tryLoad();
+    });
+  }
+
+
   function hideModal() {
     modalOverlay.classList.remove('show');
 
@@ -60,40 +101,68 @@ export function setupModal(imagesMap) {
 
     modal.style.transform = 'translate(-50%, -50%)';
 
-
     const meta = imagesMap[userData.name];
     if (!meta) return;
 
     modalOverlay.classList.remove('hidden');
-
-    void modalOverlay.offsetWidth; // ← This line forces a browser reflow
-
-
+    void modalOverlay.offsetWidth; // force reflow
     modalOverlay.classList.add('show');
 
     modalDesc.innerHTML = `
-        <h3>${meta.title}</h3>
-        <p>${meta.description || ''}</p>
-        ${meta.author ? `<p><em>By ${meta.author}</em></p>` : ''}
-      `;
+    <h3>${meta.title}</h3>
+    <p>${meta.description || ''}</p>
+    ${meta.author ? `<p><em>By ${meta.author}</em></p>` : ''}
+  `;
 
-    //modalLoader.classList.remove('hidden');
     modalImg.classList.add('hidden');
 
-    if (meta.img) {
-      modalImg.src = meta.img.src;
-      modalImg.onload = () => {
-        //modalLoader.classList.add('hidden');
-        modalImg.classList.remove('hidden');
-      };
+    // ✅ Always ensure an image is attempted, even if not preloaded
+    const useImage = (img) => {
+
+      console.log('🎨 Using image:', img.src);
+      meta.img = img; // cache
+      modalImg.src = img.src;
+      modalImg.onload = () => modalImg.classList.remove('hidden');
       modalImg.onerror = () => {
-        //modalLoader.classList.add('hidden');
-        modalDesc.textContent = 'Failed to load image.';
+        modalDesc.textContent = '⚠️ Could not display image.';
+      };
+    };
+
+    if (meta.img) {
+      // Already preloaded → show immediately
+      modalImg.src = meta.img.src;
+      modalImg.onload = () => modalImg.classList.remove('hidden');
+      modalImg.onerror = () => {
+        modalDesc.insertAdjacentHTML(
+          "beforeend",
+          "<p style='color:red'>⚠️ Failed to load image.</p>"
+        );
       };
     } else {
-      //modalLoader.classList.add('hidden');
-      modalDesc.textContent = 'Image not preloaded.';
+      // Not preloaded yet → show a loading message
+      const loadingMsg = document.createElement("p");
+      loadingMsg.innerHTML = "<em>Loading image…</em>";
+      loadingMsg.classList.add("loading-msg");
+      modalDesc.appendChild(loadingMsg);
+
+      // Try to fetch the image immediately (so user doesn’t wait indefinitely)
+      loadImageWithFallback(meta.imagePath)
+        .then(img => {
+          meta.img = img; // cache it for next time
+          modalImg.src = img.src;
+          modalImg.onload = () => {
+            modalImg.classList.remove("hidden");
+            loadingMsg.remove(); // ✅ remove loading message once ready
+          };
+        })
+        .catch(err => {
+          console.warn("⚠️ Could not load image in modal:", err);
+          loadingMsg.textContent = "⚠️ Could not load image.";
+          loadingMsg.style.color = "red";
+        });
     }
+
+
 
     if (!draggableInitialized) {
       modal.style.transform = '';
@@ -101,6 +170,7 @@ export function setupModal(imagesMap) {
       draggableInitialized = true;
     }
   };
+
 }
 
 /**

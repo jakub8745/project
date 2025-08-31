@@ -26,7 +26,7 @@ export function initAppBuilder({ showModal }) {
 }
 
 // --- Build gallery ---
-export async function buildGallery(config, container) {
+export async function buildGallery(config, container, onProgress) {
 
   if (!container) throw new Error("No container provided to buildGallery");
   console.log(config, container);
@@ -188,9 +188,22 @@ export async function buildGallery(config, container) {
   // ✅ Now do async model + media loading
   const modelLoader = new ModelLoader(deps, scene);
 
-  await modelLoader.loadModel(modelPath, interactivesPath);
+  //console.log('loaderRef', loaderRef);
 
- 
+  // Pass onProgress down
+  await modelLoader.loadModel(
+    config.modelPath,
+    config.interactivesPath,
+    (percent, current, total) => {
+      if (typeof onProgress === "function") {
+        onProgress(`Loading model ${current}/${total}: ${percent}%`);
+      }
+    }
+  );
+
+  //await modelLoader.loadModel(modelPath, interactivesPath);
+
+
 
   applyVideoMeshes(scene, config);
   applyAudioMeshes(scene, config, listener, renderer, camera, transform);
