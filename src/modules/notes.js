@@ -1,248 +1,212 @@
+// src/modules/ModelLoader.js
 import {
-  Raycaster,
-  Vector2,
-  Vector3,
-  Mesh,
-  MeshBasicMaterial,
-  CircleGeometry,
-  DoubleSide,
-  Quaternion,
-  Matrix3,
-  MathUtils
+  Group,
+  Mesh, Scene, PerspectiveCamera
+
 } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { StaticGeometryGenerator, MeshBVH } from 'three-mesh-bvh';
 
-export class PointerHandler {
-  constructor({ camera, scene, visitor, popupCallback, deps }) {
-    this.camera = camera;
-    this.scene = scene;
-    this.visitor = visitor;
-
+export default class ModelLoader {
+  constructor(deps, scene, newFloor = null) {
     this.deps = deps;
-    this.params = deps.params;
-    this.popupCallback = popupCallback;
+    this.scene = scene;
 
-    this.raycaster = new Raycaster();
-    this.pointer = new Vector2();
-
-    this.renderer = deps.renderer;
-
-    this.pressTimeout = null;
-    this.isPressing = false;
-    this.isDragging = false;
-    this.startX = 0;
-    this.startY = 0;
-    this.MOVE_THRESHOLD = 5;
-
-    // Click indicator (persistent)
-    this.clickIndicator = this._createClickCircle();
-    this.scene.add(this.clickIndicator);
-    this.visitor.clickIndicator = this.clickIndicator;
-
-    this.sidebar = document.querySelector('.sidebar');
-    this.btn = document.getElementById('btn');
-
-    this.lastTapTime = 0;
-    this.DOUBLE_TAP_THRESHOLD = 300;
-
-    // Bind handlers
-    this._onPointerDown = this._onPointerDown.bind(this);
-    this._onPointerMove = this._onPointerMove.bind(this);
-    this._onPointerUp = this._onPointerUp.bind(this);
-    this._addListeners();
-  }
-
-  _createClickCircle() {
-    const geo = new CircleGeometry(0.15, 32);
-    const mat = new MeshBasicMaterial({
-      color: 0x459de6,
-      transparent: true,
-      opacity: 0.6,
-      side: DoubleSide,
-      depthWrite: false
-    });
-    const mesh = new Mesh(geo, mat);
-    mesh.visible = false;
-    mesh.name = 'clickIndicator';
-
-    mesh.scale.set(1, 1, 1); // INITIAL SCALE
-
-    return mesh;
-  }
-
-  _addListeners() {
-    const canvas = this.renderer.domElement;
-    canvas.addEventListener('pointerdown', this._onPointerDown);
-    canvas.addEventListener('pointermove', this._onPointerMove);
-    canvas.addEventListener('pointerup', this._onPointerUp);
-  }
-
-  _onPointerDown(event) {
-    event.preventDefault();
-    this.startX = event.clientX;
-    this.startY = event.clientY;
-    this.isDragging = false;
-    //this.isPressing = true;
-
-      // DOUBLE-TAP logic:
-    const now       = performance.now();
-    const delta     = now - this.lastTapTime;
-    this.lastTapTime = now;
-
-    if (delta < this.DOUBLE_TAP_THRESHOLD && !this.isDragging) {
-      // it’s a double-click/tap!
-      this._handleClick(event);
-    }
-  }
-
-  _onPointerMove(event) {
-    if (
-      Math.abs(event.clientX - this.startX) > this.MOVE_THRESHOLD ||
-      Math.abs(event.clientY - this.startY) > this.MOVE_THRESHOLD
-    ) {
-      this.isDragging = true;
-      clearTimeout(this.pressTimeout);
-    }
-  }
-
-  _onPointerUp() {
-    this.isPressing = false;
-    clearTimeout(this.pressTimeout);
-  }
-
-  _handleClick(event) {
-    const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video'];
-    const bounds = this.renderer.domElement.getBoundingClientRect();
-    const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-    const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
-    this.pointer.set(x, y);
-
-    this.raycaster.setFromCamera(this.pointer, this.camera);
-    this.raycaster.firstHitOnly = true;
-    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    const hit = intersects.find(i => i.object.userData && validTypes.includes(i.object.userData.type));
-
-    if (!hit || !hit.object.userData) return;
-    const { type, elementID } = hit.object.userData;
-
-    // Handle image popups, videos, etc.
-    if (type === 'Image' && this.popupCallback) {
-
-      this.popupCallback(hit.object.userData);
-      return;
-    }
-    if (type === 'Video') {
+    this.newFloor = newFloor;
+    this.environment = new Group();
+    this.toMerge = {};
+    this.currentModel = 1;
+    this.totalModels = 2;
 
 
-      const videoElement = elementID ? document.getElementById(elementID) : null;
-
-      if (videoElement) {
-        videoElement.muted = false;
-        if (videoElement.paused) {
-          videoElement.play().catch(err => console.warn("Couldn't autoplay:", err));
-          this._moveToVideo(hit);
-        } else {
-          videoElement.pause();
-        }
+    this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
+    // ✅ detect support only if not already done
+    if (!this.ktx2Loader._supportChecked) {
+      try {
+        deps.renderer.render(new Scene(), new PerspectiveCamera());
+        this.ktx2Loader.detectSupport(deps.renderer);
+      } catch (err) {
+        console.warn('⚠️ KTX2 detectSupport failed:', err);
       }
-      return;
+      this.ktx2Loader._supportChecked = true;
     }
 
-    // Place click indicator on Floor, Room, Wall
-    if (['Floor', 'Room', 'Wall'].includes(type)) {
-      const point = hit.point.clone();
 
-      // Compute world normal
-      const localNormal = hit.face.normal.clone();
-      const normalMatrix = new Matrix3().getNormalMatrix(hit.object.matrixWorld);
-      const worldNormal = localNormal.applyMatrix3(normalMatrix).normalize();
+    this.manager = deps.manager || undefined;
+    this.gltfLoader = new GLTFLoader(this.manager);
+    this.dracoLoader = new DRACOLoader(this.manager).setDecoderPath('./libs/draco/');
 
-      this._placeClickIndicator(point, worldNormal);
-      this._moveVisitor(point);
+    this.setupLoaders();
+
+  }
+
+  setupLoaders() {
+    this.gltfLoader.setDRACOLoader(this.dracoLoader);
+    this.gltfLoader.setKTX2Loader(this.ktx2Loader);
+    this.gltfLoader.setMeshoptDecoder(MeshoptDecoder);
+  }
+
+  async loadModel(modelPath, interactivesPath) {
+
+
+
+    try {
+
+      const gltfScene = await this.loadGLTFModel(modelPath, this.currentModel, this.totalModels);
+      this.currentModel++;
+
+      const exhibitObjects = await this.loadGLTFModel(interactivesPath, this.currentModel, this.totalModels);
+
+      this.processExhibitObjects(exhibitObjects);
+      gltfScene.add(exhibitObjects);
+
+      this.processSceneObjects(gltfScene);
+
+      const collider = this.createCollider();
+      this.scene.add(collider);
+      this.deps.collider = collider;
+
+      this.scene.add(this.environment);
+
+      this.scene.updateMatrixWorld(true);
+
+
+      return collider;
+    } catch (err) {
+      console.error('Error loading model:', err);
+      throw err;
     }
   }
 
-  _placeClickIndicator(point, worldNormal) {
-    // Slight offset to avoid z-fighting
-    const offsetPos = point.clone().addScaledVector(worldNormal, 0.02);
-    this.clickIndicator.position.copy(offsetPos);
+  async loadGLTFModel(modelPath, currentModel, totalModels) {
+    const progressText = document.getElementById('progress-text');
+    const onProgress = (xhr) => {
+      if (xhr.total) {
+        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+        if (progressText) progressText.textContent = `Loading model ${currentModel}/${totalModels}: ${percent}%`;
+      }
+    };
 
-    // Align circle's normal (+Z) to worldNormal
-    const quat = new Quaternion().setFromUnitVectors(
-      new Vector3(0, 0, 1),
-      worldNormal
-    );
-    this.clickIndicator.setRotationFromQuaternion(quat);
-    this.clickIndicator.visible = true;
+    const { scene: gltfScene } = await this.gltfLoader.loadAsync(modelPath, onProgress);
+    gltfScene.updateMatrixWorld(true);
+
+    return gltfScene;
   }
 
-  _moveVisitor(point) {
-    this.visitor.target = point.clone();
-    this.visitor.isAutoMoving = true;
+  async loadModelFromBlob(modelBlob, interactivesBlob) {
+
+    try {
+      const gltfScene = await this.loadGLTFBlob(modelBlob, this.currentModel, this.totalModels);
+
+
+      this.currentModel++;
+      const exhibitObjects = await this.loadGLTFBlob(interactivesBlob, this.currentModel, this.totalModels);
+
+      this.processExhibitObjects(exhibitObjects);
+
+
+      gltfScene.add(exhibitObjects);
+
+      this.processSceneObjects(gltfScene);
+
+      //
+
+
+      const collider = this.createCollider();
+
+      this.scene.add(collider);
+      this.deps.collider = collider;
+
+      this.scene.add(this.environment);
+
+      this.scene.updateMatrixWorld(true);
+
+
+      return collider;
+    } catch (err) {
+      console.error('Error loading model from blob:', err);
+      throw err;
+    }
+  }
+
+  async loadGLTFBlob(blob, currentModel, totalModels) {
+    const progressText = document.getElementById('progress-text');
+
+    const arrayBuffer = await blob.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
+    const { scene: gltfScene } = await new Promise((resolve, reject) => {
+      this.gltfLoader.parse(buffer.buffer, '', resolve, reject);
+    });
+
+    if (progressText) {
+      progressText.textContent = `Loaded model ${currentModel}/${totalModels}`;
+    }
+    gltfScene.updateMatrixWorld(true);
+
+    return gltfScene;
   }
 
 
-  _moveToVideo(clickedObject) {
-    if (this.sidebar?.classList.contains('open')) {
-      this.sidebar.classList.remove('open');
-      this.btn?.classList.remove('open');
-    }
-
-    const mesh = clickedObject.object;
-    const camera = this.camera;
-    const visitor = this.visitor;
-    const point = clickedObject.point.clone();
-
-    const blockerRay = new Raycaster(visitor.position, point.clone().sub(visitor.position).normalize());
-    blockerRay.far = visitor.position.distanceTo(point);
-    const walls = this.scene.children.filter(o => o.userData.type === 'Wall');
-    if (blockerRay.intersectObjects(walls, true).length > 0) {
-      console.warn("Blocked by wall");
-      return;
-    }
-
-    const geom = mesh.geometry;
-    if (!geom.boundingBox) geom.computeBoundingBox();
-    if (!clickedObject.face?.normal) {
-      console.error("Missing face normal");
-      return;
-    }
-
-    const bbox = geom.boundingBox;
-    const localNormal = clickedObject.face.normal.clone();
-    const normalMatrix = new Matrix3().getNormalMatrix(mesh.matrixWorld);
-    const worldNormal = localNormal.applyMatrix3(normalMatrix).normalize();
-    const centerLocal = bbox.getCenter(new Vector3());
-    const centerWorld = mesh.localToWorld(centerLocal);
-
-    if (worldNormal.dot(camera.position.clone().sub(centerWorld)) < 0) {
-      worldNormal.negate();
-    }
-
-    const forward = new Vector3();
-    camera.getWorldDirection(forward);
-    const right = camera.up.clone().cross(forward).normalize();
-
-    const localCorners = [
-      new Vector3(bbox.min.x, bbox.min.y, 0),
-      new Vector3(bbox.max.x, bbox.min.y, 0),
-      new Vector3(bbox.min.x, bbox.max.y, 0),
-      new Vector3(bbox.max.x, bbox.max.y, 0),
-    ];
-    const worldCorners = localCorners.map(c => mesh.localToWorld(c));
-    const projs = worldCorners.map(c => c.clone().sub(camera.position).dot(right));
-    const worldWidth = Math.max(...projs) - Math.min(...projs);
-
-    const vFOV = MathUtils.degToRad(camera.fov);
-    const aspect = this.renderer.domElement.clientWidth / this.renderer.domElement.clientHeight;
-    const hFOV = 2 * Math.atan(Math.tan(vFOV / 2) * aspect);
-    const extraOffset = 0.5;
-    const distance = (worldWidth / 2) / Math.tan(hFOV / 2) + extraOffset;
-
-    const targetPos = centerWorld.clone().addScaledVector(worldNormal, distance);
-    this._moveVisitor(targetPos);
+  processExhibitObjects(objects) {
+    objects.traverse(obj => {
+      if (obj.isMesh) {
+        obj.wireframe = true;
+        obj.material.transparent = true;
+        obj.material.opacity = 0;
+        obj.interactive = true;
+      }
+    });
   }
 
-    setClickIndicatorPosition(x, y, z) {
-    this.clickIndicator.position.set(x, y, z);
+  processSceneObjects(scene) {
+    scene.traverse(obj => {
+      if (obj.isMesh || obj.isLight) {
+        if (obj.isLight) obj.visible = false;
+        const type = obj.userData.type;
+        this.toMerge[type] = this.toMerge[type] || [];
+        this.toMerge[type].push(obj);
+
+      }
+    });
+    this.mergeSceneObjects();
   }
+
+  mergeSceneObjects() {
+    for (const type in this.toMerge) {
+      for (const mesh of this.toMerge[type]) {
+
+        this.environment.attach(mesh);
+      }
+    }
+    this.environment.name = 'environment';
+
+  }
+
+  createCollider() {
+
+    const staticGen = new StaticGeometryGenerator(this.environment);
+    staticGen.attributes = ['position'];
+    const merged = staticGen.generate();
+
+    merged.boundsTree = new MeshBVH(merged, { lazyGeneration: false });
+
+    const collider = new Mesh(merged);
+    collider.material.wireframe = true;
+    collider.material.opacity = 0;
+    collider.material.transparent = true;
+    collider.material.color = 0x00ffff;
+    collider.visible = true;
+    collider.name = 'collider';
+
+    collider.position.set(0, 0, 0);
+    collider.castShadow = true;
+    collider.receiveShadow = true;
+
+    return collider;
+  }
+
+
 }

@@ -1,8 +1,9 @@
 // src/modules/ModelLoader.js
 import {
   Group,
-  Mesh, Scene, PerspectiveCamera
-
+  Mesh,
+  Scene,
+  PerspectiveCamera
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -20,9 +21,6 @@ export default class ModelLoader {
     this.currentModel = 1;
     this.totalModels = 2;
 
-    //this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
-    //this.ktx2Loader.detectSupport(deps.renderer); // ✅ THIS is required
-
     this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
     // ✅ detect support only if not already done
     if (!this.ktx2Loader._supportChecked) {
@@ -35,13 +33,11 @@ export default class ModelLoader {
       this.ktx2Loader._supportChecked = true;
     }
 
-
     this.manager = deps.manager || undefined;
     this.gltfLoader = new GLTFLoader(this.manager);
     this.dracoLoader = new DRACOLoader(this.manager).setDecoderPath('./libs/draco/');
 
     this.setupLoaders();
-
   }
 
   setupLoaders() {
@@ -51,29 +47,26 @@ export default class ModelLoader {
   }
 
   async loadModel(modelPath, interactivesPath) {
-
-
-
     try {
-
+      // Load exhibition model
       const gltfScene = await this.loadGLTFModel(modelPath, this.currentModel, this.totalModels);
       this.currentModel++;
 
+      // Load interactives
       const exhibitObjects = await this.loadGLTFModel(interactivesPath, this.currentModel, this.totalModels);
-
       this.processExhibitObjects(exhibitObjects);
       gltfScene.add(exhibitObjects);
 
+      // Merge into environment
       this.processSceneObjects(gltfScene);
 
+      // Collider for navigation
       const collider = this.createCollider();
       this.scene.add(collider);
       this.deps.collider = collider;
 
       this.scene.add(this.environment);
-
       this.scene.updateMatrixWorld(true);
-
 
       return collider;
     } catch (err) {
@@ -87,70 +80,16 @@ export default class ModelLoader {
     const onProgress = (xhr) => {
       if (xhr.total) {
         const percent = Math.round((xhr.loaded / xhr.total) * 100);
-        if (progressText) progressText.textContent = `Loading model ${currentModel}/${totalModels}: ${percent}%`;
+        if (progressText) {
+          progressText.textContent = `Loading model ${currentModel}/${totalModels}: ${percent}%`;
+        }
       }
     };
 
     const { scene: gltfScene } = await this.gltfLoader.loadAsync(modelPath, onProgress);
     gltfScene.updateMatrixWorld(true);
-
     return gltfScene;
   }
-
-  async loadModelFromBlob(modelBlob, interactivesBlob) {
-
-    try {
-      const gltfScene = await this.loadGLTFBlob(modelBlob, this.currentModel, this.totalModels);
-
-
-      this.currentModel++;
-      const exhibitObjects = await this.loadGLTFBlob(interactivesBlob, this.currentModel, this.totalModels);
-
-      this.processExhibitObjects(exhibitObjects);
-
-
-      gltfScene.add(exhibitObjects);
-
-      this.processSceneObjects(gltfScene);
-
-      //
-
-
-      const collider = this.createCollider();
-
-      this.scene.add(collider);
-      this.deps.collider = collider;
-
-      this.scene.add(this.environment);
-
-      this.scene.updateMatrixWorld(true);
-
-
-      return collider;
-    } catch (err) {
-      console.error('Error loading model from blob:', err);
-      throw err;
-    }
-  }
-
-  async loadGLTFBlob(blob, currentModel, totalModels) {
-    const progressText = document.getElementById('progress-text');
-
-    const arrayBuffer = await blob.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-
-    const { scene: gltfScene } = await new Promise((resolve, reject) => {
-      this.gltfLoader.parse(buffer.buffer, '', resolve, reject);
-    });
-
-    if (progressText) {
-      progressText.textContent = `Loaded model ${currentModel}/${totalModels}`;
-    }
-    gltfScene.updateMatrixWorld(true);
-
-    return gltfScene;
-  }
-
 
   processExhibitObjects(objects) {
     objects.traverse(obj => {
@@ -170,7 +109,6 @@ export default class ModelLoader {
         const type = obj.userData.type;
         this.toMerge[type] = this.toMerge[type] || [];
         this.toMerge[type].push(obj);
-
       }
     });
     this.mergeSceneObjects();
@@ -179,16 +117,13 @@ export default class ModelLoader {
   mergeSceneObjects() {
     for (const type in this.toMerge) {
       for (const mesh of this.toMerge[type]) {
-
         this.environment.attach(mesh);
       }
     }
     this.environment.name = 'environment';
-
   }
 
   createCollider() {
-
     const staticGen = new StaticGeometryGenerator(this.environment);
     staticGen.attributes = ['position'];
     const merged = staticGen.generate();
@@ -209,6 +144,4 @@ export default class ModelLoader {
 
     return collider;
   }
-
-
 }

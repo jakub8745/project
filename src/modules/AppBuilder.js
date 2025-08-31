@@ -29,7 +29,7 @@ export function initAppBuilder({ showModal }) {
 export async function buildGallery(config, container) {
 
   if (!container) throw new Error("No container provided to buildGallery");
-console.log(config, container);
+  console.log(config, container);
 
 
   let renderer = null;
@@ -121,6 +121,9 @@ console.log(config, container);
   // ✅ renderer with guaranteed canvas
   renderer = await initRenderer(container);
 
+  ktx2Loader.setTranscoderPath('./libs/basis/');
+  ktx2Loader.detectSupport(renderer);
+
   // ✅ Scene after renderer exists
   scene = initScene(
     backgroundImg || backgroundTexture,
@@ -185,11 +188,9 @@ console.log(config, container);
   // ✅ Now do async model + media loading
   const modelLoader = new ModelLoader(deps, scene);
 
-  if (modelBlob && interactivesBlob) {
-    await modelLoader.loadModelFromBlob(modelBlob, interactivesBlob);
-  } else {
-    await modelLoader.loadModel(modelPath, interactivesPath);
-  }
+  await modelLoader.loadModel(modelPath, interactivesPath);
+
+ 
 
   applyVideoMeshes(scene, config);
   applyAudioMeshes(scene, config, listener, renderer, camera, transform);

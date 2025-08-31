@@ -30,28 +30,7 @@ export default function App() {
     initAppBuilder({ showModal });
   }, []);
 
-  // On initial mount, only resolve default gallery *after* sidebar has rendered once
-  useEffect(() => {
-    // run in a microtask after first paint
-    requestAnimationFrame(() => {
-      const slug = window.location.hash.replace('#', '');
-      if (slug) {
-        const gallery = findGalleryBySlug(slug);
-        if (gallery) {
-          setSelectedConfigUrl(gallery.configUrl);
-          setSidebarOpen(false);
-          return;
-        }
-      }
-      // fallback: default gallery
-      if (GALLERIES[0]) {
-        setSelectedConfigUrl(GALLERIES[0].configUrl);
-        setSidebarOpen(false);
-      }
-    });
-  }, []);
-
-  // On hash changes, update selected gallery
+  // Unified hash handling (runs once on mount + on changes)
   useEffect(() => {
     function handleHashChange() {
       const slug = window.location.hash.replace('#', '');
@@ -68,10 +47,15 @@ export default function App() {
       }
     }
 
+    // run once
+    handleHashChange();
+
+    // listen for future hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // On gallery click, update hash and close sidebar
   const handleGallerySelect = (gallery: Gallery) => {
     window.location.hash = gallery.slug;
     setSidebarOpen(false);
@@ -79,12 +63,10 @@ export default function App() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
-      {/* Sidebar ALWAYS visible first */}
       <Sidebar
         open={sidebarOpen}
         onToggle={() => setSidebarOpen(o => !o)}
         logoText="Blue Point Art"
-        configUrl={selectedConfigUrl || ""}
       >
         <section className="p-4">
           <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
@@ -96,24 +78,15 @@ export default function App() {
         </section>
       </Sidebar>
 
-      {/* Main content */}
       <main className="flex-1 relative">
         <div className="h-full">
-          {selectedConfigUrl ? (
-            <ModularGallery
-              key={selectedConfigUrl}
-              configUrl={selectedConfigUrl}
-              onConfigLoaded={handleConfigLoaded}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              Loading default gallery…
-            </div>
-          )}
+          <ModularGallery
+            configUrl={selectedConfigUrl || ''}
+            onConfigLoaded={handleConfigLoaded} imagePath={''} />
         </div>
       </main>
 
-      {/* Modal */}
+      {/* ✅ Modal DOM lives in React tree */}
       <div id="modalOverlay" className="modal-overlay hidden">
         <div className="modal">
           <button className="modal-close" id="closeModal">×</button>

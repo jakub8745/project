@@ -11,8 +11,8 @@ export interface GalleryGridProps {
 
 const GalleryGrid: FC<GalleryGridProps> = ({
   onSelect: _onSelect,
-  sidebarOpen: _sidebarOpen,
-  onToggleSidebar: _onToggleSidebar,
+  //sidebarOpen: _sidebarOpen,
+  //onToggleSidebar: _onToggleSidebar,
 }) => {
   
 

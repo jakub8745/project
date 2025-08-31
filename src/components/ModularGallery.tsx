@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 // @ts-ignore
 import { buildGallery } from '../modules/AppBuilder.js';
-// @ts-ignore
-import { preloadConfigAssets } from '../modules/preloadConfigAssets.js';
 
 interface ModularGalleryProps {
   configUrl: string;
-  onConfigLoaded?: (config: any) => void; // 👈 new
+  onConfigLoaded?: (config: any) => void;
+  imagePath: string;
+  img?: HTMLImageElement;
 }
+
+
 
 const DEFAULT_CONFIG_URL = "/configs/puno85_config.json";
 
@@ -34,26 +36,80 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const config = await res.json();
 
-        // 2. Preload assets
-        await preloadConfigAssets(config, (p: number) => {
-          if (loaderRef.current) {
-            loaderRef.current.textContent = `${Math.floor(p * 100)}%`;
-          }
-        });
-        if (disposed) return;
+        console.log('🎨 Config fetched');
 
-        // 🔑 Notify parent that config is ready (preloaded)
+        // 2. Build the gallery immediately (AppBuilder/ModelLoader use raw paths)
         if (onConfigLoaded) onConfigLoaded(config);
-
-        console.log('🎨 Config loaded:', config, "container", container);
-
-        // 3. Build the gallery
+        console.log('🎨 Config loaded:');
         galleryInstance = await buildGallery(config, container);
+        console.log('🎨 Gallery built');
 
-        // 4. Hide loading overlay
+        // 3. Hide loading overlay
         if (overlayRef.current) {
           overlayRef.current.style.display = 'none';
         }
+
+        // 4. Lazy preload images in background
+        if (config.images) {
+          const ipfsGateways = [
+            "https://ipfs.io/ipfs/",
+            "https://cloudflare-ipfs.com/ipfs/",
+            "https://gateway.pinata.cloud/ipfs/",
+            "https://dweb.link/ipfs/"
+          ];
+
+          function ipfsToHttpMulti(ipfsUrl: string, gatewayIndex = 0) {
+            const cid = ipfsUrl.replace("ipfs://", "");
+            return ipfsGateways[gatewayIndex] + cid;
+          }
+
+          function preloadImage(url: string): Promise<HTMLImageElement> {
+            return new Promise((resolve, reject) => {
+              let attempts = 0;
+              let img = new Image();
+
+              const tryLoad = () => {
+                const src = url.startsWith("ipfs://")
+                  ? ipfsToHttpMulti(url, attempts)
+                  : url;
+
+                img = new Image();
+                img.src = src;
+
+                img.onload = () => resolve(img);
+
+                img.onerror = () => {
+                  attempts++;
+                  if (url.startsWith("ipfs://") && attempts < ipfsGateways.length) {
+                    tryLoad(); // try next gateway
+                  } else {
+                    reject(new Error(`Failed to load image from all gateways: ${url}`));
+                  }
+                };
+              };
+
+              tryLoad();
+            });
+          }
+
+          // 👇 add type assertion here
+          Object.entries(config.images as Record<string, { imagePath: string; img?: HTMLImageElement }>)
+            .forEach(([key, meta]) => {
+              preloadImage(meta.imagePath)
+                .then(img => {
+                  meta.img = img; // safe now
+                  console.log(`✅ Preloaded image for ${key}`);
+                })
+                .catch(err => {
+                  console.warn(`⚠️ Could not preload image for ${key}:`, err);
+                });
+            });
+
+          console.log('🎨 Started lazy image preloading with IPFS fallbacks');
+        }
+
+
+
       } catch (err) {
         if (disposed) return;
         console.error('⚠️ Error in ModularGallery:', err);
@@ -81,7 +137,7 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
 
   return (
     <div className="relative w-full h-full">
-      {/* Loading overlay */}
+      {/* Loading overlay (now only until config is fetched + gallery built) */}
       <div
         ref={overlayRef}
         className="absolute inset-0 flex flex-col items-center justify-center bg-white z-20"
