@@ -18,8 +18,8 @@ export default class ModelLoader {
     this.newFloor = newFloor;
     this.environment = new Group();
     this.toMerge = {};
-    this.currentModel = 1;
-    this.totalModels = 2;
+    this.currentModel = 0;         // ✅ start at 0
+    this.totalModels = 2;          // ✅ main + interactives
 
     this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
     // ✅ detect support only if not already done
@@ -46,62 +46,49 @@ export default class ModelLoader {
     this.gltfLoader.setMeshoptDecoder(MeshoptDecoder);
   }
 
-async loadModel(modelPath, interactivesPath, onProgress) {
-  try {
-    // Load exhibition model
-    const gltfScene = await this.loadGLTFModel(
-      modelPath,
-      this.currentModel,
-      this.totalModels,
-      (percent) => {
-        if (typeof onProgress === "function") {
-          onProgress(percent, this.currentModel, this.totalModels);
-        }
-      }
-    );
-    this.currentModel++;
+  async loadModel(modelPath, interactivesPath) {
+    try {
+      // Load exhibition model
+      const gltfScene = await this.loadGLTFModel(modelPath);
+      this.currentModel++;
 
-    // Load interactives
-    const exhibitObjects = await this.loadGLTFModel(
-      interactivesPath,
-      this.currentModel,
-      this.totalModels,
-      (percent) => {
-        if (typeof onProgress === "function") {
-          onProgress(percent, this.currentModel, this.totalModels);
-        }
-      }
-    );
-    this.processExhibitObjects(exhibitObjects);
-    gltfScene.add(exhibitObjects);
+      // Load interactives
+      const exhibitObjects = await this.loadGLTFModel(interactivesPath);
+      this.currentModel++;
 
-    // Merge into environment
-    this.processSceneObjects(gltfScene);
+      this.processExhibitObjects(exhibitObjects);
+      gltfScene.add(exhibitObjects);
 
-    // Collider for navigation
-    const collider = this.createCollider();
-    this.scene.add(collider);
-    this.deps.collider = collider;
+      // Merge into environment
+      this.processSceneObjects(gltfScene);
 
-    this.scene.add(this.environment);
-    this.scene.updateMatrixWorld(true);
+      // Collider for navigation
+      const collider = this.createCollider();
+      this.scene.add(collider);
+      this.deps.collider = collider;
 
-    return collider;
-  } catch (err) {
-    console.error("Error loading model:", err);
-    throw err;
+      this.scene.add(this.environment);
+      this.scene.updateMatrixWorld(true);
+
+      return collider;
+    } catch (err) {
+      console.error("Error loading model:", err);
+      throw err;
+    }
   }
-}
 
-
-  async loadGLTFModel(modelPath, currentModel, totalModels, onProgressCallback) {
+  async loadGLTFModel(modelPath) {
     const onProgress = (xhr) => {
-      if (xhr.total) {
-        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+      if (xhr.total && this.deps.onProgress) {
+        // ✅ progress for this file (0–100)
+        const localPercent = xhr.loaded / xhr.total;
 
-        if (typeof onProgressCallback === "function") {
-          onProgressCallback(percent, currentModel, totalModels);
-        }
+        // ✅ global progress = (done + current portion) / total
+        const globalPercent = Math.round(
+          ((this.currentModel + localPercent) / this.totalModels) * 100
+        );
+
+        this.deps.onProgress(globalPercent);
       }
     };
 
@@ -109,7 +96,6 @@ async loadModel(modelPath, interactivesPath, onProgress) {
     gltfScene.updateMatrixWorld(true);
     return gltfScene;
   }
-
 
   processExhibitObjects(objects) {
     objects.traverse(obj => {

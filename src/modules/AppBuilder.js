@@ -26,11 +26,9 @@ export function initAppBuilder({ showModal }) {
 }
 
 // --- Build gallery ---
-export async function buildGallery(config, container, onProgress) {
+export async function buildGallery(config, container,{ onProgress } = {}) {
 
   if (!container) throw new Error("No container provided to buildGallery");
-  console.log(config, container);
-
 
   let renderer = null;
   let scene = null;
@@ -155,7 +153,7 @@ export async function buildGallery(config, container, onProgress) {
     },
   }));
 
-  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [] };
+  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [], onProgress};
 
   // ✅ Visitor + PointerHandler BEFORE async loads
   visitor = new Visitor(deps);
@@ -188,17 +186,10 @@ export async function buildGallery(config, container, onProgress) {
   // ✅ Now do async model + media loading
   const modelLoader = new ModelLoader(deps, scene);
 
-  //console.log('loaderRef', loaderRef);
-
   // Pass onProgress down
   await modelLoader.loadModel(
     config.modelPath,
-    config.interactivesPath,
-    (percent, current, total) => {
-      if (typeof onProgress === "function") {
-        onProgress(`Loading model ${current}/${total}: ${percent}%`);
-      }
-    }
+    config.interactivesPath
   );
 
   //await modelLoader.loadModel(modelPath, interactivesPath);

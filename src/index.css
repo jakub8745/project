@@ -8,7 +8,7 @@
 
 body {
   @apply bg-gallery-dark text-gallery-text;
-  font-family: Lora,serif;
+  font-family: "Jura", sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
   margin: 0;
