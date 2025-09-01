@@ -109,7 +109,7 @@ function updateAudioToggleButton(audioAvailable) {
       position: 'absolute',
       top: '20px',
       right: '20px',
-      zIndex: '9999',
+      zIndex: '29',
       width: '48px',
       height: '48px',
       borderRadius: '8px',

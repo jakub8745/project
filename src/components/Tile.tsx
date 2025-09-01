@@ -1,13 +1,13 @@
 // src/components/Tile.tsx
-
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Loader2 } from 'lucide-react';
 import Model from './Model';
-import ktx2Loader from '../loaders/ktx2Loader'; // Adjust path as needed
-//
+import ktx2Loader from '../loaders/ktx2Loader';
 
+// Simple mobile check (can be improved with libs like react-responsive)
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
 export interface TileProps {
   modelUrl: string;
@@ -26,11 +26,13 @@ const Tile: React.FC<TileProps> = ({
 }) => (
   <div className="bg-gallery-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in">
     <div className="relative aspect-square">
-      <Suspense fallback={
-        <div className="absolute inset-0 flex items-center justify-center bg-gallery-dark bg-opacity-50">
-          <Loader2 className="w-8 h-8 text-gallery-accent animate-spin" />
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="absolute inset-0 flex items-center justify-center bg-gallery-dark bg-opacity-50">
+            <Loader2 className="w-8 h-8 text-gallery-accent animate-spin" />
+          </div>
+        }
+      >
         <Canvas
           shadows
           dpr={[1, 2]}
@@ -47,10 +49,11 @@ const Tile: React.FC<TileProps> = ({
             overridePosition={position}
           />
 
+          {/* Desktop = interactive, Mobile = only autoRotate */}
           <OrbitControls
             enableZoom={false}
             enablePan={false}
-            enableRotate
+            enableRotate={!isMobile}
             autoRotate
             autoRotateSpeed={1}
           />
