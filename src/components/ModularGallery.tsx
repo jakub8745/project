@@ -130,48 +130,38 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
 
   const showOverlay = progress < 100 || error;
 
-return (
-  <div className="relative w-full h-full">
-    {showOverlay && (
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
-        {error ? (
-          <div className="text-2xl text-red-600">{error}</div>
-        ) : (
-          <div className="relative flex items-center justify-center">
-            <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-              <circle
-                className="text-gray-300"
-                strokeWidth="8"
-                stroke="currentColor"
-                fill="transparent"
-                r="46"
-                cx="50"
-                cy="50"
-              />
-              <circle
-                className="text-blue-600 transition-all duration-300 ease-out"
-                strokeWidth="8"
-                strokeDasharray={`${2 * Math.PI * 46}`}
-                strokeDashoffset={`${2 * Math.PI * 46 * (1 - progress / 100)}`}
-                strokeLinecap="round"
-                stroke="currentColor"
-                fill="transparent"
-                r="46"
-                cx="50"
-                cy="50"
-              />
-            </svg>
-            <div className="absolute text-xl font-bold text-blue-700">
-              {progress}%
+  return (
+    <div className="relative w-full h-full">
+      {showOverlay && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
+          {error ? (
+            <div className="text-2xl text-red-600">{error}</div>
+          ) : (
+            <div className="relative flex items-center justify-center">
+              <svg className="w-24 h-24" viewBox="0 0 120 120">
+                <circle
+                  className="text-blue-600 transition-all duration-300 ease-out"
+                  fill="currentColor"
+                  r="8"
+                  cx={60 + 50 * Math.cos((2 * Math.PI * progress) / 100 - Math.PI / 2)}
+                  cy={60 + 50 * Math.sin((2 * Math.PI * progress) / 100 - Math.PI / 2)}
+                />
+              </svg>
+
+
+              {/* Centered progress text */}
+              <div className="absolute text-xl font-bold text-blue-700">
+                {progress}%
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    )}
-    {/* Three.js canvas mount point */}
-    <div ref={containerRef} className="w-full h-full absolute" />
-  </div>
-);
+
+          )}
+        </div>
+      )}
+      {/* Three.js canvas mount point */}
+      <div ref={containerRef} className="w-full h-full absolute" />
+    </div>
+  );
 
 };
 

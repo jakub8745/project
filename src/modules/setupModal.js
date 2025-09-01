@@ -141,6 +141,7 @@ export function setupModal(imagesMap) {
     } else {
       // Not preloaded yet → show a loading message
       const loadingMsg = document.createElement("p");
+      loadingMsg.classList.add("animate-flash");
       loadingMsg.innerHTML = "<em>Loading image…</em>";
       loadingMsg.classList.add("loading-msg");
       modalDesc.appendChild(loadingMsg);
