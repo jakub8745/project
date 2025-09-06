@@ -27,7 +27,7 @@ function ensureVideoElement(cfg) {
   video.loop = cfg.loop ?? true;
 
   // ✅ Force muted autoplay
-  video.muted = true;
+  video.muted = false;
   video.setAttribute('muted', ''); // Safari fix
   video.playsInline = true;
   video.preload = cfg.preload || 'auto';
@@ -91,23 +91,33 @@ function ensureVideoElement(cfg) {
 
 // Add a play/pause icon overlay to the mesh
 
-function getLocalBounds(mesh) {
+function getWorldBounds(mesh) {
   const size = new Vector3();
   const center = new Vector3();
   if (!mesh.geometry) return { size, center };
-  if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox?.();
+
+  if (!mesh.geometry.boundingBox) {
+    mesh.geometry.computeBoundingBox?.();
+  }
+
   mesh.geometry.boundingBox?.getSize(size);
   mesh.geometry.boundingBox?.getCenter(center);
+
+  // Apply local scale
+  size.multiply(mesh.scale);
+  center.multiply(mesh.scale);
+
   return { size, center };
 }
 
 function addPlayIcon(mesh, video, camera) {
   const loader = new TextureLoader();
   loader.load(PLAY_ICON_PATH, iconTex => {
-    const { size: localSize, center: localCenter } = getLocalBounds(mesh);
-    const baseLocal = Math.max(0.001, 0.3 * Math.min(localSize.x || 0, localSize.y || 0) || 1.0);
+    // ✅ use world size instead of raw geometry
+    const { size: worldSize, center: worldCenter } = getWorldBounds(mesh);
+    const baseSize = 0.3 * Math.min(worldSize.x || 0, worldSize.y || 0) || 0.1;
 
-    const iconGeo = new PlaneGeometry(baseLocal, baseLocal);
+    const iconGeo = new PlaneGeometry(baseSize, baseSize);
     const iconMat = new MeshBasicMaterial({
       map: iconTex,
       transparent: true,
@@ -121,14 +131,17 @@ function addPlayIcon(mesh, video, camera) {
     iconMesh.name = `playIcon_${video.id}`;
     iconMesh.renderOrder = 999;
 
-    if (localCenter) iconMesh.position.copy(localCenter);
-    const eps = -0.09 * Math.max(localSize.x || 1, localSize.y || 1);
+    if (worldCenter) iconMesh.position.copy(worldCenter);
+    const eps = -0.03 * Math.max(worldSize.x || 1, worldSize.y || 1);
     iconMesh.position.z += eps;
+    iconMesh.position.y += eps;
+    iconMesh.position.x += eps;
 
     mesh.add(iconMesh);
 
+    // Billboard to camera
     const qParent = new Quaternion();
-    const qCam = new Quaternion();
+    const qCam = new Quaternion();//
     const qLocal = new Quaternion();
     iconMesh.onBeforeRender = (renderer, scene, cam) => {
       const activeCam = camera || cam;
@@ -138,12 +151,14 @@ function addPlayIcon(mesh, video, camera) {
       iconMesh.quaternion.copy(qLocal);
     };
 
+    // Sync with video state
     video.addEventListener('play', () => (iconMesh.visible = false));
     video.addEventListener('pause', () => (iconMesh.visible = true));
     video.addEventListener('ended', () => (iconMesh.visible = true));
     iconMesh.visible = video.paused;
   });
 }
+
 
 
 /**
@@ -211,31 +226,66 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
 }
 
 
-function addLoadingSpinner(mesh, video) {
-  const spinnerGeo = new RingGeometry(0.2, 0.25, 32, 1, 0, Math.PI * 1.5);
+function addLoadingSpinner(mesh, video, camera) {
+  const { size: worldSize, center: worldCenter } = getWorldBounds(mesh);
+  const baseSize = 0.15 * Math.min(worldSize.x || 0, worldSize.y || 0) || 0.1;
+
+  const spinnerGeo = new RingGeometry(baseSize * 0.7, baseSize, 32, 1, 0, Math.PI * 1.5);
   const spinnerMat = new MeshBasicMaterial({
-    color: 0x87ceeb, // ✅ sky-blue
+    color: 0x87ceeb, // sky-blue
     transparent: true,
     opacity: 0.9,
     side: DoubleSide
   });
   const spinnerMesh = new Mesh(spinnerGeo, spinnerMat);
   spinnerMesh.name = `spinner_${video.id}`;
-  spinnerMesh.position.set(0, 0, -0.02);
-  mesh.add(spinnerMesh);
 
-  // ✅ Spin clockwise
-  const animate = () => {
-    if (spinnerMesh.visible) {
-      spinnerMesh.rotation.z += 0.1; // clockwise
-      requestAnimationFrame(animate);
-    }
+  // Pivot: this will get billboarding, spinner rotates inside
+  const pivot = new Mesh(); // empty container
+  pivot.name = `spinnerPivot_${video.id}`;
+  pivot.renderOrder = 999;
+
+  if (worldCenter) pivot.position.copy(worldCenter);
+  const eps = -0.03 * Math.max(worldSize.x || 1, worldSize.y || 1);
+  pivot.position.z += eps;
+  pivot.position.y += eps;
+  pivot.position.x += eps;
+
+  pivot.add(spinnerMesh);
+  mesh.add(pivot);
+
+  // Billboard the pivot to camera
+  const qParent = new Quaternion();
+  const qCam = new Quaternion();
+  const qLocal = new Quaternion();
+  pivot.onBeforeRender = (renderer, scene, cam) => {
+    const activeCam = camera || cam;
+    mesh.getWorldQuaternion(qParent);
+    activeCam.getWorldQuaternion(qCam);
+    qLocal.copy(qParent).invert().multiply(qCam);
+    pivot.quaternion.copy(qLocal);
   };
+
+  // Spin clockwise: rotate child, not the pivot
+  function animate() {
+    if (spinnerMesh.visible) {
+      spinnerMesh.rotation.z -= 0.1; // clockwise
+    }
+    requestAnimationFrame(animate);
+  }
   animate();
 
-  // hide spinner when video starts
-  video.addEventListener("playing", () => (spinnerMesh.visible = false));
-  video.addEventListener("canplay", () => (spinnerMesh.visible = false));
+  // Video state events
+  const hide = () => (spinnerMesh.visible = false);
+  const show = () => (spinnerMesh.visible = true);
+
+  video.addEventListener("playing", hide);
+  video.addEventListener("canplay", hide);
+  video.addEventListener("waiting", show); // re-show on buffering
+  video.addEventListener("stalled", show);
+
+  // Start visible until ready
+  spinnerMesh.visible = true;
 }
 
 
