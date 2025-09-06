@@ -1,212 +1,104 @@
-// src/modules/ModelLoader.js
 import {
-  Group,
-  Mesh, Scene, PerspectiveCamera
-
+  VideoTexture,
+  TextureLoader,
+  MeshBasicMaterial,
+  DoubleSide,
+  SRGBColorSpace,
+  PlaneGeometry,
+  //Vector3,
+  Mesh
 } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { StaticGeometryGenerator, MeshBVH } from 'three-mesh-bvh';
 
-export default class ModelLoader {
-  constructor(deps, scene, newFloor = null) {
-    this.deps = deps;
-    this.scene = scene;
+const PLAY_ICON_PATH =
+  'https://bafybeieawhqdesjes54to4u6gmqwzvpzlp2o5ncumaqw3nfiv2mui6i6q4.ipfs.w3s.link/ButtonPlay.png';
 
-    this.newFloor = newFloor;
-    this.environment = new Group();
-    this.toMerge = {};
-    this.currentModel = 1;
-    this.totalModels = 2;
+// Ensure a <video> element exists and is configured
+function ensureVideoElement(cfg) {
+  if (!cfg || !cfg.id) return null;
+  let video = document.getElementById(cfg.id);
+  if (video) return video;
+
+  video = document.createElement('video');
+  video.id = cfg.id;
+  video.loop = cfg.loop ?? true;
+  video.muted = cfg.muted ?? true;
+  video.playsInline = cfg.playsInline ?? true;
+  video.preload = cfg.preload || 'auto';
+  video.crossOrigin = 'anonymous';
+
+  cfg.sources.forEach(srcObj => {
+    const source = document.createElement('source');
+    source.src = srcObj.src.startsWith('ipfs://')
+      ? srcObj.src.replace('ipfs://', 'https://ipfs.io/ipfs/')
+      : srcObj.src;
+    source.type = srcObj.type;
+    video.appendChild(source);
+  });
+
+  video.load();
+  document.body.appendChild(video);
+  return video;
+}
 
 
-    this.ktx2Loader = deps.ktx2Loader.setTranscoderPath('./libs/basis/');
-    // ✅ detect support only if not already done
-    if (!this.ktx2Loader._supportChecked) {
-      try {
-        deps.renderer.render(new Scene(), new PerspectiveCamera());
-        this.ktx2Loader.detectSupport(deps.renderer);
-      } catch (err) {
-        console.warn('⚠️ KTX2 detectSupport failed:', err);
-      }
-      this.ktx2Loader._supportChecked = true;
+
+/**
+ * Replace the original 'Video' meshes' JPG textures with live video:
+ * - Uses the existing mesh and geometry
+ * - Clones or recreates a standard material
+ * - Swaps in a VideoTexture
+ * - Ensures depthTest/write for full visibility/
+ */
+export function applyVideoMeshes(scene, galleryConfig) {
+
+  const configMap = new Map((galleryConfig.videos || []).map(cfg => [cfg.id, cfg]));
+
+  console.log('🎨 Applying video meshes...', configMap);
+
+  scene.traverse(obj => {
+    if (!obj.isMesh || obj.userData.type !== 'Video') return;
+
+    obj.wireframe = false;
+
+    const cfg = configMap.get(obj.userData.elementID);
+
+    if (!cfg) {
+      console.warn(`No video config for ID ${obj.userData.elementID}`);
+      return;
     }
 
+    const video = ensureVideoElement(cfg);
+    if (!video) return;
 
-    this.manager = deps.manager || undefined;
-    this.gltfLoader = new GLTFLoader(this.manager);
-    this.dracoLoader = new DRACOLoader(this.manager).setDecoderPath('./libs/draco/');
+    video.addEventListener('loadedmetadata', () => {
 
-    this.setupLoaders();
+      // Create VideoTexture
+      const texture = new VideoTexture(video);
+      texture.colorSpace = SRGBColorSpace;
 
-  }
-
-  setupLoaders() {
-    this.gltfLoader.setDRACOLoader(this.dracoLoader);
-    this.gltfLoader.setKTX2Loader(this.ktx2Loader);
-    this.gltfLoader.setMeshoptDecoder(MeshoptDecoder);
-  }
-
-  async loadModel(modelPath, interactivesPath) {
+      texture.flipY = false;
 
 
+      const newMat = obj.material.clone();
 
-    try {
+      newMat.map = texture;
+      newMat.transparent = false;
+      newMat.depthTest = true;
+      newMat.depthWrite = true;
+      newMat.side = DoubleSide;
 
-      const gltfScene = await this.loadGLTFModel(modelPath, this.currentModel, this.totalModels);
-      this.currentModel++;
+      newMat.needsUpdate = true;
 
-      const exhibitObjects = await this.loadGLTFModel(interactivesPath, this.currentModel, this.totalModels);
+      obj.material = newMat;
 
-      this.processExhibitObjects(exhibitObjects);
-      gltfScene.add(exhibitObjects);
+      addPlayIcon(obj, video, scene.userData?.camera || null);
 
-      this.processSceneObjects(gltfScene);
+      video.currentTime = 0.01
+      video.pause();
 
-      const collider = this.createCollider();
-      this.scene.add(collider);
-      this.deps.collider = collider;
-
-      this.scene.add(this.environment);
-
-      this.scene.updateMatrixWorld(true);
+      texture.needsUpdate = true;
 
 
-      return collider;
-    } catch (err) {
-      console.error('Error loading model:', err);
-      throw err;
-    }
-  }
-
-  async loadGLTFModel(modelPath, currentModel, totalModels) {
-    const progressText = document.getElementById('progress-text');
-    const onProgress = (xhr) => {
-      if (xhr.total) {
-        const percent = Math.round((xhr.loaded / xhr.total) * 100);
-        if (progressText) progressText.textContent = `Loading model ${currentModel}/${totalModels}: ${percent}%`;
-      }
-    };
-
-    const { scene: gltfScene } = await this.gltfLoader.loadAsync(modelPath, onProgress);
-    gltfScene.updateMatrixWorld(true);
-
-    return gltfScene;
-  }
-
-  async loadModelFromBlob(modelBlob, interactivesBlob) {
-
-    try {
-      const gltfScene = await this.loadGLTFBlob(modelBlob, this.currentModel, this.totalModels);
-
-
-      this.currentModel++;
-      const exhibitObjects = await this.loadGLTFBlob(interactivesBlob, this.currentModel, this.totalModels);
-
-      this.processExhibitObjects(exhibitObjects);
-
-
-      gltfScene.add(exhibitObjects);
-
-      this.processSceneObjects(gltfScene);
-
-      //
-
-
-      const collider = this.createCollider();
-
-      this.scene.add(collider);
-      this.deps.collider = collider;
-
-      this.scene.add(this.environment);
-
-      this.scene.updateMatrixWorld(true);
-
-
-      return collider;
-    } catch (err) {
-      console.error('Error loading model from blob:', err);
-      throw err;
-    }
-  }
-
-  async loadGLTFBlob(blob, currentModel, totalModels) {
-    const progressText = document.getElementById('progress-text');
-
-    const arrayBuffer = await blob.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-
-    const { scene: gltfScene } = await new Promise((resolve, reject) => {
-      this.gltfLoader.parse(buffer.buffer, '', resolve, reject);
     });
-
-    if (progressText) {
-      progressText.textContent = `Loaded model ${currentModel}/${totalModels}`;
-    }
-    gltfScene.updateMatrixWorld(true);
-
-    return gltfScene;
-  }
-
-
-  processExhibitObjects(objects) {
-    objects.traverse(obj => {
-      if (obj.isMesh) {
-        obj.wireframe = true;
-        obj.material.transparent = true;
-        obj.material.opacity = 0;
-        obj.interactive = true;
-      }
-    });
-  }
-
-  processSceneObjects(scene) {
-    scene.traverse(obj => {
-      if (obj.isMesh || obj.isLight) {
-        if (obj.isLight) obj.visible = false;
-        const type = obj.userData.type;
-        this.toMerge[type] = this.toMerge[type] || [];
-        this.toMerge[type].push(obj);
-
-      }
-    });
-    this.mergeSceneObjects();
-  }
-
-  mergeSceneObjects() {
-    for (const type in this.toMerge) {
-      for (const mesh of this.toMerge[type]) {
-
-        this.environment.attach(mesh);
-      }
-    }
-    this.environment.name = 'environment';
-
-  }
-
-  createCollider() {
-
-    const staticGen = new StaticGeometryGenerator(this.environment);
-    staticGen.attributes = ['position'];
-    const merged = staticGen.generate();
-
-    merged.boundsTree = new MeshBVH(merged, { lazyGeneration: false });
-
-    const collider = new Mesh(merged);
-    collider.material.wireframe = true;
-    collider.material.opacity = 0;
-    collider.material.transparent = true;
-    collider.material.color = 0x00ffff;
-    collider.visible = true;
-    collider.name = 'collider';
-
-    collider.position.set(0, 0, 0);
-    collider.castShadow = true;
-    collider.receiveShadow = true;
-
-    return collider;
-  }
-
-
+  });
 }

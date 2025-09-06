@@ -84,12 +84,14 @@ export default class Visitor extends Mesh {
 
     window.addEventListener('keydown', (e) => {
       if (keyMap[e.key] !== undefined) {
+        e.preventDefault(); 
         this[keyMap[e.key]] = true;
       }
     });
 
     window.addEventListener('keyup', (e) => {
       if (keyMap[e.key] !== undefined) {
+        e.preventDefault(); 
         this[keyMap[e.key]] = false;
       }
     });

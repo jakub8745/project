@@ -26,7 +26,7 @@ export function initAppBuilder({ showModal }) {
 }
 
 // --- Build gallery ---
-export async function buildGallery(config, container,{ onProgress } = {}) {
+export async function buildGallery(config, container, { onProgress } = {}) {
 
   if (!container) throw new Error("No container provided to buildGallery");
 
@@ -153,7 +153,7 @@ export async function buildGallery(config, container,{ onProgress } = {}) {
     },
   }));
 
-  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [], onProgress};
+  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [], onProgress };
 
   // ✅ Visitor + PointerHandler BEFORE async loads
   visitor = new Visitor(deps);
@@ -196,7 +196,7 @@ export async function buildGallery(config, container,{ onProgress } = {}) {
 
 
 
-  applyVideoMeshes(scene, config);
+  applyVideoMeshes(scene, camera, config);
   applyAudioMeshes(scene, config, listener, renderer, camera, transform);
 
   // --- Animation loop ---
