@@ -26,18 +26,20 @@ function ensureVideoElement(cfg) {
   video.id = cfg.id;
   video.loop = cfg.loop ?? true;
 
-  // ✅ Force muted autoplay
-  video.muted = false;
-  video.setAttribute('muted', ''); // Safari fix
+
+  // Disable autoplay and avoid forcing muted
+  video.autoplay = false;
+  video.muted = cfg.muted ?? false;
+  video.removeAttribute('muted');
   video.playsInline = true;
-  video.preload = cfg.preload || 'auto';
+  video.preload = cfg.preload || 'metadata';
   video.crossOrigin = 'anonymous';
 
   const ipfsGateways = [
-    "https://ipfs.io/ipfs/",
     "https://cloudflare-ipfs.com/ipfs/",
     "https://gateway.pinata.cloud/ipfs/",
-    "https://dweb.link/ipfs/"
+    "https://dweb.link/ipfs/",
+    "https://ipfs.io/ipfs/"
   ];
 
   function ipfsToHttpMulti(ipfsUrl, gatewayIndex = 0) {
@@ -70,20 +72,11 @@ function ensureVideoElement(cfg) {
   trySource();
   document.body.appendChild(video);
 
-  // ✅ Wait until ready before trying to play
-  video.addEventListener("canplaythrough", () => {
-    video.play().catch(err => {
-      console.warn(`[VideoMesh] Autoplay blocked for ${cfg.id}`, err);
-
-      // ✅ Fallback: user interaction
-      const resume = () => {
-        video.play().catch(e => console.error(`[VideoMesh] Manual play failed`, e));
-        document.removeEventListener("click", resume);
-        document.removeEventListener("touchstart", resume);
-      };
-      document.addEventListener("click", resume, { once: true });
-      document.addEventListener("touchstart", resume, { once: true });
-    });
+  // Keep paused on ready; emit a custom event consumers can listen for
+  video.addEventListener('canplaythrough', () => {
+    video.pause();
+    video.currentTime = video.currentTime;
+    video.dispatchEvent(new Event('videoready'));
   }, { once: true });
 
   return video;
@@ -284,7 +277,27 @@ function addLoadingSpinner(mesh, video, camera) {
   video.addEventListener("waiting", show); // re-show on buffering
   video.addEventListener("stalled", show);
 
-  // Start visible until ready
+  // --- Robust state control to avoid spinner + play overlap ---
+  const showIfPlaying = () => { spinnerMesh.visible = !(video.paused || video.ended); };
+
+  // Hide when we have enough to display a frame or not actively playing
+  video.addEventListener("loadeddata", hide);
+  video.addEventListener("canplay", hide);
+  video.addEventListener("canplaythrough", hide);
+  video.addEventListener("playing", hide);
+  video.addEventListener("pause", hide);
+  video.addEventListener("ended", hide);
+  video.addEventListener("error", hide);
+  video.addEventListener("suspend", hide);
+  video.addEventListener("emptied", hide);
+
+  // Show only when buffering while actively playing
+  const onWaiting = () => showIfPlaying();
+  video.addEventListener("waiting", onWaiting);
+  video.addEventListener("stalled", onWaiting);
+  video.addEventListener("seeking", onWaiting);
+
+  // Start visible until the first frame is ready, then hide
   spinnerMesh.visible = true;
 }
 
