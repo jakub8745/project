@@ -16,6 +16,7 @@ interface Gallery {
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null); //
 
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -42,12 +43,14 @@ export default function App() {
         const gallery = findGalleryBySlug(slug);
         if (gallery) {
           setSelectedConfigUrl(gallery.configUrl);
+          setSelectedSlug(slug);                // ⭐ NEW
           return;
         }
       }
       // fallback: default
       if (GALLERIES[0]) {
         setSelectedConfigUrl(GALLERIES[0].configUrl);
+        setSelectedSlug(GALLERIES[0].slug);
       }
     }
 
@@ -75,6 +78,7 @@ export default function App() {
             onSelect={handleGallerySelect} // ✅ memoized
             sidebarOpen={sidebarOpen}
             onToggleSidebar={toggleSidebar} // ✅ stable reference
+            selectedSlug={selectedSlug ?? undefined}
           />
         </section>
       </Sidebar>
