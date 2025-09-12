@@ -1,4 +1,5 @@
 {
+  "id": "puno85",
   "modelPath": "https://bafybeia5zjnvgzikl6bqrgyenheuab5lbkt7dieogal2kqnz2ge2omul6q.ipfs.w3s.link/exhibition_puno85_ktx.glb",
   "interactivesPath": "/models/interactives_puno85.glb",
   "backgroundTexture": "https://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa.ipfs.w3s.link/bg_puno85.ktx2",
@@ -33,73 +34,73 @@
       "title": "prof. Oskar Halecki",
       "description": "ur. 1891 w Wiedniu, zm. 1973 w White Plains, USA, historyk, mediewista, profesor Uniwersytetu Warszawskiego i Fordham University w Nowym Jorku; rektor i inicjator Polskiego Uniwersytetu Zagranicą 1939-1940.",
       "author": "",
-      "imagePath": "ipfs://bafkreifwrijtx33jn2chz73pudp2rfbwqi6dtwmnztxgzgwigute2l4y3m"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/HALECKI.jpg"
     },
     "BRZESKI": {
       "title": "prof. Tadeusz Brzeski",
       "description": "ur. 1884 w Dębicy, zm. 1958 w Londynie, ekonomista i prawnik, profesor Uniwersytetu Warszawskiego; rektor PUNO 1949-1958.",
       "author": "",
-      "imagePath": "ipfs://bafkreiapb2iw7faub3uvyrohvp27loy4zumy2verjbemlhj7itlsdw3pmi"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/BRZESKI.jpg"
     },
     "CESARIA": {
       "title": "prof. Cezaria Baudouin de Courtenay Ehrenkreutz Jędrzejewiczowa",
       "description": "ur. 1885 w Dorpacie, zm. 1967 w Londynie, etnolog i historyk kultury, profesor Polskiego Instytutu Naukowego w Jerozolimie i PUNO; rektor PUNO 1958-1967",
       "author": "",
-      "imagePath": "ipfs://bafkreih2ksufwkwd44vbptfflxu7oggxr6yd3dyhuaq25fbm6insemt4vm"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/CESARIA.jpg"
     },
     "SULIMIRSKI": {
       "title": "prof. Tadeusz Józef Sulimirski",
       "description": "ur. 1898 w Kobylanach, zm. 1983 w Londynie, archeolog i historyk starożytny, profesor Uniwersytetu Jagiellońskiego i University of London; rektor PUNO 1969-1979.",
       "author": "",
-      "imagePath": "ipfs://bafkreibpe6hmuogc2mqsd6tpf2knxeua2hbtyx2yu5xseszjy7l5onu4xi"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/SULIMIRSKI.jpg"
     },
     "GAWENDA": {
       "title": "prof. Jerzy August Odrowąz-Gawenda",
       "description": "ur. 1917 we Lwowie, zm. 2000 w Londynie, prawnik, wicepremier i minister spraw zagranicznych Rządu RP na uchodźstwie; rektor PUNO 1978-1986.",
       "author": "",
-      "imagePath": "ipfs://bafybeic6in7splfnjy6u75jt6sqimcw7zswfqc2xuk5tabzq3duw425gru"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/GAWENDA.jpg"
     },
     "SKOWRONSKI-SAS": {
       "title": "prof. Mieczysław Sas-Skowroński",
       "description": "ur. 1920 w Szaflarach lub Stanisławowie, zm. 1996 w Londynie, inżynier i działacz emigracyjny, minister w rządach Kazimierza Sabbata; rektor PUNO 1987-1993.",
       "author": "",
-      "imagePath": "ipfs://bafkreibhlwzixd5xywcarb34vwpmsu3fs4puubhel7dktjcyfquamasbru"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/SKOWRONSKI-SAS.jpg"
     },
     "DREWNOWSKI": {
       "title": "prof. Jan Drewnowski",
       "description": "ur. 1908 w Wilnie, zm. 2000 w Londynie, ekonomista i sowietolog, profesor Szkoły Głównej Handlowej i Institute of Social Studies w Hadze; rektor PUNO 1994-1998.",
       "author": "",
-      "imagePath": "ipfs://bafkreiay5ynicavmmbrnnuo5ule4qyuiiewzxlrjnmz5ddobiieirdzlmi"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/DREWNOWSKI.jpg"
     },
     "WALASZEWSKI": {
       "title": "prof. Zdzisław Eugeniusz Wałaszewski",
       "description": "ur. 1922 w Lipinkach Szlacheckich, zm. 2008 w Londynie, romanista i dziennikarz, związany z PUNO; rektor PUNO 1998-2002.",
       "author": "",
-      "imagePath": "ipfs://bafkreiczn36o32xyqidtzqmunsez45pdzft7smndbkd4kfzopngls7aayi"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/WALASZEWSKI.jpg"
     },
     "FALKOWSKI": {
       "title": "prof. Wojciech Falkowski",
       "description": "ur. 1930 w Lochwinowiczach, zm. 2015 w Ewell, lekarz psychiatra i działacz społeczny, praktykował w Wielkiej Brytanii; rektor PUNO 2002-2011.",
       "author": "",
-      "imagePath": "ipfs://bafkreifdsp5gct57dyijbgaj2kyfeb2t6ocjenmkgpmtg2hmy7kan6feni"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/FALKOWSKI.jpg"
     },
     "TABORSKA": {
       "title": "prof. Halina Taborska",
       "description": "ur. 1933 w Puławach, zm. 2021 w Londynie, filolog i historyk sztuki, profesor Uniwersytetu Warszawskiego i PUNO; rektor PUNO 2011-2017.",
       "author": "",
-      "imagePath": "ipfs://bafkreihz2ndxhg6dl54ojzu467y345irt43ze4uehbfibf2z2mln2ivhaa"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/TABORSKA.jpg"
     },
     "KAZIMIERSKI": {
       "title": "prof. Tomasz Kaźmierski",
       "description": "ur. 1949 w Polsce, elektronik, profesor University of Southampton, specjalista w zakresie systemów VLSI i języków opisu układów; rektor PUNO 2017-2021.",
       "author": "",
-      "imagePath": "ipfs://bafkreidqbzth3rl6oem6xcnsrh5c7ejc65mbm6trfllbcgv43n7xjqzxpm"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/KAZIMIERSKI.jpg"
     },
     "MIER-JEDRZEJOWICZ": {
       "title": "prof. Włodzimierz Mier-Jędrzejowicz",
       "description": "ur. 1949 w Londynie, fizyk cząstek elementarnych, doktor i wieloletni wykładowca Imperial College London; rektor PUNO od 2021.",
       "author": "",
-      "imagePath": "ipfs://bafkreiapijnqndhjk74er67sk44lzwftborjz6npwxgybcn7cilewitpu4"
+      "imagePath": "ipfs://bafybeiczbnxjy75xjj4ctbxoxiumfjaapamyv2luiceq7alisl2klhc7za/MIER-JEDRZEJOWICZ.jpg"
     }
   },
   "videos": [

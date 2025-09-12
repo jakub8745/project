@@ -23,6 +23,62 @@ export function disposeAudioMeshes() {
 export function applyAudioMeshes(scene, galleryConfig, listener, renderer, camera, transform) {
 
   const loader = new AudioLoader();
+  const ipfsGateways = [
+    'https://cloudflare-ipfs.com/ipfs/',
+    'https://ipfs.io/ipfs/',
+    'https://gateway.pinata.cloud/ipfs/',
+    'https://dweb.link/ipfs/'
+  ];
+
+  function loadAudioWithFallback(cfg, onSuccess) {
+    const primary = cfg?.url || '';
+    const ipfsUrl = cfg?.ipfsUrl || (typeof primary === 'string' && primary.startsWith('ipfs://') ? primary : null);
+
+    const tryIpfs = (gwIndex = 0) => {
+      if (!ipfsUrl) {
+        console.error(`[AudioMesh] Primary failed and no IPFS fallback for ${cfg?.id || cfg?.name}`);
+        return;
+      }
+      if (gwIndex >= ipfsGateways.length) {
+        console.error(`[AudioMesh] Failed to load audio from all gateways: ${ipfsUrl}`);
+        return;
+      }
+      const cid = ipfsUrl.replace('ipfs://', '');
+      const url = ipfsGateways[gwIndex] + cid;
+      loader.load(
+        url,
+        buffer => onSuccess(buffer),
+        undefined,
+        () => {
+          console.warn(`[AudioMesh] IPFS gateway failed (${gwIndex + 1}/${ipfsGateways.length}), retrying...`);
+          tryIpfs(gwIndex + 1);
+        }
+      );
+    };
+
+    const tryPrimary = () => {
+      // If primary is ipfs://, go straight to IPFS
+      if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
+        tryIpfs(0);
+        return;
+      }
+      if (!primary) {
+        tryIpfs(0);
+        return;
+      }
+      loader.load(
+        primary,
+        buffer => onSuccess(buffer),
+        undefined,
+        () => {
+          console.warn(`[AudioMesh] Primary failed, falling back to IPFS: ${primary}`);
+          tryIpfs(0);
+        }
+      );
+    };
+
+    tryPrimary();
+  }
 
   // build config map for quick lookup
   const configMap = new Map((galleryConfig.audio || []).map(cfg => [cfg.id, cfg]));
@@ -56,7 +112,7 @@ export function applyAudioMeshes(scene, galleryConfig, listener, renderer, camer
       const sound = new PositionalAudio(listener);
       sound.name = cfg.name || obj.userData.name || obj.name;
 
-      loader.load(cfg.url, buffer => {
+      loadAudioWithFallback(cfg, buffer => {
         sound.setBuffer(buffer);
         sound.setLoop(cfg.loop ?? true);
         sound.setRefDistance(cfg.refDistance ?? 1);
@@ -154,4 +210,3 @@ function updateAudioToggleButton(audioAvailable) {
     audioButton.style.display = 'none';
   }
 }
-

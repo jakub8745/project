@@ -28,7 +28,7 @@ export const DEFAULT_CONFIG_URL = "./configs/puno85_config.json";
 
 export const GALLERIES: GalleryItem[] = [{
     slug: "puno85",
-    url: "https://bafybeiec35tpnq522bma536klp5cmqwnc55qmqepxquc2mmswwj63qbygq.ipfs.w3s.link/preview_puno85.glb",
+    url: "/sidebar_models/preview_puno85.glb",
     title: '85 lat PUNO',
     description: 'Wystawa z okazji 85-lecia PUNO',
     scale: 0.07,
@@ -42,7 +42,7 @@ export const GALLERIES: GalleryItem[] = [{
 },
 {
     slug: "cipriani", 
-    url: "https://bafybeiae35vsmewlokdlbgurbvya5kf2uy23f4woteokf4p3qrvwi3xfjm.ipfs.w3s.link/preview_cipriani05.glb",
+    url: "/sidebar_models/preview_cipriani05.glb",
     title: 'Cipriani - Vincenz',
     description: 'Modern meets classic',
     scale: 0.35,
@@ -55,7 +55,7 @@ export const GALLERIES: GalleryItem[] = [{
 },
 {
     slug: "bednarczyk", 
-    url: "/models/preview_bednarczyk.glb",
+    url: "/sidebar_models/preview_bednarczyk.glb",
     title: 'Unvelling the Heritage of Krystyna Bednarczyk',
     description: '3D Documentation of the project',
     scale: 0.45,
@@ -68,7 +68,7 @@ export const GALLERIES: GalleryItem[] = [{
 },
 {
     slug: "dystopia",
-    url: "https://bafybeibwkpikvcnrmme3tjwzvam7bzconw23fxnrk2c3b22s4lq2dtxfja.ipfs.w3s.link/preview_dystopia.glb",
+    url: "/sidebar_models/preview_dystopia.glb",
     title: 'Dystopia of imitation',
     description: 'Modern meets classic',
     scale: 0.3,
@@ -81,7 +81,7 @@ export const GALLERIES: GalleryItem[] = [{
 },
 {
     slug: "identity",
-    url: "https://bafybeihlip3dvgdu7m4zf66hhktrdd2bpxkkl2s6uge5ifmhsx7ympvmdq.ipfs.w3s.link/preview_identity.glb",
+    url: "/sidebar_models/preview_identity.glb",
     title: 'Identity Preview',
     description: 'Exploring self and society',
     scale: 0.29,
@@ -94,7 +94,7 @@ export const GALLERIES: GalleryItem[] = [{
 },
 {
     slug: "wakeupcall",
-    url: "https://bafybeib3shw4j4adxamxk2bchwnvz2t6nhoy6puosrz5iaxrp6uv2dotnq.ipfs.w3s.link/preview_wakeupcall.glb",
+    url: "/sidebar_models/preview_wakeupcall.glb",
     title: 'WakeUp Call',
     description: 'Modern meets classic',
     scale: 0.065,
@@ -107,7 +107,7 @@ export const GALLERIES: GalleryItem[] = [{
 },
 {
     slug: "lockdowns", 
-    url: "https://bafybeigqaweptpcmauzusqfs4ifzi6dsbo6r2ogckzzmsa2wkrzji7pyku.ipfs.w3s.link/preview_lockdowns.glb",
+    url: "/sidebar_models/preview_lockdowns.glb",
     title: 'Joanna Ciechanowska - Lockdowns',
     description: 'A look back at 2020',
     scale: 0.45,

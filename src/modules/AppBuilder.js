@@ -189,7 +189,9 @@ export async function buildGallery(config, container, { onProgress } = {}) {
   // Pass onProgress down
   await modelLoader.loadModel(
     config.modelPath,
-    config.interactivesPath
+    config.interactivesPath,
+    config.ipfsModelPath,
+    config.ipfsInteractivesPath
   );
 
   //await modelLoader.loadModel(modelPath, interactivesPath);

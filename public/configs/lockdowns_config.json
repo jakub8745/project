@@ -1,7 +1,8 @@
 {
+  "id": "lockdowns",
   "modelPath": "https://bafybeifze5a47hgujyx2seprukkdxooh4sr7semaagsglbiumyrhhyou7e.ipfs.w3s.link/exhibition_lockdowns_ktx.glb",
   "interactivesPath": "https://bafybeidm577izibt6ixk6tjlt6has7njcyphveflsq74vbzhmkwtgipdkq.ipfs.w3s.link/interactives_lockdowns.glb",
-  "backgroundTexture": "https://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda.ipfs.w3s.link/bg_lockdowns.ktx2",
+  "backgroundTexture": "ipfs://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda/bg_lockdowns.ktx2",
   "sidebar": {
     "logo": {
       "text": "Joanna Ciechanowska's Exhibition"
@@ -24,106 +25,106 @@
       {
         "label": "Strona Główna Blue Point Art",
         "icon": "https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif",
-        "link": "https://bluepointart.uk"
+        "link": "https://bluepointart.uk/lockdowns-ciechanowska/"
       }
     ]
   },
   "images": {
+    "78": {
+      "title": "78 Degrees North. ",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/78.jpg"
+    },
     "LobsterPyjamas": {
       "title": "Self Portrait in Lobster Pyjamas",
       "description": "Oil on canvas, 100x70cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreiaaviftt46d2mnwbdhs2gf7bgfyza3w4tbdyf2mz7vpm6my7ga6fm"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LobsterPyjamas.jpg"
     },
     "IndigoBlue": {
       "title": "What Will I Do if I Run Out of Indigo Blue",
       "description": "Oil on canvas, 100x76 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreihgmblguw66tovww7ibvvbqaqteeihwhg334nu4x2f4dbj2lpsmba"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/IndigoBlue.jpg"
     },
     "1000years": {
       "title": "Who Says We’ll Live for 1000 years?",
       "description": "Oil and collage on canvas, 100x70 cm, 2019",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreifjufm3mcmx2iuq4nn534v7vj5bwqb67r7dmjgo7c4yszsmo7wryy"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/1000years.jpg"
     },
     "BlueRain": {
       "title": "Blue Rain",
       "description": "Blue Rain. Oil on canvas, 76x50 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreihqtj2zzbts6taotsl2ckg6jxksv6ijv7qqkh4kcz5fofzvp4wbwy"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/BlueRain.jpg"
     },
     "LastEvening": {
       "title": "The Last Evening Before Silence. The Woman",
       "description": "Oil on canvas, 76x60 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreigct6oe6fbkinidzbyuqbmre45ghxgpulqyr2qlaaveetn6zgsqee"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LastEvening.jpg"
     },
     "Touch": {
       "title": "Don’t Touch Me",
       "description": "Oil on canvas, 76x50 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreibw2a7i2bddbp4pwua657nrs5ao25pb46qk4omdmweg7xi4vsmmdy"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Touch.jpg"
     },
     "TheMan": {
       "title": "The Last Evening Before Silence. The Man",
       "description": "Oil on canvas, 76x60 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreig6ovlsrkr7yz6sixbyw3vb7rnvukehzhffi72nt4tbwnrvalaaxm"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/TheMan.jpg"
     },
     "Svalbard": {
       "title": "Take Me to Svalbard Again",
       "description": "Acrylic on canvas, 50x76 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreidyiom4ii64sucm7yd5hvtob3l5pxx7cux2nnc6mdwjqi7kp26roe"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Svalbard.jpg"
     },
     "AncientFears": {
       "title": "Ancient Fears",
       "description": "Oil on canvas, 100x76 cm, 2009-2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreifa6k2og3b7s25pvzau65d46yae3lijq653irafi7hcde2oaxoabu"
-    },
-    "78": {
-      "title": "78 Degrees North. ",
-      "description": "Acrylic on canvas, 50x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreihd64xbtczo4flqxk67ys6givepayoxyakogsyjtrqykfdinyxsbq"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/AncientFears.jpg"
     },
     "LastFlight": {
       "title": "The Last Flight",
       "description": "Acrylic on canvas, 70x100 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreiedhzzakdipc6gzkpr34q2v7hrj2uthao5krfij4zr44bz7ka2xxe"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LastFlight.jpg"
     },
     "City": {
       "title": "Imagine a City that Never Happened",
       "description": "Oil on canvas, 100x76 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreifvxxfo5p3qmhmuxkymxqzldent53sr4esm7jkb6ageb6wfek2ibq"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/City.jpg"
     },
     "Cauchemar": {
       "title": "Cauchemar",
       "description": "Oil on canvas, 60x60 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreihhjte6pvrdycxv3mhh2cyagva3yemkt6x3v2eyv5t5bf4ccjg3j4"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Cauchemar.jpg"
     },
     "Shadow": {
       "title": "Shadow Crossing",
       "description": "Oil on canvas, 60x60 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreiamalhf35nb477oe2hapaqbx3znnr442ckd5afu632ned6ozkylcm"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Shadow.jpg"
     },
     "Waves": {
       "title": "Dreaming Waves",
       "description": "Acrylic on canvas, 50x76 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreihm2fi7ob5cuphropkrvthx4q5gg75opufkzkhxanho47gz2gg4jq"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Waves.jpg"
     },
     "Boat": {
       "title": "I Was On that Boat, Once",
       "description": "Acrylic on canvas, 50x76 cm, 2020",
       "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafkreibbpkde4ssopbk5tf6vig2dhi7hlamyjweurcyp3oj2o64fbvwccu"
+      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Boat.jpg"
     }
   },
   "params": {
@@ -139,9 +140,9 @@
       "y": 2,
       "z": 1
     },
-     "rotateOrbit": 30,
-     "backgroundBlurriness": 0.1,
-     "backgroundIntensity": 0.5,
-     "lightIntensity": 2.5
+    "rotateOrbit": 30,
+    "backgroundBlurriness": 0.1,
+    "backgroundIntensity": 0.5,
+    "lightIntensity": 2.5
   }
 }

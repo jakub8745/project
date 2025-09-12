@@ -5,23 +5,230 @@ import { buildGallery } from '../modules/AppBuilder.js';
 interface ModularGalleryProps {
   configUrl: string;
   onConfigLoaded?: (config: any) => void;
-  imagePath: string;
-  img?: HTMLImageElement;
+}
+
+const ORACLE_REGION = "uk-london-1";
+const ORACLE_NAMESPACE = "lrbcisjgkyhb";
+
+/**
+ * Extract last segment of ipfs://… (the actual filename).
+ */
+function getFilename(uri: string): string {
+  const parts = uri.split("/");
+  return parts[parts.length - 1];
+}
+
+/**
+ * Convert ipfs://… to Oracle Object Storage URL.
+ */
+function resolveOracleUrl(uri: string, bucket: string): string {
+  if (!uri.startsWith("ipfs://")) return uri;
+  const filename = getFilename(uri);
+  return `https://objectstorage.${ORACLE_REGION}.oraclecloud.com/n/${ORACLE_NAMESPACE}/b/${bucket}/o/${filename}`;
+}
+
+/**
+ * Rewrite all relevant config paths to Oracle URLs.
+ */
+function normalizeConfig(config: any) {
+  const bucket = config.id;
+
+  const images = config.images
+    ? Object.fromEntries(
+        Object.entries(config.images).map(([key, meta]: [string, any]) => {
+          const originalPath = meta?.imagePath;
+          const isIpfs = typeof originalPath === 'string' && originalPath.startsWith('ipfs://');
+          const oracleUrl = isIpfs && bucket ? resolveOracleUrl(originalPath, bucket) : undefined;
+          return [
+            key,
+            {
+              ...meta,
+              // Keep original IPFS for fallback use
+              ipfsImagePath: isIpfs ? originalPath : meta?.ipfsImagePath,
+              // Prefer Oracle URL if available; otherwise keep original
+              imagePath: oracleUrl || originalPath,
+              oracleImagePath: oracleUrl || meta?.oracleImagePath,
+            },
+          ];
+        })
+      )
+    : config.images;
+
+  const videos = Array.isArray(config.videos)
+    ? config.videos.map((vid: any) => ({
+        ...vid,
+        sources: Array.isArray(vid.sources)
+          ? vid.sources.map((srcObj: any) => {
+              const originalSrc = srcObj?.src;
+              const isIpfs = typeof originalSrc === 'string' && originalSrc.startsWith('ipfs://');
+              const oracleSrc = isIpfs && bucket ? resolveOracleUrl(originalSrc, bucket) : undefined;
+              return {
+                ...srcObj,
+                ipfsSrc: isIpfs ? originalSrc : srcObj?.ipfsSrc,
+                oracleSrc: oracleSrc || srcObj?.oracleSrc,
+                // Prefer Oracle if available, otherwise keep original
+                src: oracleSrc || originalSrc,
+              };
+            })
+          : vid.sources,
+      }))
+    : config.videos;
+
+  const audio = Array.isArray(config.audio)
+    ? config.audio.map((a: any) => {
+        const originalUrl = a?.url;
+        const isIpfs = typeof originalUrl === 'string' && originalUrl.startsWith('ipfs://');
+        const oracleUrl = isIpfs && bucket ? resolveOracleUrl(originalUrl, bucket) : undefined;
+        return {
+          ...a,
+          ipfsUrl: isIpfs ? originalUrl : a?.ipfsUrl,
+          oracleUrl: oracleUrl || a?.oracleUrl,
+          url: oracleUrl || originalUrl,
+        };
+      })
+    : config.audio;
+
+  const originalModelPath = config.modelPath;
+  const originalInteractivesPath = config.interactivesPath;
+
+  return {
+    ...config,
+    images,
+    videos,
+    audio,
+    // preserve original IPFS for fallback
+    ipfsModelPath: typeof originalModelPath === 'string' && originalModelPath.startsWith('ipfs://')
+      ? originalModelPath
+      : config.ipfsModelPath,
+    ipfsInteractivesPath: typeof originalInteractivesPath === 'string' && originalInteractivesPath.startsWith('ipfs://')
+      ? originalInteractivesPath
+      : config.ipfsInteractivesPath,
+    modelPath: originalModelPath
+      ? resolveOracleUrl(originalModelPath, bucket)
+      : originalModelPath,
+    interactivesPath: originalInteractivesPath
+      ? resolveOracleUrl(originalInteractivesPath, bucket)
+      : originalInteractivesPath,
+    backgroundTexture: config.backgroundTexture
+      ? resolveOracleUrl(config.backgroundTexture, bucket)
+      : config.backgroundTexture,
+  };
+}
+
+/**
+ * Lazy preload a single image from an already-normalized Oracle URL.
+ */
+function preloadImageOracle(url: string, registry?: HTMLImageElement[]): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    if (!url) return reject(new Error('Empty image URL'));
+    const img = new Image();
+    if (registry) registry.push(img);
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load: ${url}`));
+    img.src = url;
+  });
+}
+
+function preloadImageFromIpfs(ipfsUrl: string, registry?: HTMLImageElement[]): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    if (!ipfsUrl || !ipfsUrl.startsWith('ipfs://')) return reject(new Error('Invalid IPFS URL'));
+    const gateways = [
+      'https://ipfs.io/ipfs/',
+      'https://cloudflare-ipfs.com/ipfs/',
+      'https://gateway.pinata.cloud/ipfs/',
+      'https://dweb.link/ipfs/',
+    ];
+    const cid = ipfsUrl.replace('ipfs://', '');
+    let i = 0;
+    const img = new Image();
+    if (registry) registry.push(img);
+    const tryNext = () => {
+      if (i >= gateways.length) {
+        reject(new Error(`Failed all IPFS gateways for: ${ipfsUrl}`));
+        return;
+      }
+      img.onload = () => resolve(img);
+      img.onerror = () => {
+        i += 1;
+        setTimeout(tryNext, 100);
+      };
+      img.src = gateways[i] + cid;
+    };
+    tryNext();
+  });
+}
+
+/**
+ * Kick off non-blocking preloads for all images in config.images.
+ * Stores the loaded HTMLImageElement on each meta as meta.img.
+ */
+function lazyPreloadImagesFromOracle(config: any) {
+  if (!config?.images) return () => {};
+  const registry: HTMLImageElement[] = [];
+  let alive = true;
+  try {
+    Object.entries(config.images as Record<string, any>).forEach(([key, meta]) => {
+      const primaryUrl = meta?.imagePath;
+      const ipfsUrl = meta?.ipfsImagePath;
+      if (!primaryUrl && !ipfsUrl) return;
+
+      const onSuccess = (img: HTMLImageElement) => {
+        if (!alive) return;
+        meta.img = img; // cache for modal usage
+      };
+
+      const onOracleFail = (err: any) => {
+        if (!alive) return;
+        if (ipfsUrl) {
+          preloadImageFromIpfs(ipfsUrl, registry)
+            .then(onSuccess)
+            .catch((err2) => {
+              if (!alive) return;
+              console.warn(`⚠️ Could not preload image for ${key} (Oracle+IPFS failed):`, err2);
+            });
+        } else {
+          console.warn(`⚠️ Could not preload image for ${key} (Oracle failed, no IPFS fallback):`, err);
+        }
+      };
+
+      if (primaryUrl && typeof primaryUrl === 'string' && primaryUrl.startsWith('http')) {
+        preloadImageOracle(primaryUrl, registry).then(onSuccess).catch(onOracleFail);
+      } else if (ipfsUrl && typeof ipfsUrl === 'string') {
+        preloadImageFromIpfs(ipfsUrl, registry).then(onSuccess).catch((err3) => {
+          if (!alive) return;
+          console.warn(`⚠️ Could not preload image for ${key} (IPFS failed):`, err3);
+        });
+      }
+    });
+  } catch (err) {
+    console.warn('⚠️ Error during lazy image preloading:', err);
+  }
+  // Return a cancel function to abort in-flight image requests
+  return () => {
+    alive = false;
+    for (const img of registry) {
+      try {
+        img.onload = null as any;
+        img.onerror = null as any;
+        // Setting src to '' hints the browser to cancel the request
+        img.src = '';
+      } catch {}
+    }
+    registry.length = 0;
+  };
 }
 
 const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoaded }) => {
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const url = configUrl;
-    if (!url) return;
+    if (!configUrl) return;
 
     const container = containerRef.current;
     if (!container) {
-      console.error('🎨 ModularGallery: container div not mounted');
+      console.error("🎨 ModularGallery: container div not mounted");
       return;
     }
 
@@ -31,99 +238,58 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
     (async () => {
       try {
         // 1. Fetch config
-        const res = await fetch(url);
+        const res = await fetch(configUrl);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const config = await res.json();
-        console.log('🎨 Config fetched');
+        let config = await res.json();
+        console.log("🎨 Config fetched");
 
-        // 2. Notify parent
-        if (onConfigLoaded) onConfigLoaded(config);
-        console.log('🎨 Config loaded');
+        // 2. Normalize asset URLs
+        config = normalizeConfig(config);
+        console.log("🎨 Config normalized to Oracle URLs");
 
-        // 3. Build gallery with progress callback
+        // 3. Notify parent
+        onConfigLoaded?.(config);
+
+        console.log("🎨 Config loaded", config);
+
+        // 4. Build gallery with progress callback
         galleryInstance = await buildGallery(config, container, {
-          onProgress: (progressText: string) => {
-            if (!disposed) setProgress(parseInt(progressText, 10));
-          }
+          onProgress: (progressValue: string | number) => {
+            if (disposed) return;
+            const n =
+              typeof progressValue === "number"
+                ? progressValue
+                : parseInt(progressValue, 10);
+            if (!Number.isFinite(n) || Number.isNaN(n)) return;
+            const clamped = Math.max(0, Math.min(100, Math.round(n)));
+            setProgress(clamped);
+          },
         });
 
-        console.log('🎨 Gallery built');
-        setProgress(100); // ✅ final state
+        console.log("🎨 Gallery built");
+        setProgress(100);
 
-        // 4. Lazy preload images
-        if (config.images) {
-          const ipfsGateways = [
-            "https://ipfs.io/ipfs/",
-            "https://cloudflare-ipfs.com/ipfs/",
-            "https://gateway.pinata.cloud/ipfs/",
-            "https://dweb.link/ipfs/"
-          ];
-
-          function ipfsToHttpMulti(ipfsUrl: string, gatewayIndex = 0) {
-            const cid = ipfsUrl.replace("ipfs://", "");
-            return ipfsGateways[gatewayIndex] + cid;
-          }
-
-          function preloadImage(url: string): Promise<HTMLImageElement> {
-            return new Promise((resolve, reject) => {
-              let attempts = 0;
-              const img = new Image();
-
-              const tryLoad = () => {
-                const src = url.startsWith("ipfs://")
-                  ? ipfsToHttpMulti(url, attempts)
-                  : url;
-
-                img.src = src;
-
-                img.onload = () => resolve(img);
-
-                img.onerror = () => {
-                  attempts++;
-                  if (url.startsWith("ipfs://") && attempts < ipfsGateways.length) {
-                    setTimeout(tryLoad, 100);
-                  } else {
-                    reject(new Error(`Failed to load image from all gateways: ${url}`));
-                  }
-                };
-              };
-
-              tryLoad();
-            });
-          }
-
-          Object.entries(config.images as Record<string, { imagePath: string; img?: HTMLImageElement }>)
-            .forEach(([key, meta]) => {
-              preloadImage(meta.imagePath)
-                .then(img => {
-                  meta.img = img;
-                  console.log(`✅ Preloaded image for ${key}`);
-                })
-                .catch(err => {
-                  console.warn(`⚠️ Could not preload image for ${key}:`, err);
-                });
-            });
-
-          console.log('🎨 Started lazy image preloading with IPFS fallbacks');
-        }
+        // 5. Lazy preload images from Oracle URLs (non-blocking)
+        //    Uses normalized config.images[*].imagePath
+        const cancelImagePreloads = lazyPreloadImagesFromOracle(config);
+        // Attach cancel to cleanup scope
+        (galleryInstance as any)._cancelImagePreloads = cancelImagePreloads;
       } catch (err) {
         if (!disposed) {
-          console.error('⚠️ Error in ModularGallery:', err);
-          setError('Error loading gallery');
+          console.error("⚠️ Error in ModularGallery:", err);
+          setError("Error loading gallery");
         }
       }
     })();
 
     return () => {
       disposed = true;
-      if (galleryInstance && typeof galleryInstance.dispose === 'function') {
-        galleryInstance.dispose();
-      }
+      // Abort any in-flight image preloads for the previous exhibit
+      (galleryInstance as any)?._cancelImagePreloads?.();
+      galleryInstance?.dispose?.();
       setProgress(0);
       if (containerRef.current) {
-        while (containerRef.current.firstChild) {
-          containerRef.current.removeChild(containerRef.current.firstChild);
-        }
+        containerRef.current.innerHTML = "";
       }
     };
   }, [configUrl, onConfigLoaded]);
@@ -147,22 +313,16 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
                   cy={60 + 50 * Math.sin((2 * Math.PI * progress) / 100 - Math.PI / 2)}
                 />
               </svg>
-
-
-              {/* Centered progress text */}
               <div className="absolute text-xl font-bold text-blue-700">
                 {progress}%
               </div>
             </div>
-
           )}
         </div>
       )}
-      {/* Three.js canvas mount point */}
       <div ref={containerRef} className="w-full h-full absolute" />
     </div>
   );
-
 };
 
 export default ModularGallery;

@@ -1,4 +1,5 @@
 {
+  "id": "wakeupcall",
   "modelPath": "https://bafybeici4uefp7hpt7wkbdcu6nklzvfa6qknkhwjrcgufwv6uu2t36nh44.ipfs.w3s.link/exhibition_wakeupcall_ktx.glb",
   "interactivesPath": "https://bafybeihe4i6i7c4heeqaooabfrzkeiy5ga26yw4vvetb7lojjzje2hqc4u.ipfs.w3s.link/interactives_wakeupcall.glb",
   "backgroundTexture": "https://bafybeieo4nytbfj4fgzxqcn2ihhvoetkoy74hjqltqasvpu5n5dndd4rmi.ipfs.w3s.link/bg_white.ktx2",
@@ -22,9 +23,9 @@
         "content": "<strong>VIRTUAL BIENNALE PRAGUE:</strong><br /><br />The Virtual Biennale Prague, held in the Czech Republic since 2007, is an international event focused on a unique theme each edition. The 11th Biennale, titled <strong>Wake-Up Call</strong>, is accompanied by an exhibition at the 3D Blue Point Art Gallery (Polish University Abroad, London). This show is part of a series promoting the 2020 poster competition.<br /><br /><strong>COMPETITION FOCUS:</strong><br /><br />Artists address social issues such as discrimination and fake news, considering both global and local contexts. Black-and-white posters, a hallmark of the Biennale, offer a critical lens on contemporary life.<br /><br /><strong>THEME AND IMPACT:</strong><br /><br />This year’s Biennale is shaped by the Covid-19 pandemic and events like Black Lives Matter. The posters explore these themes and universal concerns about society, media, and the quest for harmony. Artists highlight openness, resistance to injustice, freedom, and optimism. The <strong>Wake-Up Call</strong> theme brings these ideas together, showing how art can inspire positive change.<br /><br />"
       },
       {
-        "label": "Strona Główna Blue Point Art",
+        "label": "Wakeup-Call on Blue Point Art",
         "icon": "https://bafybeihdetw233mokonbvepkkwha6ht4q645gwlxtheege5tbvyqzwkiiq.ipfs.w3s.link/logo_BPA_256px.gif",
-        "link": "https://bluepointart.uk"
+        "link": "https://bluepointart.uk/wake-up-call/"
       }
     ]
   },
@@ -33,79 +34,79 @@
       "title": "GRAND PRIX",
       "description": "Human beings are at the center of contemporary society, which is entirely influenced by their lifestyle and behavior. Humans are the key to their salvation. Only through their strengths and knowledge will they be able to find new solutions to earning and securing a future on this planet. GRAND PRIX",
       "author": "NADIA CERUTI, ITALY",
-      "imagePath": "ipfs://bafkreiagu2whlyiw3wxoirmkf3pqokilpfh4x7ycxijtziivn546q7r27m"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/NADIA.jpg"
     },
     "QUENTIN": {
       "title": "PROFESSIONALS - GOLDEN PRIX",
       "description": "The American flag is a strong and sacred symbol of patriotism in the USA. Names of black American citizens are written between the stripes, their age of death between the brackets. The list seems endless. They were all killed by white people, mostly police officers who represent the law, often seen as heroes. They were killed because they were black. We shall not forget their names. The Black Lives Matter movement rose again this year, and people have been protesting despite the sanitary restrictions. Like many others, I educated myself on anti-racism through social media and learned all the things that school never tells us. This tragedy was a wake-up call for many of us.",
       "author": "QUENTIN ROUSSEL, FRANCE",
-      "imagePath": "ipfs://bafkreibcomewucudkc2ihmls4scrjs7ex7rctgzedmh5mxn6d6sgfaq76y"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/QUENTIN.jpg"
     },
     "SZYMON": {
       "title": "PROFESSIONALS - SILVER PRIX",
       "description": "The poster entitled “Rat” (“Szczur”) was created during the recent lockdown introduced in Poland because of the COVID-19 pandemic. Being trapped at home and having to work remotely, the empty streets, the cancelled academic courses and cultural events – all this helped me to rethink the meanings we attach to our everyday lives. I was directly inspired by the song “Time” (“Czas”) performed by a new Polish band called UDW (Ukrytedowiadomości).",
       "author": "SZYMON SZYMANKIEWICZ, POLAND",
-      "imagePath": "ipfs://bafkreifxz4oiik4szwsgk5c3ss24vfenzspvk7vpyqshgmajuy4ki5giii"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SZYMON.jpg"
     },
     "TEIJA": {
       "title": "PROFESSIONALS - BRONZE PRIX",
       "description": "If you want to cause a wake-up call, the other party needs to be open to communication. If they do not have an open ear for your concern, the message will not reach them.",
       "author": "TEIJA TUULIKKI HOHL, AUSTRIA",
-      "imagePath": "ipfs://bafkreiawnmjt5lpju5d6l6bjfgfk2hypefd2uuhsddmw32fxclawphavui"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/TEIJA.jpg"
     },
     "LEX": {
       "title": "PROFESSIONALS - HONOURABLE MENTION",
       "description": "The poster depicts a human who is trying to align one half of the globe with the other half by pushing it. In the context of current problems like climate change, pandemics, social injustice, racial conflicts, division, and the seeming misalignment between groups of people, humanity should try to get the world back on track for a united future.",
       "author": "LEX DREWINSKI, GERMANY",
-      "imagePath": "ipfs://bafkreiccoprwdnj7tuvypc7eksfcko3n7chyd2ugon6cjcti5uvkpb5svq"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/LEX.jpg"
     },
     "BARTOSZ": {
       "title": "PROFESSIONALS - HONOURABLE MENTION",
       "description": "Wake up! Be positive! The poster was created in response to the current global situation, which is the pandemic caused by the Covid-19. The virus has dominated our lives and caused us fear and many negative emotions. Through this poster, I wanted to show that despite the fact that the virus has created huge confusion in our daily lives, we should smile. Let us try to look into the future with the hope that it will be normal, and it will be beautiful. It is important to accept the current situation and to live as fully as possible despite the existing restrictions. In such difficult times, we need as many smiles as possible. The form of the poster is minimalistic and positive, and therefore reaches a broader audience to stir their emotions.",
       "author": "BARTOSZ MAMAK, POLAND",
-      "imagePath": "ipfs://bafkreif3sbqz4etxmejl3f3fgkfu7acmjeszsetnadb4mqpqva2k5aiyl4"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARTOSZ.jpg"
     },
     "VICTOR": {
       "title": "PROFESSIONALS - HONOURABLE MENTION",
       "description": "Resistance In today's tumultuous and chaotically moving world, people are trying to express themselves, their desires, ideas and thoughts towards certain events, whether it's an ecological, political or social situation. Of course, the ruling powers are always trying to stir things up, mix them up and change the news. As a result, we have constant turbulence and rotation of news from all platforms of mass media. There is only one thing that can stop all this chaos and finally make people's voices heard, and that is RESISTANCE. When we look at this poster from a close distance, a close perspective, we can't see the letters, only the chaos of turbulent lines, just like fragments of thin paper strips or wires of the media twisted like a spiral. But when we look at it from a distance, amidst these twisted lines we start noticing the word RESISTANCE, it starts gradually appearing like the free voice of people coming through the constant spiral of the modern mass media. This keyword speaks for itself — from the right people, through the right people and for the good people around the world.",
       "author": "VICTOR KOVALENKO, RUSSIA",
-      "imagePath": "ipfs://bafkreibmpqftoxsm7wk7uyxmf4tev274e4z2yf2zoxgi2y2vmyq2f7mokq"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/VICTOR.jpg"
     },
     "XU": {
       "title": "STUDENTS - GOLDEN PRIX",
       "description": "The poster uses a gradual graphic design technique. The barbed wire represents confinement and singleness. The poster gradually transforms the barbed wire composed of a single figure into a freeflying bird, so as to convey freedom.",
       "author": "XU MENG, CHINA",
-      "imagePath": "ipfs://bafkreih5swfelkj2i4jbqobb3pakr4x6df4seboxonqjbuouiguw32rqlm"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/XU.jpg"
     },
     "SIQING": {
       "title": "STUDENTS - SILVER PRIX",
       "description": "This poster stems from my thinking about life around me. Nowadays, people spend a lot of energy and time in the virtual world, especially on social media software. These apps are not only a convenient medium for people to communicate but also an important place for people to get information every day. The development of the Internet has caused a flood of information, and people are besieged with endless information. In many cases, what we see may not be true. There may be pitfalls hidden behind various topics. Our thoughts are easily manipulated and guided by various media. When the truth is revealed, it becomes difficult for people to trust the media.",
       "author": "SIQING YANG, CHINA",
-      "imagePath": "ipfs://bafkreihzuf72k24ppzw4mjgitglbvoi4nlnl6dh3unhf6wn7tmtfkcqkqi"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SIQING.jpg"
     },
     "BARBORA": {
       "title": "STUDENTS - BRONZE PRIX",
       "description": "Each person plays a role in society and that is why each of us matters. A lot is happening right now all around the world and sometimes it is hard to find your way around and act right. Anyway, we should not hide from problems to stay in our comfort zone. The best way to start is with yourself. Wake up and do not close your eyes to the world around and its issues. The poster uses the metaphor of sticking one’s head in the sand before social problems that expresses a person who is not truly thinking. Also, the figure seems to be asleep and waking herself up while the storm is coming.",
       "author": "BARBORA NĚMCOVÁ, CZECH REPUBLIC",
-      "imagePath": "ipfs://bafkreig3jqyeumhg7k757pikkxxngtw6ppjtca2o4seykjtkpjnpcb6kfy"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARBORA.jpg"
     },
     "HAN": {
       "title": "STUDENTS - HONOURABLE MENTION",
       "description": "The poster uses cranes and humans as positive and negative graphics. The head of the crane is bleeding, conveying the concept of protecting endangered species and that the protection of wild animals starts with us, and calling for the harmonious coexistence of humans, animals and nature.",
       "author": "HAN RONGXUN, CHINA",
-      "imagePath": "ipfs://bafkreifthaccitglcja2ig2cotzrhlrxw4bqkonkvdgrszqql727sjjms4"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/HAN.jpg"
     },
     "SALOMON": {
       "title": "STUDENTS - HONOURABLE MENTION",
       "description": "It was sunny. We don't care about air while breathing; we don't care about food while eating; we don't care about our freedom when we're free. It was sunny - represents the way I looked at FREEDOM when my personal freedom was temporarily lost during the quarantine.",
       "author": "SALOMON FABIO, ITALY",
-      "imagePath": "ipfs://bafkreifs7miijczbgstxqgaj3rqjnxn2rqrnq52h4akje6x6we73fzicsa"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SALOMON.jpg"
     },
     "JULIANA": {
       "title": "STUDENTS - HONOURABLE MENTION",
       "description": "If we take a look at the events of this year, we can observe a massive lethargy in society, too much confidence in the mass media and slow thinking about real problems. This poster presents a visual metaphor for the need to wake up to the real world. The main motif of the poster is a pacifier, the soft part of it is replaced by a cactus plant. The primary purpose of the pacifier is to calm down a baby. A cactus is a plant that has no leaves, only thorns. If we change the familiar softness of the pacifier and replace it with the sharpness of a cactus, the pacifier will lose its original function. The connection between these two objects creates a visual situation that is striking and unpleasant to watch. The poster is made by expressive hand-drawing.",
       "author": "JULIÁNA SEDLÁKOVÁ, CZECH REPUBLIC",
-      "imagePath": "ipfs://bafkreia6noyncd3e3ude5nv7zso6f5eilt5xhj7y6brd5glelvpkpzsktm"
+      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/JULIANA.jpg"
     }
   },
   "params": {

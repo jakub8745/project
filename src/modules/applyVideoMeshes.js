@@ -6,15 +6,39 @@ import {
   SRGBColorSpace,
   PlaneGeometry,
   RingGeometry,
-  Box3,
   Vector3,
   Quaternion,
-  //Vector3,
   Mesh
 } from 'three';
 
 const PLAY_ICON_PATH =
   'https://bafybeieawhqdesjes54to4u6gmqwzvpzlp2o5ncumaqw3nfiv2mui6i6q4.ipfs.w3s.link/ButtonPlay.png';
+
+
+// --- Step 1: resource cache ---
+const _videoResourceCache = new Map(); // id -> { video, texture }
+
+function getVideoResource(id) {
+  return _videoResourceCache.get(id) || {};
+}
+
+function setVideoResource(id, data) {
+  const prev = _videoResourceCache.get(id);
+  // If we’re replacing a previous texture, dispose it to free GPU memory
+  if (prev?.texture && data.texture && prev.texture !== data.texture) {
+    prev.texture.dispose();
+  }
+  _videoResourceCache.set(id, { ...prev, ...data });
+}
+
+function disposeVideoResource(id) {
+  const res = _videoResourceCache.get(id);
+  if (!res) return;
+  if (res.texture) res.texture.dispose(); // free GPU memory
+  // we keep the <video> element around for reuse (cheap); if you want to remove it later, do it explicitly
+  _videoResourceCache.delete(id);
+}
+
 
 // Ensure a <video> element exists and is configured
 function ensureVideoElement(cfg) {
@@ -23,8 +47,11 @@ function ensureVideoElement(cfg) {
   if (video) return video;
 
   video = document.createElement('video');
+
+
   video.id = cfg.id;
   video.loop = cfg.loop ?? true;
+  setVideoResource(cfg.id, { video });
 
 
   // Disable autoplay and avoid forcing muted
@@ -35,41 +62,60 @@ function ensureVideoElement(cfg) {
   video.preload = cfg.preload || 'metadata';
   video.crossOrigin = 'anonymous';
 
+  // Oracle-first with IPFS fallback support
   const ipfsGateways = [
     "https://cloudflare-ipfs.com/ipfs/",
+    "https://ipfs.io/ipfs/",
     "https://gateway.pinata.cloud/ipfs/",
-    "https://dweb.link/ipfs/",
-    "https://ipfs.io/ipfs/"
+    "https://dweb.link/ipfs/"
   ];
 
-  function ipfsToHttpMulti(ipfsUrl, gatewayIndex = 0) {
+  const srcObj = cfg.sources[0]; // assume single video per cfg
+  const primary = srcObj?.src || ""; // may be Oracle http(s) or ipfs://
+  const ipfsUrl = srcObj?.ipfsSrc || (primary.startsWith("ipfs://") ? primary : null);
+
+  let gwIndex = 0;
+  const loadIpfs = () => {
+    if (!ipfsUrl) {
+      console.error(`[VideoMesh] Primary failed and no IPFS fallback: ${primary}`);
+      return;
+    }
+    if (gwIndex >= ipfsGateways.length) {
+      console.error(`[VideoMesh] Failed to load video from all gateways: ${ipfsUrl}`);
+      return;
+    }
     const cid = ipfsUrl.replace("ipfs://", "");
-    return ipfsGateways[gatewayIndex] + cid;
-  }
-
-  let attempts = 0;
-  const trySource = () => {
-    const srcObj = cfg.sources[0]; // assume single video per cfg
-    const src = srcObj.src.startsWith("ipfs://")
-      ? ipfsToHttpMulti(srcObj.src, attempts)
-      : srcObj.src;
-
+    const src = ipfsGateways[gwIndex] + cid;
+    gwIndex++;
     video.src = src;
     video.type = srcObj.type;
     video.load();
-
     video.onerror = () => {
-      attempts++;
-      if (srcObj.src.startsWith("ipfs://") && attempts < ipfsGateways.length) {
-        console.warn(`[VideoMesh] Retrying video load from another gateway: ${attempts}`);
-        setTimeout(trySource, 200);
-      } else {
-        console.error(`[VideoMesh] Failed to load video from all gateways: ${srcObj.src}`);
-      }
+      console.warn(`[VideoMesh] Retrying IPFS gateway ${gwIndex}/${ipfsGateways.length}`);
+      setTimeout(loadIpfs, 200);
     };
   };
 
-  trySource();
+  const loadPrimary = () => {
+    // If primary is ipfs://, go straight to IPFS flow
+    if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
+      loadIpfs();
+      return;
+    }
+    if (!primary) {
+      loadIpfs();
+      return;
+    }
+    video.src = primary;
+    video.type = srcObj.type;
+    video.load();
+    video.onerror = () => {
+      console.warn(`[VideoMesh] Primary source failed, falling back to IPFS: ${primary}`);
+      loadIpfs();
+    };
+  };
+
+  loadPrimary();
   document.body.appendChild(video);
 
   // Keep paused on ready; emit a custom event consumers can listen for
@@ -144,11 +190,34 @@ function addPlayIcon(mesh, video, camera) {
       iconMesh.quaternion.copy(qLocal);
     };
 
-    // Sync with video state
-    video.addEventListener('play', () => (iconMesh.visible = false));
-    video.addEventListener('pause', () => (iconMesh.visible = true));
-    video.addEventListener('ended', () => (iconMesh.visible = true));
-    iconMesh.visible = video.paused;
+    // Visibility strategy:
+    // - While loading: spinner shows, play icon hidden
+    // - When first frame ready: hide spinner (handled elsewhere) and show play icon (if paused)
+    // - When playing: hide play icon
+    // - When paused/ended after ready: show play icon
+    let isReady = false;
+
+    const updateIcon = () => {
+      iconMesh.visible = isReady && (video.paused || video.ended);
+    };
+
+    // Initial state: hidden until ready
+    iconMesh.visible = false;
+
+    // Ready events
+    const onReady = () => {
+      isReady = true;
+      updateIcon();
+    };
+    video.addEventListener('loadeddata', onReady, { once: true });
+    video.addEventListener('canplaythrough', onReady, { once: true });
+
+    // Playback state
+    video.addEventListener('play', () => {
+      iconMesh.visible = false;
+    });
+    video.addEventListener('pause', updateIcon);
+    video.addEventListener('ended', updateIcon);
   });
 }
 
@@ -162,62 +231,61 @@ function addPlayIcon(mesh, video, camera) {
  * - Ensures depthTest/write for full visibility/
  */
 export function applyVideoMeshes(scene, camera, galleryConfig) {
-
-
   const configMap = new Map((galleryConfig.videos || []).map(cfg => [cfg.id, cfg]));
-
 
   scene.traverse(obj => {
     if (!obj.isMesh || obj.userData.type !== 'Video') return;
 
-    obj.wireframe = false;
-
     const cfg = configMap.get(obj.userData.elementID);
-
     if (!cfg) {
       console.warn(`No video config for ID ${obj.userData.elementID}`);
       return;
     }
 
+    if (!obj.userData._videoCleanupAttached) {
+      obj.userData._videoCleanupAttached = true;
+      obj.addEventListener('removed', () => disposeVideoResource(cfg.id));
+    }
+
+
     const video = ensureVideoElement(cfg);
     if (!video) return;
 
-    addLoadingSpinner(obj, video); // ✅ spinner before load
+    // Spinner appears while loading/buffering
+    addLoadingSpinner(obj, video, camera);
 
+    // Play icon exists even before metadata is ready
+    addPlayIcon(obj, video, camera);
 
     video.addEventListener('loadedmetadata', () => {
+      // Reuse cached texture if present
+      let { texture } = getVideoResource(cfg.id);
+      if (!texture) {
+        texture = new VideoTexture(video);
+        texture.colorSpace = SRGBColorSpace;
+        texture.flipY = false;
+        setVideoResource(cfg.id, { video, texture });
+      }
 
-      // Create VideoTexture
-      const texture = new VideoTexture(video);
-      texture.colorSpace = SRGBColorSpace;
-
-      texture.flipY = false;
-
-
+      // Swap material map (don’t dispose the old JPG map here in case it’s shared elsewhere)
       const newMat = obj.material.clone();
-
       newMat.map = texture;
       newMat.transparent = false;
       newMat.depthTest = true;
       newMat.depthWrite = true;
       newMat.side = DoubleSide;
-
       newMat.needsUpdate = true;
 
       obj.material = newMat;
 
-      addPlayIcon(obj, video, camera);
-
-      video.currentTime = 0.01
+      // Keep paused until user interacts
+      video.currentTime = 0.01;
       video.pause();
-
       texture.needsUpdate = true;
-
-
     });
+
   });
 }
-
 
 function addLoadingSpinner(mesh, video, camera) {
   const { size: worldSize, center: worldCenter } = getWorldBounds(mesh);
@@ -233,21 +301,18 @@ function addLoadingSpinner(mesh, video, camera) {
   const spinnerMesh = new Mesh(spinnerGeo, spinnerMat);
   spinnerMesh.name = `spinner_${video.id}`;
 
-  // Pivot: this will get billboarding, spinner rotates inside
-  const pivot = new Mesh(); // empty container
+  const pivot = new Mesh();
   pivot.name = `spinnerPivot_${video.id}`;
   pivot.renderOrder = 999;
 
   if (worldCenter) pivot.position.copy(worldCenter);
   const eps = -0.03 * Math.max(worldSize.x || 1, worldSize.y || 1);
-  pivot.position.z += eps;
-  pivot.position.y += eps;
-  pivot.position.x += eps;
+  pivot.position.addScalar(eps);
 
   pivot.add(spinnerMesh);
   mesh.add(pivot);
 
-  // Billboard the pivot to camera
+  // Billboard
   const qParent = new Quaternion();
   const qCam = new Quaternion();
   const qLocal = new Quaternion();
@@ -259,48 +324,32 @@ function addLoadingSpinner(mesh, video, camera) {
     pivot.quaternion.copy(qLocal);
   };
 
-  // Spin clockwise: rotate child, not the pivot
+  // Spin clockwise
   function animate() {
-    if (spinnerMesh.visible) {
-      spinnerMesh.rotation.z -= 0.1; // clockwise
-    }
+    if (spinnerMesh.visible) spinnerMesh.rotation.z -= 0.1;
     requestAnimationFrame(animate);
   }
   animate();
 
-  // Video state events
+  // Visibility rules
   const hide = () => (spinnerMesh.visible = false);
-  const show = () => (spinnerMesh.visible = true);
+  const showIfPlaying = () => (spinnerMesh.visible = !video.paused && !video.ended);
 
-  video.addEventListener("playing", hide);
-  video.addEventListener("canplay", hide);
-  video.addEventListener("waiting", show); // re-show on buffering
-  video.addEventListener("stalled", show);
-
-  // --- Robust state control to avoid spinner + play overlap ---
-  const showIfPlaying = () => { spinnerMesh.visible = !(video.paused || video.ended); };
-
-  // Hide when we have enough to display a frame or not actively playing
+  // Hide when first frame ready
   video.addEventListener("loadeddata", hide);
-  video.addEventListener("canplay", hide);
   video.addEventListener("canplaythrough", hide);
   video.addEventListener("playing", hide);
-  video.addEventListener("pause", hide);
   video.addEventListener("ended", hide);
   video.addEventListener("error", hide);
-  video.addEventListener("suspend", hide);
-  video.addEventListener("emptied", hide);
 
-  // Show only when buffering while actively playing
-  const onWaiting = () => showIfPlaying();
-  video.addEventListener("waiting", onWaiting);
-  video.addEventListener("stalled", onWaiting);
-  video.addEventListener("seeking", onWaiting);
+  // Show when buffering while playing
+  video.addEventListener("waiting", showIfPlaying);
+  video.addEventListener("stalled", showIfPlaying);
+  video.addEventListener("seeking", showIfPlaying);
 
-  // Start visible until the first frame is ready, then hide
+  // Start visible
   spinnerMesh.visible = true;
 }
-
 
 
 

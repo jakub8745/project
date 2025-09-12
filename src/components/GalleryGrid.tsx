@@ -1,7 +1,7 @@
 // src/components/GalleryGrid.tsx
 import { FC, useRef, useEffect } from 'react';
 import { GALLERIES, GalleryItem } from '../data/galleryConfig';
-import Tile from './Tile.js';
+import Tile from './Tile.tsx';
 
 export interface GalleryGridProps {
   onSelect: (gallery: GalleryItem) => void;

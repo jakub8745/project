@@ -38,6 +38,15 @@ export default class ModelLoader {
     this.dracoLoader = new DRACOLoader(this.manager).setDecoderPath('./libs/draco/');
 
     this.setupLoaders();
+
+    // IPFS gateway handling for glTF and its referenced resources
+    this.ipfsGateways = [
+      'https://cloudflare-ipfs.com/ipfs/',
+      'https://ipfs.io/ipfs/',
+      'https://gateway.pinata.cloud/ipfs/',
+      'https://dweb.link/ipfs/'
+    ];
+    this.currentIpfsGatewayIndex = 0;
   }
 
   setupLoaders() {
@@ -46,14 +55,27 @@ export default class ModelLoader {
     this.gltfLoader.setMeshoptDecoder(MeshoptDecoder);
   }
 
-  async loadModel(modelPath, interactivesPath) {
+  // Map any ipfs:// URL that three.js requests (including buffers/textures) to the current gateway
+  setURLModifierForGateway(gatewayBase) {
+    const manager = this.gltfLoader.manager;
+    if (!manager) return;
+    manager.setURLModifier((url) => {
+      if (typeof url === 'string' && url.startsWith('ipfs://')) {
+        const cidPath = url.replace('ipfs://', '');
+        return gatewayBase + cidPath;
+      }
+      return url;
+    });
+  }
+
+  async loadModel(modelPath, interactivesPath, ipfsModelPath = null, ipfsInteractivesPath = null) {
     try {
       // Load exhibition model
-      const gltfScene = await this.loadGLTFModel(modelPath);
+      const gltfScene = await this.loadGLTFModel(modelPath, ipfsModelPath);
       this.currentModel++;
 
       // Load interactives
-      const exhibitObjects = await this.loadGLTFModel(interactivesPath);
+      const exhibitObjects = await this.loadGLTFModel(interactivesPath, ipfsInteractivesPath);
       this.currentModel++;
 
       this.processExhibitObjects(exhibitObjects);
@@ -77,7 +99,7 @@ export default class ModelLoader {
     }
   }
 
-  async loadGLTFModel(modelPath) {
+  async loadGLTFModel(modelPath, ipfsFallback = null) {
     const onProgress = (xhr) => {
       if (xhr.total && this.deps.onProgress) {
         // ✅ progress for this file (0–100)
@@ -92,9 +114,55 @@ export default class ModelLoader {
       }
     };
 
-    const { scene: gltfScene } = await this.gltfLoader.loadAsync(modelPath, onProgress);
-    gltfScene.updateMatrixWorld(true);
-    return gltfScene;
+    const isIpfs = typeof modelPath === 'string' && modelPath.startsWith('ipfs://');
+
+    if (isIpfs) {
+      // Try multiple gateways for ipfs:// URLs
+      let lastErr;
+      for (let i = 0; i < this.ipfsGateways.length; i++) {
+        const gateway = this.ipfsGateways[i];
+        this.currentIpfsGatewayIndex = i;
+        this.setURLModifierForGateway(gateway);
+        const resolved = gateway + modelPath.replace('ipfs://', '');
+        try {
+          const { scene: gltfScene } = await this.gltfLoader.loadAsync(resolved, onProgress);
+          gltfScene.updateMatrixWorld(true);
+          return gltfScene;
+        } catch (err) {
+          lastErr = err;
+          // try next gateway
+        }
+      }
+      // All gateways failed
+      throw lastErr || new Error(`Failed to load GLTF from IPFS: ${modelPath}`);
+    }
+
+    // HTTP(S) path, attempt normal load; on failure, try ipfsFallback if provided
+    try {
+      const { scene: gltfScene } = await this.gltfLoader.loadAsync(modelPath, onProgress);
+      gltfScene.updateMatrixWorld(true);
+      return gltfScene;
+    } catch (err) {
+      if (!ipfsFallback || typeof ipfsFallback !== 'string' || !ipfsFallback.startsWith('ipfs://')) {
+        throw err;
+      }
+      // Fallback to IPFS gateways using the provided ipfsFallback path
+      let lastErr;
+      for (let i = 0; i < this.ipfsGateways.length; i++) {
+        const gateway = this.ipfsGateways[i];
+        this.currentIpfsGatewayIndex = i;
+        this.setURLModifierForGateway(gateway);
+        const resolved = gateway + ipfsFallback.replace('ipfs://', '');
+        try {
+          const { scene: gltfScene } = await this.gltfLoader.loadAsync(resolved, onProgress);
+          gltfScene.updateMatrixWorld(true);
+          return gltfScene;
+        } catch (err2) {
+          lastErr = err2;
+        }
+      }
+      throw lastErr || err;
+    }
   }
 
   processExhibitObjects(objects) {

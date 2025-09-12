@@ -1,7 +1,8 @@
 {
-    "modelPath": "/models/dystopia.glb",
+    "id": "dystopia",
+    "modelPath": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/exhibition_dystopia.glb",
     "interactivesPath": "/models/interactives_empty.glb",
-    "backgroundTexture": "/textures/bg_dystopia.ktx2",
+    "backgroundTexture": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/bg_dystopia.ktx2",
     "sidebar": {
         "logo": {
             "text": "Wystawa z okazji 85-lecia PUNO"
@@ -33,14 +34,14 @@
             "title": "Milkmaid",
             "description": "Jaroslaw Solecki's The Dystopia of an Imitation presents a creative way of exploring the 'matter' of art. The central issue taken up in the work is the sculpting process realised in stone, clay and in the form of digital 3D graphics[...] Quote from the exhibition booklet \"The Dystopia of an Imitation\"",
             "author": "Jaroslaw Solecki",
-            "imagePath": "ipfs://bafkreiconkwv2uplp2ohyssntbb3ucbjb33bv7biia75sjy7v3n645qsx4"
+            "imagePath": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg"
         }
     },
     "audio": [
         {
             "id": "dzbanDystopia",
             "name": "dzbanDystopia",
-            "url": "/audio/pouring_milk.mp3",
+            "url": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
             "loop": true,
             "refDistance": 3,
             "rolloff": 1,

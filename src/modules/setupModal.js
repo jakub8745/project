@@ -71,6 +71,43 @@ export function setupModal(imagesMap) {
     });
   }
 
+  // Try primary (could be Oracle HTTP) then fall back to IPFS gateways
+  function loadAnyWithFallback(primaryUrl, ipfsUrl) {
+    if (!primaryUrl && !ipfsUrl) {
+      return Promise.reject(new Error('No URL provided'));
+    }
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      let state = 'primary';
+      let attempts = 0;
+      const gateways = [
+        "https://ipfs.io/ipfs/",
+        "https://cloudflare-ipfs.com/ipfs/",
+        "https://gateway.pinata.cloud/ipfs/",
+        "https://dweb.link/ipfs/"
+      ];
+      const cid = ipfsUrl?.startsWith('ipfs://') ? ipfsUrl.replace('ipfs://', '') : null;
+
+      const tryIpfs = () => {
+        if (!cid) return reject(new Error('Primary failed and no IPFS fallback'));
+        if (attempts >= gateways.length) return reject(new Error('All IPFS gateways failed'));
+        const src = gateways[attempts] + cid;
+        img.onload = () => resolve(img);
+        img.onerror = () => { attempts++; tryIpfs(); };
+        img.src = src;
+      };
+
+      const tryPrimary = () => {
+        if (!primaryUrl) return tryIpfs();
+        img.onload = () => resolve(img);
+        img.onerror = () => { state = 'ipfs'; tryIpfs(); };
+        img.src = primaryUrl;
+      };
+
+      tryPrimary();
+    });
+  }
+
 
   function hideModal() {
     modalOverlay.classList.remove('show');
@@ -129,6 +166,8 @@ export function setupModal(imagesMap) {
     };
 
     if (meta.img) {
+
+      console.log('🎨 Using cached image:', meta.img.src);
       // Already preloaded → show immediately
       modalImg.src = meta.img.src;
       modalImg.onload = () => modalImg.classList.remove('hidden');
@@ -146,8 +185,8 @@ export function setupModal(imagesMap) {
       loadingMsg.classList.add("loading-msg");
       modalDesc.appendChild(loadingMsg);
 
-      // Try to fetch the image immediately (so user doesn’t wait indefinitely)
-      loadImageWithFallback(meta.imagePath)
+      // Try Oracle first, then fallback to IPFS if provided
+      loadAnyWithFallback(meta.imagePath, meta.ipfsImagePath)
         .then(img => {
           meta.img = img; // cache it for next time
           modalImg.src = img.src;
