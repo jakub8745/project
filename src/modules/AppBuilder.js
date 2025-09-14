@@ -12,7 +12,7 @@ import { applyAudioMeshes, disposeAudioMeshes } from './applyAudioMeshes.js';
 import { PointerHandler } from './PointerHandler.js';
 import { VRPointerHandler } from './VRPointerHandler.js';
 
-import { AudioListener, Clock, BufferGeometry, Mesh } from 'three';
+import { AudioListener, Clock, BufferGeometry, Mesh, Group } from 'three';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import ktx2Loader from '../loaders/ktx2Loader.ts'; // Adjust path as needed
@@ -139,6 +139,12 @@ export async function buildGallery(config, container, { onProgress } = {}) {
 
   const camera = initCamera();
 
+  // XR rig: parent for camera when in VR so we can move the user by moving the rig
+  const xrRig = new Group();
+  xrRig.name = 'xrRig';
+  xrRig.add(camera);
+  scene.add(xrRig);
+
   const listener = new AudioListener();
   listener.name = 'MainAudioListener';
 
@@ -153,7 +159,7 @@ export async function buildGallery(config, container, { onProgress } = {}) {
     },
   }));
 
-  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [], onProgress };
+  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [], onProgress, xrRig };
 
   // ✅ Visitor + PointerHandler BEFORE async loads
   visitor = new Visitor(deps);

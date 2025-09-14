@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
+import { InfoButtons } from './components/InfoButtons';
 import ModularGallery from './components/ModularGallery';
 import { GALLERIES } from './data/galleryConfig';
 import { setupModal } from './modules/setupModal';
@@ -73,6 +74,13 @@ export default function App() {
         logoText="Blue Point Art"
       >
         <section className="p-4">
+          {/* Exhibit info section (expandable items) */}
+          {selectedConfigUrl && (
+            <InfoButtons configUrl={selectedConfigUrl} />
+          )}
+        </section>
+
+        <section className="p-4 border-t border-gray-800">
           <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
           <GalleryGrid
             onSelect={handleGallerySelect} // ✅ memoized
@@ -88,7 +96,6 @@ export default function App() {
           <ModularGallery
             configUrl={selectedConfigUrl || ''}
             onConfigLoaded={handleConfigLoaded}
-            imagePath={''}
           />
         </div>
       </main>

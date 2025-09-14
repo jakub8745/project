@@ -1,31 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 // @ts-ignore
 import { buildGallery } from '../modules/AppBuilder.js';
+import { resolveOracleUrl, isIpfsUri } from '../utils/ipfs';
 
 interface ModularGalleryProps {
   configUrl: string;
   onConfigLoaded?: (config: any) => void;
 }
 
-const ORACLE_REGION = "uk-london-1";
-const ORACLE_NAMESPACE = "lrbcisjgkyhb";
-
 /**
  * Extract last segment of ipfs://… (the actual filename).
  */
-function getFilename(uri: string): string {
-  const parts = uri.split("/");
-  return parts[parts.length - 1];
-}
-
-/**
- * Convert ipfs://… to Oracle Object Storage URL.
- */
-function resolveOracleUrl(uri: string, bucket: string): string {
-  if (!uri.startsWith("ipfs://")) return uri;
-  const filename = getFilename(uri);
-  return `https://objectstorage.${ORACLE_REGION}.oraclecloud.com/n/${ORACLE_NAMESPACE}/b/${bucket}/o/${filename}`;
-}
 
 /**
  * Rewrite all relevant config paths to Oracle URLs.
@@ -37,7 +22,7 @@ function normalizeConfig(config: any) {
     ? Object.fromEntries(
         Object.entries(config.images).map(([key, meta]: [string, any]) => {
           const originalPath = meta?.imagePath;
-          const isIpfs = typeof originalPath === 'string' && originalPath.startsWith('ipfs://');
+          const isIpfs = isIpfsUri(originalPath);
           const oracleUrl = isIpfs && bucket ? resolveOracleUrl(originalPath, bucket) : undefined;
           return [
             key,
@@ -60,7 +45,7 @@ function normalizeConfig(config: any) {
         sources: Array.isArray(vid.sources)
           ? vid.sources.map((srcObj: any) => {
               const originalSrc = srcObj?.src;
-              const isIpfs = typeof originalSrc === 'string' && originalSrc.startsWith('ipfs://');
+              const isIpfs = isIpfsUri(originalSrc);
               const oracleSrc = isIpfs && bucket ? resolveOracleUrl(originalSrc, bucket) : undefined;
               return {
                 ...srcObj,
@@ -77,7 +62,7 @@ function normalizeConfig(config: any) {
   const audio = Array.isArray(config.audio)
     ? config.audio.map((a: any) => {
         const originalUrl = a?.url;
-        const isIpfs = typeof originalUrl === 'string' && originalUrl.startsWith('ipfs://');
+        const isIpfs = isIpfsUri(originalUrl);
         const oracleUrl = isIpfs && bucket ? resolveOracleUrl(originalUrl, bucket) : undefined;
         return {
           ...a,
@@ -91,16 +76,32 @@ function normalizeConfig(config: any) {
   const originalModelPath = config.modelPath;
   const originalInteractivesPath = config.interactivesPath;
 
+  // Sidebar icons normalization (ipfs:// → Oracle URL, with IPFS fallback stored)
+  const sidebarItems = Array.isArray(config?.sidebar?.items)
+    ? config.sidebar.items.map((item: any) => {
+        const originalIcon = item?.icon;
+        const iconIsIpfs = isIpfsUri(originalIcon);
+        const oracleIcon = iconIsIpfs && bucket ? resolveOracleUrl(originalIcon, bucket) : undefined;
+        return {
+          ...item,
+          ipfsIcon: iconIsIpfs ? originalIcon : item?.ipfsIcon,
+          oracleIcon: oracleIcon || item?.oracleIcon,
+          icon: oracleIcon || originalIcon,
+        };
+      })
+    : config?.sidebar?.items;
+
   return {
     ...config,
     images,
     videos,
     audio,
+    sidebar: config.sidebar ? { ...config.sidebar, items: sidebarItems } : config.sidebar,
     // preserve original IPFS for fallback
-    ipfsModelPath: typeof originalModelPath === 'string' && originalModelPath.startsWith('ipfs://')
+    ipfsModelPath: isIpfsUri(originalModelPath)
       ? originalModelPath
       : config.ipfsModelPath,
-    ipfsInteractivesPath: typeof originalInteractivesPath === 'string' && originalInteractivesPath.startsWith('ipfs://')
+    ipfsInteractivesPath: isIpfsUri(originalInteractivesPath)
       ? originalInteractivesPath
       : config.ipfsInteractivesPath,
     modelPath: originalModelPath
@@ -131,7 +132,7 @@ function preloadImageOracle(url: string, registry?: HTMLImageElement[]): Promise
 
 function preloadImageFromIpfs(ipfsUrl: string, registry?: HTMLImageElement[]): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    if (!ipfsUrl || !ipfsUrl.startsWith('ipfs://')) return reject(new Error('Invalid IPFS URL'));
+    if (!ipfsUrl || !isIpfsUri(ipfsUrl)) return reject(new Error('Invalid IPFS URL'));
     const gateways = [
       'https://ipfs.io/ipfs/',
       'https://cloudflare-ipfs.com/ipfs/',

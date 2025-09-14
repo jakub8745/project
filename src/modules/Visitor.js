@@ -31,6 +31,8 @@ export default class Visitor extends Mesh {
     this.camera = deps.camera;
     this.controls = deps.controls;
     this.params = deps.params;
+    this.renderer = deps.renderer;
+    this.xrRig = deps.xrRig || null;
 
     this.visitorVelocity = new Vector3();
     this.visitorIsOnGround = true;
@@ -225,10 +227,17 @@ export default class Visitor extends Mesh {
     }
 
  
+    // Update camera/rig depending on XR session state
     this.tempVector.copy(this.position).add(this.params.heightOffset);
-    this.camera.position.sub(this.controls.target);
-    this.controls.target.copy(this.tempVector);
-    this.camera.position.add(this.tempVector);
+    if (this.renderer?.xr?.isPresenting && this.xrRig) {
+      // In XR, the headset controls the camera pose. Move the rig instead.
+      this.xrRig.position.copy(this.tempVector);
+    } else {
+      // Desktop: keep OrbitControls target following the visitor
+      this.camera.position.sub(this.controls.target);
+      this.controls.target.copy(this.tempVector);
+      this.camera.position.add(this.tempVector);
+    }
   }
 
   reset() {
@@ -240,11 +249,16 @@ export default class Visitor extends Mesh {
     // Optional: reset capsule target or height
     this.target.copy(this.position.clone().add(new Vector3(0, 10.5, 0)));
 
-    // Update controls and camera
+    // Update controls, camera or rig
     const offset = this.params.heightOffset || new Vector3(0, 4.5, 0);
     const target = this.position.clone().add(offset);
-    this.controls.target.copy(target);
-    this.camera.position.copy(target.clone().add(new Vector3(0, 0, 5))); // fallback offset
+    if (this.renderer?.xr?.isPresenting && this.xrRig) {
+      // Place rig at target height; camera orientation comes from HMD
+      this.xrRig.position.copy(target);
+    } else {
+      this.controls.target.copy(target);
+      this.camera.position.copy(target.clone().add(new Vector3(0, 0, 5))); // fallback offset
+    }
 
     // Camera rotation
     rotateOrbit(this.camera, this.controls, this.params.rotateOrbit || -120);

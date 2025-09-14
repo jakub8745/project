@@ -1,4 +1,6 @@
 import { useState, useEffect, FC } from 'react';
+import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
+import { COMMON_HELP_ITEM, COMMON_ICONS } from '../data/galleryConfig';
 
 export interface InfoItem {
   id: string;
@@ -36,7 +38,34 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         if (!cfg.sidebar?.items) {
           throw new Error(`No sidebar.items in ${fetchUrl}`);
         }
-        setItems(cfg.sidebar.items);
+        const bucket = cfg.id;
+        // Merge global help item in front; avoid duplicates by id
+        const merged = [COMMON_HELP_ITEM, ...cfg.sidebar.items.filter((i: any) => i.id !== 'help-icon')];
+        const normalized = merged.map((item: InfoItem) => {
+          // Prefer common icons for well-known ids
+          let overrideIcon: string | undefined;
+          if (item.id === 'help-icon') overrideIcon = COMMON_HELP_ITEM.icon;
+          if (item.id === 'info-icon') overrideIcon = COMMON_ICONS.info;
+          // Also map by filename for shared assets regardless of id
+          const base = item.icon ? getFilename(item.icon) : '';
+          if (!overrideIcon) {
+            if (base === 'logo_BPA_256px.gif') overrideIcon = COMMON_ICONS.logoBpa;
+            else if (base === 'how_to_move.png') overrideIcon = COMMON_HELP_ITEM.icon;
+            else if (base === 'info.png') overrideIcon = COMMON_ICONS.info;
+          }
+          // Fallback: BPA links use shared logo
+          if (!overrideIcon && item.link && item.link.includes('bluepointart.uk')) {
+            overrideIcon = COMMON_ICONS.logoBpa;
+          }
+
+          const nextIcon = overrideIcon
+            ? overrideIcon
+            : isIpfsUri(item.icon)
+            ? resolveOracleUrl(item.icon, bucket)
+            : item.icon;
+          return { ...item, icon: nextIcon } as InfoItem;
+        });
+        setItems(normalized);
       })
       .catch(err => {
         console.error('[InfoButtons] error:', err);

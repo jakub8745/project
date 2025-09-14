@@ -7,7 +7,6 @@ import {
 } from 'three';
 
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
-import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
 
 export default async function initRenderer(
   container: HTMLElement = document.body
@@ -40,13 +39,6 @@ export default async function initRenderer(
       const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
       if (supportsVR) {
         container.appendChild(VRButton.createButton(renderer));
-      }
-
-      const supportsAR = await navigator.xr.isSessionSupported('immersive-ar');
-      if (supportsAR) {
-        container.appendChild(
-          ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] })
-        );
       }
     } catch (err) {
       console.warn('⚠️ XR session support check failed', err);

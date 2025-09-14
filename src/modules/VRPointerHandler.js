@@ -36,13 +36,34 @@ export class VRPointerHandler {
     const controller2 = renderer.xr.getController(1);
     this.scene.add(controller1, controller2);
 
-    [controller1, controller2].forEach((controller) => {
+    const attach = (controller) => {
       this._addControllerRay(controller);
 
-      controller.addEventListener('selectstart', () => {
+      const onSelect = () => {
         if (renderer.xr.isPresenting) {
           this._handleController(controller);
         }
+      };
+
+      controller.addEventListener('selectstart', onSelect);
+      controller.addEventListener('select', onSelect);
+      controller.addEventListener('squeezestart', onSelect);
+    };
+
+    // Some runtimes demand waiting for 'connected' to know targetRayMode
+    [controller1, controller2].forEach((controller) => {
+      if (controller.userData && controller.userData.isConnected) {
+        attach(controller);
+      } else {
+        controller.addEventListener('connected', (e) => {
+          controller.userData.isConnected = true;
+          attach(controller);
+        }, { once: true });
+      }
+      controller.addEventListener('disconnected', () => {
+        // Remove helper if present
+        const helper = controller.getObjectByName('rayHelper');
+        if (helper) controller.remove(helper);
       });
     });
   }
@@ -66,12 +87,13 @@ export class VRPointerHandler {
     this.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
     this.raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
 
-    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    const hit = intersects.find(
-      i =>
-        i.object.userData &&
-        ['Floor', 'Room', 'Wall'].includes(i.object.userData.type)
-    );
+    // Prefer collider mesh if present, otherwise traverse full scene
+    const collider = this.scene.getObjectByName('collider');
+    const targets = collider ? [collider] : this.scene.children;
+    const intersects = this.raycaster.intersectObjects(targets, true);
+    const hit = collider
+      ? (intersects[0] || null)
+      : intersects.find(i => i.object.userData && ['Floor', 'Room', 'Wall'].includes(i.object.userData.type));
 
     if (hit) {
 
