@@ -8,7 +8,6 @@
             "text": "Wystawa z okazji 85-lecia PUNO"
         },
         "items": [
-            
             {
                 "id": "info-icon",
                 "label": "About Dystopia of Imitation",
@@ -41,6 +40,13 @@
         }
     ],
     "params": {
+        "exposure": 1.0,
+        "autoExposure": true,
+        "exposureTarget": 0.5,
+        "exposureMin": 0.5,
+        "exposureMax": 2.5,
+        "exposureSampleInterval": 30,
+        "lightIntensity": 1.1,
         "gravity": -8,
         "visitorSpeed": 5,
         "heightOffset": {
@@ -55,7 +61,6 @@
         },
         "rotateOrbit": -65,
         "backgroundBlurriness": 0.05,
-        "backgroundIntensity": 0.3,
-        "lightIntensity": 2
+        "backgroundIntensity": 0.3
     }
 }

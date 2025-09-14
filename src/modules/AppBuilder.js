@@ -12,7 +12,7 @@ import { applyAudioMeshes, disposeAudioMeshes } from './applyAudioMeshes.js';
 import { PointerHandler } from './PointerHandler.js';
 import { VRPointerHandler } from './VRPointerHandler.js';
 
-import { AudioListener, Clock, BufferGeometry, Mesh, Group } from 'three';
+import { AudioListener, Clock, BufferGeometry, Mesh, Group, ACESFilmicToneMapping, WebGLRenderTarget } from 'three';
 import Visitor from './Visitor.js';
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import ktx2Loader from '../loaders/ktx2Loader.ts'; // Adjust path as needed
@@ -119,6 +119,15 @@ export async function buildGallery(config, container, { onProgress } = {}) {
   // ✅ renderer with guaranteed canvas
   renderer = await initRenderer(container);
 
+  // Tone mapping setup and initial exposure from config
+  try {
+    renderer.toneMapping = ACESFilmicToneMapping;
+    if (config?.params?.exposure != null) {
+      const exp = Number(config.params.exposure);
+      if (Number.isFinite(exp)) renderer.toneMappingExposure = exp;
+    }
+  } catch {}
+
   ktx2Loader.setTranscoderPath('./libs/basis/');
   ktx2Loader.detectSupport(renderer);
 
@@ -211,11 +220,56 @@ export async function buildGallery(config, container, { onProgress } = {}) {
   function initLoop() {
     if (!scene || !camera || !renderer || !controls) return;
 
+    // --- Auto exposure (optional) ---
+    const autoExposure = config?.params?.autoExposure !== false; // default on
+    const targetGray = typeof config?.params?.exposureTarget === 'number' ? config.params.exposureTarget : 0.5;
+    const exposureMin = typeof config?.params?.exposureMin === 'number' ? config.params.exposureMin : 0.5;
+    const exposureMax = typeof config?.params?.exposureMax === 'number' ? config.params.exposureMax : 2.5;
+    const sampleInterval = typeof config?.params?.exposureSampleInterval === 'number' ? Math.max(1, config.params.exposureSampleInterval) : 30;
+    const sampleSize = 64;
+    const rt = autoExposure ? new WebGLRenderTarget(sampleSize, sampleSize, { depthBuffer: false, stencilBuffer: false }) : null;
+    const px = autoExposure ? new Uint8Array(sampleSize * sampleSize * 4) : null;
+    let frameCounter = 0;
+
     renderer.setAnimationLoop(() => {
       const dt = Math.min(clock.getDelta(), 0.1);
 
       if (deps.visitor && deps.collider) {
         deps.visitor.update(dt, deps.collider);
+      }
+
+      // Sample scene brightness at low res and adapt exposure
+      if (autoExposure && rt && px) {
+        frameCounter++;
+        if (frameCounter % sampleInterval === 0) {
+          try {
+            renderer.setRenderTarget(rt);
+            renderer.render(scene, camera);
+            renderer.readRenderTargetPixels(rt, 0, 0, sampleSize, sampleSize, px);
+            renderer.setRenderTarget(null);
+            let sum = 0;
+            const inv255 = 1 / 255;
+            for (let i = 0; i < px.length; i += 4) {
+              const r = px[i] * inv255;
+              const g = px[i + 1] * inv255;
+              const b = px[i + 2] * inv255;
+              // Rec. 709 luma weights
+              sum += 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            }
+            const avg = sum / (sampleSize * sampleSize);
+            if (Number.isFinite(avg) && avg > 0) {
+              const current = renderer.toneMappingExposure || 1;
+              // Scale exposure toward target gray; sqrt to reduce aggressiveness
+              const desired = current * Math.sqrt(Math.max(0.001, targetGray) / Math.max(0.001, Math.min(1, avg)));
+              const clamped = Math.min(exposureMax, Math.max(exposureMin, desired));
+              // Smooth towards target
+              renderer.toneMappingExposure = current + (clamped - current) * 0.15;
+            }
+          } catch (err) {
+            // ignore sampling errors
+            renderer.setRenderTarget(null);
+          }
+        }
       }
 
       controls.update();
