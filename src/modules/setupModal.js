@@ -1,6 +1,7 @@
 /**
- * Modal management: show, hide, and draggable behavior.
+ * Modal management: refactored to use material modal (mmodal).
  */
+import { initMaterialModal, openMaterialModal } from './materialModal.ts';
 
 /**
  * Initialize modal functionality and return a showModal callback.
@@ -9,27 +10,34 @@
  */
 export function setupModal(imagesMap) {
 
-  const modalOverlay = document.getElementById('modalOverlay');
-  //const modalLoader = document.getElementById('modalLoader');
-  const modalImg = document.getElementById('modalImage');
-  const modalDesc = modalOverlay.querySelector('.modal-description');
-  const closeBtn = document.getElementById('closeModal');
+  // Initialize material modal listeners once
+  initMaterialModal();
+
   const sidebar = document.querySelector('.sidebar');
   const btn = document.getElementById('btn');
-  const modal = modalOverlay.querySelector('.modal');
 
-  let draggableInitialized = false;
-
-
-
-  //modalLoader.classList.add('hidden');
-  modalImg.classList.add('hidden');
-
-  modalOverlay.addEventListener('pointerdown', (e) => {
-    if (!modal.contains(e.target)) hideModal();
-  });
-  closeBtn.addEventListener('click', hideModal);
-  modal.style.transform = '';
+  // Ensure mmodal structure exists
+  let mmodal = document.getElementById('artModal');
+  if (!mmodal) {
+    mmodal = document.createElement('div');
+    mmodal.id = 'artModal';
+    mmodal.className = 'mmodal mmodal__bg';
+    mmodal.setAttribute('role', 'dialog');
+    mmodal.setAttribute('aria-hidden', 'true');
+    mmodal.innerHTML = `
+      <div class="mmodal__dialog">
+        <div class="mmodal__content">
+          <a href="#" class="mmodal__close" aria-label="Close">×</a>
+          <div class="mmodal__body">
+            <div class="mmodal__image-wrap"><img id="mmodalImage" alt="modal image" /></div>
+            <div id="mmodalDesc" class="mmodal__desc"></div>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(mmodal);
+  }
+  const modalImg = document.getElementById('mmodalImage');
+  const modalDesc = document.getElementById('mmodalDesc');
 
   const ipfsGateways = [
     "https://ipfs.io/ipfs/",
@@ -108,22 +116,9 @@ export function setupModal(imagesMap) {
     });
   }
 
-
   function hideModal() {
-    modalOverlay.classList.remove('show');
-
-    modalOverlay.addEventListener('transitionend', function handleTransitionEnd(e) {
-      if (e.target !== modalOverlay) return; // Only react to overlay's transition end
-      if (!modalOverlay.classList.contains('show')) {
-        modalOverlay.classList.add('hidden');
-
-        // 🔥 Only clear the content AFTER fade-out completes
-        modalImg.src = '';
-        modalDesc.textContent = '';
-        modalImg.classList.add('hidden');
-      }
-      modalOverlay.removeEventListener('transitionend', handleTransitionEnd);
-    });
+    if (modalImg) modalImg.src = '';
+    if (modalDesc) modalDesc.textContent = '';
   }
 
 
@@ -136,22 +131,16 @@ export function setupModal(imagesMap) {
       btn?.classList.remove('open');
     }
 
-    modal.style.transform = 'translate(-50%, -50%)';
-
     const meta = imagesMap[userData.name];
     if (!meta) return;
 
-    modalOverlay.classList.remove('hidden');
-    void modalOverlay.offsetWidth; // force reflow
-    modalOverlay.classList.add('show');
-
+    // Fill description underneath image
     modalDesc.innerHTML = `
     <h3>${meta.title}</h3>
     <p>${meta.description || ''}</p>
     ${meta.author ? `<p><em>By ${meta.author}</em></p>` : ''}
   `;
 
-    modalImg.classList.add('hidden');
 
     // ✅ Always ensure an image is attempted, even if not preloaded
     const useImage = (img) => {
@@ -170,7 +159,7 @@ export function setupModal(imagesMap) {
       console.log('🎨 Using cached image:', meta.img.src);
       // Already preloaded → show immediately
       modalImg.src = meta.img.src;
-      modalImg.onload = () => modalImg.classList.remove('hidden');
+      modalImg.onload = () => {};
       modalImg.onerror = () => {
         modalDesc.insertAdjacentHTML(
           "beforeend",
@@ -191,7 +180,6 @@ export function setupModal(imagesMap) {
           meta.img = img; // cache it for next time
           modalImg.src = img.src;
           modalImg.onload = () => {
-            modalImg.classList.remove("hidden");
             loadingMsg.remove(); // ✅ remove loading message once ready
           };
         })
@@ -202,13 +190,8 @@ export function setupModal(imagesMap) {
         });
     }
 
-
-
-    if (!draggableInitialized) {
-      modal.style.transform = '';
-      makeModalDraggable(modal);
-      draggableInitialized = true;
-    }
+    // Open the material modal programmatically
+    openMaterialModal('artModal');
   };
 
 }
