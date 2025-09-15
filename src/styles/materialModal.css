@@ -1,0 +1,139 @@
+/* Material-style morphing modal (mmodal*) */
+
+:root {
+  --mmodal-z: 1000;
+  --mmodal-bg: #e5e7eb; /* gray background */
+  --mmodal-text: #000000; /* black text */
+  /* Make modal roughly 2x larger on wide screens */
+  --mmodal-width: min(90vw);
+  --mmodal-space: 2.4rem;
+  --mmodal-time: .5s;
+  --mmodal-ease: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mmodal {
+  will-change: visibility, opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: var(--mmodal-z);
+  visibility: hidden;
+  opacity: 0;
+  transition: all var(--mmodal-time) var(--mmodal-ease);
+}
+
+.mmodal.mmodal--active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.mmodal.mmodal--align-top { align-items: flex-start; }
+
+/* Backdrop tint applies when you put mmodal__bg on the same element */
+.mmodal.mmodal__bg { background: rgba(0, 0, 0, 0.5); }
+
+.mmodal__dialog {
+  /* Size to content: width becomes image width + paddings */
+  display: inline-block;
+  width: auto;
+  max-width: 95vw;
+  padding: 0; /* ensure width = content width only */
+}
+
+.mmodal__content {
+  will-change: transform, opacity;
+  position: relative;
+  /* 10px padding on both sides so total modal width = image width + 20px */
+  padding: 10px;
+  background: var(--mmodal-bg);
+  background-clip: padding-box;
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.25);
+  border-radius: 12px; /* slightly rounded corners */
+  opacity: 0;
+  color: var(--mmodal-text);
+  max-height: 95vh; /* fit within the screen vertically */
+  overflow: hidden; /* content areas manage their own scroll */
+  width: auto;          /* do not stretch; wrap content width */
+  display: inline-block;/* allow dialog to wrap intrinsic width */
+  box-sizing: border-box;
+  transition: opacity .25s var(--mmodal-ease);
+}
+
+.mmodal__content.mmodal__content--active { opacity: 1; }
+
+.mmodal__close {
+  position: absolute;
+  top: calc(var(--mmodal-space) / 4);
+  right: calc(var(--mmodal-space) / 4);
+  z-index: calc(var(--mmodal-z) + 100);
+  cursor: pointer;
+  color: #000; /* black close button */
+  background: transparent;
+  border: none;
+}
+
+/* Trigger (button/link) */
+.mmodal__trigger {
+  position: relative;
+  display: inline-block;
+  padding: calc(var(--mmodal-space) / 2) var(--mmodal-space);
+  color: rgba(0,0,0,0.7);
+  line-height: 1;
+  cursor: pointer;
+  background: var(--mmodal-bg);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  transition: all .2s var(--mmodal-ease);
+}
+
+.mmodal__trigger:hover { filter: brightness(0.95); }
+.mmodal__trigger.mmodal__trigger--active { z-index: 10; }
+
+/* Temporary expander div appended inside trigger during animation */
+#mmodal__temp {
+  will-change: transform, opacity;
+  position: absolute;
+  inset: 0;
+  background: var(--mmodal-bg);
+  transform: none;
+  opacity: 1;
+  transition: opacity 0.1s ease-out, transform var(--mmodal-time) var(--mmodal-ease);
+}
+
+/* Simple content layout helpers to stack image then text */
+.mmodal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* stay within content box vertically */
+  max-height: calc(95vh - 2 * var(--mmodal-space));
+  overflow: hidden;
+}
+.mmodal__image-wrap {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mmodal__image-wrap img {
+  display: block;
+  /* Image defines the modal width up to viewport cap */
+  max-width: calc(95vw - 20px); /* account for 10px left + 10px right padding */
+  max-height: 80vh; /* taller image while keeping within viewport */
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  border: 1px solid rgba(0,0,0,0.35); /* subtle dark border */
+  border-radius: 6px; /* gentle rounding on image */
+}
+.mmodal__desc {
+  flex: 1 1 auto;
+  min-height: 0; /* allow flex child to shrink */
+  overflow-y: auto;
+  color: inherit; /* black text */
+}

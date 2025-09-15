@@ -5,11 +5,7 @@ export default function initScene(backgroundTexture, ktx2Loader, name, backgroun
   const scene = new Scene();
   scene.background = new Color(0xffffff); // fallback background
 
-
   console.log('🎨 Scene in');
-
-
-
 
   if (backgroundTexture) {
     ktx2Loader.load(backgroundTexture, (texture) => {

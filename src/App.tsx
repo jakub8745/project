@@ -1,5 +1,6 @@
 // App.tsx
 import { useCallback, useEffect, useState } from 'react';
+import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import { InfoButtons } from './components/InfoButtons';
@@ -71,7 +72,7 @@ export default function App() {
       <Sidebar
         open={sidebarOpen}
         onToggle={toggleSidebar}   // ✅ stable reference
-        logoText="Blue Point Art"
+        logoText="Blue Point Art Gallery [Archive]"
       >
         <section className="p-4">
           {/* Exhibit info section (expandable items) */}

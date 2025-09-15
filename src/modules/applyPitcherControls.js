@@ -51,6 +51,14 @@ export function applyPitcherControls(obj, scene, renderer, camera, transform) {
   scene.add(spot.target);
 
   const tmpPos = new Vector3();
+  // Initialize spotlight position/target on load so it's on immediately
+  try {
+    obj.updateMatrixWorld(true);
+    obj.getWorldPosition(tmpPos);
+    spot.position.set(tmpPos.x, tmpPos.y + 5, tmpPos.z);
+    spot.target.position.copy(tmpPos);
+  } catch {}
+
   transform.addEventListener('change', (e) => {
     obj.getWorldPosition(tmpPos);
     spot.position.set(tmpPos.x, tmpPos.y + 5, tmpPos.z);

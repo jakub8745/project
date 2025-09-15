@@ -193,26 +193,58 @@ canvas {
 
 /* Layout for wide screens */
 @media (orientation: landscape) {
-  .modal {
+  /* Portrait image on horizontal screen: text aside */
+  .modal.img-portrait {
     flex-direction: row;
   }
-
-  .modal-image-container {
+  .modal.img-portrait .modal-image-container {
     flex: 3;
     justify-content: center;
     align-items: center;
     max-height: 95vh;
   }
-
-  .modal img {
+  .modal.img-portrait img {
     height: 95%;
     width: auto;
     object-fit: contain;
   }
-
-  .modal-description {
-    flex: 2;
+  .modal.img-portrait .modal-description {
+    /* Fixed column width and scrollable */
+    flex: 0 0 20em;
+    width: 20em;
     height: auto;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  /* Landscape image on horizontal screen: text underneath */
+  .modal.img-landscape {
+    flex-direction: column;
+  }
+  .modal.img-landscape .modal-image-container {
+    /* Let image area take remaining space above the 20em footer */
+    flex: 1 1 auto;
+    justify-content: center;
+    align-items: center;
+    /* Account for the 20em description + approx panel padding */
+    max-height: calc(95vh - 20em - 2rem);
+    min-height: 0; /* allow flex child to shrink */
+    overflow: auto;
+  }
+  .modal.img-landscape img {
+    /* Constrain image inside its container so it doesn't push text out */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .modal.img-landscape .modal-description {
+    /* Fixed row height and scrollable */
+    flex: 0 0 auto;
+    width: 100%;
+    height: 20em;
+    max-height: 20em;
     overflow-y: auto;
     padding: 20px;
   }

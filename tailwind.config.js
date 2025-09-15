@@ -26,7 +26,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Source Sans Pro', 'sans-serif'],
       },
       animation: {
         'spin-slow': 'spin 8s linear infinite',

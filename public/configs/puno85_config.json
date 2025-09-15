@@ -115,7 +115,7 @@
     "exposureMin": 0.5,
     "exposureMax": 2.5,
     "exposureSampleInterval": 30,
-    "lightIntensity": 2,
+    "lightIntensity": 1.5,
     "gravity": -8,
     "visitorSpeed": 2,
     "heightOffset": {

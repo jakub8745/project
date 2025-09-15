@@ -100,7 +100,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
                 className="w-full flex items-center p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition"
               >
                 <img src={item.icon} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
-                <span className="text-white text-2xl">{item.label}</span>
+                <span className="text-white text-xl">{item.label}</span>
               </button>
               {openId === item.id && item.content && (
                 <div
