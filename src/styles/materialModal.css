@@ -113,6 +113,7 @@
   /* stay within content box vertically */
   max-height: calc(95vh - 2 * var(--mmodal-space));
   overflow: hidden;
+  align-items: stretch;
 }
 .mmodal__image-wrap {
   flex: 0 0 auto;
@@ -136,4 +137,7 @@
   min-height: 0; /* allow flex child to shrink */
   overflow-y: auto;
   color: inherit; /* black text */
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }

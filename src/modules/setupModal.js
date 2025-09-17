@@ -38,6 +38,24 @@ export function setupModal(imagesMap) {
   }
   const modalImg = document.getElementById('mmodalImage');
   const modalDesc = document.getElementById('mmodalDesc');
+  const modalContent = mmodal.querySelector('.mmodal__content');
+
+  let resizeListenerBound = false;
+
+  const syncModalWidth = () => {
+    if (!mmodal?.classList.contains('mmodal--active')) return;
+    if (!modalContent || !modalImg) return;
+    const rect = modalImg.getBoundingClientRect();
+    if (!rect.width) return;
+    const contentWidth = Math.round(rect.width + 20); // respect 10px padding on each side
+    modalContent.style.width = `${contentWidth}px`;
+  };
+
+  const ensureResizeListener = () => {
+    if (resizeListenerBound) return;
+    window.addEventListener('resize', syncModalWidth, { passive: true });
+    resizeListenerBound = true;
+  };
 
   const ipfsGateways = [
     "https://ipfs.io/ipfs/",
@@ -133,6 +151,11 @@ export function setupModal(imagesMap) {
 
     const meta = imagesMap[userData.name];
     if (!meta) return;
+    if (!modalImg || !modalDesc) return;
+
+    if (modalContent) {
+      modalContent.style.width = '';
+    }
 
     // Fill description underneath image
     modalDesc.innerHTML = `
@@ -141,31 +164,28 @@ export function setupModal(imagesMap) {
     ${meta.author ? `<p><em>By ${meta.author}</em></p>` : ''}
   `;
 
-
-    // ✅ Always ensure an image is attempted, even if not preloaded
-    const useImage = (img) => {
-
-      console.log('🎨 Using image:', img.src);
-      meta.img = img; // cache
-      modalImg.src = img.src;
-      modalImg.onload = () => modalImg.classList.remove('hidden');
-      modalImg.onerror = () => {
-        modalDesc.textContent = '⚠️ Could not display image.';
-      };
-    };
-
+    ensureResizeListener();
+    modalImg.classList.add('hidden');
     if (meta.img) {
 
       console.log('🎨 Using cached image:', meta.img.src);
       // Already preloaded → show immediately
-      modalImg.src = meta.img.src;
-      modalImg.onload = () => {};
+      const handleLoad = () => {
+        modalImg.classList.remove('hidden');
+        syncModalWidth();
+      };
       modalImg.onerror = () => {
         modalDesc.insertAdjacentHTML(
           "beforeend",
           "<p style='color:red'>⚠️ Failed to load image.</p>"
         );
+        if (modalContent) modalContent.style.width = '';
       };
+      modalImg.onload = handleLoad;
+      modalImg.src = meta.img.src;
+      if (modalImg.complete && modalImg.naturalWidth > 0) {
+        handleLoad();
+      }
     } else {
       // Not preloaded yet → show a loading message
       const loadingMsg = document.createElement("p");
@@ -178,10 +198,21 @@ export function setupModal(imagesMap) {
       loadAnyWithFallback(meta.imagePath, meta.ipfsImagePath)
         .then(img => {
           meta.img = img; // cache it for next time
-          modalImg.src = img.src;
-          modalImg.onload = () => {
+          const handleLoad = () => {
             loadingMsg.remove(); // ✅ remove loading message once ready
+            modalImg.classList.remove('hidden');
+            syncModalWidth();
           };
+          modalImg.onerror = () => {
+            loadingMsg.textContent = "⚠️ Could not load image.";
+            loadingMsg.style.color = "red";
+            if (modalContent) modalContent.style.width = '';
+          };
+          modalImg.onload = handleLoad;
+          modalImg.src = img.src;
+          if (modalImg.complete && modalImg.naturalWidth > 0) {
+            handleLoad();
+          }
         })
         .catch(err => {
           console.warn("⚠️ Could not load image in modal:", err);
@@ -192,6 +223,7 @@ export function setupModal(imagesMap) {
 
     // Open the material modal programmatically
     openMaterialModal('artModal');
+    window.requestAnimationFrame(syncModalWidth);
   };
 
 }
