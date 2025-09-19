@@ -75,7 +75,7 @@ export const GALLERIES: GalleryItem[] = [{
     description: '3D Documentation of the project',
     scale: 0.45,
     position: [0, 0, 0],
-    configUrl: "./configs/lockdowns_config.json",
+    configUrl: "./configs/bednarczyk_config.json",
     keywords: [],
     ogImage: "",
     overlayText: "ggggggg",
