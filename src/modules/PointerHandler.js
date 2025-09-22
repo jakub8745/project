@@ -10,6 +10,7 @@ import {
   Matrix3,
   MathUtils
 } from 'three';
+import { createTooltip } from './Tooltip.js';
 
 export class PointerHandler {
   constructor({ camera, scene, visitor, popupCallback, deps }) {
@@ -20,6 +21,7 @@ export class PointerHandler {
     this.deps = deps;
     this.params = deps.params;
     this.links = deps.links || {};
+    this.imagesMeta = deps.imagesMeta || {};
     this.popupCallback = popupCallback;
 
     this.raycaster = new Raycaster();
@@ -45,15 +47,14 @@ export class PointerHandler {
     this.lastTapTime = 0;
     this.DOUBLE_TAP_THRESHOLD = 300;
 
-    this.hoveredLinkKey = null;
-    this.linkTooltip = this._createLinkTooltip();
+    this.tooltip = createTooltip();
 
     // Bind handlers
     this._onPointerDown = this._onPointerDown.bind(this);
     this._onPointerMove = this._onPointerMove.bind(this);
     this._onPointerUp = this._onPointerUp.bind(this);
-    this._hideLinkTooltip = this._hideLinkTooltip.bind(this);
-    this._updateLinkHover = this._updateLinkHover.bind(this);
+    this._hideHoverTooltip = this._hideHoverTooltip.bind(this);
+    this._updateHoverTooltip = this._updateHoverTooltip.bind(this);
     this._addListeners();
   }
 
@@ -80,12 +81,12 @@ export class PointerHandler {
     canvas.addEventListener('pointerdown', this._onPointerDown);
     canvas.addEventListener('pointermove', this._onPointerMove);
     canvas.addEventListener('pointerup', this._onPointerUp);
-    canvas.addEventListener('mouseleave', this._hideLinkTooltip);
+    canvas.addEventListener('mouseleave', this._hideHoverTooltip);
   }
 
   _onPointerDown(event) {
     event.preventDefault();
-    this._hideLinkTooltip();
+    this._hideHoverTooltip();
     this.startX = event.clientX;
     this.startY = event.clientY;
     this.isDragging = false;
@@ -110,22 +111,22 @@ export class PointerHandler {
       ) {
         this.isDragging = true;
         clearTimeout(this.pressTimeout);
-        this._hideLinkTooltip();
+        this._hideHoverTooltip();
         return;
       }
     }
 
-    this._updateLinkHover(event);
+    this._updateHoverTooltip(event);
   }
 
   _onPointerUp() {
     this.isPressing = false;
     clearTimeout(this.pressTimeout);
-    this._hideLinkTooltip();
+    this._hideHoverTooltip();
   }
 
   _handleClick(event) {
-    this._hideLinkTooltip();
+    this._hideHoverTooltip();
     const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video', 'Link'];
     const bounds = this.renderer.domElement.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
@@ -214,8 +215,8 @@ export class PointerHandler {
     this.visitor.isAutoMoving = true;
   }
 
-  _updateLinkHover(event) {
-    if (!this.linkTooltip) return;
+  _updateHoverTooltip(event) {
+    if (!this.tooltip) return;
 
     const bounds = this.renderer.domElement.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
@@ -225,62 +226,53 @@ export class PointerHandler {
     this.raycaster.setFromCamera(this.pointer, this.camera);
     this.raycaster.firstHitOnly = true;
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    const hit = intersects.find(i => i.object.userData && i.object.userData.type === 'Link');
+    const hit = intersects.find(i => {
+      const t = i.object.userData?.type;
+      return t === 'Link' || t === 'Image';
+    });
 
     if (!hit) {
-      this._hideLinkTooltip();
+      this._hideHoverTooltip();
       return;
     }
 
-    const { name } = hit.object.userData || {};
-    const linkKey = name || hit.object.name;
-    const linkInfo = this._resolveLinkTarget(linkKey, hit.object.userData);
+    const { type, name } = hit.object.userData || {};
+    const key = name || hit.object.name;
+    let displayText = '';
 
-    if (!linkInfo?.url) {
-      this._hideLinkTooltip();
+    if (type === 'Link') {
+      const linkInfo = this._resolveLinkTarget(key, hit.object.userData);
+      if (!linkInfo?.url) {
+        this._hideHoverTooltip();
+        return;
+      }
+      displayText = linkInfo.label || linkInfo.url;
+    } else if (type === 'Image') {
+      const imageInfo = this._resolveImageMeta(key);
+      if (!imageInfo) {
+        this._hideHoverTooltip();
+        return;
+      }
+      displayText = imageInfo.author
+        ? `${imageInfo.title} — ${imageInfo.author}`
+        : imageInfo.title;
+    } else {
+      this._hideHoverTooltip();
       return;
     }
 
-    const displayText = linkInfo.label || linkInfo.url;
-
-    if (this.hoveredLinkKey !== linkKey || this.linkTooltip.textContent !== displayText) {
-      this.linkTooltip.textContent = displayText;
-      this.hoveredLinkKey = linkKey;
-    }
-
-    this.linkTooltip.style.left = `${event.clientX + 12}px`;
-    this.linkTooltip.style.top = `${event.clientY + 12}px`;
-    this.linkTooltip.style.display = 'block';
+    const tooltipKey = `${type}:${key}`;
+    this.tooltip.show({
+      x: event.clientX + 12,
+      y: event.clientY + 12,
+      text: displayText,
+      key: tooltipKey
+    });
   }
 
-  _hideLinkTooltip() {
-    if (!this.linkTooltip) return;
-    this.linkTooltip.style.display = 'none';
-    this.hoveredLinkKey = null;
-  }
-
-  _createLinkTooltip() {
-    let tooltip = document.getElementById('pointerLinkTooltip');
-    if (!tooltip) {
-      tooltip = document.createElement('div');
-      tooltip.id = 'pointerLinkTooltip';
-      tooltip.style.position = 'fixed';
-      tooltip.style.zIndex = '10000';
-      tooltip.style.padding = '6px 10px';
-      tooltip.style.borderRadius = '4px';
-      tooltip.style.background = 'rgba(17, 24, 39, 0.9)';
-      tooltip.style.color = '#f9fafb';
-      tooltip.style.fontSize = '14px';
-      tooltip.style.fontFamily = 'sans-serif';
-      tooltip.style.pointerEvents = 'none';
-      tooltip.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.35)';
-      tooltip.style.maxWidth = '320px';
-      tooltip.style.wordBreak = 'break-word';
-      tooltip.style.display = 'none';
-      document.body.appendChild(tooltip);
-    }
-    tooltip.style.display = 'none';
-    return tooltip;
+  _hideHoverTooltip() {
+    if (!this.tooltip) return;
+    this.tooltip.hide();
   }
 
   _resolveLinkTarget(linkKey, userData = {}) {
@@ -304,6 +296,16 @@ export class PointerHandler {
     }
 
     return null;
+  }
+
+  _resolveImageMeta(imageKey) {
+    const images = this.deps?.imagesMeta || this.imagesMeta || {};
+    const meta = images?.[imageKey];
+    if (!meta) return null;
+
+    const title = meta.title || imageKey;
+    const author = meta.author || '';
+    return { title, author };
   }
 
 

@@ -178,7 +178,8 @@ export async function buildGallery(config, container, { onProgress } = {}) {
     audioObjects: [],
     onProgress,
     xrRig,
-    links: config?.links || {}
+    links: config?.links || {},
+    imagesMeta: config?.images || {}
   };
 
   // ✅ Visitor + PointerHandler BEFORE async loads
