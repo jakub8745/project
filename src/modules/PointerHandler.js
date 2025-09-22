@@ -137,9 +137,6 @@ export class PointerHandler {
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     const hit = intersects.find(i => i.object.userData && validTypes.includes(i.object.userData.type));
 
-    console.log('hit', hit.object.name);
-
-
     if (!hit || !hit.object.userData) return;
 
     const { type, elementID, name } = hit.object.userData;
@@ -168,19 +165,15 @@ export class PointerHandler {
     }
 
     if (type === 'Link') {
-
-      console.log('link hit', hit.object.name);
-
       const linkKey = name || hit.object.name;
-      const linkMap = this.deps?.links || this.links;
-      const targetUrl = linkMap?.[linkKey] || hit.object.userData?.url;
+      const linkInfo = this._resolveLinkTarget(linkKey, hit.object.userData);
 
-      if (targetUrl) {
+      if (linkInfo?.url) {
         const features = 'noopener=yes,noreferrer=yes';
-        const opened = window.open(targetUrl, '_blank', features);
+        const opened = window.open(linkInfo.url, '_blank', features);
         if (!opened) {
           // Fallback: navigate current tab if popup blocked
-          window.location.href = targetUrl;
+          window.location.href = linkInfo.url;
         }
       } else {
         console.warn(`PointerHandler: no link mapped for interactive "${linkKey}"`);
@@ -241,16 +234,17 @@ export class PointerHandler {
 
     const { name } = hit.object.userData || {};
     const linkKey = name || hit.object.name;
-    const linkMap = this.deps?.links || this.links;
-    const targetUrl = linkMap?.[linkKey] || hit.object.userData?.url;
+    const linkInfo = this._resolveLinkTarget(linkKey, hit.object.userData);
 
-    if (!targetUrl) {
+    if (!linkInfo?.url) {
       this._hideLinkTooltip();
       return;
     }
 
-    if (this.hoveredLinkKey !== linkKey) {
-      this.linkTooltip.textContent = targetUrl;
+    const displayText = linkInfo.label || linkInfo.url;
+
+    if (this.hoveredLinkKey !== linkKey || this.linkTooltip.textContent !== displayText) {
+      this.linkTooltip.textContent = displayText;
       this.hoveredLinkKey = linkKey;
     }
 
@@ -287,6 +281,29 @@ export class PointerHandler {
     }
     tooltip.style.display = 'none';
     return tooltip;
+  }
+
+  _resolveLinkTarget(linkKey, userData = {}) {
+    const linkMap = this.deps?.links || this.links || {};
+    const configEntry = linkMap[linkKey];
+
+    if (typeof configEntry === 'string') {
+      return { url: configEntry, label: configEntry };
+    }
+
+    if (configEntry && typeof configEntry === 'object') {
+      const url = configEntry.url || configEntry.href || configEntry.link || userData.url;
+      const label = configEntry.label || configEntry.title || configEntry.text || url || linkKey;
+      if (url) {
+        return { url, label };
+      }
+    }
+
+    if (userData?.url) {
+      return { url: userData.url, label: userData.url };
+    }
+
+    return null;
   }
 
 

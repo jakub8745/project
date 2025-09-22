@@ -29,7 +29,7 @@
         }
     },
     "links": {
-        "logo_oficyny": "https://bluepointart.uk"
+        "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/"
     },
     "audio": [
         {
@@ -54,7 +54,7 @@
         "visitorSpeed": 5,
         "heightOffset": {
             "x": 0,
-            "y": 0.5,
+            "y": 3.5,
             "z": 0
         },
         "visitorEnter": {
