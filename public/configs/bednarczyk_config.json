@@ -1,6 +1,6 @@
 {
     "id": "dystopia",
-    "modelPath": "/models/BEDNARCZYK_ktx.glb",
+    "modelPath": "/models/bednarczyk_exhibition.glb",
     "interactivesPath": "/models/interactives_empty.glb",
     "backgroundTexture": "/textures/equMap_podMostem.ktx2",
     "sidebar": {
@@ -27,6 +27,9 @@
             "author": "Jaroslaw Solecki",
             "imagePath": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg"
         }
+    },
+    "links": {
+        "logo_oficyny": "https://bluepointart.uk"
     },
     "audio": [
         {

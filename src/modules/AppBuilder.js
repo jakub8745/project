@@ -168,7 +168,18 @@ export async function buildGallery(config, container, { onProgress } = {}) {
     },
   }));
 
-  deps = { ktx2Loader, camera, listener, controls, renderer, params, audioObjects: [], onProgress, xrRig };
+  deps = {
+    ktx2Loader,
+    camera,
+    listener,
+    controls,
+    renderer,
+    params,
+    audioObjects: [],
+    onProgress,
+    xrRig,
+    links: config?.links || {}
+  };
 
   // ✅ Visitor + PointerHandler BEFORE async loads
   visitor = new Visitor(deps);

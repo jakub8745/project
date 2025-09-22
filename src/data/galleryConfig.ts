@@ -73,7 +73,7 @@ export const GALLERIES: GalleryItem[] = [{
     url: "/sidebar_models/preview_bednarczyk.glb",
     title: 'Unvelling the Heritage of Krystyna Bednarczyk',
     description: '3D Documentation of the project',
-    scale: 0.45,
+    scale: 0.1,
     position: [0, 0, 0],
     configUrl: "./configs/bednarczyk_config.json",
     keywords: [],

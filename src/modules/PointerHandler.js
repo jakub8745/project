@@ -19,6 +19,7 @@ export class PointerHandler {
 
     this.deps = deps;
     this.params = deps.params;
+    this.links = deps.links || {};
     this.popupCallback = popupCallback;
 
     this.raycaster = new Raycaster();
@@ -44,10 +45,15 @@ export class PointerHandler {
     this.lastTapTime = 0;
     this.DOUBLE_TAP_THRESHOLD = 300;
 
+    this.hoveredLinkKey = null;
+    this.linkTooltip = this._createLinkTooltip();
+
     // Bind handlers
     this._onPointerDown = this._onPointerDown.bind(this);
     this._onPointerMove = this._onPointerMove.bind(this);
     this._onPointerUp = this._onPointerUp.bind(this);
+    this._hideLinkTooltip = this._hideLinkTooltip.bind(this);
+    this._updateLinkHover = this._updateLinkHover.bind(this);
     this._addListeners();
   }
 
@@ -74,10 +80,12 @@ export class PointerHandler {
     canvas.addEventListener('pointerdown', this._onPointerDown);
     canvas.addEventListener('pointermove', this._onPointerMove);
     canvas.addEventListener('pointerup', this._onPointerUp);
+    canvas.addEventListener('mouseleave', this._hideLinkTooltip);
   }
 
   _onPointerDown(event) {
     event.preventDefault();
+    this._hideLinkTooltip();
     this.startX = event.clientX;
     this.startY = event.clientY;
     this.isDragging = false;
@@ -95,22 +103,30 @@ export class PointerHandler {
   }
 
   _onPointerMove(event) {
-    if (
-      Math.abs(event.clientX - this.startX) > this.MOVE_THRESHOLD ||
-      Math.abs(event.clientY - this.startY) > this.MOVE_THRESHOLD
-    ) {
-      this.isDragging = true;
-      clearTimeout(this.pressTimeout);
+    if (event.buttons !== 0) {
+      if (
+        Math.abs(event.clientX - this.startX) > this.MOVE_THRESHOLD ||
+        Math.abs(event.clientY - this.startY) > this.MOVE_THRESHOLD
+      ) {
+        this.isDragging = true;
+        clearTimeout(this.pressTimeout);
+        this._hideLinkTooltip();
+        return;
+      }
     }
+
+    this._updateLinkHover(event);
   }
 
   _onPointerUp() {
     this.isPressing = false;
     clearTimeout(this.pressTimeout);
+    this._hideLinkTooltip();
   }
 
   _handleClick(event) {
-    const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video'];
+    this._hideLinkTooltip();
+    const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video', 'Link'];
     const bounds = this.renderer.domElement.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
     const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
@@ -121,8 +137,12 @@ export class PointerHandler {
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     const hit = intersects.find(i => i.object.userData && validTypes.includes(i.object.userData.type));
 
+    console.log('hit', hit.object.name);
+
+
     if (!hit || !hit.object.userData) return;
-    const { type, elementID } = hit.object.userData;
+
+    const { type, elementID, name } = hit.object.userData;
 
     // Handle image popups, videos, etc.
     if (type === 'Image' && this.popupCallback) {
@@ -143,6 +163,27 @@ export class PointerHandler {
         } else {
           videoElement.pause();
         }
+      }
+      return;
+    }
+
+    if (type === 'Link') {
+
+      console.log('link hit', hit.object.name);
+
+      const linkKey = name || hit.object.name;
+      const linkMap = this.deps?.links || this.links;
+      const targetUrl = linkMap?.[linkKey] || hit.object.userData?.url;
+
+      if (targetUrl) {
+        const features = 'noopener=yes,noreferrer=yes';
+        const opened = window.open(targetUrl, '_blank', features);
+        if (!opened) {
+          // Fallback: navigate current tab if popup blocked
+          window.location.href = targetUrl;
+        }
+      } else {
+        console.warn(`PointerHandler: no link mapped for interactive "${linkKey}"`);
       }
       return;
     }
@@ -178,6 +219,74 @@ export class PointerHandler {
   _moveVisitor(point) {
     this.visitor.target = point.clone();
     this.visitor.isAutoMoving = true;
+  }
+
+  _updateLinkHover(event) {
+    if (!this.linkTooltip) return;
+
+    const bounds = this.renderer.domElement.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+    const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+    this.pointer.set(x, y);
+
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+    this.raycaster.firstHitOnly = true;
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    const hit = intersects.find(i => i.object.userData && i.object.userData.type === 'Link');
+
+    if (!hit) {
+      this._hideLinkTooltip();
+      return;
+    }
+
+    const { name } = hit.object.userData || {};
+    const linkKey = name || hit.object.name;
+    const linkMap = this.deps?.links || this.links;
+    const targetUrl = linkMap?.[linkKey] || hit.object.userData?.url;
+
+    if (!targetUrl) {
+      this._hideLinkTooltip();
+      return;
+    }
+
+    if (this.hoveredLinkKey !== linkKey) {
+      this.linkTooltip.textContent = targetUrl;
+      this.hoveredLinkKey = linkKey;
+    }
+
+    this.linkTooltip.style.left = `${event.clientX + 12}px`;
+    this.linkTooltip.style.top = `${event.clientY + 12}px`;
+    this.linkTooltip.style.display = 'block';
+  }
+
+  _hideLinkTooltip() {
+    if (!this.linkTooltip) return;
+    this.linkTooltip.style.display = 'none';
+    this.hoveredLinkKey = null;
+  }
+
+  _createLinkTooltip() {
+    let tooltip = document.getElementById('pointerLinkTooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.id = 'pointerLinkTooltip';
+      tooltip.style.position = 'fixed';
+      tooltip.style.zIndex = '10000';
+      tooltip.style.padding = '6px 10px';
+      tooltip.style.borderRadius = '4px';
+      tooltip.style.background = 'rgba(17, 24, 39, 0.9)';
+      tooltip.style.color = '#f9fafb';
+      tooltip.style.fontSize = '14px';
+      tooltip.style.fontFamily = 'sans-serif';
+      tooltip.style.pointerEvents = 'none';
+      tooltip.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.35)';
+      tooltip.style.maxWidth = '320px';
+      tooltip.style.wordBreak = 'break-word';
+      tooltip.style.display = 'none';
+      document.body.appendChild(tooltip);
+    }
+    tooltip.style.display = 'none';
+    return tooltip;
   }
 
 
