@@ -17,6 +17,9 @@ export interface GalleryItem {
         loop: boolean;
         muted: boolean;
         playsinline: boolean;
+        title?: string;
+        description?: string;
+        author?: string;
         sources: {
             src: string;
             type: string;

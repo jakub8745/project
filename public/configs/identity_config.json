@@ -82,6 +82,8 @@
       "loop": true,
       "muted": true,
       "playsinline": true,
+      "title": "Unreal Places",
+      "description": "Poetycka podróż wideo po hybrydowych tożsamościach autorstwa Krzysztofa Gila.",
       "sources": [
         {
           "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
@@ -94,6 +96,8 @@
       "loop": true,
       "muted": true,
       "playsinline": true,
+      "title": "Heritage",
+      "description": "Materiał wideo badający dziedzictwo i pamięć w perspektywie tożsamościowej.",
       "sources": [
         {
           "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",

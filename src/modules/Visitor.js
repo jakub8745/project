@@ -102,7 +102,7 @@ export default class Visitor extends Mesh {
   update(delta, collider) {
 
     if (this.visitorIsOnGround) {
-      this.visitorVelocity.y = delta * this.params.gravity;
+      this.visitorVelocity.y = 0;
     } else {
       this.visitorVelocity.y += delta * this.params.gravity;
     }

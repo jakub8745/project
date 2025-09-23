@@ -22,6 +22,7 @@ export class PointerHandler {
     this.params = deps.params;
     this.links = deps.links || {};
     this.imagesMeta = deps.imagesMeta || {};
+    this.videosMeta = deps.videosMeta || {};
     this.popupCallback = popupCallback;
 
     this.raycaster = new Raycaster();
@@ -228,7 +229,7 @@ export class PointerHandler {
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     const hit = intersects.find(i => {
       const t = i.object.userData?.type;
-      return t === 'Link' || t === 'Image';
+      return t === 'Link' || t === 'Image' || t === 'Video';
     });
 
     if (!hit) {
@@ -236,7 +237,7 @@ export class PointerHandler {
       return;
     }
 
-    const { type, name } = hit.object.userData || {};
+    const { type, name, elementID } = hit.object.userData || {};
     const key = name || hit.object.name;
     let displayText = '';
 
@@ -256,6 +257,17 @@ export class PointerHandler {
       displayText = imageInfo.author
         ? `${imageInfo.title} — ${imageInfo.author}`
         : imageInfo.title;
+    } else if (type === 'Video') {
+      const videoKey = elementID || key;
+      const videoInfo = this._resolveVideoMeta(videoKey, hit.object.userData);
+      if (!videoInfo) {
+        this._hideHoverTooltip();
+        return;
+      }
+      const parts = [];
+      if (videoInfo.title) parts.push(videoInfo.title);
+      if (videoInfo.description) parts.push(videoInfo.description);
+      displayText = parts.length ? parts.join(' — ') : videoKey;
     } else {
       this._hideHoverTooltip();
       return;
@@ -306,6 +318,16 @@ export class PointerHandler {
     const title = meta.title || imageKey;
     const author = meta.author || '';
     return { title, author };
+  }
+
+  _resolveVideoMeta(videoKey, userData = {}) {
+    const videos = this.deps?.videosMeta || this.videosMeta || {};
+    const meta = videos?.[videoKey];
+    if (!meta && !userData) return null;
+
+    const title = meta?.title || userData?.title || userData?.name || videoKey;
+    const description = meta?.description || userData?.description || userData?.opis || '';
+    return { title, description };
   }
 
 

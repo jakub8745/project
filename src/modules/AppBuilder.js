@@ -168,6 +168,13 @@ export async function buildGallery(config, container, { onProgress } = {}) {
     },
   }));
 
+  const videosMeta = Array.isArray(config?.videos)
+    ? config.videos.reduce((acc, video) => {
+        if (video?.id) acc[video.id] = video;
+        return acc;
+      }, {})
+    : {};
+
   deps = {
     ktx2Loader,
     camera,
@@ -179,7 +186,8 @@ export async function buildGallery(config, container, { onProgress } = {}) {
     onProgress,
     xrRig,
     links: config?.links || {},
-    imagesMeta: config?.images || {}
+    imagesMeta: config?.images || {},
+    videosMeta
   };
 
   // ✅ Visitor + PointerHandler BEFORE async loads
