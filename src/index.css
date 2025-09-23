@@ -8,7 +8,7 @@
 
 body {
   @apply bg-gallery-dark text-gallery-text;
-  font-family: "Jura", sans-serif;
+  font-family: "Xanh Mono", monospace;
   font-optical-sizing: auto;
   font-weight: 700;
   margin: 0;
@@ -86,7 +86,7 @@ canvas {
   background: rgba(17, 24, 39, 0.9);
   color: #f9fafb;
   font-size: 14px;
-  font-family: "Jura", sans-serif;
+  font-family: "Xanh Mono", monospace;
   pointer-events: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
   max-width: 320px;

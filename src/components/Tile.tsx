@@ -24,12 +24,12 @@ const Tile: React.FC<TileProps> = ({
   scale,
   position,
 }) => (
-  <div className="bg-gallery-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in">
+  <div className="bg-transparent border border-white/20 rounded-lg overflow-hidden hover:bg-white/5 transition-all duration-300 animate-fade-in">
     <div className="relative aspect-square">
       <Suspense
         fallback={
-          <div className="absolute inset-0 flex items-center justify-center bg-gallery-dark bg-opacity-50">
-            <Loader2 className="w-8 h-8 text-gallery-accent animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40">
+            <Loader2 className="w-8 h-8 text-sky-300 animate-spin" />
           </div>
         }
       >
@@ -38,7 +38,7 @@ const Tile: React.FC<TileProps> = ({
           dpr={[1, 2]}
           onCreated={({ gl }) => ktx2Loader.detectSupport(gl)}
         >
-          <color attach="background" args={['#0a171f']} />
+          <color attach="background" args={['#e1e7ef']} />
           <ambientLight intensity={1.5} />
           <directionalLight position={[5, 5, 5]} intensity={1.1} castShadow />
           <PerspectiveCamera makeDefault position={[0, 2, 4]} fov={45} />
@@ -60,9 +60,9 @@ const Tile: React.FC<TileProps> = ({
         </Canvas>
       </Suspense>
     </div>
-    <div className="p-4">
-      <h3 className="text-lg font-medium text-white">{title}</h3>
-      <p className="text-sm text-gallery-muted mt-1">{description}</p>
+    <div className="p-4 bg-transparent">
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <p className="text-sm text-slate-200 mt-1">{description}</p>
     </div>
   </div>
 );

@@ -76,7 +76,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
 
   // ✅ Conditional rendering can go *after* hook declarations
   if (!configUrl) return null;
-  if (loading) return <div className="text-gray-400 p-4">Loading info…</div>;
+  if (loading) return <div className="text-slate-400 p-4">Loading info…</div>;
   if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
 
   return (
@@ -88,7 +88,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
               href={item.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition no-underline"
+              className="w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition no-underline"
             >
               <img src={item.icon} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
               <span className="text-white text-xl">{item.label}</span>
@@ -97,14 +97,14 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             <div>
               <button
                 onClick={() => setOpenId(openId === item.id ? null : item.id)}
-                className="w-full flex items-center p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition"
+                className="w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition"
               >
                 <img src={item.icon} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
                 <span className="text-white text-xl">{item.label}</span>
               </button>
               {openId === item.id && item.content && (
                 <div
-                  className="mt-2 p-4 bg-gray-800 rounded-lg text-white text-lg font-light"
+                  className="mt-2 p-4 bg-white/10 border border-white/20 rounded-lg text-white text-lg font-light shadow-sm"
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
               )}

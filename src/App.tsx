@@ -74,14 +74,14 @@ export default function App() {
         onToggle={toggleSidebar}   // ✅ stable reference
         logoText="Blue Point Art Gallery [Archive]"
       >
-        <section className="p-4">
+        <section className="p-4 bg-slate-500/35 border-b border-slate-400/40 text-white">
           {/* Exhibit info section (expandable items) */}
           {selectedConfigUrl && (
             <InfoButtons configUrl={selectedConfigUrl} />
           )}
         </section>
 
-        <section className="p-4 border-t border-gray-800">
+        <section className="p-4 bg-slate-500/35 text-white">
           <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
           <GalleryGrid
             onSelect={handleGallerySelect} // ✅ memoized

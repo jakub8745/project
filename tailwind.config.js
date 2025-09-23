@@ -26,7 +26,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Source Sans Pro', 'sans-serif'],
+        //sans: ['Alan Sans', 'sans-serif'], 
+        sans: ['Xanh Mono', 'monospace'],
       },
       animation: {
         'spin-slow': 'spin 8s linear infinite',
@@ -47,4 +48,3 @@ export default {
   },
   plugins: [],
 };
-
