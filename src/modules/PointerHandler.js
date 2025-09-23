@@ -23,6 +23,7 @@ export class PointerHandler {
     this.links = deps.links || {};
     this.imagesMeta = deps.imagesMeta || {};
     this.videosMeta = deps.videosMeta || {};
+    this.sculpturesMeta = deps.sculpturesMeta || {};
     this.popupCallback = popupCallback;
 
     this.raycaster = new Raycaster();
@@ -229,7 +230,7 @@ export class PointerHandler {
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     const hit = intersects.find(i => {
       const t = i.object.userData?.type;
-      return t === 'Link' || t === 'Image' || t === 'Video';
+      return t === 'Link' || t === 'Image' || t === 'Video' || t === 'Sculpture';
     });
 
     if (!hit) {
@@ -266,8 +267,20 @@ export class PointerHandler {
       }
       const parts = [];
       if (videoInfo.title) parts.push(videoInfo.title);
+      if (videoInfo.author) parts.push(videoInfo.author);
       if (videoInfo.description) parts.push(videoInfo.description);
       displayText = parts.length ? parts.join(' — ') : videoKey;
+    } else if (type === 'Sculpture') {
+      const sculptureInfo = this._resolveSculptureMeta(key, hit.object.userData);
+      if (!sculptureInfo) {
+        this._hideHoverTooltip();
+        return;
+      }
+      const parts = [];
+      if (sculptureInfo.title) parts.push(sculptureInfo.title);
+      if (sculptureInfo.author) parts.push(sculptureInfo.author);
+      if (sculptureInfo.description) parts.push(sculptureInfo.description);
+      displayText = parts.length ? parts.join(' — ') : key;
     } else {
       this._hideHoverTooltip();
       return;
@@ -327,7 +340,19 @@ export class PointerHandler {
 
     const title = meta?.title || userData?.title || userData?.name || videoKey;
     const description = meta?.description || userData?.description || userData?.opis || '';
-    return { title, description };
+    const author = meta?.author || userData?.author || userData?.autor || '';
+    return { title, description, author };
+  }
+
+  _resolveSculptureMeta(sculptureKey, userData = {}) {
+    const sculptures = this.deps?.sculpturesMeta || this.sculpturesMeta || {};
+    const meta = sculptures?.[sculptureKey];
+    if (!meta && !userData) return null;
+
+    const title = meta?.title || userData?.title || userData?.name || sculptureKey;
+    const description = meta?.description || userData?.description || userData?.opis || '';
+    const author = meta?.author || userData?.author || userData?.autor || '';
+    return { title, description, author };
   }
 
 

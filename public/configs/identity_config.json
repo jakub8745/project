@@ -83,7 +83,8 @@
       "muted": true,
       "playsinline": true,
       "title": "Unreal Places",
-      "description": "An image of an identity built from memories, NATALIA KOPYTKO",
+      "description": "An image of an identity built from memories.",
+      "author": "Natalia Kopytko",
       "sources": [
         {
           "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
@@ -97,7 +98,8 @@
       "muted": true,
       "playsinline": true,
       "title": "Heritage",
-      "description": "Image of a Local-Personal Identity, ŁUKASZ MURZYN",
+      "description": "Image of a Local-Personal Identity.",
+      "author": "Łukasz Murzyn",
       "sources": [
         {
           "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
@@ -106,6 +108,13 @@
       ]
     }
   ],
+  "sculptures": {
+    "szafa": {
+      "title": "Unreal Places",
+      "description": "An image of an identity built from memories.",
+      "author": "Natalia Kopytko"
+    }
+  },
   "params": {
     "exposure": 1.0,
     "autoExposure": true,

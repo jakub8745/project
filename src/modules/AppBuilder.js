@@ -175,6 +175,10 @@ export async function buildGallery(config, container, { onProgress } = {}) {
       }, {})
     : {};
 
+  const sculpturesMeta = config?.sculptures && typeof config.sculptures === 'object'
+    ? config.sculptures
+    : {};
+
   deps = {
     ktx2Loader,
     camera,
@@ -187,7 +191,8 @@ export async function buildGallery(config, container, { onProgress } = {}) {
     xrRig,
     links: config?.links || {},
     imagesMeta: config?.images || {},
-    videosMeta
+    videosMeta,
+    sculpturesMeta
   };
 
   // ✅ Visitor + PointerHandler BEFORE async loads
