@@ -8,6 +8,7 @@ import ModularGallery from './components/ModularGallery';
 import { GALLERIES } from './data/galleryConfig';
 import { setupModal } from './modules/setupModal';
 import { initAppBuilder } from './modules/AppBuilder';
+import Joystick from './components/Joystick';
 
 interface Gallery {
   slug: string;
@@ -19,6 +20,11 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null); //
+  const [visitor, setVisitor] = useState<any | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(pointer: coarse)').matches;
+  });
 
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -37,7 +43,30 @@ export default function App() {
     initAppBuilder({ showModal });
   }, []);
 
+  const handleVisitorReady = useCallback((instance: any | null) => {
+    setVisitor(instance || null);
+  }, []);
+
   // Unified hash handling (runs once on mount + on changes)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(pointer: coarse)');
+    const update = () => setIsTouchDevice(mq.matches);
+    update();
+    if (mq.addEventListener) {
+      mq.addEventListener('change', update);
+    } else {
+      mq.addListener(update);
+    }
+    return () => {
+      if (mq.removeEventListener) {
+        mq.removeEventListener('change', update);
+      } else {
+        mq.removeListener(update);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     function handleHashChange() {
       const slug = window.location.hash.replace('#', '');
@@ -66,6 +95,10 @@ export default function App() {
     window.location.hash = gallery.slug;
     setSidebarOpen(false);
   }, []);
+
+  const handleJoystickChange = useCallback((x: number, y: number) => {
+    visitor?.setJoystickInput?.(x, y);
+  }, [visitor]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
@@ -97,6 +130,7 @@ export default function App() {
           <ModularGallery
             configUrl={selectedConfigUrl || ''}
             onConfigLoaded={handleConfigLoaded}
+            onVisitorReady={handleVisitorReady}
           />
         </div>
       </main>
@@ -111,6 +145,10 @@ export default function App() {
           <div className="modal-description"></div>
         </div>
       </div>
+
+      {isTouchDevice && visitor?.setJoystickInput && (
+        <Joystick onChange={handleJoystickChange} />
+      )}
     </div>
   );
 }

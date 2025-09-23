@@ -3,6 +3,7 @@ import {
   Mesh,
   Line3,
   Vector3,
+  Vector2,
   Raycaster,
   Box3,
   Matrix4,
@@ -43,6 +44,7 @@ export default class Visitor extends Mesh {
     this.isAutoMoving = false;
     this.autoMoveSpeed = 5;
     this.clickIndicator = null;
+    this.joystickVector = new Vector2(0, 0);
 
     this.capsuleInfo = {
       radius: 0.5,
@@ -113,6 +115,15 @@ export default class Visitor extends Mesh {
     if (this.lftPressed) this._move(-1, 0, 0, angle, delta);
     if (this.rgtPressed) this._move(1, 0, 0, angle, delta);
 
+    const joystickStrengthSq = this.joystickVector.lengthSq();
+    if (joystickStrengthSq > 1e-4) {
+      const strength = Math.min(1, Math.sqrt(joystickStrengthSq));
+      this.tempVector
+        .set(this.joystickVector.x, 0, -this.joystickVector.y)
+        .applyAxisAngle(this.upVector, angle);
+      this.position.addScaledVector(this.tempVector, this.params.visitorSpeed * delta * strength);
+    }
+
     if (this.isAutoMoving && this.target) {
 
 
@@ -148,6 +159,15 @@ export default class Visitor extends Mesh {
       return { changed: true, newFloor: currentFloor };
     }
     return { changed: false, newFloor: null };
+  }
+
+  setJoystickInput(x = 0, y = 0) {
+    const clampedX = Math.max(-1, Math.min(1, x));
+    const clampedY = Math.max(-1, Math.min(1, y));
+    this.joystickVector.set(clampedX, clampedY);
+    if (this.joystickVector.lengthSq() > 1e-4) {
+      this.isAutoMoving = false;
+    }
   }
 
   teleportTo(point) {

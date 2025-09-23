@@ -6,6 +6,7 @@ import { resolveOracleUrl, isIpfsUri } from '../utils/ipfs';
 interface ModularGalleryProps {
   configUrl: string;
   onConfigLoaded?: (config: any) => void;
+  onVisitorReady?: (visitor: any | null) => void;
 }
 
 /**
@@ -219,7 +220,7 @@ function lazyPreloadImagesFromOracle(config: any) {
   };
 }
 
-const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoaded }) => {
+const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoaded, onVisitorReady }) => {
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -269,6 +270,7 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
 
         console.log("🎨 Gallery built");
         setProgress(100);
+        onVisitorReady?.((galleryInstance as any)?.visitor || null);
 
         // 5. Lazy preload images from Oracle URLs (non-blocking)
         //    Uses normalized config.images[*].imagePath
@@ -285,6 +287,7 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
 
     return () => {
       disposed = true;
+      onVisitorReady?.(null);
       // Abort any in-flight image preloads for the previous exhibit
       (galleryInstance as any)?._cancelImagePreloads?.();
       galleryInstance?.dispose?.();

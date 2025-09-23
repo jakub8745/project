@@ -305,7 +305,7 @@ export async function buildGallery(config, container, { onProgress } = {}) {
 
   hideOverlay();
 
-  return { dispose };
+  return { dispose, visitor };
 }
 
 // --- Utils ---
