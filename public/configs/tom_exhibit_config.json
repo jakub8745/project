@@ -1,0 +1,88 @@
+{
+  "id": "proposedlayout",
+  "modelPath": "/models/wystawaTom_ktx.glb",
+  "interactivesPath": "/models/interactives_empty.glb",
+  "backgroundTexture": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+  "sidebar": {
+    "logo": {
+      "text": "a proposed layout for the Tom Konyves exhibition"
+    },
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "proposed layout",
+        "target": "info_text",
+        "content": "You are viewing a proposed layout for the Tom Konyves exhibition space. Below is a list of the required equipment:"
+      }
+    ]
+  },
+  "images": {
+    "Manifesto": {
+      "title": "Manifesto, huge printed poster",
+      "description": "Videopoetry: A Manifesto, published on Sept. 6, 2011",
+      "author": "by Tom Konyves",
+      "imagePath": "/textures/manifesto_TomKonyves.jpg"
+    }
+  },
+  "videos": [
+    {
+      "id": "Video",
+      "loop": true,
+      "muted": true,
+      "playsinline": true,
+      "title": "video projection",
+      "description": "Selection of videopoems - video projection, approximately 90 minutes.",
+      "author": "",
+      "sources": [
+        {
+          "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    },
+    {
+      "id": "Screen",
+      "loop": true,
+      "muted": true,
+      "playsinline": true,
+      "title": "Screen",
+      "description": "~15 inch screen with info about currently seen videopoem.",
+      "author": "",
+      "sources": [
+        {
+          "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    }
+  ],
+  "sculptures": {
+    "Bench": {
+      "title": "Bench",
+      "description": "something to sit on",
+      "author": ""
+    }
+  },
+  "params": {
+    "exposure": 1.0,
+    "autoExposure": true,
+    "exposureTarget": 0.5,
+    "exposureMin": 0.5,
+    "exposureMax": 2.5,
+    "exposureSampleInterval": 30,
+    "lightIntensity": 1.5,
+    "gravity": -8,
+    "visitorSpeed": 2,
+    "heightOffset": {
+      "x": 0,
+      "y": 1.5,
+      "z": 0
+    },
+    "visitorEnter": {
+      "x": 1,
+      "y": 2,
+      "z": 8
+    },
+    "rotateOrbit": 10
+  }
+}

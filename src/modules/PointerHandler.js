@@ -286,10 +286,19 @@ export class PointerHandler {
       return;
     }
 
+    const pointerType = typeof event.pointerType === 'string' ? event.pointerType : '';
+    const isTouch = pointerType === 'touch';
+    const offsetX = isTouch ? 0 : 12;
+    let offsetY = 12;
+    if (isTouch) {
+      const approxLines = Math.max(1, Math.ceil(displayText.length / 32));
+      offsetY = -60 - (approxLines - 1) * 26;
+    }
+
     const tooltipKey = `${type}:${key}`;
     this.tooltip.show({
-      x: event.clientX + 12,
-      y: event.clientY + 12,
+      x: event.clientX + offsetX,
+      y: event.clientY + offsetY,
       text: displayText,
       key: tooltipKey
     });
