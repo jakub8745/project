@@ -1,5 +1,5 @@
 // App.tsx
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
@@ -9,6 +9,7 @@ import { GALLERIES } from './data/galleryConfig';
 import { setupModal } from './modules/setupModal';
 import { initAppBuilder } from './modules/AppBuilder';
 import Joystick from './components/Joystick';
+import { R3FViewer } from './r3f/R3FViewer';
 
 interface Gallery {
   slug: string;
@@ -21,6 +22,7 @@ export default function App() {
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null); //
   const [visitor, setVisitor] = useState<any | null>(null);
+  const [viewerMode, setViewerMode] = useState<'legacy' | 'r3f'>('legacy');
   const [isTouchDevice, setIsTouchDevice] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(pointer: coarse)').matches;
@@ -38,10 +40,13 @@ export default function App() {
 
   // Handle config after ModularGallery preloads it
   const handleConfigLoaded = useCallback((config: any) => {
+    if (viewerMode !== 'legacy') {
+      return;
+    }
     const imagesMap = config.images || {};
     const showModal = setupModal(imagesMap);
     initAppBuilder({ showModal });
-  }, []);
+  }, [viewerMode]);
 
   const handleVisitorReady = useCallback((instance: any | null) => {
     setVisitor(instance || null);
@@ -69,17 +74,28 @@ export default function App() {
 
   useEffect(() => {
     function handleHashChange() {
-      const slug = window.location.hash.replace('#', '');
-      if (slug) {
+      const raw = window.location.hash.replace('#', '');
+      if (raw.startsWith('r3f/')) {
+        setViewerMode('r3f');
+        const slug = raw.slice(4);
         const gallery = findGalleryBySlug(slug);
         if (gallery) {
           setSelectedConfigUrl(gallery.configUrl);
-          setSelectedSlug(slug);                // ⭐ NEW
+          setSelectedSlug(slug);
+          return;
+        }
+      } else if (raw) {
+        const gallery = findGalleryBySlug(raw);
+        if (gallery) {
+          setViewerMode('legacy');
+          setSelectedConfigUrl(gallery.configUrl);
+          setSelectedSlug(raw);
           return;
         }
       }
       // fallback: default
       if (GALLERIES[0]) {
+        setViewerMode('legacy');
         setSelectedConfigUrl(GALLERIES[0].configUrl);
         setSelectedSlug(GALLERIES[0].slug);
       }
@@ -92,13 +108,29 @@ export default function App() {
 
   // On gallery click, update hash and close sidebar
   const handleGallerySelect = useCallback((gallery: Gallery) => {
-    window.location.hash = gallery.slug;
+    window.location.hash = viewerMode === 'r3f' ? `r3f/${gallery.slug}` : gallery.slug;
     setSidebarOpen(false);
-  }, []);
+  }, [viewerMode]);
 
   const handleJoystickChange = useCallback((x: number, y: number) => {
     visitor?.setJoystickInput?.(x, y);
   }, [visitor]);
+
+  const canvasContent = useMemo(() => {
+    if (!selectedConfigUrl) {
+      return null;
+    }
+    if (viewerMode === 'legacy') {
+      return (
+        <ModularGallery
+          configUrl={selectedConfigUrl}
+          onConfigLoaded={handleConfigLoaded}
+          onVisitorReady={handleVisitorReady}
+        />
+      );
+    }
+    return <R3FViewer configUrl={selectedConfigUrl} />;
+  }, [handleConfigLoaded, handleVisitorReady, selectedConfigUrl, viewerMode]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
@@ -127,11 +159,7 @@ export default function App() {
 
       <main className="flex-1 relative">
         <div className="h-full">
-          <ModularGallery
-            configUrl={selectedConfigUrl || ''}
-            onConfigLoaded={handleConfigLoaded}
-            onVisitorReady={handleVisitorReady}
-          />
+          {canvasContent}
         </div>
       </main>
 
@@ -146,9 +174,9 @@ export default function App() {
         </div>
       </div>
 
-      {isTouchDevice && visitor?.setJoystickInput && (
+      {viewerMode === 'legacy' && isTouchDevice && visitor?.setJoystickInput && (
         <Joystick onChange={handleJoystickChange} />
       )}
-    </div>
+   </div>
   );
 }
