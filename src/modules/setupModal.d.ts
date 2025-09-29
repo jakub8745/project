@@ -1,3 +1,11 @@
+export interface ModalUserData extends Record<string, unknown> {
+  name?: string;
+  title?: string;
+  description?: string;
+  author?: string;
+  url?: string;
+}
+
 export declare function setupModal(
   imagesMap: Record<
     string,
@@ -8,7 +16,7 @@ export declare function setupModal(
       img?: { src: string };
     }
   >
-): (userData: any) => void;
+): (userData: ModalUserData) => void;
 
 export declare function makeModalDraggable(
   popup: HTMLElement,

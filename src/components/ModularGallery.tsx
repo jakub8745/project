@@ -1,12 +1,64 @@
 import React, { useEffect, useRef, useState } from 'react';
-// @ts-ignore
 import { buildGallery } from '../modules/AppBuilder.js';
 import { resolveOracleUrl, isIpfsUri } from '../utils/ipfs';
+import type Visitor from '../modules/Visitor.js';
+import type { GalleryBuildResult } from '../modules/AppBuilder.js';
+
+type UnknownRecord = Record<string, unknown>;
+
+interface ImageMeta extends UnknownRecord {
+  imagePath?: string;
+  ipfsImagePath?: string;
+  oracleImagePath?: string;
+  img?: HTMLImageElement;
+}
+
+interface VideoSourceMeta extends UnknownRecord {
+  src?: string;
+  oracleSrc?: string;
+  ipfsSrc?: string;
+}
+
+interface VideoMeta extends UnknownRecord {
+  sources?: VideoSourceMeta[];
+}
+
+interface AudioMeta extends UnknownRecord {
+  url?: string;
+  oracleUrl?: string;
+  ipfsUrl?: string;
+}
+
+interface SidebarItemMeta extends UnknownRecord {
+  id: string;
+  icon?: string;
+  ipfsIcon?: string;
+  oracleIcon?: string;
+  content?: string;
+  link?: string;
+}
+
+interface SidebarMeta extends UnknownRecord {
+  items?: SidebarItemMeta[];
+}
+
+export interface NormalizedExhibitConfig extends UnknownRecord {
+  id?: string;
+  images?: Record<string, ImageMeta>;
+  videos?: VideoMeta[];
+  audio?: AudioMeta[];
+  sidebar?: SidebarMeta;
+  modelPath?: string;
+  interactivesPath?: string;
+  ipfsModelPath?: string;
+  ipfsInteractivesPath?: string;
+  backgroundTexture?: string;
+}
 
 interface ModularGalleryProps {
   configUrl: string;
-  onConfigLoaded?: (config: any) => void;
-  onVisitorReady?: (visitor: any | null) => void;
+  onConfigLoaded?: (config: NormalizedExhibitConfig) => void;
+  onVisitorReady?: (visitor: Visitor | null) => void;
 }
 
 /**
@@ -16,24 +68,25 @@ interface ModularGalleryProps {
 /**
  * Rewrite all relevant config paths to Oracle URLs.
  */
-function normalizeConfig(config: any) {
+function normalizeConfig(config: NormalizedExhibitConfig): NormalizedExhibitConfig {
   const bucket = config.id;
 
   const images = config.images
     ? Object.fromEntries(
-        Object.entries(config.images).map(([key, meta]: [string, any]) => {
-          const originalPath = meta?.imagePath;
+        Object.entries(config.images).map(([key, meta]) => {
+          const imageMeta = { ...meta } as ImageMeta;
+          const originalPath = imageMeta.imagePath;
           const isIpfs = isIpfsUri(originalPath);
           const oracleUrl = isIpfs && bucket ? resolveOracleUrl(originalPath, bucket) : undefined;
           return [
             key,
             {
-              ...meta,
+              ...imageMeta,
               // Keep original IPFS for fallback use
-              ipfsImagePath: isIpfs ? originalPath : meta?.ipfsImagePath,
+              ipfsImagePath: isIpfs ? originalPath : imageMeta.ipfsImagePath,
               // Prefer Oracle URL if available; otherwise keep original
               imagePath: oracleUrl || originalPath,
-              oracleImagePath: oracleUrl || meta?.oracleImagePath,
+              oracleImagePath: oracleUrl || imageMeta.oracleImagePath,
             },
           ];
         })
@@ -41,34 +94,40 @@ function normalizeConfig(config: any) {
     : config.images;
 
   const videos = Array.isArray(config.videos)
-    ? config.videos.map((vid: any) => ({
-        ...vid,
-        sources: Array.isArray(vid.sources)
-          ? vid.sources.map((srcObj: any) => {
-              const originalSrc = srcObj?.src;
+    ? config.videos.map((vid) => {
+        const videoMeta = { ...vid } as VideoMeta;
+        const sources = Array.isArray(videoMeta.sources)
+          ? videoMeta.sources.map((srcObj) => {
+              const sourceMeta = { ...srcObj } as VideoSourceMeta;
+              const originalSrc = sourceMeta.src;
               const isIpfs = isIpfsUri(originalSrc);
               const oracleSrc = isIpfs && bucket ? resolveOracleUrl(originalSrc, bucket) : undefined;
               return {
-                ...srcObj,
-                ipfsSrc: isIpfs ? originalSrc : srcObj?.ipfsSrc,
-                oracleSrc: oracleSrc || srcObj?.oracleSrc,
+                ...sourceMeta,
+                ipfsSrc: isIpfs ? originalSrc : sourceMeta.ipfsSrc,
+                oracleSrc: oracleSrc || sourceMeta.oracleSrc,
                 // Prefer Oracle if available, otherwise keep original
                 src: oracleSrc || originalSrc,
               };
             })
-          : vid.sources,
-      }))
+          : videoMeta.sources;
+        return {
+          ...videoMeta,
+          sources,
+        };
+      })
     : config.videos;
 
   const audio = Array.isArray(config.audio)
-    ? config.audio.map((a: any) => {
-        const originalUrl = a?.url;
+    ? config.audio.map((a) => {
+        const audioMeta = { ...a } as AudioMeta;
+        const originalUrl = audioMeta.url;
         const isIpfs = isIpfsUri(originalUrl);
         const oracleUrl = isIpfs && bucket ? resolveOracleUrl(originalUrl, bucket) : undefined;
         return {
-          ...a,
-          ipfsUrl: isIpfs ? originalUrl : a?.ipfsUrl,
-          oracleUrl: oracleUrl || a?.oracleUrl,
+          ...audioMeta,
+          ipfsUrl: isIpfs ? originalUrl : audioMeta.ipfsUrl,
+          oracleUrl: oracleUrl || audioMeta.oracleUrl,
           url: oracleUrl || originalUrl,
         };
       })
@@ -79,14 +138,15 @@ function normalizeConfig(config: any) {
 
   // Sidebar icons normalization (ipfs:// → Oracle URL, with IPFS fallback stored)
   const sidebarItems = Array.isArray(config?.sidebar?.items)
-    ? config.sidebar.items.map((item: any) => {
-        const originalIcon = item?.icon;
+    ? config.sidebar.items.map((item) => {
+        const sidebarMeta = { ...item } as SidebarItemMeta;
+        const originalIcon = sidebarMeta.icon;
         const iconIsIpfs = isIpfsUri(originalIcon);
         const oracleIcon = iconIsIpfs && bucket ? resolveOracleUrl(originalIcon, bucket) : undefined;
         return {
-          ...item,
-          ipfsIcon: iconIsIpfs ? originalIcon : item?.ipfsIcon,
-          oracleIcon: oracleIcon || item?.oracleIcon,
+          ...sidebarMeta,
+          ipfsIcon: iconIsIpfs ? originalIcon : sidebarMeta.ipfsIcon,
+          oracleIcon: oracleIcon || sidebarMeta.oracleIcon,
           icon: oracleIcon || originalIcon,
         };
       })
@@ -164,22 +224,23 @@ function preloadImageFromIpfs(ipfsUrl: string, registry?: HTMLImageElement[]): P
  * Kick off non-blocking preloads for all images in config.images.
  * Stores the loaded HTMLImageElement on each meta as meta.img.
  */
-function lazyPreloadImagesFromOracle(config: any) {
+function lazyPreloadImagesFromOracle(config: NormalizedExhibitConfig) {
   if (!config?.images) return () => {};
   const registry: HTMLImageElement[] = [];
   let alive = true;
   try {
-    Object.entries(config.images as Record<string, any>).forEach(([key, meta]) => {
-      const primaryUrl = meta?.imagePath;
-      const ipfsUrl = meta?.ipfsImagePath;
+    Object.entries(config.images).forEach(([key, meta]) => {
+      const imageMeta = meta as ImageMeta;
+      const primaryUrl = imageMeta.imagePath;
+      const ipfsUrl = imageMeta.ipfsImagePath;
       if (!primaryUrl && !ipfsUrl) return;
 
       const onSuccess = (img: HTMLImageElement) => {
         if (!alive) return;
-        meta.img = img; // cache for modal usage
+        imageMeta.img = img; // cache for modal usage
       };
 
-      const onOracleFail = (err: any) => {
+      const onOracleFail = (err: unknown) => {
         if (!alive) return;
         if (ipfsUrl) {
           preloadImageFromIpfs(ipfsUrl, registry)
@@ -210,11 +271,13 @@ function lazyPreloadImagesFromOracle(config: any) {
     alive = false;
     for (const img of registry) {
       try {
-        img.onload = null as any;
-        img.onerror = null as any;
+        img.onload = null;
+        img.onerror = null;
         // Setting src to '' hints the browser to cancel the request
         img.src = '';
-      } catch {}
+      } catch (disposeErr) {
+        console.warn('⚠️ Failed to cancel image preload cleanly:', disposeErr);
+      }
     }
     registry.length = 0;
   };
@@ -235,14 +298,14 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
     }
 
     let disposed = false;
-    let galleryInstance: { dispose?: () => void } | undefined;
+    let galleryInstance: GalleryBuildResult | undefined;
 
     (async () => {
       try {
         // 1. Fetch config
         const res = await fetch(configUrl);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        let config = await res.json();
+        let config = (await res.json()) as NormalizedExhibitConfig;
         console.log("🎨 Config fetched");
 
         // 2. Normalize asset URLs
@@ -270,13 +333,15 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
 
         console.log("🎨 Gallery built");
         setProgress(100);
-        onVisitorReady?.((galleryInstance as any)?.visitor || null);
+        onVisitorReady?.(galleryInstance?.visitor ?? null);
 
         // 5. Lazy preload images from Oracle URLs (non-blocking)
         //    Uses normalized config.images[*].imagePath
         const cancelImagePreloads = lazyPreloadImagesFromOracle(config);
         // Attach cancel to cleanup scope
-        (galleryInstance as any)._cancelImagePreloads = cancelImagePreloads;
+        if (galleryInstance) {
+          galleryInstance._cancelImagePreloads = cancelImagePreloads;
+        }
       } catch (err) {
         if (!disposed) {
           console.error("⚠️ Error in ModularGallery:", err);
@@ -289,14 +354,14 @@ const ModularGallery: React.FC<ModularGalleryProps> = ({ configUrl, onConfigLoad
       disposed = true;
       onVisitorReady?.(null);
       // Abort any in-flight image preloads for the previous exhibit
-      (galleryInstance as any)?._cancelImagePreloads?.();
+      galleryInstance?._cancelImagePreloads?.();
       galleryInstance?.dispose?.();
       setProgress(0);
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
+      if (container) {
+        container.innerHTML = "";
       }
     };
-  }, [configUrl, onConfigLoaded]);
+  }, [configUrl, onConfigLoaded, onVisitorReady]);
 
   const showOverlay = progress < 100 || error;
 

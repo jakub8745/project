@@ -1,11 +1,21 @@
 // src/modules/AppBuilder.d.ts
 
+export interface GalleryBuildOptions {
+  onProgress?: (progressText: string | number) => void;
+}
+
+export interface GalleryBuildResult {
+  dispose?: () => void;
+  visitor?: import('./Visitor').default | null;
+  _cancelImagePreloads?: () => void;
+}
+
 export declare function initAppBuilder(deps: {
-  showModal: (userData: any) => void;
+  showModal: (userData: Record<string, unknown>) => void;
 }): void;
 
 export declare function buildGallery(
-  config: any,
+  config: Record<string, unknown>,
   container?: HTMLElement,
-  options?: { onProgress?: (progressText: string) => void }
-): Promise<{ dispose?: () => void }>;
+  options?: GalleryBuildOptions
+): Promise<GalleryBuildResult>;

@@ -1,4 +1,4 @@
 declare module '../modules/Visitor.js' {
-  const Visitor: any;
+  import Visitor from '../modules/Visitor';
   export default Visitor;
 }

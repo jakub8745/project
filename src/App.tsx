@@ -4,12 +4,13 @@ import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import { InfoButtons } from './components/InfoButtons';
-import ModularGallery from './components/ModularGallery';
+import ModularGallery, { NormalizedExhibitConfig } from './components/ModularGallery';
 import { GALLERIES } from './data/galleryConfig';
 import { setupModal } from './modules/setupModal';
 import { initAppBuilder } from './modules/AppBuilder';
 import Joystick from './components/Joystick';
 import { R3FViewer } from './r3f/R3FViewer';
+import type Visitor from './modules/Visitor.js';
 
 interface Gallery {
   slug: string;
@@ -20,8 +21,8 @@ interface Gallery {
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null); //
-  const [visitor, setVisitor] = useState<any | null>(null);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [visitor, setVisitor] = useState<Visitor | null>(null);
   const [viewerMode, setViewerMode] = useState<'legacy' | 'r3f'>('legacy');
   const [isTouchDevice, setIsTouchDevice] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
@@ -39,17 +40,17 @@ export default function App() {
   }, []);
 
   // Handle config after ModularGallery preloads it
-  const handleConfigLoaded = useCallback((config: any) => {
+  const handleConfigLoaded = useCallback((config: NormalizedExhibitConfig) => {
     if (viewerMode !== 'legacy') {
       return;
     }
-    const imagesMap = config.images || {};
+    const imagesMap = (config.images ?? {}) as Parameters<typeof setupModal>[0];
     const showModal = setupModal(imagesMap);
     initAppBuilder({ showModal });
   }, [viewerMode]);
 
-  const handleVisitorReady = useCallback((instance: any | null) => {
-    setVisitor(instance || null);
+  const handleVisitorReady = useCallback((instance: Visitor | null) => {
+    setVisitor(instance);
   }, []);
 
   // Unified hash handling (runs once on mount + on changes)

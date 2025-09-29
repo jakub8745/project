@@ -36,6 +36,14 @@ const SELECTORS = {
 let bound = false;
 let opts: Required<Options> = { contentDelay: 400 };
 
+type TransformStyle = CSSStyleDeclaration & { webkitTransform?: string };
+
+function setElementTransform(element: HTMLElement, value: string) {
+  const style = element.style as TransformStyle;
+  style.transform = value;
+  style.webkitTransform = value;
+}
+
 export function initMaterialModal(options?: Options) {
   if (options) opts = { ...opts, ...options };
   if (bound) return;
@@ -118,8 +126,7 @@ function onCloseClick(e: MouseEvent) {
   document.querySelectorAll(SELECTORS.content).forEach(c => c.classList.remove(SELECTORS.contentActive));
   document.querySelectorAll(SELECTORS.trigger).forEach(t => {
     const el = t as HTMLElement;
-    el.style.transform = 'none';
-    (el.style as any).webkitTransform = 'none';
+    setElementTransform(el, 'none');
     el.classList.remove(SELECTORS.triggerActive);
   });
 
@@ -156,16 +163,14 @@ function moveTrig(trig: HTMLElement, modal: HTMLElement, contentEl: HTMLElement,
   scaleY = Number(scaleY.toFixed(3));
 
   // Translate trigger to center of window or modal (if align-top)
-  let transX = Math.round(xc - trigRect.left - trigRect.width / 2);
+  const transX = Math.round(xc - trigRect.left - trigRect.width / 2);
   let transY = Math.round(yc - trigRect.top - trigRect.height / 2);
   if (modal.classList.contains(SELECTORS.alignTop)) {
     transY = Math.round(contRect.height / 2 + contRect.top - trigRect.top - trigRect.height / 2);
   }
 
-  trig.style.transform = `translate(${transX}px, ${transY}px)`;
-  (trig.style as any).webkitTransform = trig.style.transform;
-  temp.style.transform = `scale(${scaleX}, ${scaleY})`;
-  (temp.style as any).webkitTransform = temp.style.transform;
+  setElementTransform(trig, `translate(${transX}px, ${transY}px)`);
+  setElementTransform(temp, `scale(${scaleX}, ${scaleY})`);
 
   window.setTimeout(() => {
     window.requestAnimationFrame(() => openModal(modal, contentEl, temp));

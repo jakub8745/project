@@ -14,6 +14,21 @@ interface InfoButtonsProps {
   configUrl?: string | null;
 }
 
+interface SidebarItemConfig {
+  id: string;
+  label: string;
+  icon?: string;
+  content?: string;
+  link?: string;
+}
+
+interface ExhibitConfigResponse {
+  id?: string;
+  sidebar?: {
+    items?: SidebarItemConfig[];
+  };
+}
+
 export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   // ✅ Always declare hooks first
   const [items, setItems] = useState<InfoItem[]>([]);
@@ -34,42 +49,58 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then(cfg => {
+      .then(raw => {
+        const cfg = raw as ExhibitConfigResponse;
         if (!cfg.sidebar?.items) {
           throw new Error(`No sidebar.items in ${fetchUrl}`);
         }
         const bucket = cfg.id;
+        const sidebarItems = cfg.sidebar.items;
         // Merge global help item in front; avoid duplicates by id
-        const merged = [COMMON_HELP_ITEM, ...cfg.sidebar.items.filter((i: any) => i.id !== 'help-icon')];
-        const normalized = merged.map((item: InfoItem) => {
+        const merged: Array<InfoItem | SidebarItemConfig> = [
+          COMMON_HELP_ITEM,
+          ...sidebarItems.filter((item) => item.id !== 'help-icon'),
+        ];
+        const normalized: InfoItem[] = merged.map((item) => {
+          const baseIcon = 'icon' in item ? item.icon ?? '' : '';
+          const link = 'link' in item ? item.link : undefined;
+          const content = 'content' in item ? item.content : undefined;
           // Prefer common icons for well-known ids
           let overrideIcon: string | undefined;
           if (item.id === 'help-icon') overrideIcon = COMMON_HELP_ITEM.icon;
           if (item.id === 'info-icon') overrideIcon = COMMON_ICONS.info;
           // Also map by filename for shared assets regardless of id
-          const base = item.icon ? getFilename(item.icon) : '';
+          const base = baseIcon ? getFilename(baseIcon) : '';
           if (!overrideIcon) {
             if (base === 'logo_BPA_256px.gif') overrideIcon = COMMON_ICONS.logoBpa;
             else if (base === 'how_to_move.png') overrideIcon = COMMON_HELP_ITEM.icon;
             else if (base === 'info.png') overrideIcon = COMMON_ICONS.info;
           }
           // Fallback: BPA links use shared logo
-          if (!overrideIcon && item.link && item.link.includes('bluepointart.uk')) {
+          if (!overrideIcon && link && link.includes('bluepointart.uk')) {
             overrideIcon = COMMON_ICONS.logoBpa;
           }
 
-          const nextIcon = overrideIcon
+          const resolvedIcon = overrideIcon
             ? overrideIcon
-            : isIpfsUri(item.icon)
-            ? resolveOracleUrl(item.icon, bucket)
-            : item.icon;
-          return { ...item, icon: nextIcon } as InfoItem;
+            : baseIcon && isIpfsUri(baseIcon) && bucket
+            ? resolveOracleUrl(baseIcon, bucket)
+            : baseIcon;
+
+          return {
+            id: item.id,
+            label: item.label,
+            icon: resolvedIcon || COMMON_ICONS.info,
+            content,
+            link,
+          };
         });
         setItems(normalized);
       })
       .catch(err => {
         console.error('[InfoButtons] error:', err);
-        setError(err.message);
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        setError(message);
       })
       .finally(() => setLoading(false));
   }, [configUrl]);

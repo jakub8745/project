@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import { resolveOracleUrl, isIpfsUri } from '../utils/ipfs';
 
-export interface ExhibitConfig {
+type UnknownRecord = Record<string, unknown>;
+
+export interface ExhibitConfig extends UnknownRecord {
+  id?: string;
   modelPath?: string;
   interactivesPath?: string;
   scale?: number;
   position?: [number, number, number];
   rotation?: [number, number, number];
-  [key: string]: unknown;
+  backgroundTexture?: string;
+  images?: Record<string, UnknownRecord>;
+  videos?: UnknownRecord[];
+  audio?: UnknownRecord[];
 }
 
 interface UseExhibitConfigResult {
@@ -17,13 +23,13 @@ interface UseExhibitConfigResult {
 }
 
 function normalizeMediaEntry(
-  original: any,
+  original: UnknownRecord | undefined,
   bucketId: string | undefined,
   key: string,
   oracleKey?: string
-) {
-  const source = original ? { ...original } : {};
-  const originalPath = source[key];
+): UnknownRecord {
+  const source: UnknownRecord = original ? { ...original } : {};
+  const originalPath = source[key] as string | undefined;
   const isIpfs = isIpfsUri(originalPath);
   const oracleUrl = isIpfs && bucketId ? resolveOracleUrl(originalPath, bucketId) : undefined;
   const capitalisedKey = key.charAt(0).toUpperCase() + key.slice(1);
@@ -31,18 +37,18 @@ function normalizeMediaEntry(
 
   return {
     ...source,
-    [ipfsKey]: isIpfs ? originalPath : source[ipfsKey],
-    ...(oracleKey ? { [oracleKey]: oracleUrl || source[oracleKey] } : {}),
+    [ipfsKey]: isIpfs ? originalPath : (source[ipfsKey] as string | undefined),
+    ...(oracleKey ? { [oracleKey]: oracleUrl || (source[oracleKey] as string | undefined) } : {}),
     [key]: oracleUrl || originalPath
   };
 }
 
-function normalizeConfig(config: ExhibitConfig & Record<string, any>): ExhibitConfig {
+function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitConfig {
   const bucket = config.id as string | undefined;
 
   const images = config.images
     ? Object.fromEntries(
-        Object.entries(config.images as Record<string, any>).map(([key, meta]) => {
+        Object.entries(config.images).map(([key, meta]) => {
           const normalised = normalizeMediaEntry(meta, bucket, 'imagePath', 'oracleImagePath');
           return [key, normalised];
         })
@@ -50,16 +56,20 @@ function normalizeConfig(config: ExhibitConfig & Record<string, any>): ExhibitCo
     : config.images;
 
   const videos = Array.isArray(config.videos)
-    ? config.videos.map((vid: any) => ({
-        ...vid,
-        sources: Array.isArray(vid.sources)
-          ? vid.sources.map((src: any) => normalizeMediaEntry(src, bucket, 'src', 'oracleSrc'))
-          : vid.sources
-      }))
+    ? config.videos.map((vid) => {
+        const videoRecord = vid as UnknownRecord & { sources?: unknown };
+        const sourcesValue = Array.isArray(videoRecord.sources)
+          ? videoRecord.sources.map((src) => normalizeMediaEntry(src as UnknownRecord, bucket, 'src', 'oracleSrc'))
+          : videoRecord.sources;
+        return {
+          ...videoRecord,
+          sources: sourcesValue,
+        };
+      })
     : config.videos;
 
   const audio = Array.isArray(config.audio)
-    ? config.audio.map((a: any) => normalizeMediaEntry(a, bucket, 'url', 'oracleUrl'))
+    ? config.audio.map((entry) => normalizeMediaEntry(entry as UnknownRecord, bucket, 'url', 'oracleUrl'))
     : config.audio;
 
   const normalisedModelPath = config.modelPath
@@ -118,9 +128,10 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
           setLoading(false);
         }
       })
-      .catch((err: Error) => {
+      .catch((err: unknown) => {
+        const errorObject = err instanceof Error ? err : new Error(String(err));
         if (!cancelled) {
-          setError(err);
+          setError(errorObject);
           setConfig(null);
           setLoading(false);
         }

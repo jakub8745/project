@@ -1,2 +1,4 @@
 // initRenderer.d.ts
-declare function initRenderer(container: HTMLElement): any;
+import type { WebGLRenderer } from 'three';
+
+export default function initRenderer(container: HTMLElement): WebGLRenderer;
