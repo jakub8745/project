@@ -13,8 +13,8 @@ import Visitor from '../modules/Visitor.js';
 import { useExhibitConfig } from './useExhibitConfig';
 import type { OrbitControls as OrbitControlsImpl } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { VisitorParams } from '../modules/Visitor.js';
-import { PointerInteractions, type PointerPopupPayload } from './PointerInteractions';
-import { ImageModal } from './ImageModal';
+import { PointerInteractions } from './PointerInteractions';
+import { useLegacyModal } from './useLegacyModal';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -211,7 +211,6 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
   const scale = typeof config?.scale === 'number' ? config.scale : 1;
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
-  const [modalEntry, setModalEntry] = useState<PointerPopupPayload | null>(null);
 
   const linkMap = useMemo(() => {
     if (config?.links && typeof config.links === 'object') {
@@ -247,6 +246,8 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
     }
     return undefined;
   }, [config?.sculptures]);
+
+  const showLegacyModal = useLegacyModal(imagesMeta);
 
   useEffect(() => {
     if (!modelPath) {
@@ -292,7 +293,7 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
           visitor={visitorInstance}
           popupCallback={(payload) => {
             if (payload.type === 'Image') {
-              setModalEntry(payload);
+              showLegacyModal(payload.userData);
             }
           }}
           links={linkMap}
@@ -317,9 +318,6 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
           Failed to load config: {error.message}
         </div>
       )}
-      {modalEntry && modalEntry.type === 'Image' ? (
-        <ImageModal entry={modalEntry} onClose={() => setModalEntry(null)} />
-      ) : null}
     </div>
   );
 }

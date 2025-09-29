@@ -41,13 +41,10 @@ export default function App() {
 
   // Handle config after ModularGallery preloads it
   const handleConfigLoaded = useCallback((config: NormalizedExhibitConfig) => {
-    if (viewerMode !== 'legacy') {
-      return;
-    }
     const imagesMap = (config.images ?? {}) as Parameters<typeof setupModal>[0];
     const showModal = setupModal(imagesMap);
     initAppBuilder({ showModal });
-  }, [viewerMode]);
+  }, []);
 
   const handleVisitorReady = useCallback((instance: Visitor | null) => {
     setVisitor(instance);
