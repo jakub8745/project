@@ -184,6 +184,9 @@ export default class Visitor extends Mesh {
   }
 
   checkLocation() {
+    if (!this.parent || !this.parent.children || this.parent.children.length === 0) {
+      return null;
+    }
     this.raycaster.firstHitOnly = true;
     this.raycaster.set(this.position, this.downVector);
     const intersected = this.raycaster.intersectObjects(this.parent.children, true);

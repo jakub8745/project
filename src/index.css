@@ -6,6 +6,12 @@
   color-scheme: dark;
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   @apply bg-gallery-dark text-gallery-text;
   font-family: "Xanh Mono", monospace;
@@ -298,4 +304,45 @@ canvas {
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+.image-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.image-modal {
+  background: #e5e7eb;
+  border-radius: 0px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+  padding: 10px;
+  pointer-events: auto;
+  max-width: calc(90vw - 20px);
+  max-height: calc(80vh - 20px);
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-modal img {
+  display: block;
+  max-width: calc(90vw - 40px);
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  flex: 1 1 auto;
+}
+
+.image-modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #0f172a;
+  flex: 0 0 auto;
 }

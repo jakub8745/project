@@ -27,7 +27,7 @@ export function setupModal(imagesMap) {
     mmodal.innerHTML = `
       <div class="mmodal__dialog">
         <div class="mmodal__content">
-          <a href="#" class="mmodal__close" aria-label="Close">×</a>
+          <a href="#" class="mmodal__close" aria-label="Close">X</a>
           <div class="mmodal__body">
             <div class="mmodal__image-wrap"><img id="mmodalImage" alt="modal image" /></div>
             <div id="mmodalDesc" class="mmodal__desc"></div>
