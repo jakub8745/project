@@ -1,14 +1,14 @@
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useReducer, useState } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { Html, Loader, OrbitControls } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
-import { AudioListener, BufferGeometry, Color, Euler, Vector3, Mesh, Group, Material, MeshBasicMaterial, WebGLRenderTarget, ACESFilmicToneMapping } from 'three';
+import { AudioListener, BufferGeometry, Color, Euler, Vector3, Mesh, Group, Material, MeshBasicMaterial, WebGLRenderTarget, ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import type { WebGLRenderer } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import type { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { StaticGeometryGenerator, MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import Visitor from '../modules/Visitor.js';
 import { useExhibitConfig } from './useExhibitConfig';
@@ -19,7 +19,11 @@ import type { VisitorParams } from '../modules/Visitor.js';
 import { PointerInteractions } from './PointerInteractions';
 import { applyVideoMeshes, type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
-import { applyAudioMeshes, disposeAudioMeshes, type AudioMeshConfig } from '../modules/applyAudioMeshes.js';
+import { MaterialModalProvider } from './Modal';
+import type { AudioMeshConfig } from '../modules/audioMeshManager.ts';
+import { AudioMeshes } from './AudioMeshes';
+import { AudioPlayerControls } from './AudioPlayerControls';
+import sharedKtx2Loader from '../loaders/ktx2Loader';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -28,29 +32,25 @@ Mesh.prototype.raycast = acceleratedRaycast;
 const DEBUG_COLLIDER = false;
 
 let sharedDracoLoader: DRACOLoader | null = null;
-let sharedKtx2Loader: KTX2Loader | null = null;
 let sharedLoaderUsers = 0;
-let ktx2SupportChecked = false;
+const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
 
 function acquireSharedLoaders(renderer: WebGLRenderer) {
   sharedLoaderUsers += 1;
   if (!sharedDracoLoader) {
     sharedDracoLoader = new DRACOLoader().setDecoderPath('/libs/draco/');
   }
-  if (!sharedKtx2Loader) {
-    sharedKtx2Loader = new KTX2Loader().setTranscoderPath('/libs/basis/');
-  }
-  if (!ktx2SupportChecked) {
+  if (!ktx2SupportedRenderers.has(renderer)) {
     try {
       sharedKtx2Loader.detectSupport(renderer);
-      ktx2SupportChecked = true;
+      ktx2SupportedRenderers.add(renderer);
     } catch (err) {
       console.warn('KTX2 detectSupport failed:', err);
     }
   }
   return {
     draco: sharedDracoLoader,
-    ktx2: sharedKtx2Loader
+    ktx2: sharedKtx2Loader as KTX2Loader
   };
 }
 
@@ -59,9 +59,6 @@ function releaseSharedLoaders() {
   if (sharedLoaderUsers === 0) {
     sharedDracoLoader?.dispose?.();
     sharedDracoLoader = null;
-    sharedKtx2Loader?.dispose?.();
-    sharedKtx2Loader = null;
-    ktx2SupportChecked = false;
   }
 }
 
@@ -123,6 +120,7 @@ function ExhibitModel({
   rotation,
   scale,
   onColliderReady,
+  onSceneReady,
   videosConfig
 }: {
   modelPath: string;
@@ -131,6 +129,7 @@ function ExhibitModel({
   rotation: Vector3Tuple;
   scale: number;
   onColliderReady?: (collider: Mesh | null) => void;
+  onSceneReady?: () => void;
   videosConfig?: VideoMeshConfig[];
 }) {
   const loadTargets = useMemo(() => {
@@ -226,11 +225,14 @@ function ExhibitModel({
 
   useEffect(() => {
     onColliderReady?.(collider);
+    if (displayScene) {
+      onSceneReady?.();
+    }
     return () => {
       onColliderReady?.(null);
       collider?.geometry?.dispose?.();
     };
-  }, [collider, onColliderReady]);
+  }, [collider, displayScene, onColliderReady, onSceneReady]);
 
   useEffect(() => {
     if (!displayScene || !videosConfig || videosConfig.length === 0) {
@@ -256,7 +258,7 @@ function ExhibitModel({
   );
 }
 
-export function R3FViewer({ configUrl }: R3FViewerProps) {
+function R3FViewerInner({ configUrl }: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
   const modelPath = config?.modelPath;
@@ -265,6 +267,7 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
   const rotation = useMemo(() => coerceVector(config?.rotation), [config?.rotation]);
   const scale = typeof config?.scale === 'number' ? config.scale : 1;
   const [collider, setCollider] = useState<Mesh | null>(null);
+  const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
 
   const linkMap = useMemo(() => {
@@ -316,6 +319,7 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
       const description = typeof record.description === 'string' ? record.description : undefined;
       const imagePath = typeof record.imagePath === 'string' ? record.imagePath : undefined;
       const oracleImagePath = typeof record.oracleImagePath === 'string' ? record.oracleImagePath : undefined;
+      const ipfsImagePath = typeof record.ipfsImagePath === 'string' ? record.ipfsImagePath : undefined;
       let img;
       if (record.img && typeof record.img === 'object') {
         const src = (record.img as Record<string, unknown>).src;
@@ -329,6 +333,7 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
         ...(description ? { description } : {}),
         ...(imagePath ? { imagePath } : {}),
         ...(oracleImagePath ? { oracleImagePath } : {}),
+        ...(ipfsImagePath ? { ipfsImagePath } : {}),
         ...(img ? { img } : {})
       };
     }
@@ -424,10 +429,23 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
 
   return (
     <div className="relative h-full w-full bg-gallery-dark">
-      <Canvas shadows camera={{ position: [10, 6, -10], fov: 60 }}>
+      <Canvas
+        shadows
+        camera={{ position: [10, 6, -10], fov: 60, near: 0.1, far: 2000 }}
+        dpr={typeof window !== 'undefined' ? [1, Math.min(2, window.devicePixelRatio || 1)] : [1, 2]}
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: 'high-performance',
+          logarithmicDepthBuffer: true,
+          stencil: false
+        }}
+      >
+        <RendererTuning />
         <color attach="background" args={[new Color('#111827')]} />
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 20, 10]} intensity={0.8} castShadow />
+        <ambientLight intensity={0.35} />
+        <hemisphereLight args={[new Color('#dbe5ff'), new Color('#151515'), 0.4]} />
+
 
         <Suspense fallback={<Html center className="text-white">Loading exhibit…</Html>}>
           {modelPath ? (
@@ -438,6 +456,7 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
               rotation={rotation}
               scale={scale}
               onColliderReady={setCollider}
+              onSceneReady={bumpSceneVersion}
               videosConfig={videosConfig}
             />
           ) : (
@@ -474,9 +493,10 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
           params={config?.params as ControllerParams | undefined}
           onVisitorReady={setVisitorInstance}
         />
-        <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} />
+        <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} sceneVersion={sceneVersion} />
         <AutoExposureControl params={config?.params as Record<string, unknown> | undefined} />
       </Canvas>
+      <AudioPlayerControls />
       <Loader />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-white bg-black/40">
@@ -489,6 +509,14 @@ export function R3FViewer({ configUrl }: R3FViewerProps) {
         </div>
       )}
     </div>
+  );
+}
+
+export function R3FViewer(props: R3FViewerProps) {
+  return (
+    <MaterialModalProvider>
+      <R3FViewerInner {...props} />
+    </MaterialModalProvider>
   );
 }
 
@@ -559,7 +587,15 @@ function FirstPersonController({
   return null;
 }
 
-function AudioSystem({ audioConfig, ready }: { audioConfig: AudioMeshConfig[] | undefined; ready: boolean }) {
+function AudioSystem({
+  audioConfig,
+  ready,
+  sceneVersion
+}: {
+  audioConfig: AudioMeshConfig[] | undefined;
+  ready: boolean;
+  sceneVersion: number;
+}) {
   const { camera, controls: orbitControls, gl, scene } = useThree();
   const listener = useMemo(() => new AudioListener(), []);
   const controls = orbitControls as OrbitControlsImpl | undefined;
@@ -587,7 +623,9 @@ function AudioSystem({ audioConfig, ready }: { audioConfig: AudioMeshConfig[] | 
     if (!helper) return;
     helper.visible = false;
     if (helper.parent !== scene) {
+
       scene.add(helper);
+
     }
     return () => {
       transform.detach();
@@ -614,7 +652,6 @@ function AudioSystem({ audioConfig, ready }: { audioConfig: AudioMeshConfig[] | 
 
   useEffect(() => {
     if (!ready || !audioConfig || audioConfig.length === 0) {
-      disposeAudioMeshes();
       transform.detach();
       transform.enabled = false;
       if (helper) {
@@ -622,16 +659,48 @@ function AudioSystem({ audioConfig, ready }: { audioConfig: AudioMeshConfig[] | 
       }
       return;
     }
-    applyAudioMeshes(scene, { audio: audioConfig }, listener, gl, camera, transform);
+
+    transform.enabled = false;
+    if (helper) {
+      helper.visible = false;
+    }
+
     return () => {
-      disposeAudioMeshes();
       transform.detach();
       transform.enabled = false;
       if (helper) {
         helper.visible = false;
       }
     };
-  }, [audioConfig, ready, scene, listener, gl, camera, transform, helper]);
+  }, [audioConfig, ready, transform, helper]);
+
+  if (!ready || !audioConfig || audioConfig.length === 0) {
+    return null;
+  }
+
+  return (
+    <AudioMeshes
+      audioConfig={audioConfig}
+      listener={listener}
+      transform={transform}
+      ready={ready}
+      sceneVersion={sceneVersion}
+    />
+  );
+}
+
+function RendererTuning() {
+  const { gl } = useThree();
+
+  useEffect(() => {
+    //gl.physicallyCorrectLights = true;
+    gl.outputColorSpace = SRGBColorSpace;
+    gl.shadowMap.enabled = true;
+    gl.shadowMap.type = PCFSoftShadowMap;
+    if (typeof window !== 'undefined') {
+      gl.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    }
+  }, [gl]);
 
   return null;
 }
