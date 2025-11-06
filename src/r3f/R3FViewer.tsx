@@ -87,6 +87,7 @@ function releaseSharedLoaders() {
 
 interface R3FViewerProps {
   configUrl: string | null;
+  onRequestSidebarClose?: () => void;
 }
 
 function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3Tuple {
@@ -379,7 +380,7 @@ function SceneBackground({
   return null;
 }
 
-function R3FViewerInner({ configUrl }: R3FViewerProps) {
+function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
   const modelPath = config?.modelPath;
@@ -629,6 +630,7 @@ function R3FViewerInner({ configUrl }: R3FViewerProps) {
         />
         <PointerInteractions
           visitor={visitorInstance}
+          onCloseSidebar={onRequestSidebarClose}
           popupCallback={(payload) => {
             if (payload.type === 'Image') {
               showLegacyModal(payload.userData);

@@ -33,6 +33,7 @@ interface PointerInteractionsProps {
   imagesMeta?: MetaRecord;
   videosMeta?: MetaRecord;
   sculpturesMeta?: MetaRecord;
+  onCloseSidebar?: () => void;
 }
 
 function createClickIndicator() {
@@ -57,7 +58,8 @@ export function PointerInteractions({
   links = {},
   imagesMeta = {},
   videosMeta = {},
-  sculpturesMeta = {}
+  sculpturesMeta = {},
+  onCloseSidebar
 }: PointerInteractionsProps) {
   const { camera, scene, gl } = useThree();
 
@@ -66,20 +68,12 @@ export function PointerInteractions({
   const clickIndicator = useMemo(() => createClickIndicator(), []);
   const tooltip = useMemo(() => createTooltip(), []);
 
-  const sidebarRef = useRef<HTMLElement | null>(null);
-  const sidebarToggleRef = useRef<HTMLElement | null>(null);
-
   const moveThreshold = 5;
   const doubleTapThreshold = 300;
 
   const isDraggingRef = useRef(false);
   const startCoordsRef = useRef({ x: 0, y: 0 });
   const lastTapRef = useRef(0);
-
-  useEffect(() => {
-    sidebarRef.current = document.querySelector('.sidebar');
-    sidebarToggleRef.current = document.getElementById('btn');
-  }, []);
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -209,11 +203,7 @@ export function PointerInteractions({
     };
 
     const moveToVideo = (clickedObject: Intersection<Object3D>) => {
-      const sidebar = sidebarRef.current;
-      if (sidebar?.classList.contains('open')) {
-        sidebar.classList.remove('open');
-        sidebarToggleRef.current?.classList.remove('open');
-      }
+      onCloseSidebar?.();
 
       const meshObject = clickedObject.object;
       if (!(meshObject instanceof Mesh)) return;
@@ -469,7 +459,7 @@ export function PointerInteractions({
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
     };
-  }, [camera, clickIndicator, gl, imagesMeta, links, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosMeta, visitor]);
+  }, [camera, clickIndicator, gl, imagesMeta, links, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosMeta, visitor]);
 
   return null;
 }

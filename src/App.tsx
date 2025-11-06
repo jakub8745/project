@@ -102,22 +102,15 @@ export default function App() {
                 </div>
               }
             >
-              <R3FViewer configUrl={selectedConfigUrl} />
+              <R3FViewer
+                configUrl={selectedConfigUrl}
+                onRequestSidebarClose={() => setSidebarOpen(false)}
+              />
             </Suspense>
           ) : null}
         </div>
       </main>
 
-      {/* ✅ Modal DOM lives in React tree */}
-      <div id="modalOverlay" className="modal-overlay hidden">
-        <div className="modal">
-          <button className="modal-close" id="closeModal">×</button>
-          <div className="modal-image-container">
-            <img id="modalImage" className="modal-image hidden" src="" alt="modal image" />
-          </div>
-          <div className="modal-description"></div>
-        </div>
-      </div>
    </div>
   );
 }

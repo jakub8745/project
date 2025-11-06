@@ -29,6 +29,8 @@ interface ExhibitConfigResponse {
   };
 }
 
+const sidebarCache = new Map<string, InfoItem[]>();
+
 export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   // ✅ Always declare hooks first
   const [items, setItems] = useState<InfoItem[]>([]);
@@ -37,14 +39,29 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!configUrl) return;
+    setOpenId(null);
 
+    if (!configUrl) {
+      setItems([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    const fetchUrl = configUrl.startsWith('/') ? configUrl : `/${configUrl}`;
+    const cached = sidebarCache.get(fetchUrl);
+    if (cached) {
+      setItems(cached);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
 
-    const fetchUrl = configUrl.startsWith('/') ? configUrl : `/${configUrl}`;
-
-    fetch(fetchUrl)
+    fetch(fetchUrl, { signal: controller.signal })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -95,14 +112,24 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             link,
           };
         });
-        setItems(normalized);
+        sidebarCache.set(fetchUrl, normalized);
+        if (!controller.signal.aborted) {
+          setItems(normalized);
+        }
       })
       .catch(err => {
+        if (controller.signal.aborted) return;
         console.error('[InfoButtons] error:', err);
         const message = err instanceof Error ? err.message : 'Unknown error';
         setError(message);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      });
+
+    return () => controller.abort();
   }, [configUrl]);
 
   // ✅ Conditional rendering can go *after* hook declarations

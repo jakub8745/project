@@ -35,8 +35,39 @@ function disposeVideoResource(id) {
   const res = _videoResourceCache.get(id);
   if (!res) return;
   if (res.texture) res.texture.dispose(); // free GPU memory
-  // we keep the <video> element around for reuse (cheap); if you want to remove it later, do it explicitly
+  if (res.video) {
+    try {
+      res.video.pause();
+      res.video.removeAttribute('src');
+      res.video.load();
+    } catch {
+      // ignore cleanup errors
+    }
+    if (res.video.parentNode) {
+      res.video.parentNode.removeChild(res.video);
+    }
+  }
   _videoResourceCache.delete(id);
+}
+
+function getMeshDisposers(mesh) {
+  if (!Array.isArray(mesh.userData._videoDisposers)) {
+    mesh.userData._videoDisposers = [];
+  }
+  return mesh.userData._videoDisposers;
+}
+
+function cleanupMeshDecorations(mesh) {
+  const disposers = mesh.userData._videoDisposers;
+  if (!Array.isArray(disposers) || disposers.length === 0) return;
+  while (disposers.length) {
+    const dispose = disposers.pop();
+    try {
+      dispose?.();
+    } catch (err) {
+      console.warn('[VideoMesh] cleanup failed', err);
+    }
+  }
 }
 
 
@@ -151,7 +182,34 @@ function getWorldBounds(mesh) {
 
 function addPlayIcon(mesh, video, camera) {
   const loader = new TextureLoader();
+  let disposed = false;
+  let iconMesh = null;
+  const cleanupFns = [];
+
+  const teardown = () => {
+    disposed = true;
+    cleanupFns.forEach(fn => {
+      try {
+        fn();
+      } catch {
+        /* noop */
+      }
+    });
+    cleanupFns.length = 0;
+    if (iconMesh) {
+      iconMesh.parent?.remove(iconMesh);
+      iconMesh.geometry?.dispose?.();
+      iconMesh.material?.dispose?.();
+      iconMesh = null;
+    }
+  };
+
   loader.load(PLAY_ICON_PATH, iconTex => {
+    if (disposed) {
+      iconTex.dispose();
+      return;
+    }
+
     // ✅ use world size instead of raw geometry
     const { size: worldSize, center: worldCenter } = getWorldBounds(mesh);
     const baseSize = 0.3 * Math.min(worldSize.x || 0, worldSize.y || 0) || 0.1;
@@ -166,7 +224,7 @@ function addPlayIcon(mesh, video, camera) {
       side: DoubleSide
     });
 
-    const iconMesh = new Mesh(iconGeo, iconMat);
+    iconMesh = new Mesh(iconGeo, iconMat);
     iconMesh.name = `playIcon_${video.id}`;
     iconMesh.renderOrder = 999;
 
@@ -180,7 +238,7 @@ function addPlayIcon(mesh, video, camera) {
 
     // Billboard to camera
     const qParent = new Quaternion();
-    const qCam = new Quaternion();//
+    const qCam = new Quaternion();
     const qLocal = new Quaternion();
     iconMesh.onBeforeRender = (renderer, scene, cam) => {
       const activeCam = camera || cam;
@@ -190,35 +248,45 @@ function addPlayIcon(mesh, video, camera) {
       iconMesh.quaternion.copy(qLocal);
     };
 
-    // Visibility strategy:
-    // - While loading: spinner shows, play icon hidden
-    // - When first frame ready: hide spinner (handled elsewhere) and show play icon (if paused)
-    // - When playing: hide play icon
-    // - When paused/ended after ready: show play icon
+    // Visibility handling
     let isReady = false;
-
     const updateIcon = () => {
       iconMesh.visible = isReady && (video.paused || video.ended);
     };
-
-    // Initial state: hidden until ready
     iconMesh.visible = false;
 
-    // Ready events
-    const onReady = () => {
+    const handleReady = () => {
       isReady = true;
       updateIcon();
     };
-    video.addEventListener('loadeddata', onReady, { once: true });
-    video.addEventListener('canplaythrough', onReady, { once: true });
-
-    // Playback state
-    video.addEventListener('play', () => {
-      iconMesh.visible = false;
+    const readyHandler = () => {
+      handleReady();
+      video.removeEventListener('loadeddata', readyHandler);
+      video.removeEventListener('canplaythrough', readyHandler);
+    };
+    video.addEventListener('loadeddata', readyHandler);
+    video.addEventListener('canplaythrough', readyHandler);
+    cleanupFns.push(() => {
+      video.removeEventListener('loadeddata', readyHandler);
+      video.removeEventListener('canplaythrough', readyHandler);
     });
-    video.addEventListener('pause', updateIcon);
-    video.addEventListener('ended', updateIcon);
+
+    const handlePlay = () => {
+      iconMesh.visible = false;
+    };
+    const handlePause = () => updateIcon();
+    const handleEnded = () => updateIcon();
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('ended', handleEnded);
+    cleanupFns.push(() => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('ended', handleEnded);
+    });
   });
+
+  return teardown;
 }
 
 
@@ -244,20 +312,32 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
 
     if (!obj.userData._videoCleanupAttached) {
       obj.userData._videoCleanupAttached = true;
-      obj.addEventListener('removed', () => disposeVideoResource(cfg.id));
+      obj.addEventListener('removed', () => {
+        cleanupMeshDecorations(obj);
+        disposeVideoResource(cfg.id);
+      });
     }
 
-
+    cleanupMeshDecorations(obj);
     const video = ensureVideoElement(cfg);
     if (!video) return;
 
+    const meshDisposers = getMeshDisposers(obj);
+
     // Spinner appears while loading/buffering
-    addLoadingSpinner(obj, video, camera);
+    const spinnerCleanup = addLoadingSpinner(obj, video, camera);
 
     // Play icon exists even before metadata is ready
-    addPlayIcon(obj, video, camera);
+    const iconCleanup = addPlayIcon(obj, video, camera);
 
-    video.addEventListener('loadedmetadata', () => {
+    if (typeof spinnerCleanup === 'function') {
+      meshDisposers.push(spinnerCleanup);
+    }
+    if (typeof iconCleanup === 'function') {
+      meshDisposers.push(iconCleanup);
+    }
+
+    const onLoadedMetadata = () => {
       // Reuse cached texture if present
       let { texture } = getVideoResource(cfg.id);
       if (!texture) {
@@ -282,7 +362,10 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
       video.currentTime = 0.01;
       video.pause();
       texture.needsUpdate = true;
-    });
+    };
+
+    video.addEventListener('loadedmetadata', onLoadedMetadata);
+    meshDisposers.push(() => video.removeEventListener('loadedmetadata', onLoadedMetadata));
 
   });
 }
@@ -325,31 +408,36 @@ function addLoadingSpinner(mesh, video, camera) {
   };
 
   // Spin clockwise
-  function animate() {
+  let rafId = 0;
+  let active = true;
+  const animate = () => {
+    if (!active) return;
     if (spinnerMesh.visible) spinnerMesh.rotation.z -= 0.1;
-    requestAnimationFrame(animate);
-  }
-  animate();
+    rafId = requestAnimationFrame(animate);
+  };
+  rafId = requestAnimationFrame(animate);
 
   // Visibility rules
   const hide = () => (spinnerMesh.visible = false);
   const showIfPlaying = () => (spinnerMesh.visible = !video.paused && !video.ended);
 
-  // Hide when first frame ready
-  video.addEventListener("loadeddata", hide);
-  video.addEventListener("canplaythrough", hide);
-  video.addEventListener("playing", hide);
-  video.addEventListener("ended", hide);
-  video.addEventListener("error", hide);
+  const hideEvents = ["loadeddata", "canplaythrough", "playing", "ended", "error"];
+  hideEvents.forEach(evt => video.addEventListener(evt, hide));
 
   // Show when buffering while playing
-  video.addEventListener("waiting", showIfPlaying);
-  video.addEventListener("stalled", showIfPlaying);
-  video.addEventListener("seeking", showIfPlaying);
+  const showEvents = ["waiting", "stalled", "seeking"];
+  showEvents.forEach(evt => video.addEventListener(evt, showIfPlaying));
 
   // Start visible
   spinnerMesh.visible = true;
+
+  return () => {
+    active = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    hideEvents.forEach(evt => video.removeEventListener(evt, hide));
+    showEvents.forEach(evt => video.removeEventListener(evt, showIfPlaying));
+    pivot.parent?.remove(pivot);
+    spinnerMesh.geometry?.dispose?.();
+    spinnerMesh.material?.dispose?.();
+  };
 }
-
-
-

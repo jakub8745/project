@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { resolveOracleUrl, isIpfsUri } from '../utils/ipfs';
 
 type UnknownRecord = Record<string, unknown>;
+const configCache = new Map<string, ExhibitConfig>();
 
 export interface ExhibitConfig extends UnknownRecord {
   id?: string;
@@ -112,33 +113,41 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
       return;
     }
 
-    let cancelled = false;
+    const cached = configCache.get(configUrl);
+    if (cached) {
+      setConfig(cached);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    const controller = new AbortController();
     setLoading(true);
     setError(null);
 
-    fetch(configUrl)
+    fetch(configUrl, { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) {
           throw new Error(`Failed to load config ${response.status}: ${response.statusText}`);
         }
         const raw = (await response.json()) as ExhibitConfig & Record<string, unknown>;
         const normalised = normalizeConfig(raw);
-        if (!cancelled) {
+        configCache.set(configUrl, normalised);
+        if (!controller.signal.aborted) {
           setConfig(normalised);
           setLoading(false);
         }
       })
       .catch((err: unknown) => {
+        if (controller.signal.aborted) return;
         const errorObject = err instanceof Error ? err : new Error(String(err));
-        if (!cancelled) {
-          setError(errorObject);
-          setConfig(null);
-          setLoading(false);
-        }
+        setError(errorObject);
+        setConfig(null);
+        setLoading(false);
       });
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [configUrl]);
 
