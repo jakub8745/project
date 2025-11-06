@@ -1,68 +1,139 @@
 // modules/applyPitcherControls.js
-import { Vector2, Vector3, SpotLight } from 'three';
+import { Raycaster, Vector2, Vector3, SpotLight } from 'three';
 
 export function applyPitcherControls(obj, scene, renderer, camera, transform) {
-  // attach transform
+  if (!obj || !scene || !renderer || !camera || !transform) return;
+  if (obj.userData._pitcherControlsAttached) return;
+  obj.userData._pitcherControlsAttached = true;
+
+  // Attach transform controls and configure defaults
   transform.attach(obj);
   transform.setMode('rotate');
-  transform.setSize(0.5);
+  transform.setSize(0.3);
+  transform.enabled = false;
 
-  const gizmo = transform.getHelper();
-  gizmo.visible = false;
-  scene.add(gizmo);
-
-  // re-use transform’s raycaster
-  const raycaster = transform.getRaycaster();
-  const pointer = new Vector2();
-
-  function updatePointer(e) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  // Some versions of TransformControls expose getHelper(); guard just in case
+  const helper = typeof transform.getHelper === 'function' ? transform.getHelper() : null;
+  if (helper) {
+    helper.visible = false;
+    if (helper.parent !== scene) {
+      scene.add(helper);
+    }
   }
 
-  renderer.domElement.addEventListener('pointermove', (e) => {
-    updatePointer(e);
+  const raycaster = new Raycaster();
+  const pointer = new Vector2();
+  const dom = renderer.domElement;
+
+  const spotLight = new SpotLight(0xffffff, 40);
+  spotLight.angle = Math.PI / 7;
+  spotLight.penumbra = 0.3;
+  spotLight.decay = 2;
+  spotLight.distance = 35;
+  spotLight.castShadow = true;
+  spotLight.shadow.mapSize.width = 1024;
+  spotLight.shadow.mapSize.height = 1024;
+  spotLight.shadow.bias = -0.00005;
+
+  scene.add(spotLight);
+  scene.add(spotLight.target);
+
+  const worldPos = new Vector3();
+
+  function syncLightPosition() {
+    try {
+      obj.updateMatrixWorld(true);
+      obj.getWorldPosition(worldPos);
+      spotLight.position.set(worldPos.x, worldPos.y + 3, worldPos.z);
+      spotLight.target.position.copy(worldPos);
+    } catch {
+      // swallow
+    }
+  }
+  syncLightPosition();
+
+  let hovering = false;
+  let dragging = false;
+
+  function setPointer(event) {
+    const rect = dom.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  }
+
+  function updateHover(event) {
+    setPointer(event);
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObject(obj, true);
-    gizmo.visible = intersects.length > 0;
-  });
-
-  window.addEventListener('keydown', (e) => {
-    switch (e.key.toLowerCase()) {
-      case 'v': gizmo.visible = !gizmo.visible; break;
-      case 't': transform.setMode('translate'); break;
-      case 'r': transform.setMode('rotate'); break;
+    hovering = intersects.length > 0;
+    if (!dragging) {
+      transform.enabled = hovering;
+      if (hovering) {
+        transform.setMode('rotate');
+      }
+      if (helper) helper.visible = hovering;
     }
-  });
+  }
 
-  // spotlight
-  const spot = new SpotLight(0xffffff, 50);
-  spot.angle = Math.PI / 6;
-  spot.penumbra = 0.2;
-  spot.decay = 2;
-  spot.distance = 50;
-  spot.castShadow = true;
-  spot.shadow.mapSize.width = 2048;
-  spot.shadow.mapSize.height = 2048;
-  spot.shadow.bias = -0.0001;
+  function beginDrag(event) {
+    updateHover(event);
+    if (!hovering) return;
+    if (transform.getMode && transform.getMode() !== 'rotate') {
+      transform.setMode('rotate');
+    } else {
+      transform.setMode('rotate');
+    }
+    dragging = true;
+    transform.enabled = true;
+    if (helper) helper.visible = true;
+  }
 
-  scene.add(spot);
-  scene.add(spot.target);
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    transform.enabled = false;
+    if (helper) helper.visible = false;
+  }
 
-  const tmpPos = new Vector3();
-  // Initialize spotlight position/target on load so it's on immediately
-  try {
-    obj.updateMatrixWorld(true);
-    obj.getWorldPosition(tmpPos);
-    spot.position.set(tmpPos.x, tmpPos.y + 5, tmpPos.z);
-    spot.target.position.copy(tmpPos);
-  } catch {}
+  dom.addEventListener('pointermove', updateHover);
+  dom.addEventListener('pointerdown', beginDrag);
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('blur', endDrag);
 
-  transform.addEventListener('change', (e) => {
-    obj.getWorldPosition(tmpPos);
-    spot.position.set(tmpPos.x, tmpPos.y + 5, tmpPos.z);
-    spot.target.position.copy(tmpPos);
-    gizmo.visible = e.value;
-  });
+  function onDraggingChanged(event) {
+    dragging = event.value;
+    if (!dragging) {
+      transform.enabled = false;
+      if (helper) helper.visible = false;
+    }
+  }
+
+  function onTransformChange() {
+    syncLightPosition();
+  }
+
+  transform.addEventListener('dragging-changed', onDraggingChanged);
+  transform.addEventListener('change', onTransformChange);
+
+  const cleanup = () => {
+    obj.userData._pitcherControlsAttached = false;
+    dom.removeEventListener('pointermove', updateHover);
+    dom.removeEventListener('pointerdown', beginDrag);
+    window.removeEventListener('pointerup', endDrag);
+    window.removeEventListener('blur', endDrag);
+    transform.removeEventListener('dragging-changed', onDraggingChanged);
+    transform.removeEventListener('change', onTransformChange);
+    transform.detach?.(obj);
+    transform.enabled = false;
+    if (helper) {
+      if (helper.parent === scene) {
+        scene.remove(helper);
+      }
+    }
+    scene.remove(spotLight);
+    scene.remove(spotLight.target);
+    spotLight.dispose?.();
+  };
+
+  obj.addEventListener('removed', cleanup);
 }

@@ -1,14 +1,15 @@
 // App.tsx
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import { InfoButtons } from './components/InfoButtons';
-import ModularGallery from './components/ModularGallery';
 import { GALLERIES } from './data/galleryConfig';
-import { setupModal } from './modules/setupModal';
-import { initAppBuilder } from './modules/AppBuilder';
-import Joystick from './components/Joystick';
+
+const R3FViewer = lazy(async () => {
+  const module = await import('./r3f/R3FViewer');
+  return { default: module.R3FViewer ?? module.default }; // retain support for both exports
+});
 
 interface Gallery {
   slug: string;
@@ -19,12 +20,7 @@ interface Gallery {
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null); //
-  const [visitor, setVisitor] = useState<any | null>(null);
-  const [isTouchDevice, setIsTouchDevice] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(pointer: coarse)').matches;
-  });
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -36,53 +32,28 @@ export default function App() {
     return GALLERIES.find(g => g.slug === slug);
   }, []);
 
-  // Handle config after ModularGallery preloads it
-  const handleConfigLoaded = useCallback((config: any) => {
-    const imagesMap = config.images || {};
-    const showModal = setupModal(imagesMap);
-    initAppBuilder({ showModal });
-  }, []);
-
-  const handleVisitorReady = useCallback((instance: any | null) => {
-    setVisitor(instance || null);
-  }, []);
-
-  // Unified hash handling (runs once on mount + on changes)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(pointer: coarse)');
-    const update = () => setIsTouchDevice(mq.matches);
-    update();
-    if (mq.addEventListener) {
-      mq.addEventListener('change', update);
-    } else {
-      mq.addListener(update);
-    }
-    return () => {
-      if (mq.removeEventListener) {
-        mq.removeEventListener('change', update);
-      } else {
-        mq.removeListener(update);
-      }
-    };
-  }, []);
-
+  // Handle hash-based gallery selection
   useEffect(() => {
     function handleHashChange() {
-      const slug = window.location.hash.replace('#', '');
-      if (slug) {
-        const gallery = findGalleryBySlug(slug);
-        if (gallery) {
-          setSelectedConfigUrl(gallery.configUrl);
-          setSelectedSlug(slug);                // ⭐ NEW
-          return;
-        }
+      const rawHash = window.location.hash.replace('#', '').trim();
+      const fallbackGallery = GALLERIES[0];
+
+      const normalizedSlug = rawHash
+        .replace(/^legacy\/?/i, '')
+        .replace(/^r3f\/?/i, '')
+        .replace(/^\/+|\/+$/g, '');
+
+      const requestedGallery = normalizedSlug ? findGalleryBySlug(normalizedSlug) : undefined;
+      const gallery = requestedGallery ?? fallbackGallery;
+
+      if (!gallery) {
+        setSelectedConfigUrl(null);
+        setSelectedSlug(null);
+        return;
       }
-      // fallback: default
-      if (GALLERIES[0]) {
-        setSelectedConfigUrl(GALLERIES[0].configUrl);
-        setSelectedSlug(GALLERIES[0].slug);
-      }
+
+      setSelectedConfigUrl(gallery.configUrl);
+      setSelectedSlug(gallery.slug);
     }
 
     handleHashChange();
@@ -95,10 +66,6 @@ export default function App() {
     window.location.hash = gallery.slug;
     setSidebarOpen(false);
   }, []);
-
-  const handleJoystickChange = useCallback((x: number, y: number) => {
-    visitor?.setJoystickInput?.(x, y);
-  }, [visitor]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
@@ -127,28 +94,23 @@ export default function App() {
 
       <main className="flex-1 relative">
         <div className="h-full">
-          <ModularGallery
-            configUrl={selectedConfigUrl || ''}
-            onConfigLoaded={handleConfigLoaded}
-            onVisitorReady={handleVisitorReady}
-          />
+          {selectedConfigUrl ? (
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center text-white/70">
+                  Loading viewer…
+                </div>
+              }
+            >
+              <R3FViewer
+                configUrl={selectedConfigUrl}
+                onRequestSidebarClose={() => setSidebarOpen(false)}
+              />
+            </Suspense>
+          ) : null}
         </div>
       </main>
 
-      {/* ✅ Modal DOM lives in React tree */}
-      <div id="modalOverlay" className="modal-overlay hidden">
-        <div className="modal">
-          <button className="modal-close" id="closeModal">×</button>
-          <div className="modal-image-container">
-            <img id="modalImage" className="modal-image hidden" src="" alt="modal image" />
-          </div>
-          <div className="modal-description"></div>
-        </div>
-      </div>
-
-      {isTouchDevice && visitor?.setJoystickInput && (
-        <Joystick onChange={handleJoystickChange} />
-      )}
-    </div>
+   </div>
   );
 }
