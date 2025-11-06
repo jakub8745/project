@@ -1,51 +1,46 @@
-# Blue Point Art - Virtual Gallery Archive
+# Blue Point Art – Virtual Gallery Archive
 
-Welcome to the Virtual Gallery Archive for [Blue Point Art](https://bluepointart.uk) – a modular, evolving platform for curating, viewing, and experiencing digital exhibitions.
-
-## Overview
-
-The archive provides a modular structure for virtual exhibitions, enabling artists and curators to showcase work in an interactive 3D environment. The core of the project is a **gallery viewer built with Three.js**, allowing immersive navigation and dynamic exhibition design.
+This repo hosts the React-based virtual gallery for [Blue Point Art](https://bluepointart.uk). Exhibitions are defined by JSON configuration and rendered through a performant [@react-three/fiber](https://github.com/pmndrs/react-three-fiber) viewer that runs entirely inside React.
 
 ---
 
-## Features
+## What’s inside
 
-* **Modular Architecture:**
-  Exhibitions are driven by customizable configuration files (`config.json`), making setup and expansion straightforward.
-
-* **Gallery Viewer:**
-  Built on [Three.js](https://threejs.org/), the viewer is the foundation for exploring virtual exhibitions.
-
-* **Decentralized Assets:**
-  All gallery assets (images, models, videos) are stored on [IPFS](https://ipfs.tech/) for permanence and global accessibility.
+- **React + Vite app** – all interaction, modals, and overlays are implemented as React components.
+- **R3F scene graph** – a single, code-split Three.js viewer handles models, media meshes, audio, and navigation.
+- **Config-driven content** – `config.json` files describe assets, transforms, and metadata so new shows require zero code.
+- **IPFS-aware loaders** – assets can fall back across multiple gateways; Oracle URLs are resolved automatically where available.
+- **Spatial media** – positional audio, video planes, and hotspot interactions are wired through typed helpers.
 
 ---
 
-## Roadmap
+## Getting started
 
-1. **Current:**
+```bash
+pnpm install   # or npm / yarn
+pnpm dev       # starts Vite on http://localhost:5173
 
-   * Gallery viewer with modular config-based exhibitions
-   * All assets decentralized via IPFS
+# build for production
+pnpm build
+```
 
-2. **Coming Next:**
+Drop exhibition configs into `public/configs/` (or host them remotely) and update `src/data/galleryConfig.ts` to register new entries.
 
-   * **VR Support:** Step into exhibitions using VR headsets
-   * **WebXR Projects:** Host and archive advanced interactive and spatial artworks
-   * **Spatial Documentation:** Tools for archiving and presenting digital spatial projects
+---
 
-3. **Future Directions:**
+## Project structure highlights
 
-   * **Config as NFT:** Exhibition configurations will become NFTs for provenance and ownership
-   * **Wallet Integration:** Connect crypto wallets for authentication, collection, and interaction
-   * **Web3 Bridge:** Enable decentralized participation and on-chain curation
+- `src/App.tsx` – application shell, sidebar navigation, and lazy-loaded viewer.
+- `src/r3f/` – canvas-side logic (viewer, audio system, modal integration, pointer interactions).
+- `src/modules/` – shared utilities consumed by both UI and R3F code (e.g. audio manager, visitor controls).
 
+Legacy DOM scaffolding has been removed; the React viewer is the only runtime entry point.
 
+---
 
 ## Contributing
 
-We welcome contributions from artists, coders, and curators interested in the future of virtual exhibitions.
-Please [open an issue](https://github.com/your-username/bluepointart-virtual-gallery/issues) or contact the team to get involved.
+Issues and PRs are welcome. If you are planning a larger contribution, please open a discussion first so we can align on approach.
 
 ---
 
@@ -57,6 +52,5 @@ MIT
 
 ## Credits
 
-Developed by [Blue Point Art](https://bluepointart.uk)
-Special thanks to the open-source and web3 community.
-
+Developed by [Blue Point Art](https://bluepointart.uk).
+Thanks to the pmndrs and Three.js communities for the tooling this archive is built on.

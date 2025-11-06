@@ -1,35 +1,19 @@
-import { useEffect, useRef } from 'react';
-import { setupModal } from '../modules/setupModal';
+import { useCallback, useEffect } from 'react';
+import { type ModalImageMap, type ModalOpenPayload, useMaterialModal } from './Modal';
 
-type ImageMeta = {
-  title: string;
-  description?: string;
-  author?: string;
-  img?: { src: string };
-  imagePath?: string;
-  oracleImagePath?: string;
-};
-
-export type LegacyImageMap = Record<string, ImageMeta>;
+export type LegacyImageMap = ModalImageMap;
 
 export function useLegacyModal(images: LegacyImageMap | undefined) {
-  const showModalRef = useRef<ReturnType<typeof setupModal> | null>(null);
+  const { setImages, showModal } = useMaterialModal();
 
   useEffect(() => {
-    if (!images) {
-      showModalRef.current = null;
-      return;
-    }
-    const showModal = setupModal(images);
-    showModalRef.current = showModal;
-    return () => {
-      showModalRef.current = null;
-    };
-  }, [images]);
+    setImages(images);
+  }, [images, setImages]);
 
-  return (userData: Record<string, unknown>) => {
-    showModalRef.current?.({ ...userData });
-  };
+  return useCallback((userData: Record<string, unknown>) => {
+    const payload: ModalOpenPayload = { ...userData };
+    showModal(payload);
+  }, [showModal]);
 }
 
 export default useLegacyModal;

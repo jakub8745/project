@@ -1,16 +1,15 @@
 // App.tsx
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import { InfoButtons } from './components/InfoButtons';
-import ModularGallery, { NormalizedExhibitConfig } from './components/ModularGallery';
 import { GALLERIES } from './data/galleryConfig';
-import { setupModal } from './modules/setupModal';
-import { initAppBuilder } from './modules/AppBuilder';
-import Joystick from './components/Joystick';
-import { R3FViewer } from './r3f/R3FViewer';
-import type Visitor from './modules/Visitor.js';
+
+const R3FViewer = lazy(async () => {
+  const module = await import('./r3f/R3FViewer');
+  return { default: module.R3FViewer ?? module.default }; // retain support for both exports
+});
 
 interface Gallery {
   slug: string;
@@ -22,12 +21,6 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const [visitor, setVisitor] = useState<Visitor | null>(null);
-  const [viewerMode, setViewerMode] = useState<'legacy' | 'r3f'>('legacy');
-  const [isTouchDevice, setIsTouchDevice] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(pointer: coarse)').matches;
-  });
 
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -39,64 +32,28 @@ export default function App() {
     return GALLERIES.find(g => g.slug === slug);
   }, []);
 
-  // Handle config after ModularGallery preloads it
-  const handleConfigLoaded = useCallback((config: NormalizedExhibitConfig) => {
-    const imagesMap = (config.images ?? {}) as Parameters<typeof setupModal>[0];
-    const showModal = setupModal(imagesMap);
-    initAppBuilder({ showModal });
-  }, []);
-
-  const handleVisitorReady = useCallback((instance: Visitor | null) => {
-    setVisitor(instance);
-  }, []);
-
-  // Unified hash handling (runs once on mount + on changes)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(pointer: coarse)');
-    const update = () => setIsTouchDevice(mq.matches);
-    update();
-    if (mq.addEventListener) {
-      mq.addEventListener('change', update);
-    } else {
-      mq.addListener(update);
-    }
-    return () => {
-      if (mq.removeEventListener) {
-        mq.removeEventListener('change', update);
-      } else {
-        mq.removeListener(update);
-      }
-    };
-  }, []);
-
+  // Handle hash-based gallery selection
   useEffect(() => {
     function handleHashChange() {
-      const raw = window.location.hash.replace('#', '');
-      if (raw.startsWith('r3f/')) {
-        setViewerMode('r3f');
-        const slug = raw.slice(4);
-        const gallery = findGalleryBySlug(slug);
-        if (gallery) {
-          setSelectedConfigUrl(gallery.configUrl);
-          setSelectedSlug(slug);
-          return;
-        }
-      } else if (raw) {
-        const gallery = findGalleryBySlug(raw);
-        if (gallery) {
-          setViewerMode('legacy');
-          setSelectedConfigUrl(gallery.configUrl);
-          setSelectedSlug(raw);
-          return;
-        }
+      const rawHash = window.location.hash.replace('#', '').trim();
+      const fallbackGallery = GALLERIES[0];
+
+      const normalizedSlug = rawHash
+        .replace(/^legacy\/?/i, '')
+        .replace(/^r3f\/?/i, '')
+        .replace(/^\/+|\/+$/g, '');
+
+      const requestedGallery = normalizedSlug ? findGalleryBySlug(normalizedSlug) : undefined;
+      const gallery = requestedGallery ?? fallbackGallery;
+
+      if (!gallery) {
+        setSelectedConfigUrl(null);
+        setSelectedSlug(null);
+        return;
       }
-      // fallback: default
-      if (GALLERIES[0]) {
-        setViewerMode('legacy');
-        setSelectedConfigUrl(GALLERIES[0].configUrl);
-        setSelectedSlug(GALLERIES[0].slug);
-      }
+
+      setSelectedConfigUrl(gallery.configUrl);
+      setSelectedSlug(gallery.slug);
     }
 
     handleHashChange();
@@ -106,29 +63,9 @@ export default function App() {
 
   // On gallery click, update hash and close sidebar
   const handleGallerySelect = useCallback((gallery: Gallery) => {
-    window.location.hash = viewerMode === 'r3f' ? `r3f/${gallery.slug}` : gallery.slug;
+    window.location.hash = gallery.slug;
     setSidebarOpen(false);
-  }, [viewerMode]);
-
-  const handleJoystickChange = useCallback((x: number, y: number) => {
-    visitor?.setJoystickInput?.(x, y);
-  }, [visitor]);
-
-  const canvasContent = useMemo(() => {
-    if (!selectedConfigUrl) {
-      return null;
-    }
-    if (viewerMode === 'legacy') {
-      return (
-        <ModularGallery
-          configUrl={selectedConfigUrl}
-          onConfigLoaded={handleConfigLoaded}
-          onVisitorReady={handleVisitorReady}
-        />
-      );
-    }
-    return <R3FViewer configUrl={selectedConfigUrl} />;
-  }, [handleConfigLoaded, handleVisitorReady, selectedConfigUrl, viewerMode]);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
@@ -157,7 +94,17 @@ export default function App() {
 
       <main className="flex-1 relative">
         <div className="h-full">
-          {canvasContent}
+          {selectedConfigUrl ? (
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center text-white/70">
+                  Loading viewer…
+                </div>
+              }
+            >
+              <R3FViewer configUrl={selectedConfigUrl} />
+            </Suspense>
+          ) : null}
         </div>
       </main>
 
@@ -171,10 +118,6 @@ export default function App() {
           <div className="modal-description"></div>
         </div>
       </div>
-
-      {viewerMode === 'legacy' && isTouchDevice && visitor?.setJoystickInput && (
-        <Joystick onChange={handleJoystickChange} />
-      )}
    </div>
   );
 }

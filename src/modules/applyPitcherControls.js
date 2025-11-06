@@ -9,7 +9,7 @@ export function applyPitcherControls(obj, scene, renderer, camera, transform) {
   // Attach transform controls and configure defaults
   transform.attach(obj);
   transform.setMode('rotate');
-  transform.setSize(0.6);
+  transform.setSize(0.3);
   transform.enabled = false;
 
   // Some versions of TransformControls expose getHelper(); guard just in case
@@ -68,6 +68,9 @@ export function applyPitcherControls(obj, scene, renderer, camera, transform) {
     hovering = intersects.length > 0;
     if (!dragging) {
       transform.enabled = hovering;
+      if (hovering) {
+        transform.setMode('rotate');
+      }
       if (helper) helper.visible = hovering;
     }
   }
@@ -75,6 +78,11 @@ export function applyPitcherControls(obj, scene, renderer, camera, transform) {
   function beginDrag(event) {
     updateHover(event);
     if (!hovering) return;
+    if (transform.getMode && transform.getMode() !== 'rotate') {
+      transform.setMode('rotate');
+    } else {
+      transform.setMode('rotate');
+    }
     dragging = true;
     transform.enabled = true;
     if (helper) helper.visible = true;
@@ -106,17 +114,6 @@ export function applyPitcherControls(obj, scene, renderer, camera, transform) {
 
   transform.addEventListener('dragging-changed', onDraggingChanged);
   transform.addEventListener('change', onTransformChange);
-
-  window.addEventListener('keydown', (event) => {
-    switch (event.key.toLowerCase()) {
-      case 't':
-        transform.setMode('translate');
-        break;
-      case 'r':
-        transform.setMode('rotate');
-        break;
-    }
-  });
 
   const cleanup = () => {
     obj.userData._pitcherControlsAttached = false;

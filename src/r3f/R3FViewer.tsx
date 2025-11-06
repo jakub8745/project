@@ -2,7 +2,26 @@ import { Suspense, useEffect, useMemo, useReducer, useState } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { Html, Loader, OrbitControls } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
-import { AudioListener, BufferGeometry, Color, Euler, Vector3, Mesh, Group, Material, MeshBasicMaterial, WebGLRenderTarget, ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
+import {
+  AudioListener,
+  BufferGeometry,
+  Color,
+  Euler,
+  Vector3,
+  Mesh,
+  Group,
+  Material,
+  MeshBasicMaterial,
+  WebGLRenderTarget,
+  ACESFilmicToneMapping,
+  PCFSoftShadowMap,
+  SRGBColorSpace,
+  Texture,
+  TextureLoader,
+  EquirectangularReflectionMapping,
+  LinearFilter,
+  LinearMipmapLinearFilter
+} from 'three';
 import type { WebGLRenderer } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -30,24 +49,28 @@ BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
 Mesh.prototype.raycast = acceleratedRaycast;
 
 const DEBUG_COLLIDER = false;
+const DEFAULT_BACKGROUND = '#111827';
 
 let sharedDracoLoader: DRACOLoader | null = null;
 let sharedLoaderUsers = 0;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
+
+function ensureKtx2Support(renderer: WebGLRenderer) {
+  if (ktx2SupportedRenderers.has(renderer)) return;
+  try {
+    sharedKtx2Loader.detectSupport(renderer);
+    ktx2SupportedRenderers.add(renderer);
+  } catch (err) {
+    console.warn('KTX2 detectSupport failed:', err);
+  }
+}
 
 function acquireSharedLoaders(renderer: WebGLRenderer) {
   sharedLoaderUsers += 1;
   if (!sharedDracoLoader) {
     sharedDracoLoader = new DRACOLoader().setDecoderPath('/libs/draco/');
   }
-  if (!ktx2SupportedRenderers.has(renderer)) {
-    try {
-      sharedKtx2Loader.detectSupport(renderer);
-      ktx2SupportedRenderers.add(renderer);
-    } catch (err) {
-      console.warn('KTX2 detectSupport failed:', err);
-    }
-  }
+  ensureKtx2Support(renderer);
   return {
     draco: sharedDracoLoader,
     ktx2: sharedKtx2Loader as KTX2Loader
@@ -75,6 +98,11 @@ function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vect
     return [Number(x) || 0, Number(y) || 0, Number(z) || 0];
   }
   return fallback;
+}
+
+function toVector3(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3 {
+  const [x, y, z] = coerceVector(source, fallback);
+  return new Vector3(x, y, z);
 }
 
 function useConfiguredGLTFs(paths: string[]): GLTF[] {
@@ -258,6 +286,99 @@ function ExhibitModel({
   );
 }
 
+function SceneBackground({
+  textureUrl,
+  blurriness,
+  intensity
+}: {
+  textureUrl?: string | null;
+  blurriness?: number;
+  intensity?: number;
+}) {
+  const { scene, gl } = useThree();
+  const fallbackColor = useMemo(() => new Color(DEFAULT_BACKGROUND), []);
+
+  useEffect(() => {
+    let disposed = false;
+    let loadedTexture: Texture | null = null;
+    const previousBlurriness = scene.backgroundBlurriness ?? 0;
+    const previousIntensity = scene.backgroundIntensity ?? 1;
+    const targetBlurriness = typeof blurriness === 'number' ? blurriness : 0;
+    const targetIntensity = typeof intensity === 'number' ? intensity : 1;
+
+    const applyFallback = () => {
+      scene.background = fallbackColor;
+    };
+
+    applyFallback();
+    scene.backgroundBlurriness = targetBlurriness;
+    scene.backgroundIntensity = targetIntensity;
+
+    if (!textureUrl) {
+      return () => {
+        if (scene.background === fallbackColor) {
+          scene.background = null;
+        }
+        scene.backgroundBlurriness = previousBlurriness;
+        scene.backgroundIntensity = previousIntensity;
+      };
+    }
+
+    const loadBackground = async () => {
+      try {
+        let texture: Texture;
+        const isKtx2 = textureUrl.toLowerCase().endsWith('.ktx2');
+        if (isKtx2) {
+          ensureKtx2Support(gl as WebGLRenderer);
+          texture = await sharedKtx2Loader.loadAsync(textureUrl);
+        } else {
+          const loader = new TextureLoader();
+          texture = await loader.loadAsync(textureUrl);
+        }
+        if (disposed) {
+          texture.dispose();
+          return;
+        }
+        texture.colorSpace = SRGBColorSpace;
+        texture.mapping = EquirectangularReflectionMapping;
+        if (!('isCompressedTexture' in texture && texture.isCompressedTexture)) {
+          texture.magFilter = LinearFilter;
+          texture.minFilter = LinearMipmapLinearFilter;
+          texture.generateMipmaps = true;
+        }
+        texture.needsUpdate = true;
+        loadedTexture = texture;
+        scene.background = texture;
+        scene.backgroundBlurriness = targetBlurriness;
+        scene.backgroundIntensity = targetIntensity;
+      } catch (err) {
+        if (!disposed) {
+          console.warn('Failed to load background texture:', textureUrl, err);
+          applyFallback();
+        }
+      }
+    };
+
+    loadBackground();
+
+    return () => {
+      disposed = true;
+      if (loadedTexture) {
+        if (scene.background === loadedTexture) {
+          scene.background = null;
+        }
+        loadedTexture.dispose();
+      } else if (scene.background === fallbackColor) {
+        scene.background = null;
+      }
+      scene.backgroundBlurriness = previousBlurriness;
+      scene.backgroundIntensity = previousIntensity;
+    };
+  }, [textureUrl, blurriness, intensity, scene, gl, fallbackColor]);
+
+  return null;
+}
+
 function R3FViewerInner({ configUrl }: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
@@ -266,6 +387,32 @@ function R3FViewerInner({ configUrl }: R3FViewerProps) {
   const position = useMemo(() => coerceVector(config?.position), [config?.position]);
   const rotation = useMemo(() => coerceVector(config?.rotation), [config?.rotation]);
   const scale = typeof config?.scale === 'number' ? config.scale : 1;
+  const rawParams = config?.params as Record<string, unknown> | undefined;
+  const heightOffsetVector = useMemo(() => toVector3(rawParams?.heightOffset, [0, 1.05, 0]), [rawParams?.heightOffset]);
+  const visitorEnterVector = useMemo(() => toVector3(rawParams?.visitorEnter, [0, 2, 0]), [rawParams?.visitorEnter]);
+  const controllerParams = useMemo<ControllerParams | undefined>(() => {
+    if (!rawParams) return undefined;
+    const result: ControllerParams = {};
+    if (typeof rawParams.visitorSpeed === 'number' && Number.isFinite(rawParams.visitorSpeed)) {
+      result.visitorSpeed = rawParams.visitorSpeed;
+    }
+    if (typeof rawParams.gravity === 'number' && Number.isFinite(rawParams.gravity)) {
+      result.gravity = rawParams.gravity;
+    }
+    if (typeof rawParams.rotateOrbit === 'number' && Number.isFinite(rawParams.rotateOrbit)) {
+      result.rotateOrbit = rawParams.rotateOrbit;
+    }
+    if (rawParams.heightOffset !== undefined) {
+      result.heightOffset = heightOffsetVector.clone();
+    }
+    if (rawParams.visitorEnter !== undefined) {
+      result.visitorEnter = visitorEnterVector.clone();
+    }
+    return result;
+  }, [rawParams, heightOffsetVector, visitorEnterVector]);
+  const backgroundBlurriness = typeof rawParams?.backgroundBlurriness === 'number' ? rawParams.backgroundBlurriness : undefined;
+  const backgroundIntensity = typeof rawParams?.backgroundIntensity === 'number' ? rawParams.backgroundIntensity : undefined;
+  const lightIntensity = typeof rawParams?.lightIntensity === 'number' && Number.isFinite(rawParams.lightIntensity) ? rawParams.lightIntensity : 1;
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
@@ -442,9 +589,13 @@ function R3FViewerInner({ configUrl }: R3FViewerProps) {
         }}
       >
         <RendererTuning />
-        <color attach="background" args={[new Color('#111827')]} />
-        <ambientLight intensity={0.35} />
-        <hemisphereLight args={[new Color('#dbe5ff'), new Color('#151515'), 0.4]} />
+        <SceneBackground
+          textureUrl={config?.backgroundTexture}
+          blurriness={backgroundBlurriness}
+          intensity={backgroundIntensity}
+        />
+        <ambientLight intensity={0.35 * lightIntensity} />
+        <hemisphereLight args={[new Color('#dbe5ff'), new Color('#151515'), 0.4 * lightIntensity]} />
 
 
         <Suspense fallback={<Html center className="text-white">Loading exhibit…</Html>}>
@@ -490,11 +641,11 @@ function R3FViewerInner({ configUrl }: R3FViewerProps) {
         />
         <FirstPersonController
           collider={collider}
-          params={config?.params as ControllerParams | undefined}
+          params={controllerParams}
           onVisitorReady={setVisitorInstance}
         />
         <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} sceneVersion={sceneVersion} />
-        <AutoExposureControl params={config?.params as Record<string, unknown> | undefined} />
+        <AutoExposureControl params={rawParams} />
       </Canvas>
       <AudioPlayerControls />
       <Loader />
@@ -538,11 +689,14 @@ function FirstPersonController({
 
   const visitor = useMemo(() => {
     if (!controls) return null;
+    const heightOffsetVec = toVector3(params?.heightOffset, [0, 1.05, 0]);
+    const visitorEnterVec = toVector3(params?.visitorEnter, [0, 10, 0]);
     const defaults = {
-      visitorSpeed: params?.visitorSpeed ?? 2.5,
-      gravity: params?.gravity ?? -9,
-      heightOffset: params?.heightOffset ?? { x: 0, y: 1.05, z: 0 },
-      rotateOrbit: params?.rotateOrbit ?? 15
+      visitorSpeed: typeof params?.visitorSpeed === 'number' ? params.visitorSpeed : 2.5,
+      gravity: typeof params?.gravity === 'number' ? params.gravity : -9,
+      heightOffset: heightOffsetVec,
+      rotateOrbit: typeof params?.rotateOrbit === 'number' ? params.rotateOrbit : 15,
+      visitorEnter: visitorEnterVec
     };
     return new Visitor({
       camera,
@@ -565,8 +719,8 @@ function FirstPersonController({
       controls.minDistance = 1e-4;
       controls.maxDistance = 1e-4;
 
-      const offset = params?.heightOffset ?? { x: 0, y: 1.05, z: 0 };
-      const headPosition = visitor.position.clone().add(new Vector3(offset.x, offset.y, offset.z));
+      const offset = toVector3(params?.heightOffset, [0, 1.05, 0]);
+      const headPosition = visitor.position.clone().add(offset);
       controls.target.copy(headPosition);
       camera.position.copy(headPosition).add(new Vector3(0, 0, 1e-4));
 
@@ -602,6 +756,7 @@ function AudioSystem({
   const transform = useMemo(() => {
     const ctrl = new TransformControls(camera, gl.domElement);
     ctrl.enabled = false;
+    ctrl.setSize(0.1);
     const helper = ctrl.getHelper?.();
     if (helper) {
       helper.visible = false;
