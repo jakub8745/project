@@ -147,7 +147,7 @@ export const GALLERIES: GalleryItem[] = [
     // …add as many as you like
 
 ];
-/*
+/*//
     {
         slug: "puno85",
         url: "/sidebar_models/preview_puno85.glb",
