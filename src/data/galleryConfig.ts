@@ -46,33 +46,6 @@ export const COMMON_ICONS = {
 
 export const GALLERIES: GalleryItem[] = [
     {
-        slug: "videopoetry",
-        url: "/sidebar_models/preview_wystawaTom.glb",
-        title: 'layout for the Tom Konyves exhibition space',
-        description: '',
-        scale: 0.15,
-        position: [0, 0, 0],
-        configUrl: "./configs/tom_exhibit_config.json",
-        keywords: [],
-        ogImage: "",
-        overlayText: "",
-        videos: []
-    },
-    {
-        slug: "puno85",
-        url: "/sidebar_models/preview_puno85.glb",
-        title: '85 lat PUNO',
-        description: 'Wystawa z okazji 85-lecia PUNO',
-        scale: 0.07,
-        position: [0, 0, 0],
-        configUrl: "./configs/puno85_config.json",
-        "keywords": ["PUNO", "85-lecie", "Londyn", "3D art", "webgl"],
-        "ogImage": "https://bluepointart.uk/preview.png",
-        "overlayText":
-            "Wystawa z okazji<br/>85-lecia<br/>Polskiego Uniwersytetu na Obczyźnie",
-        "videos": [],
-    },
-    {
         slug: "cipriani",
         url: "/sidebar_models/preview_cipriani05.glb",
         title: 'Cipriani - Vincenz',
@@ -150,6 +123,19 @@ export const GALLERIES: GalleryItem[] = [
         overlayText: "",
         videos: []
     },
+    {
+        slug: "videopoetry",
+        url: "/sidebar_models/preview_wystawaTom.glb",
+        title: 'layout for the Tom Konyves exhibition space',
+        description: '',
+        scale: 0.15,
+        position: [0, 0, 0],
+        configUrl: "./configs/tom_exhibit_config.json",
+        keywords: [],
+        ogImage: "",
+        overlayText: "",
+        videos: []
+    },
 
 
 
@@ -161,3 +147,19 @@ export const GALLERIES: GalleryItem[] = [
     // …add as many as you like
 
 ];
+/*
+    {
+        slug: "puno85",
+        url: "/sidebar_models/preview_puno85.glb",
+        title: '85 lat PUNO',
+        description: 'Wystawa z okazji 85-lecia PUNO',
+        scale: 0.07,
+        position: [0, 0, 0],
+        configUrl: "./configs/puno85_config.json",
+        "keywords": ["PUNO", "85-lecie", "Londyn", "3D art", "webgl"],
+        "ogImage": "https://bluepointart.uk/preview.png",
+        "overlayText":
+            "Wystawa z okazji<br/>85-lecia<br/>Polskiego Uniwersytetu na Obczyźnie",
+        "videos": [],
+    },
+*/
