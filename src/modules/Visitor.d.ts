@@ -1,4 +1,4 @@
-import { Mesh, Vector2, Vector3, WebGLRenderer, Group, Camera, Object3D } from 'three';
+import { Mesh, Vector2, Vector3, WebGLRenderer, Camera, Object3D } from 'three';
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export interface VisitorParams {
@@ -13,7 +13,7 @@ export interface VisitorDependencies {
   controls: OrbitControls;
   params: VisitorParams;
   renderer: WebGLRenderer;
-  xrRig?: Group | null;
+  xrRig?: Object3D | null;
   visitor?: Visitor;
 }
 

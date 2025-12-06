@@ -1,5 +1,6 @@
-import { Suspense, useEffect, useMemo, useReducer, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
+import type { RootState } from '@react-three/fiber';
 import { Html, Loader, OrbitControls } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
 import {
@@ -13,6 +14,7 @@ import {
   Material,
   MeshBasicMaterial,
   WebGLRenderTarget,
+  Object3D,
   ACESFilmicToneMapping,
   PCFSoftShadowMap,
   SRGBColorSpace,
@@ -54,6 +56,44 @@ const DEFAULT_BACKGROUND = '#111827';
 let sharedDracoLoader: DRACOLoader | null = null;
 let sharedLoaderUsers = 0;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
+
+type XRSessionConstructor = { new (...args: any[]): XRSession };
+type XRWebGLBindingConstructor = { new (...args: any[]): unknown };
+
+function temporarilyDisableXRWebGLBinding(session: XRSession | null) {
+  if (typeof globalThis === 'undefined' || !session) {
+    return null;
+  }
+  const globalWithXR = globalThis as typeof globalThis & {
+    XRWebGLBinding?: XRWebGLBindingConstructor;
+    XRSession?: XRSessionConstructor;
+  };
+  const originalBinding = globalWithXR.XRWebGLBinding;
+  if (typeof originalBinding !== 'function') {
+    return null;
+  }
+
+  const sessionCtor = globalWithXR.XRSession;
+  let shouldDisable = false;
+  if (typeof sessionCtor === 'function') {
+    try {
+      shouldDisable = !(session instanceof sessionCtor);
+    } catch {
+      shouldDisable = true;
+    }
+  } else {
+    shouldDisable = true;
+  }
+
+  if (!shouldDisable) {
+    return null;
+  }
+
+  globalWithXR.XRWebGLBinding = undefined;
+  return () => {
+    globalWithXR.XRWebGLBinding = originalBinding;
+  };
+}
 
 function ensureKtx2Support(renderer: WebGLRenderer) {
   if (ktx2SupportedRenderers.has(renderer)) return;
@@ -490,6 +530,15 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
 
   const showLegacyModal = useLegacyModal(legacyImages);
 
+  const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+  const [xrSupported, setXrSupported] = useState(false);
+  const [xrSessionActive, setXrSessionActive] = useState(false);
+  const [xrError, setXrError] = useState<string | null>(null);
+  const xrSessionRef = useRef<XRSession | null>(null);
+  const handleCanvasCreated = useCallback((state: RootState) => {
+    setRenderer(state.gl);
+  }, []);
+
   const audioConfig = useMemo<AudioMeshConfig[] | undefined>(() => {
     if (!Array.isArray(config?.audio)) return undefined;
     const sanitized = config.audio
@@ -570,6 +619,128 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
   }, [config?.videos]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function detectXrSupport() {
+      if (typeof navigator === 'undefined') {
+        if (!cancelled) {
+          setXrSupported(false);
+        }
+        return;
+      }
+      const xrSystem = navigator.xr;
+      if (!xrSystem?.isSessionSupported) {
+        if (!cancelled) {
+          setXrSupported(false);
+        }
+        return;
+      }
+      try {
+        const supported = await xrSystem.isSessionSupported('immersive-vr');
+        if (!cancelled) {
+          setXrSupported(Boolean(supported));
+          if (supported) {
+            setXrError(null);
+          }
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setXrSupported(false);
+          setXrError(err instanceof Error ? err.message : 'Unable to detect WebXR support.');
+        }
+      }
+    }
+
+    detectXrSupport();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!renderer) return;
+    const xrManager = renderer.xr;
+    const handleSessionStart = () => {
+      setXrSessionActive(true);
+      setXrError(null);
+    };
+    const handleSessionEnd = () => {
+      setXrSessionActive(false);
+      xrSessionRef.current = null;
+    };
+    xrManager.addEventListener('sessionstart', handleSessionStart);
+    xrManager.addEventListener('sessionend', handleSessionEnd);
+    return () => {
+      xrManager.removeEventListener('sessionstart', handleSessionStart);
+      xrManager.removeEventListener('sessionend', handleSessionEnd);
+    };
+  }, [renderer]);
+
+  useEffect(() => {
+    if (!renderer) return;
+    renderer.xr.enabled = xrSupported;
+    if (xrSupported) {
+      renderer.xr.setReferenceSpaceType('local-floor');
+    }
+  }, [renderer, xrSupported]);
+
+  useEffect(() => {
+    return () => {
+      const session = xrSessionRef.current;
+      if (session && typeof session.end === 'function') {
+        session.end().catch(() => undefined);
+      }
+      xrSessionRef.current = null;
+    };
+  }, []);
+
+  const requestVrSession = useCallback(async () => {
+    if (!renderer) return;
+    if (typeof navigator === 'undefined') {
+      setXrError('Navigator is not available in this environment.');
+      return;
+    }
+    const xrSystem = navigator.xr;
+    if (!xrSystem?.requestSession) {
+      setXrError('WebXR is not available on this device.');
+      return;
+    }
+    try {
+      const session = await xrSystem.requestSession('immersive-vr', {
+        optionalFeatures: ['local-floor', 'bounded-floor']
+      });
+      xrSessionRef.current = session;
+      const handleEnd = () => {
+        xrSessionRef.current = null;
+        session.removeEventListener('end', handleEnd);
+      };
+      session.addEventListener('end', handleEnd);
+      const restoreBinding = temporarilyDisableXRWebGLBinding(session);
+      try {
+        await renderer.xr.setSession(session);
+      } finally {
+        restoreBinding?.();
+      }
+      setXrError(null);
+    } catch (err) {
+      console.error('Failed to start VR session', err);
+      setXrError(err instanceof Error ? err.message : 'Failed to start VR session.');
+    }
+  }, [renderer]);
+
+  const exitVrSession = useCallback(async () => {
+    if (!xrSessionRef.current) return;
+    try {
+      await xrSessionRef.current.end();
+    } catch (err) {
+      console.warn('Failed to end XR session', err);
+    } finally {
+      xrSessionRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
     if (!modelPath) {
       setCollider(null);
     }
@@ -588,6 +759,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
           logarithmicDepthBuffer: true,
           stencil: false
         }}
+        onCreated={handleCanvasCreated}
       >
         <RendererTuning />
         <SceneBackground
@@ -659,6 +831,25 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
       {error && (
         <div className="absolute inset-0 flex items-center justify-center text-red-200 bg-black/60">
           Failed to load config: {error.message}
+        </div>
+      )}
+      {xrSupported && (
+        <div className="absolute bottom-4 inset-x-0 flex flex-col items-center gap-2 text-white text-center">
+          <button
+            type="button"
+            className="rounded-lg border border-white/40 bg-slate-900/70 px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur-sm transition hover:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={xrSessionActive ? exitVrSession : requestVrSession}
+            disabled={!renderer}
+          >
+            {xrSessionActive ? 'Exit VR' : 'Enter VR'}
+          </button>
+          {xrError ? (
+            <p className="max-w-[16rem] rounded-md bg-red-900/70 px-3 py-1 text-xs text-red-100 shadow-lg">
+              {xrError}
+            </p>
+          ) : (
+            <p className="text-xs text-white/70">VR headset detected</p>
+          )}
         </div>
       )}
     </div>
@@ -734,6 +925,44 @@ function FirstPersonController({
       onVisitorReady?.(null);
     };
   }, [camera, controls, onVisitorReady, params, scene, visitor]);
+
+  useEffect(() => {
+    if (!visitor) return undefined;
+    const updateRigReference = () => {
+      const xrCamera = gl.xr.getCamera(camera);
+      const rigObject = (xrCamera?.parent ?? xrCamera ?? null) as Object3D | null;
+      visitor.xrRig = rigObject;
+      if (rigObject) {
+        const offset = toVector3(params?.heightOffset, [0, 1.05, 0]);
+        const targetPosition = visitor.position.clone().add(offset);
+        rigObject.position.copy(targetPosition);
+      }
+    };
+    const handleSessionStart = () => {
+      if (controls) {
+        controls.enabled = false;
+      }
+      updateRigReference();
+    };
+    const handleSessionEnd = () => {
+      visitor.xrRig = null;
+      if (controls) {
+        controls.enabled = true;
+      }
+    };
+
+    gl.xr.addEventListener('sessionstart', handleSessionStart);
+    gl.xr.addEventListener('sessionend', handleSessionEnd);
+
+    return () => {
+      gl.xr.removeEventListener('sessionstart', handleSessionStart);
+      gl.xr.removeEventListener('sessionend', handleSessionEnd);
+      visitor.xrRig = null;
+      if (controls) {
+        controls.enabled = true;
+      }
+    };
+  }, [camera, controls, gl, params?.heightOffset, visitor]);
 
   useFrame((_, delta) => {
     if (!visitor || !collider) return;
