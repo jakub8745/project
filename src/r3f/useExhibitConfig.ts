@@ -59,11 +59,12 @@ function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitConfig {
   const videos = Array.isArray(config.videos)
     ? config.videos.map((vid) => {
         const videoRecord = vid as UnknownRecord & { sources?: unknown };
+        const withPoster = normalizeMediaEntry(videoRecord, bucket, 'poster', 'oraclePoster');
         const sourcesValue = Array.isArray(videoRecord.sources)
           ? videoRecord.sources.map((src) => normalizeMediaEntry(src as UnknownRecord, bucket, 'src', 'oracleSrc'))
           : videoRecord.sources;
         return {
-          ...videoRecord,
+          ...withPoster,
           sources: sourcesValue,
         };
       })

@@ -1,0 +1,100 @@
+{
+  "id": "videopoems",
+  "modelPath": "/models/exhibition_videopoems.glb",
+  "interactivesPath": "/models/interactives_empty.glb",
+  "backgroundTexture": "",
+  "sidebar": {
+    "logo": {
+      "text": "LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY"
+    },
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "O Wystawie",
+        "target": "info_text",
+        "content": "The exhibition brings together three videopoems created in the framework of workshops organised within the CAPHE project, developed in diverse settings and through collaboration with different partners. These works transform existing literary texts into immersive audiovisual experiences, demonstrating how videopoetry can function both as artistic reinvention and as cultural transmission. By remediating poetry, the project shows how classic and modern texts acquire new resonances across languages, media, and cultural contexts. It also highlights the educational and popularising dimension of videopoetry, revealing how creative reinterpretations make complex ideas accessible to wider, multilingual audiences. Curated in the Spacial virtual gallery by Jarek Solecki and Justyna Gorzkowicz, the exhibition is experienced through VR headsets (Oculus). Each piece reimagines a poem as a multi-sensory encounter, weaving together word, image, and sound into a unified composition."
+      },
+      {
+        "label": "",
+        "link": ""
+      }
+    ]
+  },
+  "images": {},
+  "videos": [
+    {
+      "id": "jednaziemia",
+      "loop": true,
+      "muted": true,
+      "playsinline": true,
+      "title": "JEDNA ZIEMIA / ONE EARTH (2024)",
+      "description": "This videopoem is based on W drodze (On the Road) by the Polish futurist Stanisław Młodożeniec. It reimagines the original poem in audiovisual form, highlighting the dynamism of early 20th-century avant-garde poetry while resonating with contemporary ecological and humanist concerns.",
+      "author": "Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna",
+      "poster": "/textures/title_jednaZiemia.png",
+      "sources": [
+        {
+          "src_local": "/Volumes/working/Archivum_BPA/video/Mlodozeniec_JednaZiemia.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    },
+    {
+      "id": "echoes",
+      "loop": true,
+      "muted": true,
+      "playsinline": true,
+      "title": "ECHOES OF A FATHER (2023)",
+      "description": "A remediation and paraphrase of Stanisław Vincenz's poetic interpretation of The Lord's Prayer. Presented in English, this videopoem explores how sacred text, when mediated through image and sound, resonates across cultures and contexts.",
+      "author": "Justyna Gorzkowicz & Jarosław Solecki",
+      "poster": "/textures/title_echoes.png",
+      "sources": [
+        {
+          "src_local": "/Volumes/working/Archivum_BPA/video/ECHOES_OF_A_FATHER.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES_OF_A_FATHER.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    },
+    {
+      "id": "pessoa",
+      "loop": true,
+      "muted": true,
+      "playsinline": true,
+      "title": "DISAPPEARING MIRRORS (2025)",
+      "description": "This videopoem remediates the polyphonic poetics of Fernando Pessoa. Different languages and voices overlap, echo, and dissolve into one another, mirroring the heteronyms and multiple identities of the Portuguese modernist.",
+      "author": "Portuguese student & PUNO collaboration (CAPHE project)",
+      "poster": "/textures/title_disappeared.png",
+      "sources": [
+        {
+          "src_local": "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Pessoa_DissapearedMirrors.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    }
+  ],
+  "sculptures": {},
+  "params": {
+    "exposure": 1.0,
+    "autoExposure": true,
+    "exposureTarget": 0.5,
+    "exposureMin": 0.5,
+    "exposureMax": 2.5,
+    "exposureSampleInterval": 30,
+    "lightIntensity": 1.5,
+    "gravity": -8,
+    "visitorSpeed": 2,
+    "heightOffset": {
+      "x": 0,
+      "y": 2.5,
+      "z": 0
+    },
+    "visitorEnter": {
+      "x": 0,
+      "y": 4,
+      "z": 0
+    },
+    "rotateOrbit": -150
+  }
+}

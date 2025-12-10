@@ -15,7 +15,7 @@ export function getFilename(uri: string): string {
 export function resolveOracleUrl(uri: string, bucket: string): string {
   if (!isIpfsUri(uri)) return uri;
   const filename = getFilename(uri);
-  return `https://objectstorage.${ORACLE_REGION}.oraclecloud.com/n/${ORACLE_NAMESPACE}/b/${bucket}/o/${filename}`;
+  return `https://${ORACLE_NAMESPACE}.objectstorage.${ORACLE_REGION}.oci.customer-oci.com/n/${ORACLE_NAMESPACE}/b/${bucket}/o/${filename}`;
 }
 
 export function oracleStaticUrl(path: string): string {
@@ -24,5 +24,5 @@ export function oracleStaticUrl(path: string): string {
   if (ORACLE_ASSETS_BUCKET && clean.startsWith(`${ORACLE_ASSETS_BUCKET}/`)) {
     clean = clean.slice(ORACLE_ASSETS_BUCKET.length + 1);
   }
-  return `https://objectstorage.${ORACLE_REGION}.oraclecloud.com/n/${ORACLE_NAMESPACE}/b/${ORACLE_ASSETS_BUCKET}/o/${clean}`;
+  return `https://${ORACLE_NAMESPACE}.objectstorage.${ORACLE_REGION}.oci.customer-oci.com/n/${ORACLE_NAMESPACE}/b/${ORACLE_ASSETS_BUCKET}/o/${clean}`;
 }

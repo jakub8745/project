@@ -10,6 +10,9 @@ export interface VideoMeshConfig {
   loop?: boolean;
   muted?: boolean;
   preload?: string;
+  poster?: string;
+  ipfsPoster?: string;
+  oraclePoster?: string;
 }
 
 export interface GalleryVideoConfig {

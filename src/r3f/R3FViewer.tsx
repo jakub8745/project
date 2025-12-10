@@ -612,7 +612,14 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
         sources: mappedSources,
         loop: typeof entry.loop === 'boolean' ? entry.loop : undefined,
         muted: typeof entry.muted === 'boolean' ? entry.muted : undefined,
-        preload: typeof entry.preload === 'string' ? entry.preload : undefined
+        preload: typeof entry.preload === 'string' ? entry.preload : undefined,
+        poster:
+          typeof entry.poster === 'string'
+            ? entry.poster
+            : typeof entry.oraclePoster === 'string'
+              ? entry.oraclePoster
+              : undefined,
+        ipfsPoster: typeof entry.ipfsPoster === 'string' ? entry.ipfsPoster : undefined
       });
     }
     return filtered.length > 0 ? filtered : undefined;

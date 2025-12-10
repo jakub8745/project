@@ -20,6 +20,8 @@ export interface GalleryItem {
         title?: string;
         description?: string;
         author?: string;
+        poster?: string;
+        ipfsPoster?: string;
         sources: {
             src: string;
             type: string;
@@ -45,6 +47,19 @@ export const COMMON_ICONS = {
 };
 
 export const GALLERIES: GalleryItem[] = [
+        {
+        slug: "videopoems_lisbon",
+        url: "/sidebar_models/preview_3videopoems.glb",
+        title: 'LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY',
+        description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
+        scale: 0.12,
+        position: [0, 0, 0],
+        configUrl: "./configs/videopoems_config.json",
+        keywords: [],
+        ogImage: "",
+        overlayText: "",
+        videos: []
+    },
     {
         slug: "cipriani",
         url: "/sidebar_models/preview_cipriani05.glb",

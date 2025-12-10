@@ -380,7 +380,6 @@ export function PointerInteractions({
           videoElement.muted = false;
           if (videoElement.paused) {
             videoElement.play().catch((err) => console.warn("Couldn't autoplay:", err));
-            moveToVideo(hit);
           } else {
             videoElement.pause();
           }
