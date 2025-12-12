@@ -1,6 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
 import { COMMON_HELP_ITEM, COMMON_ICONS } from '../data/galleryConfig';
+import { normalizeConfigUrl } from '../utils/url';
 
 export interface InfoItem {
   id: string;
@@ -48,7 +49,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
       return;
     }
 
-    const fetchUrl = configUrl.startsWith('/') ? configUrl : `/${configUrl}`;
+    const fetchUrl = normalizeConfigUrl(configUrl);
     const cached = sidebarCache.get(fetchUrl);
     if (cached) {
       setItems(cached);

@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode, type SyntheticEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode, type SyntheticEvent } from 'react';
 import { createPortal } from 'react-dom';
+import { MaterialModalContext, type MaterialModalContextValue } from './materialModalContext';
 
 const ipfsGateways = [
   'https://ipfs.io/ipfs/',
@@ -35,18 +36,10 @@ type ModalState = {
   message: string | null;
 };
 
-type MaterialModalContextValue = {
-  setImages: (images: ModalImageMap | undefined) => void;
-  showModal: (payload: ModalOpenPayload) => void;
-  hideModal: () => void;
-};
-
 type MaterialModalProviderProps = {
   children: ReactNode;
   initialImages?: ModalImageMap;
 };
-
-const MaterialModalContext = createContext<MaterialModalContextValue | null>(null);
 
 const defaultState = (): ModalState => ({
   isOpen: false,
@@ -371,14 +364,6 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
         : null}
     </MaterialModalContext.Provider>
   );
-}
-
-export function useMaterialModal() {
-  const ctx = useContext(MaterialModalContext);
-  if (!ctx) {
-    throw new Error('useMaterialModal must be used within a MaterialModalProvider');
-  }
-  return ctx;
 }
 
 export default MaterialModalProvider;

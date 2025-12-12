@@ -9,11 +9,8 @@ import {
   CircleGeometry,
   DoubleSide,
   Quaternion,
-  Matrix3,
-  MathUtils,
-  Object3D
+  Matrix3
 } from 'three';
-import type { Intersection, PerspectiveCamera } from 'three';
 import { createTooltip } from '../modules/Tooltip.js';
 import type Visitor from '../modules/Visitor';
 
@@ -200,66 +197,6 @@ export function PointerInteractions({
         (userData?.autor as string | undefined) ||
         '';
       return { title, description, author };
-    };
-
-    const moveToVideo = (clickedObject: Intersection<Object3D>) => {
-      onCloseSidebar?.();
-
-      const meshObject = clickedObject.object;
-      if (!(meshObject instanceof Mesh)) return;
-      const mesh = meshObject as Mesh;
-      const point = clickedObject.point.clone();
-
-      const blockerRay = new Raycaster(visitor.position, point.clone().sub(visitor.position).normalize());
-      blockerRay.far = visitor.position.distanceTo(point);
-      const walls = scene.children.filter((o) => o.userData.type === 'Wall');
-      if (blockerRay.intersectObjects(walls, true).length > 0) {
-        console.warn('Blocked by wall');
-        return;
-      }
-
-      const geom = mesh.geometry;
-      if (!geom.boundingBox) geom.computeBoundingBox();
-      if (!clickedObject.face?.normal) {
-        console.error('Missing face normal');
-        return;
-      }
-
-      const bbox = geom.boundingBox!;
-      const localNormal = clickedObject.face.normal.clone();
-      const normalMatrix = new Matrix3().getNormalMatrix(mesh.matrixWorld);
-      const worldNormal = localNormal.applyMatrix3(normalMatrix).normalize();
-      const centerLocal = bbox.getCenter(new Vector3());
-      const centerWorld = mesh.localToWorld(centerLocal);
-
-      if (worldNormal.dot(camera.position.clone().sub(centerWorld)) < 0) {
-        worldNormal.negate();
-      }
-
-      const forward = new Vector3();
-      camera.getWorldDirection(forward);
-      const right = camera.up.clone().cross(forward).normalize();
-
-      const localCorners = [
-        new Vector3(bbox.min.x, bbox.min.y, 0),
-        new Vector3(bbox.max.x, bbox.min.y, 0),
-        new Vector3(bbox.min.x, bbox.max.y, 0),
-        new Vector3(bbox.max.x, bbox.max.y, 0)
-      ];
-      const worldCorners = localCorners.map((c) => mesh.localToWorld(c));
-      const projs = worldCorners.map((c) => c.clone().sub(camera.position).dot(right));
-      const worldWidth = Math.max(...projs) - Math.min(...projs);
-
-      const isPerspective = (camera as PerspectiveCamera).isPerspectiveCamera === true;
-      const perspectiveCamera = camera as PerspectiveCamera;
-      const verticalFov = isPerspective ? MathUtils.degToRad(perspectiveCamera.fov) : Math.PI / 3;
-      const aspect = gl.domElement.clientHeight === 0 ? 1 : gl.domElement.clientWidth / gl.domElement.clientHeight;
-      const hFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
-      const extraOffset = 0.5;
-      const distance = worldWidth / (2 * Math.tan(hFov / 2)) + extraOffset;
-
-      const targetPos = centerWorld.clone().addScaledVector(worldNormal, distance);
-      moveVisitor(targetPos);
     };
 
     const handleHover = (event: PointerEvent) => {

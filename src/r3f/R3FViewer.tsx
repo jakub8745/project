@@ -45,6 +45,7 @@ import type { AudioMeshConfig } from '../modules/audioMeshManager.ts';
 import { AudioMeshes } from './AudioMeshes';
 import { AudioPlayerControls } from './AudioPlayerControls';
 import sharedKtx2Loader from '../loaders/ktx2Loader';
+import { OnscreenJoystick } from './OnscreenJoystick';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -57,8 +58,8 @@ let sharedDracoLoader: DRACOLoader | null = null;
 let sharedLoaderUsers = 0;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
 
-type XRSessionConstructor = { new (...args: any[]): XRSession };
-type XRWebGLBindingConstructor = { new (...args: any[]): unknown };
+type XRSessionConstructor = { new (...args: unknown[]): XRSession };
+type XRWebGLBindingConstructor = { new (...args: unknown[]): unknown };
 
 function temporarilyDisableXRWebGLBinding(session: XRSession | null) {
   if (typeof globalThis === 'undefined' || !session) {
@@ -829,6 +830,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
         <AutoExposureControl params={rawParams} />
       </Canvas>
       <AudioPlayerControls />
+      <OnscreenJoystick visitor={visitorInstance} />
       <Loader />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-white bg-black/40">

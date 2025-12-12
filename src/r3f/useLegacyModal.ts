@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import { type ModalImageMap, type ModalOpenPayload, useMaterialModal } from './Modal';
+import { type ModalImageMap, type ModalOpenPayload } from './Modal';
+import { useMaterialModal } from './useMaterialModal';
 
 export type LegacyImageMap = ModalImageMap;
 
