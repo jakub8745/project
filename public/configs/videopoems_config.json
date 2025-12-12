@@ -87,7 +87,7 @@
     "visitorSpeed": 2,
     "heightOffset": {
       "x": 0,
-      "y": 2.5,
+      "y": 1.2,
       "z": 0
     },
     "visitorEnter": {
