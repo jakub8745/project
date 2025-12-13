@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent, TouchEvent as ReactTouchEvent } from 'react';
 import type Visitor from '../modules/Visitor.js';
 
 interface OnscreenJoystickProps {
@@ -17,6 +18,10 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
       (typeof window !== 'undefined' && 'ontouchstart' in window) ||
       (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches);
     setIsTouch(Boolean(hasTouch));
+
+    const enableOnTouch = () => setIsTouch(true);
+    window.addEventListener('touchstart', enableOnTouch, { passive: true });
+    return () => window.removeEventListener('touchstart', enableOnTouch);
   }, []);
 
   const reset = useCallback(() => {
@@ -26,7 +31,7 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
   }, [visitor]);
 
   const updateFromEvent = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
+    (event: ReactPointerEvent<HTMLDivElement>) => {
       const base = baseRef.current;
       if (!base) return;
       const rect = base.getBoundingClientRect();
@@ -38,6 +43,25 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
       const ny = length > 1 ? y / length : y;
       setKnob({ x: nx, y: ny });
       // Invert Y so dragging up moves backward and down moves forward
+      visitor?.setJoystickInput(nx, -ny);
+    },
+    [visitor]
+  );
+
+  const updateFromTouch = useCallback(
+    (event: ReactTouchEvent<HTMLDivElement>) => {
+      if (!event.touches.length) return;
+      const touch = event.touches[0];
+      const base = baseRef.current;
+      if (!base) return;
+      const rect = base.getBoundingClientRect();
+      const radius = Math.max(1, Math.min(rect.width, rect.height) / 2);
+      const x = (touch.clientX - (rect.left + rect.width / 2)) / radius;
+      const y = (touch.clientY - (rect.top + rect.height / 2)) / radius;
+      const length = Math.hypot(x, y);
+      const nx = length > 1 ? x / length : x;
+      const ny = length > 1 ? y / length : y;
+      setKnob({ x: nx, y: ny });
       visitor?.setJoystickInput(nx, -ny);
     },
     [visitor]
@@ -71,6 +95,10 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
     [reset]
   );
 
+  const handleTouchEnd = useCallback(() => {
+    reset();
+  }, [reset]);
+
   useEffect(() => {
     return () => reset();
   }, [reset]);
@@ -92,6 +120,10 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onPointerLeave={handlePointerUp}
+        onTouchStart={updateFromTouch}
+        onTouchMove={updateFromTouch}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
       >
         <div
           className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-white/25 shadow-md transition-transform duration-50"
