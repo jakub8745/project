@@ -110,7 +110,13 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
   }
 
   return (
-    <div className="pointer-events-none absolute bottom-4 left-4 z-30 md:bottom-6 md:left-6">
+    <div
+      className="pointer-events-none absolute z-30"
+      style={{
+        left: '1.25rem',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)'
+      }}
+    >
       <div
         ref={baseRef}
         className="pointer-events-auto h-24 w-24 rounded-full border border-white/15 bg-black/40 backdrop-blur touch-none"
