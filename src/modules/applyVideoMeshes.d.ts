@@ -20,3 +20,4 @@ export interface GalleryVideoConfig {
 }
 
 export function applyVideoMeshes(scene: Scene | Group, camera: Camera, galleryConfig: GalleryVideoConfig): void;
+export function disposeAllVideoMeshes(): void;

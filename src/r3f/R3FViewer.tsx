@@ -38,13 +38,13 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import type { TransformControlsEventMap } from 'three/examples/jsm/controls/TransformControls.js';
 import type { VisitorParams } from '../modules/Visitor.js';
 import { PointerInteractions } from './PointerInteractions';
-import { applyVideoMeshes, type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
+import { applyVideoMeshes, disposeAllVideoMeshes, type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
 import { MaterialModalProvider } from './Modal';
 import type { AudioMeshConfig } from '../modules/audioMeshManager.ts';
 import { AudioMeshes } from './AudioMeshes';
 import { AudioPlayerControls } from './AudioPlayerControls';
-import sharedKtx2Loader from '../loaders/ktx2Loader';
+import { getKtx2Loader } from '../loaders/ktx2Loader';
 import { OnscreenJoystick } from './OnscreenJoystick';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
@@ -99,7 +99,7 @@ function temporarilyDisableXRWebGLBinding(session: XRSession | null) {
 function ensureKtx2Support(renderer: WebGLRenderer) {
   if (ktx2SupportedRenderers.has(renderer)) return;
   try {
-    sharedKtx2Loader.detectSupport(renderer);
+    getKtx2Loader(renderer).detectSupport(renderer);
     ktx2SupportedRenderers.add(renderer);
   } catch (err) {
     console.warn('KTX2 detectSupport failed:', err);
@@ -114,7 +114,7 @@ function acquireSharedLoaders(renderer: WebGLRenderer) {
   ensureKtx2Support(renderer);
   return {
     draco: sharedDracoLoader,
-    ktx2: sharedKtx2Loader as KTX2Loader
+    ktx2: getKtx2Loader(renderer) as KTX2Loader
   };
 }
 
@@ -129,6 +129,7 @@ function releaseSharedLoaders() {
 interface R3FViewerProps {
   configUrl: string | null;
   onRequestSidebarClose?: () => void;
+  onVisitorActivity?: () => void;
 }
 
 function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3Tuple {
@@ -306,9 +307,13 @@ function ExhibitModel({
 
   useEffect(() => {
     if (!displayScene || !videosConfig || videosConfig.length === 0) {
+      disposeAllVideoMeshes();
       return;
     }
     applyVideoMeshes(displayScene, camera, { videos: videosConfig });
+    return () => {
+      disposeAllVideoMeshes();
+    };
   }, [camera, displayScene, videosConfig]);
 
   if (!displayScene) {
@@ -372,7 +377,7 @@ function SceneBackground({
         const isKtx2 = textureUrl.toLowerCase().endsWith('.ktx2');
         if (isKtx2) {
           ensureKtx2Support(gl as WebGLRenderer);
-          texture = await sharedKtx2Loader.loadAsync(textureUrl);
+          texture = await getKtx2Loader(gl as WebGLRenderer).loadAsync(textureUrl);
         } else {
           const loader = new TextureLoader();
           texture = await loader.loadAsync(textureUrl);
@@ -421,7 +426,7 @@ function SceneBackground({
   return null;
 }
 
-function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
+function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
   const modelPath = config?.modelPath;
@@ -759,11 +764,11 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
       <Canvas
         shadows
         camera={{ position: [10, 6, -10], fov: 60, near: 0.1, far: 2000 }}
-        dpr={typeof window !== 'undefined' ? [1, Math.min(2, window.devicePixelRatio || 1)] : [1, 2]}
+        dpr={typeof window !== 'undefined' ? [1, Math.min(1.5, window.devicePixelRatio || 1)] : [1, 1.5]}
         gl={{
           antialias: true,
           alpha: false,
-          powerPreference: 'high-performance',
+          powerPreference: 'low-power',
           logarithmicDepthBuffer: true,
           stencil: false
         }}
@@ -825,6 +830,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose }: R3FViewerProps) {
           collider={collider}
           params={controllerParams}
           onVisitorReady={setVisitorInstance}
+          onVisitorActivity={onVisitorActivity}
         />
         <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} sceneVersion={sceneVersion} />
         <AutoExposureControl params={rawParams} />
@@ -880,11 +886,13 @@ type ControllerParams = Partial<VisitorParams> & Record<string, unknown>;
 function FirstPersonController({
   collider,
   params,
-  onVisitorReady
+  onVisitorReady,
+  onVisitorActivity
 }: {
   collider: Mesh | null;
   params?: ControllerParams;
   onVisitorReady?: (visitor: Visitor | null) => void;
+  onVisitorActivity?: () => void;
 }) {
   const { camera, gl, scene } = useThree();
   const controls = useThree((state) => state.controls) as OrbitControlsImpl | undefined;
@@ -909,6 +917,10 @@ function FirstPersonController({
     });
   }, [camera, controls, gl, params]);
 
+  const lastPosition = useRef<Vector3 | null>(null);
+  const lastAngle = useRef<number | null>(null);
+  const lastActivityStamp = useRef(0);
+
   useEffect(() => {
     if (!visitor) return undefined;
     onVisitorReady?.(visitor);
@@ -930,6 +942,7 @@ function FirstPersonController({
     }
 
     return () => {
+      visitor.dispose?.();
       scene.remove(visitor);
       onVisitorReady?.(null);
     };
@@ -976,6 +989,28 @@ function FirstPersonController({
   useFrame((_, delta) => {
     if (!visitor || !collider) return;
     visitor.update(delta, collider);
+
+    const now = performance.now();
+    if (!lastPosition.current) {
+      lastPosition.current = visitor.position.clone();
+    }
+    const angle = controls?.getAzimuthalAngle?.();
+    const angleChanged =
+      typeof angle === 'number' &&
+      (lastAngle.current === null || Math.abs(angle - lastAngle.current) > 0.01);
+    const moved =
+      lastPosition.current.distanceToSquared(visitor.position) > 1e-4 || visitor.isAutoMoving;
+
+    if (moved || angleChanged) {
+      lastPosition.current.copy(visitor.position);
+      if (typeof angle === 'number') {
+        lastAngle.current = angle;
+      }
+      if (onVisitorActivity && now - lastActivityStamp.current > 500) {
+        lastActivityStamp.current = now;
+        onVisitorActivity();
+      }
+    }
   });
 
   return null;
@@ -1093,7 +1128,7 @@ function RendererTuning() {
     gl.shadowMap.enabled = true;
     gl.shadowMap.type = PCFSoftShadowMap;
     if (typeof window !== 'undefined') {
-      gl.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+      gl.setPixelRatio(Math.min(1.5, window.devicePixelRatio || 1));
     }
   }, [gl]);
 

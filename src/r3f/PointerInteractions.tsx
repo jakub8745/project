@@ -13,6 +13,7 @@ import {
 } from 'three';
 import { createTooltip } from '../modules/Tooltip.js';
 import type Visitor from '../modules/Visitor';
+import { toSafeExternalUrl } from '../utils/url';
 
 type MetaRecord = Record<string, Record<string, unknown>>;
 
@@ -329,10 +330,15 @@ export function PointerInteractions({
         const linkInfo = resolveLinkTarget(linkKey, hit.object.userData as Record<string, unknown>);
 
         if (linkInfo?.url) {
+          const safeUrl = toSafeExternalUrl(linkInfo.url);
+          if (!safeUrl) {
+            console.warn(`PointerInteractions: blocked unsafe link for "${linkKey}"`);
+            return;
+          }
           const features = 'noopener=yes,noreferrer=yes';
-          const opened = window.open(linkInfo.url, '_blank', features);
+          const opened = window.open(safeUrl, '_blank', features);
           if (!opened) {
-            window.location.href = linkInfo.url;
+            window.location.href = safeUrl;
           }
         } else {
           console.warn(`PointerInteractions: no link mapped for interactive "${linkKey}"`);

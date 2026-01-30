@@ -1,7 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
 import { COMMON_HELP_ITEM, COMMON_ICONS } from '../data/galleryConfig';
-import { normalizeConfigUrl } from '../utils/url';
+import { normalizeConfigUrl, toSafeExternalUrl } from '../utils/url';
 
 export interface InfoItem {
   id: string;
@@ -110,7 +110,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             label: item.label,
             icon: resolvedIcon || COMMON_ICONS.info,
             content,
-            link,
+            link: toSafeExternalUrl(link),
           };
         });
         sidebarCache.set(fetchUrl, normalized);

@@ -80,6 +80,18 @@ function disposeVideoResource(id) {
   _videoResourceCache.delete(id);
 }
 
+export function disposeAllVideoMeshes() {
+  _overlayDisposers.forEach((dispose) => {
+    try {
+      dispose();
+    } catch {
+      /* ignore */
+    }
+  });
+  _overlayDisposers.clear();
+  Array.from(_videoResourceCache.keys()).forEach((id) => disposeVideoResource(id));
+}
+
 function getMeshDisposers(mesh) {
   if (!Array.isArray(mesh.userData._videoDisposers)) {
     mesh.userData._videoDisposers = [];

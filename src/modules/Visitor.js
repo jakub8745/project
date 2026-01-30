@@ -68,6 +68,9 @@ export default class Visitor extends Mesh {
 
     this.lastFloorName = null;
 
+    this._keyDownHandler = null;
+    this._keyUpHandler = null;
+
     this._setupInput();
     deps.visitor = this;
 
@@ -75,6 +78,7 @@ export default class Visitor extends Mesh {
   }
 
   _setupInput() {
+    if (typeof window === 'undefined') return;
     const keyMap = {
       ArrowUp: 'fwdPressed',
       w: 'fwdPressed',
@@ -86,19 +90,34 @@ export default class Visitor extends Mesh {
       d: 'rgtPressed'
     };
 
-    window.addEventListener('keydown', (e) => {
+    this._keyDownHandler = (e) => {
       if (keyMap[e.key] !== undefined) {
         e.preventDefault(); 
         this[keyMap[e.key]] = true;
       }
-    });
+    };
 
-    window.addEventListener('keyup', (e) => {
+    this._keyUpHandler = (e) => {
       if (keyMap[e.key] !== undefined) {
         e.preventDefault(); 
         this[keyMap[e.key]] = false;
       }
-    });
+    };
+
+    window.addEventListener('keydown', this._keyDownHandler);
+    window.addEventListener('keyup', this._keyUpHandler);
+  }
+
+  dispose() {
+    if (typeof window === 'undefined') return;
+    if (this._keyDownHandler) {
+      window.removeEventListener('keydown', this._keyDownHandler);
+    }
+    if (this._keyUpHandler) {
+      window.removeEventListener('keyup', this._keyUpHandler);
+    }
+    this._keyDownHandler = null;
+    this._keyUpHandler = null;
   }
 
   update(delta, collider) {

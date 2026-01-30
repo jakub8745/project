@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import ktx2Loader from '../loaders/ktx2Loader';
+import { getKtx2Loader } from '../loaders/ktx2Loader';
 
 
 export interface ModelProps {
@@ -32,8 +32,9 @@ const Model: React.FC<ModelProps> = ({
       loader.setDRACOLoader(draco);
 
       // must detectSupport BEFORE using the loader
-      ktx2Loader.detectSupport(gl);
-      loader.setKTX2Loader(ktx2Loader);
+      const ktx2 = getKtx2Loader(gl);
+      ktx2.detectSupport(gl);
+      loader.setKTX2Loader(ktx2);
 
       
 

@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Loader2 } from 'lucide-react';
 import Model from './Model';
-import ktx2Loader from '../loaders/ktx2Loader';
+import { getKtx2Loader } from '../loaders/ktx2Loader';
 import { useInViewport } from '../hooks/useInViewport';
 
 function useIsMobile(breakpoint = 768) {
@@ -60,13 +60,14 @@ const Tile: React.FC<TileProps> = ({
             }
           >
             <Canvas
-              shadows
-              dpr={[1, 2]}
-              onCreated={({ gl }) => ktx2Loader.detectSupport(gl)}
+              shadows={false}
+              dpr={1}
+              gl={{ antialias: false, alpha: false, powerPreference: 'low-power' }}
+              onCreated={({ gl }) => getKtx2Loader(gl).detectSupport(gl)}
             >
               <color attach="background" args={['#e1e7ef']} />
               <ambientLight intensity={1.5} />
-              <directionalLight position={[5, 5, 5]} intensity={1.1} castShadow />
+              <directionalLight position={[5, 5, 5]} intensity={1.1} />
               <PerspectiveCamera makeDefault position={[0, 2, 4]} fov={45} />
 
               <Model
