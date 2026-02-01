@@ -1,7 +1,8 @@
 // src/data/galleryConfig.ts
 export interface GalleryItem {
     slug: string;
-    url: string;
+    thumbnailVideo: string;
+    thumbnailPoster?: string;
     title: string;
     description: string;
     /** Uniform scale factor to apply instead of auto‐computed. */
@@ -49,7 +50,8 @@ export const COMMON_ICONS = {
 export const GALLERIES: GalleryItem[] = [
         {
         slug: "videopoems_lisbon",
-        url: "/sidebar_models/preview_3videopoems.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_15poets.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_15poets.jpg",
         title: 'LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY',
         description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
         scale: 0.12,
@@ -62,7 +64,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "cipriani",
-        url: "/sidebar_models/preview_cipriani05.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_cipriani.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_cipriani.jpg",
         title: 'Cipriani - Vincenz',
         description: 'Modern meets classic',
         scale: 0.35,
@@ -75,7 +78,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "bednarczyk",
-        url: "/sidebar_models/preview_bednarczyk.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_bednarczyk.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_bednarczyk.jpg",
         title: 'Unvelling the Heritage of Krystyna Bednarczyk',
         description: '3D Documentation of the project',
         scale: 0.1,
@@ -88,7 +92,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "dystopia",
-        url: "/sidebar_models/preview_dystopia.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_dystopia.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_dystopia.jpg",
         title: 'Dystopia of imitation',
         description: 'Modern meets classic',
         scale: 0.3,
@@ -101,7 +106,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "identity",
-        url: "/sidebar_models/preview_identity.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_identity.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_identity.jpg",
         title: 'Identity Preview',
         description: 'Exploring self and society',
         scale: 0.29,
@@ -114,7 +120,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "wakeupcall",
-        url: "/sidebar_models/preview_wakeupcall.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_wakeupcall.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_wakeupcall.jpg",
         title: 'WakeUp Call',
         description: 'Modern meets classic',
         scale: 0.065,
@@ -127,7 +134,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "lockdowns",
-        url: "/sidebar_models/preview_lockdowns.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_lockdowns.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_lockdowns.jpg",
         title: 'Joanna Ciechanowska - Lockdowns',
         description: 'A look back at 2020',
         scale: 0.45,
@@ -140,7 +148,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "videopoetry",
-        url: "/sidebar_models/preview_wystawaTom.glb",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_videopoetry.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_videopoetry.jpg",
         title: 'layout for the Tom Konyves exhibition space',
         description: '',
         scale: 0.15,

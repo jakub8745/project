@@ -54,7 +54,7 @@ const audioObjectsRef: ManagedAudio[] = [];
 let audioState: AudioManagerState = {
   available: false,
   isPlaying: false,
-  volume: 1
+  volume: 0.5
 };
 
 type AudioStateListener = (state: AudioManagerState) => void;

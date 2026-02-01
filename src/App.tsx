@@ -1,5 +1,5 @@
 // App.tsx
-import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
@@ -21,42 +21,10 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedConfigUrl, setSelectedConfigUrl] = useState<string | null>(null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const autoHideTimerRef = useRef<number | null>(null);
-  const autoHideDelayMs = 6000;
-
-  const clearAutoHide = useCallback(() => {
-    if (autoHideTimerRef.current) {
-      window.clearTimeout(autoHideTimerRef.current);
-      autoHideTimerRef.current = null;
-    }
-  }, []);
-
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
-    clearAutoHide();
     setSidebarOpen(o => !o);
-  }, [clearAutoHide]);
-
-  const scheduleAutoHide = useCallback(() => {
-    if (!sidebarOpen) return;
-    clearAutoHide();
-    autoHideTimerRef.current = window.setTimeout(() => {
-      setSidebarOpen(false);
-      autoHideTimerRef.current = null;
-    }, autoHideDelayMs);
-  }, [clearAutoHide, sidebarOpen]);
-
-  useEffect(() => {
-    if (!sidebarOpen) {
-      clearAutoHide();
-    }
-  }, [clearAutoHide, sidebarOpen]);
-
-  useEffect(() => {
-    return () => {
-      clearAutoHide();
-    };
-  }, [clearAutoHide]);
+  }, []);
 
   // Helper: find gallery by slug
   const findGalleryBySlug = useCallback((slug: string) => {
@@ -95,9 +63,7 @@ export default function App() {
   // On gallery click, update hash and close sidebar
   const handleGallerySelect = useCallback((gallery: Gallery) => {
     window.location.hash = gallery.slug;
-    setSidebarOpen(false);
-    clearAutoHide();
-  }, [clearAutoHide]);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
@@ -136,8 +102,6 @@ export default function App() {
             >
               <R3FViewer
                 configUrl={selectedConfigUrl}
-                onRequestSidebarClose={() => setSidebarOpen(false)}
-                onVisitorActivity={scheduleAutoHide}
               />
             </Suspense>
           ) : null}

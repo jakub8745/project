@@ -2,7 +2,7 @@ name: Build + Pin to IPFS + Update DNSLink
 
 on:
   push:
-    branches: ["main"]
+    branches: ["sidebar-video-thumbs"]
 
 env:
   DNSLINK_RECORD_NAME: ${{ secrets.DNSLINK_RECORD_NAME || '' }}
@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - run: npm ci
       - run: |

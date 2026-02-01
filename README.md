@@ -28,6 +28,23 @@ Drop exhibition configs into `public/configs/` (or host them remotely) and updat
 
 ---
 
+## Sidebar video thumbnails
+
+Use this ffmpeg preset to generate lightweight looping thumbnail videos for sidebar tiles:
+
+```bash
+ffmpeg -i "INPUT.mp4" -vf "scale=360:360:flags=lanczos,fps=12" \
+  -c:v libx264 -crf 26 -preset medium -pix_fmt yuv420p \
+  -g 24 -keyint_min 24 -sc_threshold 0 \
+  -an "thumb_360_12fps_crf26.mp4"
+```
+
+Notes:
+- 360x360, 12 fps, H.264, yuv420p, no audio.
+- `-g 24` = 2s keyframe interval at 12 fps (smooth looping/seek).
+
+---
+
 ## Project structure highlights
 
 - `src/App.tsx` – application shell, sidebar navigation, and lazy-loaded viewer.

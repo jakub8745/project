@@ -27,11 +27,11 @@ const GalleryGrid: FC<GalleryGridProps> = ({
   }, [selectedSlug]);
 
   const base =
-    'relative pointer-events-auto cursor-pointer rounded-xl transition ring-offset-2 focus:outline-none focus:ring-2 focus:ring-sky-300 bg-white/20 border border-white/25 backdrop-blur-sm';
+    'relative pointer-events-auto cursor-pointer rounded-xl transition ring-offset-2 focus:outline-none focus:ring-2 focus:ring-sky-300 bg-white/30 border border-white/35 backdrop-blur-sm';
   const selected =
-    'ring-2 ring-sky-300 shadow-lg shadow-sky-400/30 bg-white/30';
+    'ring-2 ring-sky-300 shadow-lg shadow-sky-400/30 bg-white/40';
   const unselected =
-    'hover:ring-2 hover:ring-sky-200 hover:bg-white/25'; // no default ring
+    'hover:ring-2 hover:ring-sky-200 hover:bg-white/35'; // no default ring
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -39,7 +39,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
         const isSelected = item.slug === selectedSlug;
         return (
           <div
-            key={item.url}
+            key={item.slug}
             ref={(el) => (tileRefs.current[item.slug] = el)}
             className={`${base} ${isSelected ? selected : unselected}`}
             role="button"
@@ -50,11 +50,10 @@ const GalleryGrid: FC<GalleryGridProps> = ({
             }}
           >
             <Tile
-              modelUrl={item.url}
+              thumbnailVideo={item.thumbnailVideo}
+              thumbnailPoster={item.thumbnailPoster}
               title={item.title}
               description={item.description}
-              scale={item.scale}
-              position={item.position}
             />
           </div>
         );

@@ -67,14 +67,18 @@ const ThreeThumbnail: React.FC<ThreeThumbnailProps> = ({ gallery }) => {
   
   return (
     <div className="w-full h-full tile-canvas">
-      <Canvas shadows dpr={[1, 2]}>
+      <Canvas
+        shadows
+        dpr={typeof window !== 'undefined' ? [1, Math.min(2, window.devicePixelRatio || 1)] : [1, 2]}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      >
         <ambientLight intensity={0.5} />
         <directionalLight 
-          position={[5, 5, 5]} 
-          intensity={0.8} 
+          position={[5, 6, 5]} 
+          intensity={1.0} 
           castShadow 
-          shadow-mapSize-width={1024} 
-          shadow-mapSize-height={1024} 
+          shadow-mapSize-width={2048} 
+          shadow-mapSize-height={2048} 
         />
         
         <PerspectiveCamera 
