@@ -31,9 +31,13 @@ export function applyPitcherControls(obj, scene, renderer, camera, transform) {
   spotLight.decay = 2;
   spotLight.distance = 35;
   spotLight.castShadow = true;
-  spotLight.shadow.mapSize.width = 1024;
-  spotLight.shadow.mapSize.height = 1024;
-  spotLight.shadow.bias = -0.00005;
+  spotLight.shadow.mapSize.width = 2048;
+  spotLight.shadow.mapSize.height = 2048;
+  spotLight.shadow.bias = 0;
+  spotLight.shadow.normalBias = 0.02;
+  spotLight.shadow.radius = 2;
+  spotLight.shadow.camera.near = 0.5;
+  spotLight.shadow.camera.far = 40;
 
   scene.add(spotLight);
   scene.add(spotLight.target);

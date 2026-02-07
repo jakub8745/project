@@ -14,7 +14,7 @@ body {
 
 body {
   @apply bg-gallery-dark text-gallery-text;
-  font-family: "Xanh Mono", monospace;
+  font-family: "Encode Sans Condensed", sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
   margin: 0;
@@ -92,7 +92,7 @@ canvas {
   background: rgba(17, 24, 39, 0.9);
   color: #f9fafb;
   font-size: 14px;
-  font-family: "Xanh Mono", monospace;
+  font-family: "Encode Sans Condensed", sans-serif;
   pointer-events: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
   max-width: 320px;
@@ -362,7 +362,7 @@ canvas {
   backdrop-filter: blur(6px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
   pointer-events: auto;
-  font-family: "Xanh Mono", monospace;
+  font-family: "Encode Sans Condensed", sans-serif;
   font-size: 0.9rem;
 }
 

@@ -48,10 +48,10 @@ export const COMMON_ICONS = {
 };
 
 export const GALLERIES: GalleryItem[] = [
-        {
+    {
         slug: "videopoems_lisbon",
-        thumbnailVideo: "/sidebar_thumbnails/thumb_15poets.mp4",
-        thumbnailPoster: "/sidebar_thumbnails/poster_15poets.jpg",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_videopoetry.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_videopoetry.jpg",
         title: 'LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY',
         description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
         scale: 0.12,
@@ -148,8 +148,8 @@ export const GALLERIES: GalleryItem[] = [
     },
     {
         slug: "videopoetry",
-        thumbnailVideo: "/sidebar_thumbnails/thumb_videopoetry.mp4",
-        thumbnailPoster: "/sidebar_thumbnails/poster_videopoetry.jpg",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_15poets.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_15poets.jpg",
         title: 'layout for the Tom Konyves exhibition space',
         description: '',
         scale: 0.15,

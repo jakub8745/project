@@ -80,6 +80,114 @@ function disposeVideoResource(id) {
   _videoResourceCache.delete(id);
 }
 
+function openVideoPlayer(cfg, video) {
+  if (typeof document === 'undefined' || !(video instanceof HTMLVideoElement)) return false;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'video-modal-overlay';
+  const modal = document.createElement('div');
+  modal.className = 'video-modal';
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'video-modal__close';
+  closeBtn.textContent = '×';
+  closeBtn.setAttribute('aria-label', 'Close video');
+  const modalVideo = document.createElement('video');
+  modalVideo.className = 'video-modal__video';
+  modalVideo.controls = true;
+  modalVideo.autoplay = true;
+  modalVideo.playsInline = true;
+  modalVideo.muted = false;
+  modalVideo.volume = Math.min(Math.max(video.volume ?? DEFAULT_VOLUME, 0), 1);
+  const poster = resolvePosterUrl(cfg);
+  if (poster) modalVideo.poster = poster;
+
+  const primarySource =
+    video.currentSrc ||
+    video.src ||
+    (Array.isArray(cfg?.sources) ? cfg.sources[0]?.src : undefined) ||
+    '';
+  if (primarySource) {
+    const sourceEl = document.createElement('source');
+    sourceEl.src = primarySource;
+    sourceEl.type = (Array.isArray(cfg?.sources) ? cfg.sources[0]?.type : undefined) || '';
+    modalVideo.appendChild(sourceEl);
+  }
+
+  modal.appendChild(closeBtn);
+  modal.appendChild(modalVideo);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  const wasPlaying = !video.paused && !video.ended;
+  const currentTime = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+  video.pause();
+  const audioListener = getVideoResource(cfg?.id)?.audioListener;
+  audioListener?.context?.resume?.().catch?.(() => {});
+
+  const syncBack = () => {
+    if (Number.isFinite(modalVideo.currentTime)) {
+      try {
+        video.currentTime = modalVideo.currentTime;
+      } catch {
+        /* ignore */
+      }
+    }
+    if (wasPlaying) {
+      video.muted = false;
+      video.play().catch(() => {});
+    }
+  };
+
+  const close = () => {
+    modalVideo.pause();
+    syncBack();
+    overlay.removeEventListener('click', overlayHandler);
+    closeBtn.removeEventListener('click', closeHandler);
+    document.removeEventListener('keydown', escHandler);
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  };
+
+  const overlayHandler = (evt) => {
+    if (evt.target === overlay) close();
+  };
+  const closeHandler = (evt) => {
+    evt.stopPropagation();
+    close();
+  };
+  const escHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      close();
+    }
+  };
+
+  overlay.addEventListener('click', overlayHandler);
+  closeBtn.addEventListener('click', closeHandler);
+  document.addEventListener('keydown', escHandler);
+
+  const setStartTime = () => {
+    if (Number.isFinite(currentTime) && modalVideo.readyState >= 1) {
+      modalVideo.currentTime = currentTime;
+    }
+  };
+  if (modalVideo.readyState >= 1) {
+    setStartTime();
+  } else {
+    modalVideo.addEventListener('loadedmetadata', setStartTime, { once: true });
+  }
+  modalVideo.play().catch(() => {});
+  return true;
+}
+
+export function openVideoPlayerById(videoId) {
+  if (!videoId) return false;
+  const resource = getVideoResource(videoId);
+  const video = resource?.video;
+  if (!(video instanceof HTMLVideoElement)) return false;
+  const cfg = resource?.cfg || { id: videoId };
+  return openVideoPlayer(cfg, video);
+}
+
 export function disposeAllVideoMeshes() {
   _overlayDisposers.forEach((dispose) => {
     try {
@@ -442,6 +550,7 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     cleanupMeshDecorations(obj);
     const video = ensureVideoElement(cfg);
     if (!video) return;
+    setVideoResource(cfg.id, { cfg });
 
     const resolvedPoster = resolvePosterUrl(cfg);
     let { posterTexture, texture: cachedTexture } = getVideoResource(cfg.id);
@@ -843,103 +952,12 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
     }
   };
 
-  const openFullscreen = () => {
-    const overlay = document.createElement('div');
-    overlay.className = 'video-modal-overlay';
-    const modal = document.createElement('div');
-    modal.className = 'video-modal';
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'video-modal__close';
-    closeBtn.textContent = '×';
-    closeBtn.setAttribute('aria-label', 'Close video');
-    const modalVideo = document.createElement('video');
-    modalVideo.className = 'video-modal__video';
-    modalVideo.controls = true;
-    modalVideo.autoplay = true;
-    modalVideo.playsInline = true;
-    modalVideo.muted = false;
-    const poster = resolvePosterUrl(cfg);
-    if (poster) modalVideo.poster = poster;
-
-    const primarySource = video.currentSrc || video.src || (Array.isArray(cfg?.sources) ? cfg.sources[0]?.src : undefined) || '';
-    if (primarySource) {
-      const sourceEl = document.createElement('source');
-      sourceEl.src = primarySource;
-      sourceEl.type = (Array.isArray(cfg?.sources) ? cfg.sources[0]?.type : undefined) || '';
-      modalVideo.appendChild(sourceEl);
-    }
-
-    modal.appendChild(closeBtn);
-    modal.appendChild(modalVideo);
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    const wasPlaying = !video.paused && !video.ended;
-    const currentTime = Number.isFinite(video.currentTime) ? video.currentTime : 0;
-    video.pause();
-    const audioListener = getVideoResource(cfg.id)?.audioListener;
-    audioListener?.context?.resume?.().catch?.(() => {});
-
-    const syncBack = () => {
-      if (Number.isFinite(modalVideo.currentTime)) {
-        try {
-          video.currentTime = modalVideo.currentTime;
-        } catch {
-          /* ignore */
-        }
-      }
-      if (wasPlaying) {
-        video.muted = false;
-        video.play().catch(() => {});
-      }
-    };
-
-    const close = () => {
-      modalVideo.pause();
-      syncBack();
-      overlay.removeEventListener('click', overlayHandler);
-      closeBtn.removeEventListener('click', closeHandler);
-      document.removeEventListener('keydown', escHandler);
-      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-    };
-
-    const overlayHandler = (evt) => {
-      if (evt.target === overlay) close();
-    };
-    const closeHandler = (evt) => {
-      evt.stopPropagation();
-      close();
-    };
-    const escHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        close();
-      }
-    };
-
-    overlay.addEventListener('click', overlayHandler);
-    closeBtn.addEventListener('click', closeHandler);
-    document.addEventListener('keydown', escHandler);
-
-    const setStartTime = () => {
-      if (Number.isFinite(currentTime) && modalVideo.readyState >= 1) {
-        modalVideo.currentTime = currentTime;
-      }
-    };
-    if (modalVideo.readyState >= 1) {
-      setStartTime();
-    } else {
-      modalVideo.addEventListener('loadedmetadata', setStartTime, { once: true });
-    }
-    modalVideo.play().catch(() => {});
-  };
-
   playButton.addEventListener('click', handlePlayClick);
   progress.addEventListener('input', handleProgressInput);
   volume.addEventListener('input', handleVolumeInput);
   const handleFullscreenClick = (evt) => {
     evt.stopPropagation();
-    openFullscreen();
+    openVideoPlayer(cfg, video);
   };
   fullscreenButton.addEventListener('click', handleFullscreenClick);
 

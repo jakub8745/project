@@ -14,6 +14,7 @@ import {
 import { createTooltip } from '../modules/Tooltip.js';
 import type Visitor from '../modules/Visitor';
 import { toSafeExternalUrl } from '../utils/url';
+import { openVideoPlayerById } from '../modules/applyVideoMeshes.js';
 
 type MetaRecord = Record<string, Record<string, unknown>>;
 
@@ -312,15 +313,15 @@ export function PointerInteractions({
       }
 
       if (type === 'Video') {
-        const videoElement = elementID ? document.getElementById(elementID) : null;
+        const videoKey = typeof elementID === 'string' && elementID ? elementID : name || hit.object.name;
+        const opened = openVideoPlayerById(videoKey);
+        if (opened) return;
+
+        const videoElement = videoKey ? document.getElementById(videoKey) : null;
 
         if (videoElement instanceof HTMLVideoElement) {
           videoElement.muted = false;
-          if (videoElement.paused) {
-            videoElement.play().catch((err) => console.warn("Couldn't autoplay:", err));
-          } else {
-            videoElement.pause();
-          }
+          videoElement.play().catch((err) => console.warn("Couldn't autoplay:", err));
         }
         return;
       }

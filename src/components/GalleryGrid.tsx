@@ -17,6 +17,8 @@ const GalleryGrid: FC<GalleryGridProps> = ({
 }) => {
   // Track refs for each tile
   const tileRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const lastPressRef = useRef<{ slug: string | null; time: number }>({ slug: null, time: 0 });
+  const DOUBLE_PRESS_WINDOW_MS = 350;
 
   // Scroll selected tile into view when it changes
   useEffect(() => {
@@ -33,6 +35,20 @@ const GalleryGrid: FC<GalleryGridProps> = ({
   const unselected =
     'hover:ring-2 hover:ring-sky-200 hover:bg-white/35'; // no default ring
 
+  const handleTilePress = (item: GalleryItem) => {
+    const now = Date.now();
+    const { slug, time } = lastPressRef.current;
+    const isDoublePress = slug === item.slug && now - time <= DOUBLE_PRESS_WINDOW_MS;
+
+    if (isDoublePress) {
+      onSelect(item);
+      lastPressRef.current = { slug: null, time: 0 };
+      return;
+    }
+
+    lastPressRef.current = { slug: item.slug, time: now };
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {GALLERIES.map((item) => {
@@ -44,7 +60,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
             className={`${base} ${isSelected ? selected : unselected}`}
             role="button"
             tabIndex={0}
-            onClick={() => onSelect(item)}
+            onClick={() => handleTilePress(item)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') onSelect(item);
             }}

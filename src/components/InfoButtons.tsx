@@ -1,6 +1,6 @@
 import { useState, useEffect, FC } from 'react';
 import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
-import { COMMON_HELP_ITEM, COMMON_ICONS } from '../data/galleryConfig';
+import { COMMON_ICONS } from '../data/galleryConfig';
 import { normalizeConfigUrl, toSafeExternalUrl } from '../utils/url';
 
 export interface InfoItem {
@@ -74,24 +74,20 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         }
         const bucket = cfg.id;
         const sidebarItems = cfg.sidebar.items;
-        // Merge global help item in front; avoid duplicates by id
-        const merged: Array<InfoItem | SidebarItemConfig> = [
-          COMMON_HELP_ITEM,
-          ...sidebarItems.filter((item) => item.id !== 'help-icon'),
-        ];
+        // Keep gallery-specific sidebar items, excluding the global help item
+        // because help content is shown in the startup modal.
+        const merged: Array<InfoItem | SidebarItemConfig> = sidebarItems.filter((item) => item.id !== 'help-icon');
         const normalized: InfoItem[] = merged.map((item) => {
           const baseIcon = 'icon' in item ? item.icon ?? '' : '';
           const link = 'link' in item ? item.link : undefined;
           const content = 'content' in item ? item.content : undefined;
           // Prefer common icons for well-known ids
           let overrideIcon: string | undefined;
-          if (item.id === 'help-icon') overrideIcon = COMMON_HELP_ITEM.icon;
           if (item.id === 'info-icon') overrideIcon = COMMON_ICONS.info;
           // Also map by filename for shared assets regardless of id
           const base = baseIcon ? getFilename(baseIcon) : '';
           if (!overrideIcon) {
             if (base === 'logo_BPA_256px.gif') overrideIcon = COMMON_ICONS.logoBpa;
-            else if (base === 'how_to_move.png') overrideIcon = COMMON_HELP_ITEM.icon;
             else if (base === 'info.png') overrideIcon = COMMON_ICONS.info;
           }
           // Fallback: BPA links use shared logo

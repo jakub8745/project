@@ -15,7 +15,7 @@ import {
   MeshBasicMaterial,
   WebGLRenderTarget,
   Object3D,
-  ACESFilmicToneMapping,
+  NeutralToneMapping,
   PCFSoftShadowMap,
   SRGBColorSpace,
   Texture,
@@ -184,6 +184,10 @@ function cloneTransparentMaterial(material: Material): Material {
   return cloned;
 }
 
+function enableMaterialDithering(material: Material) {
+  material.dithering = true;
+}
+
 function ExhibitModel({
   modelPath,
   interactivesPath,
@@ -233,6 +237,11 @@ function ExhibitModel({
       if (object instanceof Mesh) {
         object.castShadow = true;
         object.receiveShadow = true;
+        if (Array.isArray(object.material)) {
+          object.material.forEach((mat) => enableMaterialDithering(mat));
+        } else if (object.material) {
+          enableMaterialDithering(object.material);
+        }
       }
     });
 
@@ -780,8 +789,9 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
           blurriness={backgroundBlurriness}
           intensity={backgroundIntensity}
         />
-        <ambientLight intensity={0.35 * lightIntensity} />
-        <hemisphereLight args={[new Color('#dbe5ff'), new Color('#151515'), 0.4 * lightIntensity]} />
+        <ambientLight intensity={0.55 * lightIntensity} />
+        <hemisphereLight args={[new Color('#e8eeff'), new Color('#3b4352'), 0.65 * lightIntensity]} />
+        <directionalLight position={[4, 8, 2]} intensity={0.25 * lightIntensity} />
 
 
         <Suspense fallback={<Html center className="text-white">Loading exhibit…</Html>}>
@@ -1138,10 +1148,10 @@ function RendererTuning() {
 function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
   const { gl, scene, camera } = useThree();
   const autoExposure = params?.autoExposure !== false;
-  const targetGray = typeof params?.exposureTarget === 'number' ? params.exposureTarget : 0.5;
-  const exposureMin = typeof params?.exposureMin === 'number' ? params.exposureMin : 0.5;
-  const exposureMax = typeof params?.exposureMax === 'number' ? params.exposureMax : 2.5;
-  const sampleInterval = typeof params?.exposureSampleInterval === 'number' ? Math.max(1, params.exposureSampleInterval) : 30;
+  const targetGray = typeof params?.exposureTarget === 'number' ? params.exposureTarget : 0.6;
+  const exposureMin = typeof params?.exposureMin === 'number' ? params.exposureMin : 0.75;
+  const exposureMax = typeof params?.exposureMax === 'number' ? params.exposureMax : 1.6;
+  const sampleInterval = typeof params?.exposureSampleInterval === 'number' ? Math.max(1, params.exposureSampleInterval) : 20;
   const sampleSize = 64;
 
   const targetRef = useMemo(() => ({ current: null as WebGLRenderTarget | null }), []);
@@ -1149,9 +1159,11 @@ function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
   const frameRef = useMemo(() => ({ current: 0 }), []);
 
   useEffect(() => {
-    gl.toneMapping = ACESFilmicToneMapping;
+    gl.toneMapping = NeutralToneMapping;
     if (typeof params?.exposure === 'number' && Number.isFinite(params.exposure)) {
       gl.toneMappingExposure = params.exposure;
+    } else {
+      gl.toneMappingExposure = 1.1;
     }
   }, [gl, params?.exposure]);
 
