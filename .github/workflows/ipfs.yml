@@ -68,6 +68,14 @@ jobs:
           DNSLINK_RECORD_NAME: ${{ env.DNSLINK_RECORD_NAME }}
           CF_WEB3_HOSTNAME_ID: ${{ secrets.CF_WEB3_HOSTNAME_ID }}
         run: |
+          if [ -z "${CF_API_TOKEN}" ] || [ -z "${CF_ZONE_ID}" ] || [ -z "${CID}" ]; then
+            echo "Missing required Cloudflare inputs (CF_API_TOKEN, CF_ZONE_ID, or CID)."
+            exit 1
+          fi
+          echo "Deploy CID: ${CID}"
+          if [ -n "${DNSLINK_RECORD_NAME}" ]; then
+            echo "DNSLINK_RECORD_NAME target: ${DNSLINK_RECORD_NAME}"
+          fi
           if [ -n "${CF_WEB3_HOSTNAME_ID}" ]; then
             node -e '
             const token = process.env.CF_API_TOKEN;
@@ -82,9 +90,9 @@ jobs:
               const resp = await fetch(api, { method: "PATCH", headers, body });
               const out = await resp.json();
               if (!out.success) { console.error(out); process.exit(1); }
+              console.log(`Updated Web3 hostname ${hostnameId} to ${dnslink}`);
             })();
             '
-            exit 0
           fi
           if [ -z "${DNSLINK_RECORD_NAME}" ]; then
             echo "DNSLINK_RECORD_NAME is empty; skipping DNSLink update."
@@ -102,12 +110,20 @@ jobs:
           (async () => {
             const list = await fetch(`${api}?type=TXT&name=${encodeURIComponent(name)}`, { headers });
             const data = await list.json();
-            const record = data.result?.[0];
             const body = JSON.stringify({ type: "TXT", name, content, ttl: 1 });
-            const resp = record
-              ? await fetch(`${api}/${record.id}`, { method: "PUT", headers, body })
-              : await fetch(api, { method: "POST", headers, body });
-            const out = await resp.json();
-            if (!out.success) { console.error(out); process.exit(1); }
+            const records = Array.isArray(data.result) ? data.result : [];
+            if (records.length === 0) {
+              const resp = await fetch(api, { method: "POST", headers, body });
+              const out = await resp.json();
+              if (!out.success) { console.error(out); process.exit(1); }
+              console.log(`Created TXT ${name} -> ${content}`);
+              return;
+            }
+            for (const record of records) {
+              const resp = await fetch(`${api}/${record.id}`, { method: "PUT", headers, body });
+              const out = await resp.json();
+              if (!out.success) { console.error(out); process.exit(1); }
+            }
+            console.log(`Updated ${records.length} TXT record(s) for ${name} -> ${content}`);
           })();
           '
