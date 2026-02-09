@@ -160,6 +160,20 @@ export const GALLERIES: GalleryItem[] = [
         overlayText: "",
         videos: []
     },
+    {
+        slug: "prompt_procedural_room",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_agentsroom.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_agentsroom.jpg",
+        title: 'Collision Salon',
+        description: 'Conversation is not a feature but a consequence',
+        scale: 1,
+        position: [0, 0, 0],
+        configUrl: "./configs/prompt_procedural_room_config.json",
+        keywords: [],
+        ogImage: "",
+        overlayText: "",
+        videos: []
+    },
 
 
 

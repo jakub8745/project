@@ -1,0 +1,177 @@
+{
+  "id": "prompt_procedural_room",
+  "position": [0, 0, 0],
+  "rotation": [0, 0, 0],
+  "scale": 1,
+  "proceduralRoom": {
+    "width": 18,
+    "depth": 14,
+    "height": 4,
+    "wallThickness": 0.25,
+    "ceiling": false,
+    "floorY": 0,
+    "floorColor": "#2f2a24",
+    "wallColor": "#d9d1c4",
+    "ceilingColor": "#efede7",
+    "roughness": 0.92,
+    "metalness": 0.03
+  },
+  "lights": {
+    "ambientColor": "#fffaf0",
+    "ambientIntensity": 2.75,
+    "hemisphereSkyColor": "#f4f7ff",
+    "hemisphereGroundColor": "#4b4138",
+    "hemisphereIntensity": 0.5,
+    "directionalColor": "#fff3d6",
+    "directionalIntensity": 3.8,
+    "directionalPosition": [6, 9, 4],
+    "directionalCastShadow": true,
+    "directionalShadowMapSize": 2048,
+    "directionalShadowCameraSize": 20,
+    "directionalShadowBias": -0.00015,
+    "directionalShadowNormalBias": 0.025,
+    "spotColor": "#ffe8c6",
+    "spotIntensity": 2.9,
+    "spotPosition": [0, 5.8, 0.5],
+    "spotTarget": [0, 0, -1.5],
+    "spotAngle": 0.58,
+    "spotPenumbra": 0.5,
+    "spotDistance": 30,
+    "spotDecay": 1.3,
+    "spotCastShadow": true,
+    "spotShadowMapSize": 2048,
+    "spotShadowBias": -0.00012,
+    "spotShadowNormalBias": 0.02
+  },
+  "models": [
+    {
+      "id": "robot",
+      "path": "/models/robot_edited.glb",
+      "position": [0, 0, -1.5],
+      "rotation": [0, 0.6, 0],
+      "scale": 1,
+      "collisionRadius": 0.95,
+      "animation": {
+        "swayAngle": 0.05,
+        "swaySpeed": 8,
+        "driftDistance": 0,
+        "driftSpeed": 0,
+        "bobDistance": 0.04,
+        "bobSpeed": 0.45,
+        "collisionAware": true,
+        "speed": 0.55,
+        "boundaryPadding": 1.2,
+        "turnJitter": 0.5,
+        "direction": [1, 0.25]
+      }
+    },
+    {
+      "id": "robot_2",
+      "path": "/models/robot_edited.glb",
+      "position": [2.8, 0, 1.8],
+      "rotation": [0, 0, 0],
+      "scale": 1,
+      "collisionRadius": 0.95,
+      "animation": {
+        "swayAngle": 0.03,
+        "swaySpeed": 12,
+        "driftDistance": 0,
+        "driftSpeed": 0,
+        "bobDistance": 0.04,
+        "bobSpeed": 0.52,
+        "collisionAware": true,
+        "speed": 0.88,
+        "boundaryPadding": 1.2,
+        "turnJitter": 0.55,
+        "direction": [-1, -0.18]
+      }
+    }
+  ],
+  "physics": {
+    "enabled": true,
+    "iterations": 2,
+    "actors": {
+      "visitor": {
+        "enabled": true,
+        "radius": 0.55,
+        "mass": 1.2,
+        "pushable": true
+      },
+      "robot": {
+        "enabled": true,
+        "radius": 0.95,
+        "mass": 10.0,
+        "pushable": true
+      },
+      "robot_2": {
+        "enabled": true,
+        "radius": 0.95,
+        "mass": 1.0,
+        "pushable": true
+      }
+    },
+    "pairs": [
+      { "a": "visitor", "b": "robot", "enabled": true },
+      { "a": "visitor", "b": "robot_2", "enabled": true },
+      { "a": "robot", "b": "robot_2", "enabled": true }
+    ]
+  },
+  "thumbnailCapture": {
+    "enabled": true,
+    "preset": "lockdownsPoster",
+    "cameraPosition": [-12.5, 11.5, 10.2],
+    "target": [0.6, 1.1, -1.4],
+    "fov": 34,
+    "allowOrbit": true,
+    "heightStep": 0.7,
+    "autoRotate": true,
+    "autoRotateSpeed": 0.3,
+    "showHint": false,
+    "backgroundColor": "#c7cdd5",
+    "fps": 30,
+    "mimeType": "video/webm;codecs=vp9",
+    "bitsPerSecond": 6000000,
+    "filename": "robots_thumbnail_take.webm"
+  },
+  "sidebar": {
+    "logo": {
+      "text": "Room"
+    },
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "Collision Salon - only room for now",
+        "target": "info_text",
+        "content": "I built a room where conversation is not a feature but a consequence. Two robots wander like displaced docents, carrying a single obsession: everything is art. They don’t speak on command. They speak only when they collide—when bodies interrupt code and proximity becomes a trigger. Each bump is a small opening: an involuntary panel discussion staged by physics. The visitor can nudge their directions, not to control them, but to curate chance. In this space, choreography writes the script. Interpretation appears as contact, then vanishes back into motion. The work treats critique as a kinetic event: brief, dry, and produced by encounter rather than intention."
+      }
+    ]
+  },
+  "params": {
+    "exposure": 1,
+    "autoExposure": true,
+    "exposureTarget": 0.45,
+    "exposureMin": 0.5,
+    "exposureMax": 2,
+    "exposureSampleInterval": 30,
+    "lightIntensity": 1,
+    "gravity": -9,
+    "visitorSpeed": 2.2,
+    "heightOffset": {
+      "x": 0,
+      "y": 0.5,
+      "z": 0
+    },
+    "visitorEnter": {
+      "x": 0,
+      "y": 0.4,
+      "z": 4
+    },
+    "rotateOrbit": 20,
+    "backgroundBlurriness": 0,
+    "backgroundIntensity": 1
+  },
+  "prompt": {
+    "roomIntent": "Create a clean rectangular exhibit room generated in code, with readable neutral materials and simple warm gallery lighting.",
+    "generationNotes": "No GLB model is used; geometry comes from proceduralRoom settings and lights comes from config values."
+  }
+}

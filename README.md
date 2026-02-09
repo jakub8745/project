@@ -28,6 +28,53 @@ Drop exhibition configs into `public/configs/` (or host them remotely) and updat
 
 ---
 
+## Procedural Agents Room
+
+The `prompt_procedural_room` exhibit is a fully config-driven scene generated in code (no room GLB).  
+Its config is located at:
+
+- `public/configs/prompt_procedural_room_config.json`
+
+Key features:
+
+- **Procedural room geometry**: floor, walls, optional ceiling (`proceduralRoom.ceiling`).
+- **Patterned materials**: chevrons on walls and carpet-like floor.
+- **Dynamic actors**: reusable robot objects (`models[]`, e.g. `id: "robot"`).
+- **Game-like collisions**:
+  - static world collision via BVH room collider,
+  - dynamic actor-vs-actor collision via config `physics` block (`actors`, `pairs`, `iterations`).
+- **Configurable lights**: ambient, hemisphere, directional, and optional spotlight.
+
+---
+
+## Thumbnail / Recording Mode
+
+Use thumbnail mode to frame and capture videos for sidebar assets from a fixed poster-like camera style.
+
+Open with query param:
+
+```text
+http://localhost:5173/?thumbnailMode=1#prompt_procedural_room
+```
+
+Runtime controls:
+
+- `K` reset camera to configured thumbnail pose
+- `R` start/stop recording (`MediaRecorder`, auto-download on stop)
+- `PageUp/PageDown` or `Q/E` raise/lower camera
+- `P` print current camera pose to browser console (for copy/paste into config)
+
+Config block:
+
+- `thumbnailCapture` in `public/configs/prompt_procedural_room_config.json`
+  - camera pose: `cameraPosition`, `target`, `fov`
+  - recording: `fps`, `mimeType`, `bitsPerSecond`, `filename`
+  - behavior: `allowOrbit`, `autoRotate`, `autoRotateSpeed`, `backgroundColor`, `showHint`
+
+Note: in thumbnail mode, sidebar/help overlays are hidden for clean capture.
+
+---
+
 ## Sidebar video thumbnails
 
 Use this ffmpeg preset to generate lightweight looping thumbnail videos for sidebar tiles:

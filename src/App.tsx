@@ -17,7 +17,16 @@ interface Gallery {
   title: string;
 }
 
+function getBooleanFromQuery(name: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get(name);
+  if (!value) return false;
+  return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
+}
+
 export default function App() {
+  const isThumbnailMode = getBooleanFromQuery('thumbnailMode') || getBooleanFromQuery('recordThumb');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showHowToModal, setShowHowToModal] = useState(true);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
@@ -175,28 +184,30 @@ export default function App() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gallery-dark">
-      <Sidebar
-        open={sidebarOpen}
-        onToggle={toggleSidebar}   // ✅ stable reference
-        logoText="Blue Point Art Gallery [Archive]"
-      >
-        <section className="p-4 bg-slate-500/35 border-b border-slate-400/40 text-white">
-          {/* Exhibit info section (expandable items) */}
-          {selectedConfigUrl && (
-            <InfoButtons configUrl={selectedConfigUrl} />
-          )}
-        </section>
+      {!isThumbnailMode ? (
+        <Sidebar
+          open={sidebarOpen}
+          onToggle={toggleSidebar}   // ✅ stable reference
+          logoText="Blue Point Art Gallery [Archive]"
+        >
+          <section className="p-4 bg-slate-500/35 border-b border-slate-400/40 text-white">
+            {/* Exhibit info section (expandable items) */}
+            {selectedConfigUrl && (
+              <InfoButtons configUrl={selectedConfigUrl} />
+            )}
+          </section>
 
-        <section className="p-4 bg-slate-500/35 text-white">
-          <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
-          <GalleryGrid
-            onSelect={handleGallerySelect} // ✅ memoized
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={toggleSidebar} // ✅ stable reference
-            selectedSlug={selectedSlug ?? undefined}
-          />
-        </section>
-      </Sidebar>
+          <section className="p-4 bg-slate-500/35 text-white">
+            <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
+            <GalleryGrid
+              onSelect={handleGallerySelect} // ✅ memoized
+              sidebarOpen={sidebarOpen}
+              onToggleSidebar={toggleSidebar} // ✅ stable reference
+              selectedSlug={selectedSlug ?? undefined}
+            />
+          </section>
+        </Sidebar>
+      ) : null}
 
       <main ref={mainRef} className="flex-1 relative">
         <div className="h-full">
@@ -216,13 +227,13 @@ export default function App() {
         </div>
       </main>
 
-      {showHowToModal && (
+      {!isThumbnailMode && showHowToModal && (
         <div className="fixed inset-0 z-[1200] bg-black/70 flex items-end md:items-center justify-center p-2 sm:p-3 md:p-6">
           <div
             role="dialog"
             aria-modal="true"
             aria-label="How to move instructions"
-            className="relative w-full max-w-4xl h-[100dvh] sm:h-[92vh] md:h-[85vh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100 text-slate-900 shadow-2xl"
+            className="relative w-full max-w-4xl h-auto max-h-[95dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100 text-slate-900 shadow-2xl"
           >
             <button
               type="button"
@@ -232,18 +243,18 @@ export default function App() {
             >
               X
             </button>
-            <div className="h-full p-3 pt-12 sm:p-4 sm:pt-14">
+            <div className="p-3 pt-12 sm:p-4 sm:pt-14">
               <img
-                src="/icons/archive_how_to_move_icons.png"
+                src="/icons/archive_how_to_move_icons.jpg"
                 alt="How to move in the gallery instructions"
-                className="w-full h-full object-contain"
+                className="w-full h-auto max-h-[calc(95dvh-4rem)] object-contain"
               />
             </div>
           </div>
         </div>
       )}
 
-      {isMobileViewport && !isFullscreen && (
+      {!isThumbnailMode && isMobileViewport && !isFullscreen && (
         <button
           type="button"
           onClick={requestLandscapeFullscreen}
@@ -254,7 +265,7 @@ export default function App() {
         </button>
       )}
 
-      {isMobileViewport && isPortrait && showRotateHint && (
+      {!isThumbnailMode && isMobileViewport && isPortrait && showRotateHint && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1400] rounded-lg border border-slate-400 bg-slate-900/90 px-3 py-2 text-xs text-white shadow-lg">
           Rotate device to landscape.
         </div>
