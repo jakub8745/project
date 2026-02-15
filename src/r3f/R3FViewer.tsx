@@ -2,10 +2,11 @@ import { Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState
 import type { MutableRefObject } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import type { RootState } from '@react-three/fiber';
-import { Html, Loader, OrbitControls } from '@react-three/drei';
+import { Html, Loader, OrbitControls, Text } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
 import {
   AudioListener,
+  BufferAttribute,
   BufferGeometry,
   BoxGeometry,
   CanvasTexture,
@@ -17,9 +18,12 @@ import {
   Group,
   Material,
   MeshBasicMaterial,
+  MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
   WebGLRenderTarget,
+  WebGLCubeRenderTarget,
+  CubeCamera,
   Object3D,
   NeutralToneMapping,
   PCFSoftShadowMap,
@@ -41,7 +45,7 @@ import type { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { StaticGeometryGenerator, MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import Visitor from '../modules/Visitor.js';
 import Robot from '../modules/Robot.js';
-import { PhysicsSystem, type PhysicsConfig, type PhysicsRuntimeActor } from '../modules/physicsSystem';
+import { PhysicsSystem, type PhysicsCollisionEvent, type PhysicsConfig, type PhysicsRuntimeActor } from '../modules/physicsSystem';
 import { useExhibitConfig } from './useExhibitConfig';
 import type { OrbitControls as OrbitControlsImpl } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
@@ -140,6 +144,13 @@ interface R3FViewerProps {
   configUrl: string | null;
   onRequestSidebarClose?: () => void;
   onVisitorActivity?: () => void;
+  onPhysicsCollision?: (event: {
+    a: string;
+    b: string;
+    point: Vector3Tuple;
+    penetration: number;
+    timestamp: number;
+  }) => void;
 }
 
 function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3Tuple {
@@ -173,11 +184,37 @@ function getBooleanFromQuery(name: string): boolean {
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 }
 
-function createPatternTexture(
-  type: 'chevrons' | 'carpet',
-  width = 1024,
-  height = 1024
-): CanvasTexture | null {
+type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes';
+type SurfacePrint = {
+  id: number;
+  text: string;
+  surface: 'north' | 'south' | 'east' | 'west' | 'floor';
+  u: number;
+  v: number;
+  rotation: number;
+  scale: number;
+  color: string;
+  opacity: number;
+};
+
+function clamp01(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
+
+function clampValue(value: number, min: number, max: number): number {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, value));
+}
+
+const CHAT_API_BASE = (import.meta.env.VITE_CHAT_API_BASE || '').trim().replace(/\/+$/, '');
+
+function chatApiUrl(path: string): string {
+  if (!CHAT_API_BASE) return path;
+  return `${CHAT_API_BASE}${path}`;
+}
+
+function createPatternTexture(type: ProceduralPatternType, width = 1024, height = 1024): CanvasTexture | null {
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -200,7 +237,7 @@ function createPatternTexture(
         ctx.stroke();
       }
     }
-  } else {
+  } else if (type === 'carpet') {
     ctx.fillStyle = '#3b2f2b';
     ctx.fillRect(0, 0, width, height);
 
@@ -218,11 +255,89 @@ function createPatternTexture(
       ctx.lineTo(x, height);
       ctx.stroke();
     }
+  } else {
+    ctx.fillStyle = '#dcd4c7';
+    ctx.fillRect(0, 0, width, height);
+
+    // subtle paper grain so repeated tiles are less obvious
+    for (let i = 0; i < 1400; i += 1) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      const alpha = 0.02 + Math.random() * 0.03;
+      ctx.fillStyle = `rgba(78, 68, 58, ${alpha})`;
+      ctx.fillRect(x, y, 2, 2);
+    }
+
+    const motifW = 150;
+    const motifH = 210;
+    const offsetX = 28;
+    const offsetY = 24;
+    const colorA = 'rgba(58, 47, 41, 0.34)';
+    const colorB = 'rgba(90, 74, 64, 0.24)';
+
+    const drawSilhouette = (x: number, y: number, scale: number, color: string) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      ctx.fillStyle = color;
+
+      // simple profile-like blob
+      ctx.beginPath();
+      ctx.moveTo(0, 165);
+      ctx.bezierCurveTo(14, 102, 28, 88, 52, 77);
+      ctx.bezierCurveTo(70, 66, 82, 50, 80, 33);
+      ctx.bezierCurveTo(78, 16, 64, 2, 47, 2);
+      ctx.bezierCurveTo(24, 2, 7, 19, 8, 42);
+      ctx.bezierCurveTo(9, 62, 20, 75, 33, 84);
+      ctx.bezierCurveTo(18, 96, 7, 112, 0, 165);
+      ctx.closePath();
+      ctx.fill();
+
+      // shoulder block to read as wallpaper silhouette
+      ctx.beginPath();
+      ctx.moveTo(-8, 165);
+      ctx.lineTo(65, 165);
+      ctx.lineTo(65, 204);
+      ctx.lineTo(-8, 204);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    };
+
+    for (let y = -motifH; y < height + motifH; y += motifH) {
+      for (let x = -motifW; x < width + motifW; x += motifW) {
+        const evenRow = Math.round(y / motifH) % 2 === 0;
+        const motifX = evenRow ? x : x + offsetX;
+        drawSilhouette(motifX + 28, y + offsetY, 0.86, colorA);
+        drawSilhouette(motifX + 88, y + offsetY + 10, 0.7, colorB);
+      }
+    }
   }
 
   const texture = new CanvasTexture(canvas);
   texture.wrapS = RepeatWrapping;
   texture.wrapT = RepeatWrapping;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+async function loadEquirectTexture(textureUrl: string, gl: WebGLRenderer): Promise<Texture> {
+  let texture: Texture;
+  const isKtx2 = textureUrl.toLowerCase().endsWith('.ktx2');
+  if (isKtx2) {
+    ensureKtx2Support(gl);
+    texture = await getKtx2Loader(gl).loadAsync(textureUrl);
+  } else {
+    const loader = new TextureLoader();
+    texture = await loader.loadAsync(textureUrl);
+  }
+  texture.colorSpace = SRGBColorSpace;
+  texture.mapping = EquirectangularReflectionMapping;
+  if (!('isCompressedTexture' in texture && texture.isCompressedTexture)) {
+    texture.magFilter = LinearFilter;
+    texture.minFilter = LinearMipmapLinearFilter;
+    texture.generateMipmaps = true;
+  }
   texture.needsUpdate = true;
   return texture;
 }
@@ -265,6 +380,413 @@ function cloneTransparentMaterial(material: Material): Material {
 
 function enableMaterialDithering(material: Material) {
   material.dithering = true;
+}
+
+type ProceduralObjectShape = 'sphere' | 'box' | 'torusKnot' | 'icosahedron' | 'blob';
+type ProceduralObjectMaterialSpec = {
+  color: string;
+  metalness: number;
+  roughness: number;
+  envMapIntensity: number;
+  transmission: number;
+  thickness: number;
+  ior: number;
+  clearcoat: number;
+  clearcoatRoughness: number;
+  reflectivity: number;
+  opacity: number;
+  realtimeEnvMap: boolean;
+  envMapResolution: number;
+  envMapRefreshFrames: number;
+};
+type ProceduralObjectAnimationSpec = {
+  swayAngle: number;
+  swaySpeed: number;
+  driftDistance: number;
+  driftSpeed: number;
+  bobDistance: number;
+  bobSpeed: number;
+  collisionAware: boolean;
+  speed: number;
+  boundaryPadding: number;
+  turnJitter: number;
+  direction: [number, number];
+};
+type ProceduralObjectSpec = {
+  id?: string;
+  shape: ProceduralObjectShape;
+  position: Vector3Tuple;
+  rotation: Vector3Tuple;
+  scale: Vector3Tuple;
+  size: Vector3Tuple;
+  radius: number;
+  detail: number;
+  tube: number;
+  tubularSegments: number;
+  radialSegments: number;
+  p: number;
+  q: number;
+  blobAmplitude: number;
+  blobFrequency: number;
+  blobSpeed: number;
+  collisionRadius: number;
+  castShadow: boolean;
+  receiveShadow: boolean;
+  animation?: ProceduralObjectAnimationSpec;
+  material: ProceduralObjectMaterialSpec;
+};
+
+function AnimatedProceduralObject({
+  object,
+  objectIndex,
+  roomBounds,
+  collider,
+  visitor,
+  objectRefs,
+  onActorRef
+}: {
+  object: ProceduralObjectSpec;
+  objectIndex: number;
+  roomBounds?: ProceduralRoomBounds;
+  collider: Mesh | null;
+  visitor: Visitor | null;
+  objectRefs: MutableRefObject<Map<number, { mesh: Mesh; radius: number }>>;
+  onActorRef?: ProceduralActorRefCallback;
+}) {
+  const { gl, scene } = useThree();
+  const meshRef = useRef<Mesh | null>(null);
+  const materialRef = useRef<MeshPhysicalMaterial | null>(null);
+  const basePosition = useMemo(() => new Vector3(...object.position), [object.position]);
+  const baseRotation = useMemo(() => new Euler(...object.rotation), [object.rotation]);
+  const robotRef = useRef<Robot | null>(null);
+  const moveDir = useRef<Vector3>(new Vector3(1, 0, 0));
+  const seeded = useRef(false);
+  const frameCounter = useRef(0);
+  const geometryRef = useRef<BufferGeometry | null>(null);
+  const blobBasePositionsRef = useRef<Float32Array | null>(null);
+  const blobPhaseRef = useRef<Float32Array | null>(null);
+  const blobNormalFrameCounter = useRef(0);
+  const cubeOrigin = useMemo(() => new Vector3(), []);
+  const actorId = object.id || `object_${objectIndex}`;
+  const cubeRenderTarget = useMemo(() => {
+    if (!object.material.realtimeEnvMap) return null;
+    return new WebGLCubeRenderTarget(Math.max(64, Math.floor(object.material.envMapResolution)));
+  }, [object.material.envMapResolution, object.material.realtimeEnvMap]);
+  const cubeCamera = useMemo(() => {
+    if (!cubeRenderTarget) return null;
+    return new CubeCamera(0.05, 1000, cubeRenderTarget);
+  }, [cubeRenderTarget]);
+
+  useEffect(() => {
+    return () => {
+      cubeRenderTarget?.dispose();
+    };
+  }, [cubeRenderTarget]);
+
+  useEffect(() => {
+    if (!cubeCamera) return;
+    scene.add(cubeCamera);
+    return () => {
+      scene.remove(cubeCamera);
+    };
+  }, [cubeCamera, scene]);
+
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+    objectRefs.current.set(objectIndex, { mesh, radius: object.collisionRadius });
+    onActorRef?.(actorId, mesh, object.collisionRadius);
+    return () => {
+      objectRefs.current.delete(objectIndex);
+      onActorRef?.(actorId, null, object.collisionRadius);
+    };
+  }, [actorId, object.collisionRadius, objectIndex, objectRefs, onActorRef]);
+
+  useEffect(() => {
+    if (!object.animation?.collisionAware) {
+      robotRef.current = null;
+      return;
+    }
+    const robot = new Robot({
+      direction: object.animation.direction,
+      speed: object.animation.speed,
+      swayAngle: object.animation.swayAngle,
+      swaySpeed: object.animation.swaySpeed,
+      bobDistance: object.animation.bobDistance,
+      bobSpeed: object.animation.bobSpeed,
+      turnJitter: object.animation.turnJitter,
+      collisionRadius: object.collisionRadius,
+      avoidDistance: object.animation.boundaryPadding + 0.5,
+      boundaryPadding: object.animation.boundaryPadding,
+      basePosition,
+      baseRotation: new Vector3(baseRotation.x, baseRotation.y, baseRotation.z)
+    });
+    robot.attach(meshRef.current);
+    robotRef.current = robot;
+    return () => {
+      robotRef.current = null;
+    };
+  }, [basePosition, baseRotation, object.animation, object.collisionRadius]);
+
+  useEffect(() => {
+    if (object.shape !== 'blob') {
+      blobBasePositionsRef.current = null;
+      blobPhaseRef.current = null;
+      return;
+    }
+    const geometry = geometryRef.current;
+    if (!geometry) return;
+    const positionAttr = geometry.getAttribute('position');
+    if (!positionAttr || !('array' in positionAttr)) return;
+    const positionArray = positionAttr.array;
+    if (!(positionArray instanceof Float32Array)) return;
+
+    const basePositions = new Float32Array(positionArray.length);
+    basePositions.set(positionArray);
+    const phase = new Float32Array(positionArray.length / 3);
+    for (let i = 0; i < phase.length; i += 1) {
+      const x = basePositions[i * 3];
+      const y = basePositions[i * 3 + 1];
+      const z = basePositions[i * 3 + 2];
+      const hash = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453;
+      phase[i] = (hash - Math.floor(hash)) * Math.PI * 2;
+    }
+    blobBasePositionsRef.current = basePositions;
+    blobPhaseRef.current = phase;
+  }, [object.shape, object.radius, object.tubularSegments, object.radialSegments]);
+
+  useFrame(({ clock }, delta) => {
+    const mesh = meshRef.current;
+    const material = materialRef.current;
+    if (!mesh || !material) return;
+
+    if (object.animation) {
+      if (object.animation.collisionAware && robotRef.current) {
+        const obstacles: Array<{ position: Vector3; radius: number }> = [];
+        for (const [index, entry] of objectRefs.current.entries()) {
+          if (index === objectIndex || !entry?.mesh) continue;
+          obstacles.push({ position: entry.mesh.position, radius: entry.radius });
+        }
+        robotRef.current.update(delta, {
+          collider,
+          visitor,
+          obstacles,
+          roomBounds: roomBounds || null
+        });
+      } else {
+        const t = clock.getElapsedTime();
+        const {
+          swayAngle,
+          swaySpeed,
+          driftDistance,
+          driftSpeed,
+          bobDistance,
+          bobSpeed,
+          collisionAware,
+          speed,
+          boundaryPadding,
+          turnJitter,
+          direction
+        } = object.animation;
+
+        if (collisionAware && roomBounds) {
+          if (!seeded.current) {
+            const [dx, dz] = direction;
+            moveDir.current.set(dx, 0, dz);
+            if (moveDir.current.lengthSq() < 1e-6) {
+              moveDir.current.set(Math.random() > 0.5 ? 1 : -1, 0, Math.random() * 2 - 1);
+            }
+            moveDir.current.normalize();
+            seeded.current = true;
+          }
+
+          let nextX = mesh.position.x + moveDir.current.x * speed * delta;
+          let nextZ = mesh.position.z + moveDir.current.z * speed * delta;
+          let collidedWithBounds = false;
+
+          const minX = roomBounds.minX + boundaryPadding;
+          const maxX = roomBounds.maxX - boundaryPadding;
+          const minZ = roomBounds.minZ + boundaryPadding;
+          const maxZ = roomBounds.maxZ - boundaryPadding;
+
+          if (nextX <= minX || nextX >= maxX) {
+            moveDir.current.x *= -1;
+            collidedWithBounds = true;
+            nextX = Math.max(minX, Math.min(maxX, nextX));
+          }
+          if (nextZ <= minZ || nextZ >= maxZ) {
+            moveDir.current.z *= -1;
+            collidedWithBounds = true;
+            nextZ = Math.max(minZ, Math.min(maxZ, nextZ));
+          }
+
+          if (collidedWithBounds && turnJitter > 0) {
+            const jitter = (Math.random() * 2 - 1) * turnJitter;
+            const c = Math.cos(jitter);
+            const s = Math.sin(jitter);
+            const x = moveDir.current.x;
+            const z = moveDir.current.z;
+            moveDir.current.x = x * c - z * s;
+            moveDir.current.z = x * s + z * c;
+            moveDir.current.normalize();
+          }
+
+          mesh.position.x = nextX;
+          mesh.position.z = nextZ;
+          mesh.position.y = basePosition.y + Math.sin(t * bobSpeed) * bobDistance;
+          mesh.rotation.y = baseRotation.y + Math.atan2(moveDir.current.x, moveDir.current.z);
+        } else {
+          mesh.position.x = basePosition.x + Math.sin(t * driftSpeed) * driftDistance;
+          mesh.position.y = basePosition.y + Math.sin(t * bobSpeed) * bobDistance;
+          mesh.position.z = basePosition.z;
+          mesh.rotation.y = baseRotation.y;
+        }
+
+        mesh.rotation.x = baseRotation.x;
+        mesh.rotation.z = baseRotation.z + Math.sin(t * swaySpeed) * swayAngle;
+      }
+    }
+
+    if (object.shape === 'blob') {
+      const geometry = geometryRef.current;
+      const basePositions = blobBasePositionsRef.current;
+      const phase = blobPhaseRef.current;
+      if (geometry && basePositions && phase) {
+        const positionAttr = geometry.getAttribute('position');
+        if (positionAttr && 'array' in positionAttr && positionAttr.array instanceof Float32Array) {
+          const positions = positionAttr.array;
+          const t = clock.getElapsedTime() * object.blobSpeed;
+          const amplitude = object.blobAmplitude;
+          const frequency = object.blobFrequency;
+          // Blob deformation: radial displacement from base sphere to mimic lava-lamp motion.
+          for (let i = 0; i < phase.length; i += 1) {
+            const idx = i * 3;
+            const bx = basePositions[idx];
+            const by = basePositions[idx + 1];
+            const bz = basePositions[idx + 2];
+            const length = Math.max(1e-6, Math.hypot(bx, by, bz));
+            const nx = bx / length;
+            const ny = by / length;
+            const nz = bz / length;
+            const p = phase[i];
+            const waveA = Math.sin(t + p + length * frequency);
+            const waveB = Math.sin(t * 1.7 + p * 0.7 + (bx + by + bz) * frequency * 0.55);
+            const offset = amplitude * (waveA * 0.65 + waveB * 0.35);
+            positions[idx] = bx + nx * offset;
+            positions[idx + 1] = by + ny * offset;
+            positions[idx + 2] = bz + nz * offset;
+          }
+          positionAttr.needsUpdate = true;
+          blobNormalFrameCounter.current += 1;
+          if (blobNormalFrameCounter.current % 2 === 0) {
+            geometry.computeVertexNormals();
+          }
+        }
+      }
+    }
+
+    if (object.material.realtimeEnvMap && cubeCamera && cubeRenderTarget) {
+      frameCounter.current += 1;
+      const refreshFrames = Math.max(1, object.material.envMapRefreshFrames);
+      if (frameCounter.current % refreshFrames === 0) {
+        mesh.getWorldPosition(cubeOrigin);
+        const wasVisible = mesh.visible;
+        mesh.visible = false;
+        cubeCamera.position.copy(cubeOrigin);
+        cubeCamera.update(gl, scene);
+        mesh.visible = wasVisible;
+      }
+      if (material.envMap !== cubeRenderTarget.texture) {
+        material.envMap = cubeRenderTarget.texture;
+        material.needsUpdate = true;
+      }
+    }
+  });
+
+  return (
+    <mesh
+      ref={meshRef}
+      position={object.position}
+      rotation={object.rotation}
+      scale={object.scale}
+      castShadow={object.castShadow}
+      receiveShadow={object.receiveShadow}
+    >
+      {object.shape === 'box' ? (
+        <boxGeometry args={object.size} />
+      ) : object.shape === 'torusKnot' ? (
+        <torusKnotGeometry
+          args={[
+            object.radius,
+            object.tube,
+            Math.max(16, object.tubularSegments),
+            Math.max(8, object.radialSegments),
+            Math.max(2, object.p),
+            Math.max(2, object.q)
+          ]}
+        />
+      ) : object.shape === 'icosahedron' ? (
+        <icosahedronGeometry args={[object.radius, Math.max(0, object.detail)]} />
+      ) : object.shape === 'blob' ? (
+        <sphereGeometry
+          ref={geometryRef}
+          args={[object.radius, Math.max(24, object.tubularSegments), Math.max(16, object.radialSegments)]}
+        />
+      ) : (
+        <sphereGeometry args={[object.radius, Math.max(16, object.tubularSegments), Math.max(8, object.radialSegments)]} />
+      )}
+      <meshPhysicalMaterial
+        ref={materialRef}
+        color={object.material.color}
+        metalness={object.material.metalness}
+        roughness={object.material.roughness}
+        envMapIntensity={object.material.envMapIntensity}
+        transmission={object.material.transmission}
+        thickness={object.material.thickness}
+        ior={object.material.ior}
+        clearcoat={object.material.clearcoat}
+        clearcoatRoughness={object.material.clearcoatRoughness}
+        reflectivity={object.material.reflectivity}
+        opacity={object.material.opacity}
+        transparent={object.material.opacity < 1 || object.material.transmission > 0}
+      />
+    </mesh>
+  );
+}
+
+function ProceduralObjects({
+  objects,
+  roomBounds,
+  collider,
+  visitor,
+  onActorRef
+}: {
+  objects: ProceduralObjectSpec[];
+  roomBounds?: ProceduralRoomBounds;
+  collider: Mesh | null;
+  visitor: Visitor | null;
+  onActorRef?: ProceduralActorRefCallback;
+}) {
+  const objectRefs = useRef<Map<number, { mesh: Mesh; radius: number }>>(new Map());
+  return (
+    <>
+      {objects.map((item, index) => {
+        const key = item.id || `${item.shape}_${index}`;
+        return (
+          <AnimatedProceduralObject
+            key={key}
+            object={item}
+            objectIndex={index}
+            roomBounds={roomBounds}
+            collider={collider}
+            visitor={visitor}
+            objectRefs={objectRefs}
+            onActorRef={onActorRef}
+          />
+        );
+      })}
+    </>
+  );
 }
 
 function ExhibitModel({
@@ -450,7 +972,7 @@ type ProceduralModelSpec = {
   collisionRadius: number;
   animation?: ProceduralModelAnimationSpec;
 };
-type ProceduralActorRefCallback = (id: string, object: Group | null, radius: number) => void;
+type ProceduralActorRefCallback = (id: string, object: Object3D | null, radius: number) => void;
 
 function AnimatedProceduralModel({
   model,
@@ -726,8 +1248,208 @@ function ProceduralRoomModel({
   onColliderReady?: (collider: Mesh | null) => void;
   onSceneReady?: () => void;
 }) {
+  const wallBendRef = useRef<{
+    speed: number;
+    walls: Array<{
+      mesh: Mesh;
+      positionAttr: BufferAttribute;
+      basePositions: Float32Array;
+      bendAxis: 'x' | 'z';
+      span: number;
+      height: number;
+      amplitude: number;
+      frequency: number;
+      phase: number;
+      direction: 1 | -1;
+    }>;
+  } | null>(null);
+  const wallTextureAnimationRef = useRef<{
+    texture: Texture;
+    speedX: number;
+    speedY: number;
+  } | null>(null);
+  const animatedWallOverlayRef = useRef<{
+    texture: CanvasTexture;
+    ctx: CanvasRenderingContext2D;
+    width: number;
+    height: number;
+    speed: number;
+    blobs: Array<{
+      x: number;
+      y: number;
+      radius: number;
+      ampX: number;
+      ampY: number;
+      phase: number;
+      drift: number;
+    }>;
+  } | null>(null);
+
   const width = coercePositiveNumber(roomSpec?.width, 16);
   const depth = coercePositiveNumber(roomSpec?.depth, 16);
+  const height = coercePositiveNumber(roomSpec?.height, 4);
+  const floorY = typeof roomSpec?.floorY === 'number' && Number.isFinite(roomSpec.floorY) ? roomSpec.floorY : 0;
+  const chatPrintsConfig = roomSpec?.chatPrints && typeof roomSpec.chatPrints === 'object'
+    ? (roomSpec.chatPrints as Record<string, unknown>)
+    : undefined;
+  const chatPrintsEnabled = chatPrintsConfig?.enabled !== false;
+  const chatPrintsPollMs = Math.max(
+    3_000,
+    typeof chatPrintsConfig?.pollMs === 'number' && Number.isFinite(chatPrintsConfig.pollMs)
+      ? chatPrintsConfig.pollMs
+      : 12_000
+  );
+  const chatPrintsFetchLimit = Math.max(
+    5,
+    Math.floor(
+      typeof chatPrintsConfig?.fetchLimit === 'number' && Number.isFinite(chatPrintsConfig.fetchLimit)
+        ? chatPrintsConfig.fetchLimit
+        : 180
+    )
+  );
+  const chatPrintsMaxVisible = Math.max(
+    5,
+    Math.floor(
+      typeof chatPrintsConfig?.maxVisible === 'number' && Number.isFinite(chatPrintsConfig.maxVisible)
+        ? chatPrintsConfig.maxVisible
+        : 72
+    )
+  );
+  const chatPrintsMaxChars = Math.max(
+    40,
+    Math.floor(
+      typeof chatPrintsConfig?.maxChars === 'number' && Number.isFinite(chatPrintsConfig.maxChars)
+        ? chatPrintsConfig.maxChars
+        : 160
+    )
+  );
+  const chatPrintsBackgroundOpacity = clampValue(
+    typeof chatPrintsConfig?.backgroundOpacity === 'number' && Number.isFinite(chatPrintsConfig.backgroundOpacity)
+      ? chatPrintsConfig.backgroundOpacity
+      : 0,
+    0,
+    1
+  );
+  const chatPrintsBackgroundColor =
+    typeof chatPrintsConfig?.backgroundColor === 'string' ? chatPrintsConfig.backgroundColor : '#0e0e0e';
+  const [surfacePrints, setSurfacePrints] = useState<SurfacePrint[]>([]);
+  const fetchSurfacePrints = useCallback(async () => {
+    if (!chatPrintsEnabled) {
+      setSurfacePrints([]);
+      return;
+    }
+    try {
+      const response = await fetch(chatApiUrl(`/api/prints?limit=${chatPrintsFetchLimit}`));
+      if (!response.ok) return;
+      const payload = (await response.json()) as { ok?: boolean; prints?: Array<Record<string, unknown>> };
+      if (!payload.ok || !Array.isArray(payload.prints)) return;
+      const mapped = payload.prints
+        .map((entry) => {
+          const rawSurface = typeof entry.surface === 'string' ? entry.surface.toLowerCase() : '';
+          const surface = ['north', 'south', 'east', 'west', 'floor'].includes(rawSurface)
+            ? (rawSurface as SurfacePrint['surface'])
+            : null;
+          const text = typeof entry.text === 'string' ? entry.text.trim() : '';
+          if (!surface || !text) return null;
+          return {
+            id: typeof entry.id === 'number' && Number.isFinite(entry.id) ? entry.id : Math.floor(Math.random() * 1_000_000_000),
+            text,
+            surface,
+            u: clamp01(typeof entry.u === 'number' ? entry.u : 0.5),
+            v: clamp01(typeof entry.v === 'number' ? entry.v : 0.5),
+            rotation: typeof entry.rotation === 'number' && Number.isFinite(entry.rotation) ? entry.rotation : 0,
+            scale: clampValue(typeof entry.scale === 'number' ? entry.scale : 1, 0.55, 1.9),
+            color: typeof entry.color === 'string' ? entry.color : '#ece6dc',
+            opacity: clampValue(typeof entry.opacity === 'number' ? entry.opacity : 0.85, 0.45, 0.98)
+          } as SurfacePrint;
+        })
+        .filter((entry): entry is SurfacePrint => entry !== null)
+        .slice(0, chatPrintsMaxVisible);
+      setSurfacePrints(mapped);
+    } catch {
+      // Ignore transient API errors; existing prints stay visible.
+    }
+  }, [chatPrintsEnabled, chatPrintsFetchLimit, chatPrintsMaxVisible]);
+
+  useEffect(() => {
+    void fetchSurfacePrints();
+    if (!chatPrintsEnabled) return undefined;
+    const timer = window.setInterval(() => {
+      void fetchSurfacePrints();
+    }, chatPrintsPollMs);
+    return () => window.clearInterval(timer);
+  }, [chatPrintsEnabled, chatPrintsPollMs, fetchSurfacePrints]);
+
+  const renderedSurfacePrints = useMemo(() => {
+    const halfW = width / 2;
+    const halfD = depth / 2;
+    const wallInset = 0.035;
+    return surfacePrints.map((print, idx) => {
+      const layerDepth = idx * 0.0012;
+      const panelWidth = clampValue(1.2 * print.scale, 0.45, 2.8);
+      const panelHeight = clampValue(0.48 * print.scale, 0.2, 1.25);
+      const fontSize = clampValue(0.11 * print.scale, 0.055, 0.22);
+      const localRotation = print.rotation;
+      const clippedText =
+        print.text.length > chatPrintsMaxChars ? `${print.text.slice(0, chatPrintsMaxChars - 1)}…` : print.text;
+      let px = 0;
+      let py = floorY + height * 0.5;
+      let pz = 0;
+      let rx = 0;
+      let ry = 0;
+      let rz = 0;
+
+      if (print.surface === 'north') {
+        px = -halfW + print.u * width;
+        py = floorY + print.v * height;
+        pz = -halfD + wallInset + layerDepth;
+      } else if (print.surface === 'south') {
+        px = -halfW + print.u * width;
+        py = floorY + print.v * height;
+        pz = halfD - wallInset - layerDepth;
+        ry = Math.PI;
+      } else if (print.surface === 'west') {
+        px = -halfW + wallInset + layerDepth;
+        py = floorY + print.v * height;
+        pz = -halfD + print.u * depth;
+        ry = Math.PI / 2;
+      } else if (print.surface === 'east') {
+        px = halfW - wallInset - layerDepth;
+        py = floorY + print.v * height;
+        pz = -halfD + print.u * depth;
+        ry = -Math.PI / 2;
+      } else {
+        px = -halfW + print.u * width;
+        py = floorY + wallInset + layerDepth;
+        pz = -halfD + print.v * depth;
+        rx = -Math.PI / 2;
+      }
+
+      rz += localRotation;
+      return {
+        id: print.id,
+        text: clippedText,
+        panelWidth,
+        panelHeight,
+        fontSize,
+        color: print.color,
+        opacity: print.opacity,
+        panelOpacity: chatPrintsBackgroundOpacity,
+        panelColor: chatPrintsBackgroundColor,
+        position: [px, py, pz] as Vector3Tuple,
+        rotation: [rx, ry, rz] as Vector3Tuple
+      };
+    });
+  }, [
+    chatPrintsBackgroundColor,
+    chatPrintsBackgroundOpacity,
+    chatPrintsMaxChars,
+    depth,
+    floorY,
+    height,
+    surfacePrints,
+    width
+  ]);
   const roomBounds = useMemo<ProceduralRoomBounds>(() => {
     return {
       minX: -width / 2,
@@ -738,9 +1460,7 @@ function ProceduralRoomModel({
   }, [depth, width]);
 
   const { displayScene, collider } = useMemo(() => {
-    const height = coercePositiveNumber(roomSpec?.height, 4);
     const wallThickness = coercePositiveNumber(roomSpec?.wallThickness, 0.2);
-    const floorY = typeof roomSpec?.floorY === 'number' && Number.isFinite(roomSpec.floorY) ? roomSpec.floorY : 0;
     const floorColor = typeof roomSpec?.floorColor === 'string' ? roomSpec.floorColor : '#2a2a2a';
     const wallColor = typeof roomSpec?.wallColor === 'string' ? roomSpec.wallColor : '#ece6dc';
     const ceilingColor = typeof roomSpec?.ceilingColor === 'string' ? roomSpec.ceilingColor : '#e6e6e6';
@@ -749,7 +1469,26 @@ function ProceduralRoomModel({
     const metalness = typeof roomSpec?.metalness === 'number' ? roomSpec.metalness : 0.05;
     const wallPatternScale = coercePositiveNumber(roomSpec?.wallPatternScale, 4);
     const floorPatternScale = coercePositiveNumber(roomSpec?.floorPatternScale, 6);
-    const wallPattern = createPatternTexture('chevrons');
+    const wallTextureUrl = typeof roomSpec?.wallTexture === 'string' ? roomSpec.wallTexture : null;
+    const wallTextureRepeatX = coercePositiveNumber(roomSpec?.wallTextureRepeatX, wallPatternScale);
+    const wallTextureRepeatY = coercePositiveNumber(roomSpec?.wallTextureRepeatY, wallPatternScale * Math.max(0.5, height / 4));
+    const wallTextureScrollX = typeof roomSpec?.wallTextureScrollX === 'number' ? roomSpec.wallTextureScrollX : 0;
+    const wallTextureScrollY = typeof roomSpec?.wallTextureScrollY === 'number' ? roomSpec.wallTextureScrollY : 0;
+    const wallBendEnabled = roomSpec?.wallBend === true;
+    const wallBendAmplitude = coercePositiveNumber(roomSpec?.wallBendAmplitude, 0.18);
+    const wallBendFrequency = coercePositiveNumber(roomSpec?.wallBendFrequency, 1.1);
+    const wallBendSpeed = coercePositiveNumber(roomSpec?.wallBendSpeed, 0.9);
+    const wallBendSegments = Math.max(2, Math.floor(coercePositiveNumber(roomSpec?.wallBendSegments, 20)));
+    const animatedWallOverlay = roomSpec?.wallBlobOverlay === true;
+    const wallBlobOverlaySpeed = coercePositiveNumber(roomSpec?.wallBlobOverlaySpeed, 0.5);
+    const wallBlobOverlayIntensity = coercePositiveNumber(roomSpec?.wallBlobOverlayIntensity, 0.22);
+    const wallBlobOverlayScale = coercePositiveNumber(roomSpec?.wallBlobOverlayScale, wallPatternScale);
+    const wallBlobOverlayColor =
+      typeof roomSpec?.wallBlobOverlayColor === 'string' ? roomSpec.wallBlobOverlayColor : '#556b8f';
+    const wallPatternTypeRaw = typeof roomSpec?.wallPatternType === 'string' ? roomSpec.wallPatternType : 'chevrons';
+    const wallPatternType: ProceduralPatternType =
+      wallPatternTypeRaw === 'silhouettes' || wallPatternTypeRaw === 'carpet' ? wallPatternTypeRaw : 'chevrons';
+    const wallPattern = createPatternTexture(wallPatternType);
     const floorPattern = createPatternTexture('carpet');
     if (wallPattern) {
       wallPattern.repeat.set(wallPatternScale, wallPatternScale * Math.max(0.5, height / 4));
@@ -757,6 +1496,15 @@ function ProceduralRoomModel({
     if (floorPattern) {
       floorPattern.repeat.set(floorPatternScale, floorPatternScale * Math.max(0.75, depth / 14));
     }
+    if (animatedWallOverlayRef.current?.texture) {
+      animatedWallOverlayRef.current.texture.dispose();
+      animatedWallOverlayRef.current = null;
+    }
+    if (wallTextureAnimationRef.current?.texture) {
+      wallTextureAnimationRef.current.texture.dispose();
+      wallTextureAnimationRef.current = null;
+    }
+    wallBendRef.current = null;
 
     const display = new Group();
     display.name = 'r3f-procedural-room';
@@ -777,7 +1525,10 @@ function ProceduralRoomModel({
     const halfW = width / 2;
     const halfD = depth / 2;
 
-    const northWall = new Mesh(new BoxGeometry(width, height, wallThickness), wallMaterial.clone());
+    const northWall = new Mesh(
+      new BoxGeometry(width, height, wallThickness, wallBendSegments, wallBendSegments, 1),
+      wallMaterial.clone()
+    );
     northWall.name = 'NorthWall';
     northWall.position.set(0, wallHeightCenter, -halfD);
     northWall.castShadow = true;
@@ -785,7 +1536,10 @@ function ProceduralRoomModel({
     northWall.userData.type = 'Wall';
     display.add(northWall);
 
-    const southWall = new Mesh(new BoxGeometry(width, height, wallThickness), wallMaterial.clone());
+    const southWall = new Mesh(
+      new BoxGeometry(width, height, wallThickness, wallBendSegments, wallBendSegments, 1),
+      wallMaterial.clone()
+    );
     southWall.name = 'SouthWall';
     southWall.position.set(0, wallHeightCenter, halfD);
     southWall.castShadow = true;
@@ -793,7 +1547,10 @@ function ProceduralRoomModel({
     southWall.userData.type = 'Wall';
     display.add(southWall);
 
-    const westWall = new Mesh(new BoxGeometry(wallThickness, height, depth), wallMaterial.clone());
+    const westWall = new Mesh(
+      new BoxGeometry(wallThickness, height, depth, 1, wallBendSegments, wallBendSegments),
+      wallMaterial.clone()
+    );
     westWall.name = 'WestWall';
     westWall.position.set(-halfW, wallHeightCenter, 0);
     westWall.castShadow = true;
@@ -801,13 +1558,123 @@ function ProceduralRoomModel({
     westWall.userData.type = 'Wall';
     display.add(westWall);
 
-    const eastWall = new Mesh(new BoxGeometry(wallThickness, height, depth), wallMaterial.clone());
+    const eastWall = new Mesh(
+      new BoxGeometry(wallThickness, height, depth, 1, wallBendSegments, wallBendSegments),
+      wallMaterial.clone()
+    );
     eastWall.name = 'EastWall';
     eastWall.position.set(halfW, wallHeightCenter, 0);
     eastWall.castShadow = true;
     eastWall.receiveShadow = true;
     eastWall.userData.type = 'Wall';
     display.add(eastWall);
+
+    const wallMaterials = [northWall, southWall, westWall, eastWall]
+      .map((wall) => wall.material)
+      .filter((mat): mat is MeshStandardMaterial => mat instanceof MeshStandardMaterial);
+
+    if (wallBendEnabled) {
+      const createWallBendData = (
+        mesh: Mesh,
+        bendAxis: 'x' | 'z',
+        span: number,
+        direction: 1 | -1,
+        phase: number
+      ) => {
+        const positionAttr = mesh.geometry.getAttribute('position');
+        if (!(positionAttr instanceof BufferAttribute)) return null;
+        const basePositions = new Float32Array(positionAttr.array.length);
+        basePositions.set(positionAttr.array as ArrayLike<number>);
+        return {
+          mesh,
+          positionAttr,
+          basePositions,
+          bendAxis,
+          span,
+          height,
+          amplitude: wallBendAmplitude,
+          frequency: wallBendFrequency,
+          phase,
+          direction
+        };
+      };
+
+      const bendWalls = [
+        createWallBendData(northWall, 'z', width, -1, 0),
+        createWallBendData(southWall, 'z', width, 1, 1.2),
+        createWallBendData(westWall, 'x', depth, -1, 2.4),
+        createWallBendData(eastWall, 'x', depth, 1, 3.6)
+      ].filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+
+      wallBendRef.current = {
+        speed: wallBendSpeed,
+        walls: bendWalls
+      };
+    }
+
+    if (wallTextureUrl) {
+      const loader = new TextureLoader();
+      loader.load(
+        wallTextureUrl,
+        (loaded) => {
+          loaded.colorSpace = SRGBColorSpace;
+          loaded.wrapS = RepeatWrapping;
+          loaded.wrapT = RepeatWrapping;
+          loaded.repeat.set(wallTextureRepeatX, wallTextureRepeatY);
+          loaded.needsUpdate = true;
+          wallTextureAnimationRef.current = {
+            texture: loaded,
+            speedX: wallTextureScrollX,
+            speedY: wallTextureScrollY
+          };
+          wallMaterials.forEach((material) => {
+            material.map = loaded;
+            material.needsUpdate = true;
+          });
+        },
+        undefined,
+        (err) => {
+          console.warn('Failed to load wall texture:', wallTextureUrl, err);
+        }
+      );
+    }
+
+    if (animatedWallOverlay && typeof document !== 'undefined') {
+      const overlayCanvas = document.createElement('canvas');
+      overlayCanvas.width = 1024;
+      overlayCanvas.height = 1024;
+      const overlayCtx = overlayCanvas.getContext('2d');
+      if (overlayCtx) {
+        const overlayTexture = new CanvasTexture(overlayCanvas);
+        overlayTexture.wrapS = RepeatWrapping;
+        overlayTexture.wrapT = RepeatWrapping;
+        overlayTexture.repeat.set(wallBlobOverlayScale, wallBlobOverlayScale * Math.max(0.5, height / 4));
+        overlayTexture.needsUpdate = true;
+        const blobs = Array.from({ length: 8 }).map((_, idx) => ({
+          x: 120 + idx * 110,
+          y: 140 + (idx % 3) * 230,
+          radius: 90 + (idx % 4) * 20,
+          ampX: 22 + (idx % 3) * 10,
+          ampY: 18 + (idx % 2) * 8,
+          phase: idx * 0.9,
+          drift: 0.35 + idx * 0.05
+        }));
+        animatedWallOverlayRef.current = {
+          texture: overlayTexture,
+          ctx: overlayCtx,
+          width: overlayCanvas.width,
+          height: overlayCanvas.height,
+          speed: wallBlobOverlaySpeed,
+          blobs
+        };
+        wallMaterials.forEach((material) => {
+          material.emissive = new Color(wallBlobOverlayColor);
+          material.emissiveIntensity = wallBlobOverlayIntensity;
+          material.emissiveMap = overlayTexture;
+          material.needsUpdate = true;
+        });
+      }
+    }
 
     if (hasCeiling) {
       const ceiling = new Mesh(new PlaneGeometry(width, depth), ceilingMaterial);
@@ -847,13 +1714,78 @@ function ProceduralRoomModel({
     }
 
     return { displayScene: display, collider: colliderMesh };
-  }, [depth, position, roomSpec, rotation, scale, width]);
+  }, [depth, floorY, height, position, roomSpec, rotation, scale, width]);
+
+  useFrame(({ clock }) => {
+    const bendState = wallBendRef.current;
+    if (bendState) {
+      const t = clock.elapsedTime * bendState.speed;
+      bendState.walls.forEach((wall) => {
+        const arr = wall.positionAttr.array as Float32Array;
+        const base = wall.basePositions;
+        const axisIndex = wall.bendAxis === 'x' ? 0 : 2;
+        for (let i = 0; i < arr.length; i += 3) {
+          const bx = base[i];
+          const by = base[i + 1];
+          const bz = base[i + 2];
+          const lateral = wall.bendAxis === 'z' ? bx : bz;
+          const yNorm = Math.max(0, Math.min(1, by / wall.height + 0.5));
+          const strength = 0.35 + 0.65 * yNorm;
+          const wave = Math.sin((lateral / wall.span) * Math.PI * wall.frequency + t + wall.phase);
+          const bend = wave * wall.amplitude * strength * wall.direction;
+          arr[i] = bx;
+          arr[i + 1] = by;
+          arr[i + 2] = bz;
+          arr[i + axisIndex] = base[i + axisIndex] + bend;
+        }
+        wall.positionAttr.needsUpdate = true;
+        wall.mesh.geometry.computeVertexNormals();
+      });
+    }
+
+    const movingWallTexture = wallTextureAnimationRef.current;
+    if (movingWallTexture && (movingWallTexture.speedX !== 0 || movingWallTexture.speedY !== 0)) {
+      const elapsed = clock.elapsedTime;
+      movingWallTexture.texture.offset.set(
+        elapsed * movingWallTexture.speedX,
+        elapsed * movingWallTexture.speedY
+      );
+      movingWallTexture.texture.needsUpdate = true;
+    }
+
+    const overlay = animatedWallOverlayRef.current;
+    if (!overlay) return;
+    const t = clock.elapsedTime * overlay.speed;
+    const { ctx, width: canvasW, height: canvasH, blobs, texture } = overlay;
+    ctx.clearRect(0, 0, canvasW, canvasH);
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    blobs.forEach((blob) => {
+      const x = blob.x + Math.sin(t + blob.phase) * blob.ampX + Math.cos(t * blob.drift) * blob.ampY;
+      const y = blob.y + Math.cos(t + blob.phase * 1.7) * blob.ampY + Math.sin(t * blob.drift) * blob.ampX;
+      const radius = blob.radius * (0.85 + 0.25 * Math.sin(t * 1.4 + blob.phase));
+      const gradient = ctx.createRadialGradient(x, y, radius * 0.18, x, y, radius);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
+      gradient.addColorStop(0.5, 'rgba(198, 210, 255, 0.2)');
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    texture.needsUpdate = true;
+  });
 
   useEffect(() => {
     onColliderReady?.(collider);
     onSceneReady?.();
     return () => {
       onColliderReady?.(null);
+      wallTextureAnimationRef.current?.texture?.dispose?.();
+      wallTextureAnimationRef.current = null;
+      animatedWallOverlayRef.current?.texture?.dispose?.();
+      animatedWallOverlayRef.current = null;
       collider?.geometry?.dispose?.();
     };
   }, [collider, onColliderReady, onSceneReady]);
@@ -863,6 +1795,41 @@ function ProceduralRoomModel({
   return (
     <group position={new Vector3(...position)} rotation={new Euler(rx, ry, rz)} scale={scale}>
       <primitive object={displayScene} dispose={null} />
+      {chatPrintsEnabled ? (
+        <group name="SurfacePrints">
+          {renderedSurfacePrints.map((item, idx) => (
+            <group
+              key={`surface_print_${item.id}_${idx}`}
+              position={new Vector3(...item.position)}
+              rotation={new Euler(...item.rotation)}
+            >
+              {item.panelOpacity > 0 ? (
+                <mesh renderOrder={40 + (idx % 40)}>
+                  <planeGeometry args={[item.panelWidth, item.panelHeight]} />
+                  <meshBasicMaterial
+                    color={item.panelColor}
+                    transparent
+                    opacity={item.panelOpacity}
+                    depthWrite={false}
+                  />
+                </mesh>
+              ) : null}
+              <Text
+                position={[0, 0, 0.002]}
+                fontSize={item.fontSize}
+                maxWidth={item.panelWidth * 0.84}
+                color={item.color}
+                anchorX="center"
+                anchorY="middle"
+                textAlign="center"
+                lineHeight={1.15}
+              >
+                {item.text}
+              </Text>
+            </group>
+          ))}
+        </group>
+      ) : null}
       {models && models.length > 0 ? (
         <ProceduralRoomModels
           models={models}
@@ -918,27 +1885,11 @@ function SceneBackground({
 
     const loadBackground = async () => {
       try {
-        let texture: Texture;
-        const isKtx2 = textureUrl.toLowerCase().endsWith('.ktx2');
-        if (isKtx2) {
-          ensureKtx2Support(gl as WebGLRenderer);
-          texture = await getKtx2Loader(gl as WebGLRenderer).loadAsync(textureUrl);
-        } else {
-          const loader = new TextureLoader();
-          texture = await loader.loadAsync(textureUrl);
-        }
+        const texture = await loadEquirectTexture(textureUrl, gl as WebGLRenderer);
         if (disposed) {
           texture.dispose();
           return;
         }
-        texture.colorSpace = SRGBColorSpace;
-        texture.mapping = EquirectangularReflectionMapping;
-        if (!('isCompressedTexture' in texture && texture.isCompressedTexture)) {
-          texture.magFilter = LinearFilter;
-          texture.minFilter = LinearMipmapLinearFilter;
-          texture.generateMipmaps = true;
-        }
-        texture.needsUpdate = true;
         loadedTexture = texture;
         scene.background = texture;
         scene.backgroundBlurriness = targetBlurriness;
@@ -967,6 +1918,60 @@ function SceneBackground({
       scene.backgroundIntensity = previousIntensity;
     };
   }, [textureUrl, blurriness, intensity, scene, gl, fallbackColor]);
+
+  return null;
+}
+
+function SceneEnvironment({
+  textureUrl,
+  intensity
+}: {
+  textureUrl?: string | null;
+  intensity?: number;
+}) {
+  const { scene, gl } = useThree();
+
+  useEffect(() => {
+    if (!textureUrl) return undefined;
+
+    let disposed = false;
+    let loadedTexture: Texture | null = null;
+    const previousEnvironment = scene.environment;
+    const previousIntensity = scene.environmentIntensity ?? 1;
+    const targetIntensity = typeof intensity === 'number' ? intensity : 1;
+
+    const loadEnvironment = async () => {
+      try {
+        const texture = await loadEquirectTexture(textureUrl, gl as WebGLRenderer);
+        if (disposed) {
+          texture.dispose();
+          return;
+        }
+        loadedTexture = texture;
+        scene.environment = texture;
+        scene.environmentIntensity = targetIntensity;
+      } catch (err) {
+        if (!disposed) {
+          console.warn('Failed to load environment texture:', textureUrl, err);
+        }
+      }
+    };
+
+    loadEnvironment();
+
+    return () => {
+      disposed = true;
+      if (loadedTexture) {
+        if (scene.environment === loadedTexture) {
+          scene.environment = previousEnvironment;
+        }
+        loadedTexture.dispose();
+      } else if (scene.environment !== previousEnvironment) {
+        scene.environment = previousEnvironment;
+      }
+      scene.environmentIntensity = previousIntensity;
+    };
+  }, [textureUrl, intensity, scene, gl]);
 
   return null;
 }
@@ -1183,7 +2188,7 @@ function ThumbnailRecorderMode({
   );
 }
 
-function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }: R3FViewerProps) {
+function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, onPhysicsCollision }: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
   const modelPath = config?.modelPath;
@@ -1265,6 +2270,184 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
       .filter((entry): entry is ProceduralModelSpec => entry !== null);
     return mapped.length > 0 ? mapped : undefined;
   }, [config?.models]);
+  const proceduralObjects = useMemo<ProceduralObjectSpec[] | undefined>(() => {
+    if (!Array.isArray(config?.proceduralObjects)) return undefined;
+    const mapped = config.proceduralObjects
+      .map((entry) => {
+        if (!entry || typeof entry !== 'object') return null;
+        const record = entry as Record<string, unknown>;
+        const shape = typeof record.shape === 'string' ? record.shape : 'sphere';
+        if (!['sphere', 'box', 'torusKnot', 'icosahedron', 'blob'].includes(shape)) return null;
+        const sizeRaw = record.size;
+        const size = Array.isArray(sizeRaw) && sizeRaw.length >= 3
+          ? coerceVector(sizeRaw, [1, 1, 1])
+          : [typeof sizeRaw === 'number' ? sizeRaw : 1, typeof sizeRaw === 'number' ? sizeRaw : 1, typeof sizeRaw === 'number' ? sizeRaw : 1] as Vector3Tuple;
+        const scaleRaw = record.scale;
+        const scale = Array.isArray(scaleRaw) && scaleRaw.length >= 3
+          ? coerceVector(scaleRaw, [1, 1, 1])
+          : [typeof scaleRaw === 'number' ? scaleRaw : 1, typeof scaleRaw === 'number' ? scaleRaw : 1, typeof scaleRaw === 'number' ? scaleRaw : 1] as Vector3Tuple;
+        const material = record.material && typeof record.material === 'object'
+          ? record.material as Record<string, unknown>
+          : {};
+        return {
+          id: typeof record.id === 'string' ? record.id : undefined,
+          shape: shape as ProceduralObjectShape,
+          position: coerceVector(record.position, [0, 1, 0]),
+          rotation: coerceVector(record.rotation),
+          scale,
+          size,
+          radius: typeof record.radius === 'number' && Number.isFinite(record.radius) ? Math.max(0.02, record.radius) : 0.65,
+          detail: typeof record.detail === 'number' && Number.isFinite(record.detail) ? Math.max(0, Math.floor(record.detail)) : 0,
+          tube: typeof record.tube === 'number' && Number.isFinite(record.tube) ? Math.max(0.01, record.tube) : 0.22,
+          tubularSegments:
+            typeof record.tubularSegments === 'number' && Number.isFinite(record.tubularSegments)
+              ? Math.max(16, Math.floor(record.tubularSegments))
+              : 128,
+          radialSegments:
+            typeof record.radialSegments === 'number' && Number.isFinite(record.radialSegments)
+              ? Math.max(8, Math.floor(record.radialSegments))
+              : 32,
+          p: typeof record.p === 'number' && Number.isFinite(record.p) ? Math.max(2, Math.floor(record.p)) : 2,
+          q: typeof record.q === 'number' && Number.isFinite(record.q) ? Math.max(2, Math.floor(record.q)) : 3,
+          blobAmplitude:
+            typeof record.blobAmplitude === 'number' && Number.isFinite(record.blobAmplitude)
+              ? Math.max(0, record.blobAmplitude)
+              : 0.18,
+          blobFrequency:
+            typeof record.blobFrequency === 'number' && Number.isFinite(record.blobFrequency)
+              ? Math.max(0.1, record.blobFrequency)
+              : 2,
+          blobSpeed:
+            typeof record.blobSpeed === 'number' && Number.isFinite(record.blobSpeed)
+              ? Math.max(0.05, record.blobSpeed)
+              : 1,
+          collisionRadius:
+            typeof record.collisionRadius === 'number' && Number.isFinite(record.collisionRadius)
+              ? Math.max(0.05, record.collisionRadius)
+              : 0.65,
+          castShadow: record.castShadow !== false,
+          receiveShadow: record.receiveShadow !== false,
+          animation:
+            record.animation && typeof record.animation === 'object'
+              ? {
+                  swayAngle:
+                    typeof (record.animation as Record<string, unknown>).swayAngle === 'number'
+                      ? ((record.animation as Record<string, unknown>).swayAngle as number)
+                      : 0,
+                  swaySpeed:
+                    typeof (record.animation as Record<string, unknown>).swaySpeed === 'number'
+                      ? ((record.animation as Record<string, unknown>).swaySpeed as number)
+                      : 0.8,
+                  driftDistance:
+                    typeof (record.animation as Record<string, unknown>).driftDistance === 'number'
+                      ? ((record.animation as Record<string, unknown>).driftDistance as number)
+                      : 0,
+                  driftSpeed:
+                    typeof (record.animation as Record<string, unknown>).driftSpeed === 'number'
+                      ? ((record.animation as Record<string, unknown>).driftSpeed as number)
+                      : 0.35,
+                  bobDistance:
+                    typeof (record.animation as Record<string, unknown>).bobDistance === 'number'
+                      ? ((record.animation as Record<string, unknown>).bobDistance as number)
+                      : 0.03,
+                  bobSpeed:
+                    typeof (record.animation as Record<string, unknown>).bobSpeed === 'number'
+                      ? ((record.animation as Record<string, unknown>).bobSpeed as number)
+                      : 0.5,
+                  collisionAware:
+                    typeof (record.animation as Record<string, unknown>).collisionAware === 'boolean'
+                      ? ((record.animation as Record<string, unknown>).collisionAware as boolean)
+                      : false,
+                  speed:
+                    typeof (record.animation as Record<string, unknown>).speed === 'number'
+                      ? ((record.animation as Record<string, unknown>).speed as number)
+                      : 0.45,
+                  boundaryPadding:
+                    typeof (record.animation as Record<string, unknown>).boundaryPadding === 'number'
+                      ? ((record.animation as Record<string, unknown>).boundaryPadding as number)
+                      : 0.8,
+                  turnJitter:
+                    typeof (record.animation as Record<string, unknown>).turnJitter === 'number'
+                      ? ((record.animation as Record<string, unknown>).turnJitter as number)
+                      : 0.35,
+                  direction:
+                    Array.isArray((record.animation as Record<string, unknown>).direction) &&
+                    (record.animation as Record<string, unknown>).direction.length >= 2
+                      ? [
+                          Number(((record.animation as Record<string, unknown>).direction as unknown[])[0]) || 1,
+                          Number(((record.animation as Record<string, unknown>).direction as unknown[])[1]) || 0
+                        ]
+                      : [1, 0]
+                }
+              : undefined,
+          material: {
+            color: typeof material.color === 'string' ? material.color : '#ffffff',
+            metalness:
+              typeof material.metalness === 'number' && Number.isFinite(material.metalness)
+                ? Math.min(1, Math.max(0, material.metalness))
+                : 1,
+            roughness:
+              typeof material.roughness === 'number' && Number.isFinite(material.roughness)
+                ? Math.min(1, Math.max(0, material.roughness))
+                : 0.06,
+            envMapIntensity:
+              typeof material.envMapIntensity === 'number' && Number.isFinite(material.envMapIntensity)
+                ? Math.max(0, material.envMapIntensity)
+                : 1,
+            transmission:
+              typeof material.transmission === 'number' && Number.isFinite(material.transmission)
+                ? Math.min(1, Math.max(0, material.transmission))
+                : 0,
+            thickness:
+              typeof material.thickness === 'number' && Number.isFinite(material.thickness)
+                ? Math.max(0, material.thickness)
+                : 0,
+            ior:
+              typeof material.ior === 'number' && Number.isFinite(material.ior)
+                ? Math.max(1, material.ior)
+                : 1.45,
+            clearcoat:
+              typeof material.clearcoat === 'number' && Number.isFinite(material.clearcoat)
+                ? Math.min(1, Math.max(0, material.clearcoat))
+                : 0,
+            clearcoatRoughness:
+              typeof material.clearcoatRoughness === 'number' && Number.isFinite(material.clearcoatRoughness)
+                ? Math.min(1, Math.max(0, material.clearcoatRoughness))
+                : 0,
+            reflectivity:
+              typeof material.reflectivity === 'number' && Number.isFinite(material.reflectivity)
+                ? Math.min(1, Math.max(0, material.reflectivity))
+                : 0.8,
+            opacity:
+              typeof material.opacity === 'number' && Number.isFinite(material.opacity)
+                ? Math.min(1, Math.max(0, material.opacity))
+                : 1,
+            realtimeEnvMap: material.realtimeEnvMap === true,
+            envMapResolution:
+              typeof material.envMapResolution === 'number' && Number.isFinite(material.envMapResolution)
+                ? Math.max(64, Math.floor(material.envMapResolution))
+                : 256,
+            envMapRefreshFrames:
+              typeof material.envMapRefreshFrames === 'number' && Number.isFinite(material.envMapRefreshFrames)
+                ? Math.max(1, Math.floor(material.envMapRefreshFrames))
+                : 1
+          }
+        } as ProceduralObjectSpec;
+      })
+      .filter((entry): entry is ProceduralObjectSpec => entry !== null);
+    return mapped.length > 0 ? mapped : undefined;
+  }, [config?.proceduralObjects]);
+  const proceduralRoomBounds = useMemo<ProceduralRoomBounds | undefined>(() => {
+    if (!proceduralRoom) return undefined;
+    const width = coercePositiveNumber(proceduralRoom.width, 16);
+    const depth = coercePositiveNumber(proceduralRoom.depth, 16);
+    return {
+      minX: -width / 2,
+      maxX: width / 2,
+      minZ: -depth / 2,
+      maxZ: depth / 2
+    };
+  }, [proceduralRoom]);
   const interactivesPath = config?.interactivesPath;
   const position = useMemo(() => coerceVector(config?.position), [config?.position]);
   const rotation = useMemo(() => coerceVector(config?.rotation), [config?.rotation]);
@@ -1294,6 +2477,12 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
   }, [rawParams, heightOffsetVector, visitorEnterVector]);
   const backgroundBlurriness = typeof rawParams?.backgroundBlurriness === 'number' ? rawParams.backgroundBlurriness : undefined;
   const backgroundIntensity = typeof rawParams?.backgroundIntensity === 'number' ? rawParams.backgroundIntensity : undefined;
+  const environmentTexture = typeof config?.environmentTexture === 'string' && config.environmentTexture
+    ? config.environmentTexture
+    : rawParams?.environmentFromBackground === true
+      ? config?.backgroundTexture
+      : undefined;
+  const environmentIntensity = typeof rawParams?.environmentIntensity === 'number' ? rawParams.environmentIntensity : 1;
   const lightIntensity = typeof rawParams?.lightIntensity === 'number' && Number.isFinite(rawParams.lightIntensity) ? rawParams.lightIntensity : 1;
   const lights = config?.lights && typeof config.lights === 'object' ? (config.lights as Record<string, unknown>) : undefined;
   const ambientLightColor = typeof lights?.ambientColor === 'string' ? lights.ambientColor : '#ffffff';
@@ -1361,7 +2550,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
-  const dynamicActorsRef = useRef<Map<string, { object: Group; radius: number }>>(new Map());
+  const dynamicActorsRef = useRef<Map<string, { object: Object3D; radius: number }>>(new Map());
   const physicsConfig = useMemo<PhysicsConfig | undefined>(() => {
     if (!config?.physics || typeof config.physics !== 'object') return undefined;
     const record = config.physics as Record<string, unknown>;
@@ -1719,6 +2908,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
           intensity={backgroundIntensity}
           fallbackColorHex={thumbnailBackgroundColor}
         />
+        <SceneEnvironment textureUrl={environmentTexture} intensity={environmentIntensity} />
         <ambientLight color={ambientLightColor} intensity={ambientLightIntensity} />
         <hemisphereLight args={[new Color(hemisphereSkyColor), new Color(hemisphereGroundColor), hemisphereIntensity]} />
         <directionalLight
@@ -1782,6 +2972,15 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
           ) : (
             <Html center className="text-white">Missing modelPath or proceduralRoom in config</Html>
           )}
+          {proceduralObjects && proceduralObjects.length > 0 ? (
+            <ProceduralObjects
+              objects={proceduralObjects}
+              roomBounds={proceduralRoomBounds}
+              collider={collider}
+              visitor={visitorInstance}
+              onActorRef={handleProceduralActorRef}
+            />
+          ) : null}
         </Suspense>
 
         {DEBUG_COLLIDER && collider ? <primitive object={collider} /> : null}
@@ -1818,7 +3017,12 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity }:
           onVisitorReady={setVisitorInstance}
           onVisitorActivity={onVisitorActivity}
         />
-        <ScenePhysics config={physicsConfig} visitor={visitorInstance} actorRefs={dynamicActorsRef} />
+        <ScenePhysics
+          config={physicsConfig}
+          visitor={visitorInstance}
+          actorRefs={dynamicActorsRef}
+          onCollision={onPhysicsCollision}
+        />
         <ThumbnailRecorderMode config={thumbnailCapture} active={thumbnailModeActive} />
         <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} sceneVersion={sceneVersion} />
         <AutoExposureControl params={rawParams} />
@@ -2010,11 +3214,19 @@ function FirstPersonController({
 function ScenePhysics({
   config,
   visitor,
-  actorRefs
+  actorRefs,
+  onCollision
 }: {
   config?: PhysicsConfig;
   visitor: Visitor | null;
-  actorRefs: MutableRefObject<Map<string, { object: Group; radius: number }>>;
+  actorRefs: MutableRefObject<Map<string, { object: Object3D; radius: number }>>;
+  onCollision?: (event: {
+    a: string;
+    b: string;
+    point: Vector3Tuple;
+    penetration: number;
+    timestamp: number;
+  }) => void;
 }) {
   const physicsSystemRef = useRef<PhysicsSystem | null>(null);
 
@@ -2039,7 +3251,19 @@ function ScenePhysics({
         radius: entry.radius
       });
     }
-    physicsSystemRef.current.step(config, actors);
+    const collisions = physicsSystemRef.current.step(config, actors);
+    if (onCollision && collisions.length > 0) {
+      const timestamp = Date.now();
+      collisions.forEach((entry: PhysicsCollisionEvent) => {
+        onCollision({
+          a: entry.a,
+          b: entry.b,
+          point: [entry.point.x, entry.point.y, entry.point.z],
+          penetration: entry.penetration,
+          timestamp
+        });
+      });
+    }
   });
 
   return null;

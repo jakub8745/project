@@ -1,8 +1,11 @@
 name: Build + Pin to IPFS + Update DNSLink
 
 on:
+  workflow_dispatch:
   push:
-    branches: ["sidebar-video-thumbs"]
+    branches: ["main"]
+    paths-ignore:
+      - "worker/**"
 
 env:
   DNSLINK_RECORD_NAME: ${{ secrets.DNSLINK_RECORD_NAME || '' }}

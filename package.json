@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "bridge": "node server/chat-bridge.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

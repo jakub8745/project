@@ -1,0 +1,23 @@
+name = "blob-room-api"
+main = "src/index.ts"
+compatibility_date = "2026-02-14"
+
+[vars]
+OPENAI_MODEL = "gpt-4o-mini"
+ART_ONLY_GUARD = "You are an art-focused assistant in a virtual gallery. Only discuss art, artworks, curation, media, aesthetics, interpretation, art process, and art history. If asked about unrelated topics, briefly redirect to art perspective."
+SOUL_PROMPT = ""
+DEFAULT_MAX_PRINTS = "1500"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blob_room_db"
+database_id = "6f901468-635c-4083-ad41-0df844e22c2d"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "55ad3f95a2bc4824be6ff0709c42a84a"
+
+[[r2_buckets]]
+binding = "TEXTURE_BUCKET"
+bucket_name = "blob-room-textures"

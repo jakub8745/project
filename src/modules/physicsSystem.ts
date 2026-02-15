@@ -28,6 +28,13 @@ export interface PhysicsRuntimeActor {
   pushable?: boolean;
 }
 
+export interface PhysicsCollisionEvent {
+  a: string;
+  b: string;
+  point: Vector3;
+  penetration: number;
+}
+
 const EPSILON = 1e-6;
 
 function getPairKey(a: string, b: string) {
@@ -38,6 +45,7 @@ export class PhysicsSystem {
   private normal = new Vector3();
   private deltaPos = new Vector3();
   private fallback = new Vector3();
+  private contactPoint = new Vector3();
   private pairRules = new Map<string, boolean>();
 
   configure(config?: PhysicsConfig) {
@@ -75,8 +83,9 @@ export class PhysicsSystem {
     return true;
   }
 
-  step(config: PhysicsConfig | undefined, actors: PhysicsRuntimeActor[]) {
-    if (config?.enabled === false || actors.length < 2) return;
+  step(config: PhysicsConfig | undefined, actors: PhysicsRuntimeActor[]): PhysicsCollisionEvent[] {
+    if (config?.enabled === false || actors.length < 2) return [];
+    const collisions: PhysicsCollisionEvent[] = [];
     const iterations = typeof config?.iterations === 'number' && Number.isFinite(config.iterations)
       ? Math.max(1, Math.min(8, Math.floor(config.iterations)))
       : 2;
@@ -111,6 +120,14 @@ export class PhysicsSystem {
           const penetration = minDist - dist;
           if (penetration <= 0) continue;
 
+          this.contactPoint.copy(a.object.position).add(b.object.position).multiplyScalar(0.5);
+          collisions.push({
+            a: a.id,
+            b: b.id,
+            point: this.contactPoint.clone(),
+            penetration
+          });
+
           const invMassA = aRule.pushable ? 1 / aRule.mass : 0;
           const invMassB = bRule.pushable ? 1 / bRule.mass : 0;
           const invMassSum = invMassA + invMassB;
@@ -128,5 +145,6 @@ export class PhysicsSystem {
         }
       }
     }
+    return collisions;
   }
 }

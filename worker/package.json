@@ -1,0 +1,14 @@
+{
+  "name": "blob-room-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "migrate": "wrangler d1 migrations apply blob_room_db --remote",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.33.0"
+  }
+}

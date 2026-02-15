@@ -12,6 +12,7 @@ export interface ExhibitConfig extends UnknownRecord {
   position?: [number, number, number];
   rotation?: [number, number, number];
   backgroundTexture?: string;
+  environmentTexture?: string;
   images?: Record<string, UnknownRecord>;
   videos?: UnknownRecord[];
   audio?: UnknownRecord[];
@@ -89,6 +90,11 @@ function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitConfig {
       ? resolveOracleUrl(config.backgroundTexture, bucket)
       : config.backgroundTexture
     : config.backgroundTexture;
+  const normalisedEnvironment = config.environmentTexture
+    ? bucket && isIpfsUri(config.environmentTexture)
+      ? resolveOracleUrl(config.environmentTexture, bucket)
+      : config.environmentTexture
+    : config.environmentTexture;
 
   return {
     ...config,
@@ -97,7 +103,8 @@ function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitConfig {
     audio,
     modelPath: normalisedModelPath,
     interactivesPath: normalisedInteractivesPath,
-    backgroundTexture: normalisedBackground
+    backgroundTexture: normalisedBackground,
+    environmentTexture: normalisedEnvironment
   };
 }
 

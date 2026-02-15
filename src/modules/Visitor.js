@@ -90,7 +90,25 @@ export default class Visitor extends Mesh {
       d: 'rgtPressed'
     };
 
+    const isTypingTarget = (event) => {
+      const target = event.target;
+      if (!target || !(target instanceof HTMLElement)) return false;
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if (target.isContentEditable) return true;
+      const role = target.getAttribute('role');
+      if (role === 'textbox') return true;
+      return false;
+    };
+
     this._keyDownHandler = (e) => {
+      if (isTypingTarget(e)) {
+        this.fwdPressed = false;
+        this.bkdPressed = false;
+        this.lftPressed = false;
+        this.rgtPressed = false;
+        return;
+      }
       if (keyMap[e.key] !== undefined) {
         e.preventDefault(); 
         this[keyMap[e.key]] = true;
@@ -98,6 +116,13 @@ export default class Visitor extends Mesh {
     };
 
     this._keyUpHandler = (e) => {
+      if (isTypingTarget(e)) {
+        this.fwdPressed = false;
+        this.bkdPressed = false;
+        this.lftPressed = false;
+        this.rgtPressed = false;
+        return;
+      }
       if (keyMap[e.key] !== undefined) {
         e.preventDefault(); 
         this[keyMap[e.key]] = false;

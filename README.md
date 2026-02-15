@@ -40,9 +40,18 @@ Key features:
 - **Procedural room geometry**: floor, walls, optional ceiling (`proceduralRoom.ceiling`).
 - **Patterned materials**: chevrons on walls and carpet-like floor.
 - **Dynamic actors**: reusable robot objects (`models[]`, e.g. `id: "robot"`).
+- **Envmap objects**: reflective/refractive primitives via `proceduralObjects[]` + `environmentTexture`.
+  - Supports `shape: "blob"` for lava-lamp-style deformations on top of sphere geometry.
+  - Tune blob motion with `blobAmplitude`, `blobFrequency`, `blobSpeed`.
+  - Enable real-time reflections per object with `material.realtimeEnvMap: true` (cube camera).
+  - Tune quality/perf with `material.envMapResolution` and `material.envMapRefreshFrames`.
+  - Reuse robot-like roaming with `proceduralObjects[].animation` (`collisionAware`, `speed`, `direction`, etc.).
 - **Game-like collisions**:
   - static world collision via BVH room collider,
   - dynamic actor-vs-actor collision via config `physics` block (`actors`, `pairs`, `iterations`).
+- **Persistent surface prints**:
+  - room can pull `/api/prints` and project chat fragments onto walls/floor,
+  - tune via `proceduralRoom.chatPrints` (`enabled`, `pollMs`, `fetchLimit`, `maxVisible`, `maxChars`).
 - **Configurable lights**: ambient, hemisphere, directional, and optional spotlight.
 
 ---
@@ -98,7 +107,91 @@ Notes:
 - `src/r3f/` – canvas-side logic (viewer, audio system, modal integration, pointer interactions).
 - `src/modules/` – shared utilities consumed by both UI and R3F code (e.g. audio manager, visitor controls).
 
-Legacy DOM scaffolding has been removed; the React viewer is the only runtime entry point.
+---
+
+## Chat Backend Modes
+
+The room chat is now backend-agnostic and supports two API modes:
+
+- Local bridge (`server/chat-bridge.mjs`) for local development.
+- Cloudflare Worker API (`worker/`) for production/static IPFS deployments.
+
+Frontend hook: `src/hooks/useBlobChatBridge.ts`
+
+### Frontend env
+
+```bash
+# For deployed static site on IPFS/custom domain:
+VITE_CHAT_API_BASE=https://your-worker-api.example.com
+
+# Optional local dev proxy target (Vite only):
+VITE_CHAT_PROXY_TARGET=http://localhost:8787
+```
+
+Notes:
+- If `VITE_CHAT_API_BASE` is empty, frontend uses relative paths (good with local proxy).
+- If `VITE_CHAT_PROXY_TARGET` is empty, Vite does not proxy `/api/chat`.
+
+### Local bridge mode (dev)
+
+```bash
+npm run bridge
+npm run dev
+```
+
+Bridge env vars:
+
+```bash
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_TIMEOUT_MS=45000
+CHAT_BRIDGE_PORT=8787
+
+# Optional Telegram mirror:
+MIRROR_TO_TELEGRAM=false
+TELEGRAM_BOT_TOKEN=123456:abcDEF...
+TELEGRAM_CHAT_ID=123456789
+TELEGRAM_THREAD_ID=42
+```
+
+### Cloudflare Worker mode (prod)
+
+Worker project: `worker/`
+
+Stack:
+- Worker API routes
+- D1 (`chat_messages`, `surface_prints`)
+- KV (`prints:latest:*` cache)
+- R2 (texture object storage)
+
+Required GitHub secrets for `.github/workflows/worker-api.yml`:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `OPENAI_API_KEY`
+
+One-time setup:
+
+1. Create D1 DB, KV namespace, and R2 bucket in Cloudflare.
+2. Put real IDs into `worker/wrangler.toml`:
+   - `database_id`
+   - `kv_namespaces.id`
+3. Optionally set `SOUL_PROMPT` in `worker/wrangler.toml` (project-level framing).
+4. Run Worker deploy workflow.
+5. Set `VITE_CHAT_API_BASE` in frontend build environment to your Worker domain.
+
+Current chat endpoints (compatible with existing app):
+
+- `GET /api/chat/health`
+- `POST /api/chat/send`
+
+Additional Worker routes:
+
+- `GET /api/prints`
+- `PUT /api/textures/:key`
+- `GET /api/textures/:key`
+
+This keeps the frontend static while enabling persistent, evolving room data via Cloudflare services.
 
 ---
 

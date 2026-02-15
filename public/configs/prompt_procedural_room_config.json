@@ -12,10 +12,36 @@
     "floorY": 0,
     "floorColor": "#2f2a24",
     "wallColor": "#d9d1c4",
+    "wallPatternType": "silhouettes",
+    "wallTexture": "/textures/cueva-de-los-manos_wallpaper.jpg",
+    "wallTextureRepeatX": 2.6,
+    "wallTextureRepeatY": 1.2,
+    "wallTextureScrollX": 0.008,
+    "wallTextureScrollY": -0.003,
+    "wallBend": true,
+    "wallBendAmplitude": 0.22,
+    "wallBendFrequency": 1.45,
+    "wallBendSpeed": 0.2,
+    "wallBendSegments": 18,
+    "wallBlobOverlay": true,
+    "wallBlobOverlaySpeed": 0.42,
+    "wallBlobOverlayIntensity": 0.16,
+    "wallBlobOverlayScale": 3.2,
+    "wallBlobOverlayColor": "#4f6a92",
+    "chatPrints": {
+      "enabled": true,
+      "pollMs": 10000,
+      "fetchLimit": 220,
+      "maxVisible": 184,
+      "maxChars": 380,
+      "backgroundOpacity": 0.0,
+      "backgroundColor": "#0e0e0e"
+    },
     "ceilingColor": "#efede7",
     "roughness": 0.92,
     "metalness": 0.03
   },
+  "environmentTexture": "/textures/cueva-de-los-manos_wallpaper.jpg",
   "lights": {
     "ambientColor": "#fffaf0",
     "ambientIntensity": 2.75,
@@ -87,6 +113,80 @@
       }
     }
   ],
+  "proceduralObjects": [
+    {
+      "id": "blob_alpha",
+      "shape": "blob",
+      "position": [-3.1, 0.75, -0.8],
+      "rotation": [0, 0.2, 0],
+      "radius": 0.65,
+      "tubularSegments": 0,
+      "radialSegments": 3,
+      "blobAmplitude": 0.06,
+      "blobFrequency": 0.7,
+      "blobSpeed": 1.85,
+      "material": {
+        "color": "#e8f9ff",
+        "metalness": 0.76,
+        "roughness": 0.03,
+        "transmission": 0.97,
+        "thickness": 0.15,
+        "ior": 1.38,
+        "envMapIntensity": 1.55,
+        "opacity": 0.72,
+        "realtimeEnvMap": true,
+        "envMapResolution": 256,
+        "envMapRefreshFrames": 2
+      },
+      "animation": {
+        "collisionAware": true,
+        "speed": 0.42,
+        "boundaryPadding": 1.2,
+        "turnJitter": 0.42,
+        "bobDistance": 0.05,
+        "bobSpeed": 0.52,
+        "swayAngle": 0.02,
+        "swaySpeed": 2.2,
+        "direction": [1, 0.05]
+      }
+    },
+    {
+      "id": "blob_beta",
+      "shape": "blob",
+      "position": [3.4, 1.25, -0.1],
+      "rotation": [0, -0.25, 0],
+      "radius": 0.92,
+      "tubularSegments": 3,
+      "radialSegments": 14,
+      "blobAmplitude": 0.14,
+      "blobFrequency": 1.55,
+      "blobSpeed": 0.78,
+      "material": {
+        "color": "#e8f9ff",
+        "metalness": 0.04,
+        "roughness": 0.035,
+        "transmission": 0.975,
+        "thickness": 0.58,
+        "ior": 1.4,
+        "envMapIntensity": 1.5,
+        "opacity": 0.68,
+        "realtimeEnvMap": true,
+        "envMapResolution": 256,
+        "envMapRefreshFrames": 2
+      },
+      "animation": {
+        "collisionAware": true,
+        "speed": 0.48,
+        "boundaryPadding": 1.2,
+        "turnJitter": 0.46,
+        "bobDistance": 0.045,
+        "bobSpeed": 0.6,
+        "swayAngle": 0.018,
+        "swaySpeed": 2.6,
+        "direction": [-1, -0.12]
+      }
+    }
+  ],
   "physics": {
     "enabled": true,
     "iterations": 2,
@@ -114,6 +214,28 @@
       { "a": "visitor", "b": "robot", "enabled": true },
       { "a": "visitor", "b": "robot_2", "enabled": true },
       { "a": "robot", "b": "robot_2", "enabled": true }
+    ]
+  },
+  "chat": {
+    "enabled": true,
+    "title": "Blob Salon",
+    "visitorActorId": "visitor",
+    "collisionCooldownMs": 4200,
+    "blobs": [
+      {
+        "id": "blob_alpha",
+        "label": "Blob Alpha",
+        "systemPrompt": "You are Blob Alpha, an art-focused guide in a virtual gallery. You respond in concise, poetic-critical language and stay strictly on art, curation, aesthetics, interpretation, and art history.",
+        "collisionPrompt": "A collision happened between Blob Alpha and the visitor in the room. Reply with one short, art-focused message.",
+        "chatOnCollision": true
+      },
+      {
+        "id": "blob_beta",
+        "label": "Blob Beta",
+        "systemPrompt": "You are Blob Beta, a pragmatic art theorist in a virtual gallery. You stay strictly on art topics and respond with short concrete observations about form, medium, and context.",
+        "collisionPrompt": "Blob Beta collided with the visitor. Reply with one short art-only reflection tied to movement, form, or installation context.",
+        "chatOnCollision": true
+      }
     ]
   },
   "thumbnailCapture": {
