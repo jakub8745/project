@@ -3,7 +3,7 @@ name: Build + Pin to IPFS + Update DNSLink
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["sidebar-video-thumbs"]
     paths-ignore:
       - "worker/**"
 
