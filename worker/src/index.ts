@@ -7,6 +7,8 @@ export interface Env {
   ART_ONLY_GUARD?: string;
   SOUL_PROMPT?: string;
   DEFAULT_MAX_PRINTS?: string;
+  CHAT_UNLOCK_PHRASE?: string;
+  CHAT_UNLOCK_TTL_SEC?: string;
 }
 
 type ChatHistoryItem = { role: 'user' | 'assistant'; content: string };
@@ -19,6 +21,7 @@ type ChatPayload = {
   blobLabel: string;
   systemPrompt?: string;
   history?: ChatHistoryItem[];
+  unlockPhrase?: string;
 };
 
 const DEFAULT_ART_GUARD =
@@ -61,6 +64,58 @@ function normalizeHistory(history: unknown): ChatHistoryItem[] {
       return { role, content: text } as ChatHistoryItem;
     })
     .filter((item): item is ChatHistoryItem => item !== null);
+}
+
+function normalizeUnlockPhrase(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  return value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+
+function isUnlockValid(env: Env, candidate: unknown): boolean {
+  const configured = normalizeUnlockPhrase(env.CHAT_UNLOCK_PHRASE || '');
+  if (!configured) return true;
+  return normalizeUnlockPhrase(candidate) === configured;
+}
+
+const unlockedSessionMemory = new Map<string, number>();
+
+function unlockTtlSec(env: Env): number {
+  const parsed = Number(env.CHAT_UNLOCK_TTL_SEC || 8 * 60 * 60);
+  if (!Number.isFinite(parsed)) return 8 * 60 * 60;
+  return Math.max(60, Math.floor(parsed));
+}
+
+function unlockCacheKey(sessionId: string): string {
+  return `chat:unlock:${sessionId}`;
+}
+
+async function markSessionUnlocked(env: Env, sessionId: string): Promise<void> {
+  const ttl = unlockTtlSec(env);
+  if (env.CACHE) {
+    await env.CACHE.put(unlockCacheKey(sessionId), '1', { expirationTtl: ttl });
+    return;
+  }
+  unlockedSessionMemory.set(sessionId, Date.now() + ttl * 1000);
+}
+
+async function isSessionUnlocked(env: Env, sessionId: string): Promise<boolean> {
+  const configured = normalizeUnlockPhrase(env.CHAT_UNLOCK_PHRASE || '');
+  if (!configured) return true;
+  if (!sessionId) return false;
+  if (env.CACHE) {
+    const val = await env.CACHE.get(unlockCacheKey(sessionId));
+    return val === '1';
+  }
+  const exp = unlockedSessionMemory.get(sessionId);
+  if (!exp) return false;
+  if (Date.now() > exp) {
+    unlockedSessionMemory.delete(sessionId);
+    return false;
+  }
+  return true;
 }
 
 async function generateBlobReply(env: Env, payload: ChatPayload): Promise<string> {
@@ -227,7 +282,25 @@ export default {
         configured: Boolean(env.OPENAI_API_KEY),
         error: env.OPENAI_API_KEY ? null : 'Missing OPENAI_API_KEY secret in worker.',
         mode: 'worker-api',
-        model: env.OPENAI_MODEL || 'gpt-4o-mini'
+        model: env.OPENAI_MODEL || 'gpt-4o-mini',
+        requiresUnlock: normalizeUnlockPhrase(env.CHAT_UNLOCK_PHRASE || '').length > 0
+      });
+    }
+
+    if (request.method === 'POST' && url.pathname === '/api/chat/unlock') {
+      const payload = await readJson<{ sessionId?: string; phrase?: string }>(request);
+      const sessionId = typeof payload?.sessionId === 'string' ? payload.sessionId : '';
+      if (!sessionId) {
+        return json({ ok: false, unlocked: false, error: 'sessionId is required.' }, 400);
+      }
+      if (!isUnlockValid(env, payload?.phrase || '')) {
+        return json({ ok: false, unlocked: false, error: 'Invalid secret words.' }, 403);
+      }
+      await markSessionUnlocked(env, sessionId);
+      return json({
+        ok: true,
+        unlocked: true,
+        requiresUnlock: normalizeUnlockPhrase(env.CHAT_UNLOCK_PHRASE || '').length > 0
       });
     }
 
@@ -251,6 +324,9 @@ export default {
       const payload = await readJson<ChatPayload>(request);
       if (!payload || !payload.sessionId || !payload.text || !payload.blobId || !payload.blobLabel) {
         return json({ ok: false, error: 'Invalid payload.' }, 400);
+      }
+      if (!(await isSessionUnlocked(env, payload.sessionId))) {
+        return json({ ok: false, error: 'Chat is locked. Unlock this session first.', code: 'UNAUTHORIZED_CHAT' }, 403);
       }
 
       try {

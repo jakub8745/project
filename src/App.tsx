@@ -160,12 +160,20 @@ export default function App() {
   const [blobChatSettings, setBlobChatSettings] = useState<BlobChatSettings>(DEFAULT_BLOB_CHAT_SETTINGS);
   const [activeBlobId, setActiveBlobId] = useState<string | null>(DEFAULT_BLOB_CHAT_SETTINGS.blobs[0]?.id || null);
   const [chatMessages, setChatMessages] = useState<BlobChatMessage[]>([]);
+  const [chatUnlocked, setChatUnlocked] = useState(false);
   const mainRef = useRef<HTMLElement | null>(null);
   const autoHideTimerRef = useRef<number | null>(null);
   const chatSessionIdRef = useRef<string>('default-session');
   const lastCollisionAtRef = useRef<Map<string, number>>(new Map());
   const requestInFlightRef = useRef(false);
-  const { sendMessage: sendToBridge, loading: bridgeLoading, error: bridgeError, available: bridgeAvailable } = useBlobChatBridge();
+  const {
+    sendMessage: sendToBridge,
+    loading: bridgeLoading,
+    error: bridgeError,
+    available: bridgeAvailable,
+    requiresUnlock,
+    unlockChat
+  } = useBlobChatBridge();
   const AUTO_HIDE_DELAY_MS = 5000;
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -314,6 +322,7 @@ export default function App() {
   useEffect(() => {
     chatSessionIdRef.current = `${selectedSlug || 'gallery'}-${Date.now()}`;
     setChatMessages([]);
+    setChatUnlocked(false);
     lastCollisionAtRef.current.clear();
     requestInFlightRef.current = false;
   }, [selectedSlug]);
@@ -357,16 +366,19 @@ export default function App() {
     const labels = blobChatSettings.blobs.map((blob) => blob.label).join(', ');
     setChatMessages((prev) => {
       if (prev.length > 0) return prev;
+      const onlineMessage = requiresUnlock && !chatUnlocked
+        ? `Blob chat is locked. Enter secret words to unlock. Available: ${labels || 'Blob'}.`
+        : `${labels || 'Blob'} online. Ask about art. Use @blob_id to pick a blob; collisions trigger blob replies.`;
       return [
         {
           id: createMessageId('system'),
           role: 'system',
-          text: `${labels || 'Blob'} online. Ask about art. Use @blob_id to pick a blob; collisions trigger blob replies.`,
+          text: onlineMessage,
           createdAt: Date.now()
         }
       ];
     });
-  }, [blobChatSettings.blobs, blobChatSettings.enabled]);
+  }, [blobChatSettings.blobs, blobChatSettings.enabled, requiresUnlock, chatUnlocked]);
 
   const requestBlobReply = useCallback(
     async ({
@@ -381,6 +393,9 @@ export default function App() {
       collisionEvent?: PhysicsCollisionEvent;
     }) => {
       if (!blobChatSettings.enabled || !bridgeAvailable) {
+        return;
+      }
+      if (requiresUnlock && !chatUnlocked) {
         return;
       }
       if (requestInFlightRef.current) return;
@@ -443,12 +458,40 @@ export default function App() {
         requestInFlightRef.current = false;
       }
     },
-    [blobChatSettings.enabled, bridgeAvailable, chatMessages, selectedSlug, sendToBridge]
+    [blobChatSettings.enabled, bridgeAvailable, chatMessages, selectedSlug, sendToBridge, requiresUnlock, chatUnlocked]
   );
 
   const handleChatSend = useCallback(
     async (text: string) => {
       if (!blobChatSettings.enabled) return;
+      if (requiresUnlock && !chatUnlocked) {
+        const phrase = text.trim();
+        if (!phrase) return;
+        const ok = await unlockChat(chatSessionIdRef.current, phrase);
+        if (!ok) {
+          setChatMessages((prev) => [
+            ...prev,
+            {
+              id: createMessageId('system'),
+              role: 'system',
+              text: 'Secret words rejected. Try again.',
+              createdAt: Date.now()
+            }
+          ]);
+          return;
+        }
+        setChatUnlocked(true);
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: createMessageId('system'),
+            role: 'system',
+            text: 'Chat unlocked. You can now talk to the blobs.',
+            createdAt: Date.now()
+          }
+        ]);
+        return;
+      }
       const { blob, messageText } = resolveBlobFromVisitorText(text, blobChatSettings.blobs, activeBlobId);
       if (!blob || !messageText) return;
       setActiveBlobId(blob.id);
@@ -462,12 +505,13 @@ export default function App() {
       setChatMessages((prev) => [...prev, visitorMessage]);
       await requestBlobReply({ blob, trigger: 'visitor', messageText });
     },
-    [activeBlobId, blobChatSettings.blobs, blobChatSettings.enabled, requestBlobReply]
+    [activeBlobId, blobChatSettings.blobs, blobChatSettings.enabled, requestBlobReply, requiresUnlock, chatUnlocked, unlockChat]
   );
 
   const handlePhysicsCollision = useCallback(
     (event: PhysicsCollisionEvent) => {
       if (!blobChatSettings.enabled) return;
+      if (requiresUnlock && !chatUnlocked) return;
       const blob =
         blobChatSettings.blobs.find((entry) => entry.id === event.a || entry.id === event.b) || null;
       if (!blob || !blob.chatOnCollision) return;
@@ -495,7 +539,7 @@ export default function App() {
         collisionEvent: event
       });
     },
-    [blobChatSettings, chatMessages, requestBlobReply]
+    [blobChatSettings, chatMessages, requestBlobReply, requiresUnlock, chatUnlocked]
   );
 
   const activeBlob = blobChatSettings.blobs.find((blob) => blob.id === activeBlobId) || blobChatSettings.blobs[0] || null;
@@ -551,6 +595,7 @@ export default function App() {
             loading={bridgeLoading}
             error={bridgeError}
             bridgeOnline={bridgeAvailable}
+            locked={requiresUnlock && !chatUnlocked}
             onSend={handleChatSend}
           />
         ) : null}

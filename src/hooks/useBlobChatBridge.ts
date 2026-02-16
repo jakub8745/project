@@ -21,6 +21,7 @@ interface BlobChatBridgeSendPayload {
 
 export function useBlobChatBridge() {
   const [available, setAvailable] = useState(false);
+  const [requiresUnlock, setRequiresUnlock] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,8 +38,14 @@ export function useBlobChatBridge() {
   const checkHealth = useCallback(async () => {
     try {
       const response = await fetch(chatApiUrl('/api/chat/health'));
-      const payload = (await readJsonSafe(response)) as { ok?: boolean; configured?: boolean; error?: string };
+      const payload = (await readJsonSafe(response)) as {
+        ok?: boolean;
+        configured?: boolean;
+        error?: string;
+        requiresUnlock?: boolean;
+      };
       setAvailable(Boolean(response.ok && payload.ok && payload.configured));
+      setRequiresUnlock(payload.requiresUnlock === true);
       if (!response.ok || payload.ok === false) {
         setError(payload.error || 'Chat bridge is unavailable.');
       } else {
@@ -46,6 +53,7 @@ export function useBlobChatBridge() {
       }
     } catch (err) {
       setAvailable(false);
+      setRequiresUnlock(false);
       setError(err instanceof Error ? err.message : 'Chat bridge is unavailable.');
     }
   }, [readJsonSafe]);
@@ -83,11 +91,39 @@ export function useBlobChatBridge() {
     }
   }, [readJsonSafe]);
 
+  const unlockChat = useCallback(async (sessionId: string, phrase: string): Promise<boolean> => {
+    try {
+      const response = await fetch(chatApiUrl('/api/chat/unlock'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, phrase })
+      });
+      const json = (await readJsonSafe(response)) as {
+        ok?: boolean;
+        unlocked?: boolean;
+        error?: string;
+        requiresUnlock?: boolean;
+      };
+      setRequiresUnlock(json.requiresUnlock === true);
+      if (!response.ok || json.ok === false || json.unlocked !== true) {
+        setError(json.error || 'Invalid secret words.');
+        return false;
+      }
+      setError(null);
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unlock request failed.');
+      return false;
+    }
+  }, [readJsonSafe]);
+
   return {
     available,
+    requiresUnlock,
     loading,
     error,
     sendMessage,
+    unlockChat,
     refreshHealth: checkHealth
   };
 }

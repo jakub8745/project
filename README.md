@@ -146,6 +146,8 @@ OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
 OPENAI_TIMEOUT_MS=45000
 CHAT_BRIDGE_PORT=8787
+CHAT_UNLOCK_PHRASE=two secret words
+CHAT_UNLOCK_TTL_MS=28800000
 
 # Optional Telegram mirror:
 MIRROR_TO_TELEGRAM=false
@@ -169,6 +171,8 @@ Required GitHub secrets for `.github/workflows/worker-api.yml`:
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 - `OPENAI_API_KEY`
+- `CHAT_UNLOCK_PHRASE` (optional; enables visitor phrase gate for `/api/chat/*`)
+- `CHAT_UNLOCK_TTL_SEC` (optional; session unlock lifetime, default 28800)
 
 One-time setup:
 
@@ -183,6 +187,7 @@ One-time setup:
 Current chat endpoints (compatible with existing app):
 
 - `GET /api/chat/health`
+- `POST /api/chat/unlock`
 - `POST /api/chat/send`
 
 Additional Worker routes:

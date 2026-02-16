@@ -31,6 +31,8 @@ const PORT = Number(process.env.CHAT_BRIDGE_PORT || 8787);
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const OPENAI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || 45000);
+const CHAT_UNLOCK_PHRASE = (process.env.CHAT_UNLOCK_PHRASE || '').trim();
+const CHAT_UNLOCK_TTL_MS = Number(process.env.CHAT_UNLOCK_TTL_MS || 8 * 60 * 60 * 1000);
 const MIRROR_TO_TELEGRAM = String(process.env.MIRROR_TO_TELEGRAM || '').toLowerCase() === 'true';
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
@@ -42,6 +44,7 @@ const ART_ONLY_GUARD =
   'You are an art-focused assistant in a virtual gallery. Only discuss art, artworks, curation, media, aesthetics, interpretation, art process, and art history. If asked about unrelated topics, briefly redirect to art perspective.';
 
 let lastBridgeError = '';
+const unlockedSessions = new Map();
 
 function loadSoulPrompt() {
   try {
@@ -116,6 +119,36 @@ function normalizeHistory(history) {
     .filter((entry) => entry !== null);
 }
 
+function normalizeUnlockPhrase(value) {
+  return String(value || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+
+function isUnlockValid(candidate) {
+  if (!CHAT_UNLOCK_PHRASE) return true;
+  return normalizeUnlockPhrase(candidate) === normalizeUnlockPhrase(CHAT_UNLOCK_PHRASE);
+}
+
+function unlockSession(sessionId) {
+  if (!sessionId) return;
+  const ttl = Number.isFinite(CHAT_UNLOCK_TTL_MS) ? Math.max(60_000, CHAT_UNLOCK_TTL_MS) : 8 * 60 * 60 * 1000;
+  unlockedSessions.set(sessionId, Date.now() + ttl);
+}
+
+function isSessionUnlocked(sessionId) {
+  if (!CHAT_UNLOCK_PHRASE) return true;
+  if (!sessionId) return false;
+  const exp = unlockedSessions.get(sessionId);
+  if (!exp) return false;
+  if (Date.now() > exp) {
+    unlockedSessions.delete(sessionId);
+    return false;
+  }
+  return true;
+}
+
 async function callOpenAI({ systemPrompt, history, text }) {
   if (!OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY is missing for chat bridge.');
@@ -184,8 +217,26 @@ const server = http.createServer(async (req, res) => {
       mode: 'openai-art-blob-chat',
       model: OPENAI_MODEL,
       soulLoaded: soulPrompt.length > 0,
-      telegramMirror: MIRROR_TO_TELEGRAM && telegramConfigured
+      telegramMirror: MIRROR_TO_TELEGRAM && telegramConfigured,
+      requiresUnlock: CHAT_UNLOCK_PHRASE.length > 0
     });
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/chat/unlock') {
+    const body = await parseBody(req);
+    const sessionId = typeof body.sessionId === 'string' ? body.sessionId : '';
+    const phrase = typeof body.phrase === 'string' ? body.phrase : '';
+    if (!sessionId) {
+      json(res, 400, { ok: false, unlocked: false, error: 'sessionId is required.' });
+      return;
+    }
+    if (!isUnlockValid(phrase)) {
+      json(res, 403, { ok: false, unlocked: false, error: 'Invalid secret words.' });
+      return;
+    }
+    unlockSession(sessionId);
+    json(res, 200, { ok: true, unlocked: true, requiresUnlock: CHAT_UNLOCK_PHRASE.length > 0 });
     return;
   }
 
@@ -200,6 +251,10 @@ const server = http.createServer(async (req, res) => {
     const history = normalizeHistory(body.history);
     if (!sessionId || !text) {
       json(res, 400, { ok: false, error: 'sessionId and text are required.' });
+      return;
+    }
+    if (!isSessionUnlocked(sessionId)) {
+      json(res, 403, { ok: false, error: 'Chat is locked. Unlock this session first.', code: 'UNAUTHORIZED_CHAT' });
       return;
     }
 

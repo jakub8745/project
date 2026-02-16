@@ -1587,14 +1587,15 @@ function ProceduralRoomModel({
     const wallTextureUrl = typeof roomSpec?.wallTexture === 'string' ? roomSpec.wallTexture : null;
     const wallTextureRepeatX = coercePositiveNumber(roomSpec?.wallTextureRepeatX, wallPatternScale);
     const wallTextureRepeatY = coercePositiveNumber(roomSpec?.wallTextureRepeatY, wallPatternScale * Math.max(0.5, height / 4));
-    const wallTextureScrollX = typeof roomSpec?.wallTextureScrollX === 'number' ? roomSpec.wallTextureScrollX : 0;
-    const wallTextureScrollY = typeof roomSpec?.wallTextureScrollY === 'number' ? roomSpec.wallTextureScrollY : 0;
-    const wallBendEnabled = roomSpec?.wallBend === true;
+    // Global performance guard: keep wall systems static on all devices.
+    const wallTextureScrollX = 0;
+    const wallTextureScrollY = 0;
+    const wallBendEnabled = false;
     const wallBendAmplitude = coercePositiveNumber(roomSpec?.wallBendAmplitude, 0.18);
     const wallBendFrequency = coercePositiveNumber(roomSpec?.wallBendFrequency, 1.1);
     const wallBendSpeed = coercePositiveNumber(roomSpec?.wallBendSpeed, 0.9);
     const wallBendSegments = Math.max(2, Math.floor(coercePositiveNumber(roomSpec?.wallBendSegments, 20)));
-    const animatedWallOverlay = roomSpec?.wallBlobOverlay === true;
+    const animatedWallOverlay = false;
     const wallBlobOverlaySpeed = coercePositiveNumber(roomSpec?.wallBlobOverlaySpeed, 0.5);
     const wallBlobOverlayIntensity = coercePositiveNumber(roomSpec?.wallBlobOverlayIntensity, 0.22);
     const wallBlobOverlayScale = coercePositiveNumber(roomSpec?.wallBlobOverlayScale, wallPatternScale);

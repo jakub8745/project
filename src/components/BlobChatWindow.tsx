@@ -15,6 +15,7 @@ interface BlobChatWindowProps {
   loading?: boolean;
   error?: string | null;
   bridgeOnline?: boolean;
+  locked?: boolean;
   onSend: (text: string) => Promise<void> | void;
 }
 
@@ -24,6 +25,7 @@ export default function BlobChatWindow({
   loading = false,
   error,
   bridgeOnline = true,
+  locked = false,
   onSend
 }: BlobChatWindowProps) {
   const [input, setInput] = useState('');
@@ -45,6 +47,10 @@ export default function BlobChatWindow({
         {!bridgeOnline ? (
           <span className="rounded-full border border-rose-300/40 bg-rose-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-200">
             Bridge offline
+          </span>
+        ) : locked ? (
+          <span className="rounded-full border border-amber-300/40 bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-100">
+            Locked
           </span>
         ) : null}
       </header>
@@ -89,7 +95,7 @@ export default function BlobChatWindow({
           onKeyUp={(event) => {
             event.stopPropagation();
           }}
-          placeholder="Send a message to Blob Alpha..."
+          placeholder={locked ? 'Enter secret words to unlock chat...' : 'Send a message to Blob Alpha...'}
           className="flex-1 rounded-md border border-white/20 bg-slate-900/80 px-2 py-1 text-sm text-white outline-none focus:border-cyan-300/70"
         />
         <button
