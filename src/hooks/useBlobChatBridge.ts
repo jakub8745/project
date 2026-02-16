@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { chatApiUrl } from '../utils/chatApi';
 
 export type BlobChatBridgeRole = 'user' | 'assistant';
 
@@ -18,13 +19,6 @@ interface BlobChatBridgeSendPayload {
   metadata?: Record<string, unknown>;
 }
 
-const CHAT_API_BASE = (import.meta.env.VITE_CHAT_API_BASE || '').trim().replace(/\/+$/, '');
-
-function chatUrl(path: string) {
-  if (!CHAT_API_BASE) return path;
-  return `${CHAT_API_BASE}${path}`;
-}
-
 export function useBlobChatBridge() {
   const [available, setAvailable] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,7 +36,7 @@ export function useBlobChatBridge() {
 
   const checkHealth = useCallback(async () => {
     try {
-      const response = await fetch(chatUrl('/api/chat/health'));
+      const response = await fetch(chatApiUrl('/api/chat/health'));
       const payload = (await readJsonSafe(response)) as { ok?: boolean; configured?: boolean; error?: string };
       setAvailable(Boolean(response.ok && payload.ok && payload.configured));
       if (!response.ok || payload.ok === false) {
@@ -69,7 +63,7 @@ export function useBlobChatBridge() {
   const sendMessage = useCallback(async (payload: BlobChatBridgeSendPayload): Promise<{ text: string }> => {
     setLoading(true);
     try {
-      const response = await fetch(chatUrl('/api/chat/send'), {
+      const response = await fetch(chatApiUrl('/api/chat/send'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

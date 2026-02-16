@@ -60,6 +60,7 @@ import { AudioMeshes } from './AudioMeshes';
 import { AudioPlayerControls } from './AudioPlayerControls';
 import { getKtx2Loader } from '../loaders/ktx2Loader';
 import { OnscreenJoystick } from './OnscreenJoystick';
+import { chatApiUrl } from '../utils/chatApi';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -205,13 +206,6 @@ function clamp01(value: number): number {
 function clampValue(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
   return Math.max(min, Math.min(max, value));
-}
-
-const CHAT_API_BASE = (import.meta.env.VITE_CHAT_API_BASE || '').trim().replace(/\/+$/, '');
-
-function chatApiUrl(path: string): string {
-  if (!CHAT_API_BASE) return path;
-  return `${CHAT_API_BASE}${path}`;
 }
 
 function createPatternTexture(type: ProceduralPatternType, width = 1024, height = 1024): CanvasTexture | null {
