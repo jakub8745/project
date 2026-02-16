@@ -1,0 +1,90 @@
+
+{
+  "id": "vectai_prez",
+  "modelPath": "/models/vectai_room.glb",
+  "interactivesPath": "/models/interactives_empty.glb",
+  "backgroundTexture": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+  "sidebar": {
+    "logo": {
+      "text": "a proposed layout for exhibit after workshops"
+    },
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "proposed layout",
+        "target": "info_text",
+        "content": "You are viewing a proposed layout for after-workshops exhibition"
+      }
+    ]
+  },
+  "images": {},
+  "videos": {},
+  "sculptures": {},
+      "audio": [
+        {
+            "id": "audio_left",
+            "name": "audio_left",
+            "url": "/audio/Recording_12.mp3",
+            "loop": true,
+            "refDistance": 2,
+            "rolloff": 0.8,
+            "maxDistance": 50,
+            "distanceModel": "linear",
+            "directionalCone": [
+                45,
+                90,
+                0.3
+            ],
+            "coneTarget": [
+                -2,
+                1,
+                0
+            ],
+            "volume": 1
+        },
+         {
+            "id": "audio_right",
+            "name": "audio_right",
+            "url": "/audio/Recording_12.mp3",
+            "loop": true,
+            "refDistance": 1,
+            "rolloff": 0.8,
+            "maxDistance": 10,
+            "distanceModel": "linear",
+            "directionalCone": [
+                45,
+                90,
+                0.3
+            ],
+            "coneTarget": [
+                4,
+                2,
+                0
+            ],
+            "reverse": true,
+            "volume": 5
+        }
+    ],
+  "params": {
+    "exposure": 1.0,
+    "autoExposure": true,
+    "exposureTarget": 0.5,
+    "exposureMin": 0.5,
+    "exposureMax": 2.5,
+    "exposureSampleInterval": 30,
+    "lightIntensity": 1.5,
+    "gravity": -8,
+    "visitorSpeed": 2,
+    "heightOffset": {
+      "x": 0,
+      "y": 1.1,
+      "z": 0
+    },
+    "visitorEnter": {
+      "x": 1,
+      "y": 2,
+      "z": 8
+    },
+    "rotateOrbit": 10
+  }
+}

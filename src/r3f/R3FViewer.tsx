@@ -184,7 +184,7 @@ function getBooleanFromQuery(name: string): boolean {
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 }
 
-type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes';
+type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes' | 'concrete' | 'plaster';
 type SurfacePrint = {
   id: number;
   text: string;
@@ -255,7 +255,7 @@ function createPatternTexture(type: ProceduralPatternType, width = 1024, height 
       ctx.lineTo(x, height);
       ctx.stroke();
     }
-  } else {
+  } else if (type === 'silhouettes') {
     ctx.fillStyle = '#dcd4c7';
     ctx.fillRect(0, 0, width, height);
 
@@ -311,6 +311,59 @@ function createPatternTexture(type: ProceduralPatternType, width = 1024, height 
         drawSilhouette(motifX + 28, y + offsetY, 0.86, colorA);
         drawSilhouette(motifX + 88, y + offsetY + 10, 0.7, colorB);
       }
+    }
+  } else if (type === 'concrete') {
+    ctx.fillStyle = '#8d8f92';
+    ctx.fillRect(0, 0, width, height);
+
+    for (let i = 0; i < 3600; i += 1) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      const s = 1 + Math.floor(Math.random() * 3);
+      const shade = 95 + Math.floor(Math.random() * 65);
+      const alpha = 0.04 + Math.random() * 0.1;
+      ctx.fillStyle = `rgba(${shade}, ${shade}, ${shade}, ${alpha})`;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    for (let i = 0; i < 180; i += 1) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      const len = 8 + Math.random() * 24;
+      const angle = Math.random() * Math.PI * 2;
+      ctx.strokeStyle = `rgba(40, 42, 45, ${0.03 + Math.random() * 0.07})`;
+      ctx.lineWidth = 0.8 + Math.random() * 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+      ctx.stroke();
+    }
+  } else {
+    // plaster
+    ctx.fillStyle = '#f6f1e8';
+    ctx.fillRect(0, 0, width, height);
+
+    for (let i = 0; i < 2800; i += 1) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      const s = 1 + Math.floor(Math.random() * 2);
+      const tone = 210 + Math.floor(Math.random() * 35);
+      const alpha = 0.03 + Math.random() * 0.08;
+      ctx.fillStyle = `rgba(${tone}, ${tone - 5}, ${tone - 10}, ${alpha})`;
+      ctx.fillRect(x, y, s, s);
+    }
+
+    for (let i = 0; i < 70; i += 1) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      const r = 10 + Math.random() * 26;
+      const g = ctx.createRadialGradient(x, y, r * 0.2, x, y, r);
+      g.addColorStop(0, 'rgba(255,255,255,0.13)');
+      g.addColorStop(1, 'rgba(210,198,180,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
@@ -387,7 +440,11 @@ type ProceduralObjectMaterialSpec = {
   color: string;
   metalness: number;
   roughness: number;
+  emissive: string;
+  emissiveIntensity: number;
   envMapIntensity: number;
+  texture?: string;
+  textureRepeat: [number, number];
   transmission: number;
   thickness: number;
   ior: number;
@@ -432,6 +489,10 @@ type ProceduralObjectSpec = {
   collisionRadius: number;
   castShadow: boolean;
   receiveShadow: boolean;
+  userData?: {
+    type?: string;
+    name?: string;
+  };
   animation?: ProceduralObjectAnimationSpec;
   material: ProceduralObjectMaterialSpec;
 };
@@ -456,6 +517,7 @@ function AnimatedProceduralObject({
   const { gl, scene } = useThree();
   const meshRef = useRef<Mesh | null>(null);
   const materialRef = useRef<MeshPhysicalMaterial | null>(null);
+  const textureRef = useRef<Texture | null>(null);
   const basePosition = useMemo(() => new Vector3(...object.position), [object.position]);
   const baseRotation = useMemo(() => new Euler(...object.rotation), [object.rotation]);
   const robotRef = useRef<Robot | null>(null);
@@ -490,6 +552,62 @@ function AnimatedProceduralObject({
       scene.remove(cubeCamera);
     };
   }, [cubeCamera, scene]);
+
+  useEffect(() => {
+    const material = materialRef.current;
+    const texturePath = object.material.texture;
+    if (!material) return undefined;
+
+    const disposeTexture = () => {
+      if (textureRef.current) {
+        if (material.map === textureRef.current) {
+          material.map = null;
+          material.needsUpdate = true;
+        }
+        textureRef.current.dispose();
+        textureRef.current = null;
+      }
+    };
+
+    disposeTexture();
+
+    if (!texturePath) {
+      return undefined;
+    }
+
+    const loader = new TextureLoader();
+    let cancelled = false;
+    loader.load(
+      texturePath,
+      (loaded) => {
+        if (cancelled) {
+          loaded.dispose();
+          return;
+        }
+        loaded.colorSpace = SRGBColorSpace;
+        loaded.wrapS = RepeatWrapping;
+        loaded.wrapT = RepeatWrapping;
+        loaded.repeat.set(
+          Math.max(0.01, object.material.textureRepeat[0]),
+          Math.max(0.01, object.material.textureRepeat[1])
+        );
+        textureRef.current = loaded;
+        material.map = loaded;
+        material.needsUpdate = true;
+      },
+      undefined,
+      () => {
+        if (!cancelled) {
+          console.warn(`Failed to load procedural object texture: ${texturePath}`);
+        }
+      }
+    );
+
+    return () => {
+      cancelled = true;
+      disposeTexture();
+    };
+  }, [object.material.texture, object.material.textureRepeat]);
 
   useEffect(() => {
     const mesh = meshRef.current;
@@ -709,6 +827,7 @@ function AnimatedProceduralObject({
       position={object.position}
       rotation={object.rotation}
       scale={object.scale}
+      userData={object.userData}
       castShadow={object.castShadow}
       receiveShadow={object.receiveShadow}
     >
@@ -740,6 +859,8 @@ function AnimatedProceduralObject({
         color={object.material.color}
         metalness={object.material.metalness}
         roughness={object.material.roughness}
+        emissive={object.material.emissive}
+        emissiveIntensity={object.material.emissiveIntensity}
         envMapIntensity={object.material.envMapIntensity}
         transmission={object.material.transmission}
         thickness={object.material.thickness}
@@ -1487,9 +1608,16 @@ function ProceduralRoomModel({
       typeof roomSpec?.wallBlobOverlayColor === 'string' ? roomSpec.wallBlobOverlayColor : '#556b8f';
     const wallPatternTypeRaw = typeof roomSpec?.wallPatternType === 'string' ? roomSpec.wallPatternType : 'chevrons';
     const wallPatternType: ProceduralPatternType =
-      wallPatternTypeRaw === 'silhouettes' || wallPatternTypeRaw === 'carpet' ? wallPatternTypeRaw : 'chevrons';
+      ['chevrons', 'carpet', 'silhouettes', 'concrete', 'plaster'].includes(wallPatternTypeRaw)
+        ? (wallPatternTypeRaw as ProceduralPatternType)
+        : 'chevrons';
+    const floorPatternTypeRaw = typeof roomSpec?.floorPatternType === 'string' ? roomSpec.floorPatternType : 'carpet';
+    const floorPatternType: ProceduralPatternType =
+      ['chevrons', 'carpet', 'silhouettes', 'concrete', 'plaster'].includes(floorPatternTypeRaw)
+        ? (floorPatternTypeRaw as ProceduralPatternType)
+        : 'carpet';
     const wallPattern = createPatternTexture(wallPatternType);
-    const floorPattern = createPatternTexture('carpet');
+    const floorPattern = createPatternTexture(floorPatternType);
     if (wallPattern) {
       wallPattern.repeat.set(wallPatternScale, wallPatternScale * Math.max(0.5, height / 4));
     }
@@ -2272,6 +2400,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   }, [config?.models]);
   const proceduralObjects = useMemo<ProceduralObjectSpec[] | undefined>(() => {
     if (!Array.isArray(config?.proceduralObjects)) return undefined;
+    const randomTexturePoolByGroup = new Map<string, string[]>();
     const mapped = config.proceduralObjects
       .map((entry) => {
         if (!entry || typeof entry !== 'object') return null;
@@ -2289,6 +2418,31 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         const material = record.material && typeof record.material === 'object'
           ? record.material as Record<string, unknown>
           : {};
+        const userData = record.userData && typeof record.userData === 'object'
+          ? (record.userData as Record<string, unknown>)
+          : undefined;
+        const textureRepeat = Array.isArray(material.textureRepeat) && material.textureRepeat.length >= 2
+          ? [
+              Number((material.textureRepeat as unknown[])[0]) || 1,
+              Number((material.textureRepeat as unknown[])[1]) || 1
+            ] as [number, number]
+          : [1, 1] as [number, number];
+        const textureRandomPool = Array.isArray(material.textureRandomPool)
+          ? (material.textureRandomPool as unknown[]).filter((item): item is string => typeof item === 'string')
+          : [];
+        const textureRandomGroup =
+          typeof material.textureRandomGroup === 'string' ? material.textureRandomGroup : 'default';
+        let resolvedTexture = typeof material.texture === 'string' ? material.texture : undefined;
+        if (textureRandomPool.length > 0) {
+          let groupPool = randomTexturePoolByGroup.get(textureRandomGroup);
+          if (!groupPool || groupPool.length === 0) {
+            groupPool = [...textureRandomPool];
+          }
+          const pickIndex = Math.floor(Math.random() * groupPool.length);
+          resolvedTexture = groupPool[pickIndex];
+          groupPool.splice(pickIndex, 1);
+          randomTexturePoolByGroup.set(textureRandomGroup, groupPool);
+        }
         return {
           id: typeof record.id === 'string' ? record.id : undefined,
           shape: shape as ProceduralObjectShape,
@@ -2327,6 +2481,12 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
               : 0.65,
           castShadow: record.castShadow !== false,
           receiveShadow: record.receiveShadow !== false,
+          userData: userData
+            ? {
+                type: typeof userData.type === 'string' ? userData.type : undefined,
+                name: typeof userData.name === 'string' ? userData.name : undefined
+              }
+            : undefined,
           animation:
             record.animation && typeof record.animation === 'object'
               ? {
@@ -2390,10 +2550,17 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
               typeof material.roughness === 'number' && Number.isFinite(material.roughness)
                 ? Math.min(1, Math.max(0, material.roughness))
                 : 0.06,
+            emissive: typeof material.emissive === 'string' ? material.emissive : '#000000',
+            emissiveIntensity:
+              typeof material.emissiveIntensity === 'number' && Number.isFinite(material.emissiveIntensity)
+                ? Math.max(0, material.emissiveIntensity)
+                : 0,
             envMapIntensity:
               typeof material.envMapIntensity === 'number' && Number.isFinite(material.envMapIntensity)
                 ? Math.max(0, material.envMapIntensity)
                 : 1,
+            texture: resolvedTexture,
+            textureRepeat,
             transmission:
               typeof material.transmission === 'number' && Number.isFinite(material.transmission)
                 ? Math.min(1, Math.max(0, material.transmission))
@@ -2697,6 +2864,16 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
             directionalCone = [cone[0], cone[1], cone[2]];
           }
         }
+        let coneTarget: [number, number, number] | undefined;
+        if (Array.isArray(record.coneTarget)) {
+          const target = (record.coneTarget as unknown[])
+            .slice(0, 3)
+            .map((value) => (typeof value === 'number' ? value : Number(value)))
+            .filter((value) => Number.isFinite(value)) as number[];
+          if (target.length === 3) {
+            coneTarget = [target[0], target[1], target[2]];
+          }
+        }
         const sanitized: AudioMeshConfig = {
           id,
           name: typeof record.name === 'string' ? record.name : undefined,
@@ -2708,7 +2885,10 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           maxDistance: typeof record.maxDistance === 'number' ? record.maxDistance : undefined,
           distanceModel: typeof record.distanceModel === 'string' ? record.distanceModel : undefined,
           volume: typeof record.volume === 'number' ? record.volume : undefined,
-          directionalCone
+          directionalCone,
+          coneTarget,
+          startOffset: typeof record.startOffset === 'number' ? record.startOffset : undefined,
+          reverse: typeof record.reverse === 'boolean' ? record.reverse : undefined
         };
         return sanitized;
       })

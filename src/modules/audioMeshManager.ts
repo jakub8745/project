@@ -15,6 +15,9 @@ export interface AudioMeshConfig {
   distanceModel?: string;
   volume?: number;
   directionalCone?: [innerAngle: number, outerAngle: number, outerGain: number];
+  coneTarget?: [x: number, y: number, z: number];
+  startOffset?: number;
+  reverse?: boolean;
 }
 
 export interface GalleryAudioConfig {
@@ -250,6 +253,18 @@ function loadAudioWithFallback(
   tryPrimary();
 }
 
+function reverseAudioBuffer(buffer: AudioBuffer, context: BaseAudioContext): AudioBuffer {
+  const reversed = context.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+  for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+    const source = buffer.getChannelData(channel);
+    const target = reversed.getChannelData(channel);
+    for (let i = 0, j = source.length - 1; i < source.length; i += 1, j -= 1) {
+      target[i] = source[j];
+    }
+  }
+  return reversed;
+}
+
 
 
 export function applyAudioMeshes(context: AudioMeshContext): void {
@@ -276,12 +291,16 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
       sound.name = cfg.name || obj.userData.name || obj.name;
 
       loadAudioWithFallback(cfg, (buffer) => {
-        sound.setBuffer(buffer);
+        const playbackBuffer = cfg.reverse ? reverseAudioBuffer(buffer, sound.context) : buffer;
+        sound.setBuffer(playbackBuffer);
         sound.setLoop(cfg.loop ?? true);
         sound.setRefDistance(cfg.refDistance ?? 1);
         sound.setRolloffFactor(cfg.rolloff ?? 1);
         sound.setMaxDistance(cfg.maxDistance ?? 5);
         sound.setDistanceModel(cfg.distanceModel ?? 'linear');
+        if (typeof cfg.startOffset === 'number' && Number.isFinite(cfg.startOffset)) {
+          sound.offset = Math.max(0, cfg.startOffset);
+        }
         const baseVolume = cfg.volume ?? 1;
         sound.userData.__baseVolume = baseVolume;
         applyVolumeToSound(sound);
@@ -310,8 +329,12 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
       });
 
       obj.scale.setScalar(0.1);
-      obj.rotateX(Math.PI / 2);
-      obj.rotation.y += MathUtils.degToRad(120);
+      if (Array.isArray(cfg.coneTarget)) {
+        obj.lookAt(cfg.coneTarget[0], cfg.coneTarget[1], cfg.coneTarget[2]);
+      } else {
+        obj.rotateX(Math.PI / 2);
+        obj.rotation.y += MathUtils.degToRad(120);
+      }
     }
 
     if (type === 'Pitcher' && transform) {
