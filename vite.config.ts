@@ -4,6 +4,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const proxyTarget = (env.VITE_CHAT_PROXY_TARGET || '').trim();
+  const allowedHosts = (env.VITE_DEV_ALLOWED_HOSTS || '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
 
   return {
     plugins: [react()],
@@ -11,7 +15,7 @@ export default defineConfig(({ mode }) => {
       host: 'localhost',
       port: 5173,
       strictPort: false,
-      allowedHosts: ['92f0346c603e.ngrok-free.app'],
+      allowedHosts: allowedHosts.length > 0 ? allowedHosts : undefined,
       proxy: proxyTarget
         ? {
             '/api/chat': {

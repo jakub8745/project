@@ -76,6 +76,14 @@ function getBooleanFromQuery(name: string): boolean {
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 }
 
+function detectIPadLikeDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+  const maxTouch = navigator.maxTouchPoints || 0;
+  return /iPad/i.test(ua) || (platform === 'MacIntel' && maxTouch > 1);
+}
+
 function parseBlobPersonas(chat: Record<string, unknown>): BlobPersona[] {
   const blobsRaw = Array.isArray(chat.blobs) ? chat.blobs : null;
   if (blobsRaw && blobsRaw.length > 0) {
@@ -271,10 +279,11 @@ export default function App() {
 
   useEffect(() => {
     const updateViewportFlags = () => {
+      const isIPadLike = detectIPadLikeDevice();
       const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
       const narrowViewport = window.matchMedia('(max-width: 1024px)').matches;
       const portraitNow = window.matchMedia('(orientation: portrait)').matches || window.innerHeight > window.innerWidth;
-      setIsMobileViewport(coarsePointer && narrowViewport);
+      setIsMobileViewport((coarsePointer && narrowViewport) || isIPadLike);
       setIsPortrait(portraitNow);
       setIsFullscreen(Boolean(document.fullscreenElement));
       if (!portraitNow) {

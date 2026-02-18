@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 
 export interface BlobChatMessage {
   id: string;
@@ -29,7 +29,36 @@ export default function BlobChatWindow({
   onSend
 }: BlobChatWindowProps) {
   const [input, setInput] = useState('');
+  const [hasNewBlobMessage, setHasNewBlobMessage] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const lastMessageIdRef = useRef<string | null>(null);
+  const indicatorTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const latest = messages[messages.length - 1];
+    if (!latest) return;
+    const previousId = lastMessageIdRef.current;
+    lastMessageIdRef.current = latest.id;
+    if (!previousId) return;
+    if (latest.id === previousId) return;
+    if (latest.role !== 'blob') return;
+    setHasNewBlobMessage(true);
+    if (indicatorTimerRef.current !== null) {
+      window.clearTimeout(indicatorTimerRef.current);
+    }
+    indicatorTimerRef.current = window.setTimeout(() => {
+      setHasNewBlobMessage(false);
+      indicatorTimerRef.current = null;
+    }, 3200);
+  }, [messages]);
+
+  useEffect(() => {
+    return () => {
+      if (indicatorTimerRef.current !== null) {
+        window.clearTimeout(indicatorTimerRef.current);
+      }
+    };
+  }, []);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -43,7 +72,14 @@ export default function BlobChatWindow({
   return (
     <section className="pointer-events-auto absolute bottom-4 right-4 z-40 flex h-[24rem] w-[22rem] max-w-[92vw] flex-col rounded-xl border border-white/20 bg-slate-950/85 shadow-xl backdrop-blur-sm">
       <header className="flex items-center justify-between border-b border-white/15 px-3 py-2 text-sm font-semibold text-white">
-        <span>{title}</span>
+        <div className="flex items-center gap-2">
+          <span>{title}</span>
+          {hasNewBlobMessage ? (
+            <span className="rounded-full border border-cyan-300/40 bg-cyan-400/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-100 animate-pulse">
+              New reply
+            </span>
+          ) : null}
+        </div>
         {!bridgeOnline ? (
           <span className="rounded-full border border-rose-300/40 bg-rose-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-200">
             Bridge offline

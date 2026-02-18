@@ -2,6 +2,7 @@ import http from 'node:http';
 import { URL } from 'node:url';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 function loadEnvFromFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -33,6 +34,14 @@ const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const OPENAI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS || 45000);
 const CHAT_UNLOCK_PHRASE = (process.env.CHAT_UNLOCK_PHRASE || '').trim();
 const CHAT_UNLOCK_TTL_MS = Number(process.env.CHAT_UNLOCK_TTL_MS || 8 * 60 * 60 * 1000);
+const CORS_ALLOW_ORIGINS = String(process.env.CORS_ALLOW_ORIGINS || '')
+  .split(',')
+  .map((entry) => entry.trim())
+  .filter(Boolean);
+const RATE_LIMIT_CHAT_PER_MIN = Math.max(1, Number(process.env.RATE_LIMIT_CHAT_PER_MIN || 24));
+const RATE_LIMIT_UNLOCK_PER_MIN = Math.max(1, Number(process.env.RATE_LIMIT_UNLOCK_PER_MIN || 12));
+const MAX_CHAT_TEXT_LENGTH = Math.max(32, Number(process.env.MAX_CHAT_TEXT_LENGTH || 2400));
+
 const MIRROR_TO_TELEGRAM = String(process.env.MIRROR_TO_TELEGRAM || '').toLowerCase() === 'true';
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
@@ -45,6 +54,7 @@ const ART_ONLY_GUARD =
 
 let lastBridgeError = '';
 const unlockedSessions = new Map();
+const rateBuckets = new Map();
 
 function loadSoulPrompt() {
   try {
@@ -55,15 +65,53 @@ function loadSoulPrompt() {
   }
 }
 
-function json(res, statusCode, payload) {
+function getCorsOrigin(req) {
+  const origin = String(req.headers.origin || '').trim();
+  if (CORS_ALLOW_ORIGINS.length === 0) return '*';
+  if (!origin) return CORS_ALLOW_ORIGINS[0] || 'null';
+  if (CORS_ALLOW_ORIGINS.includes(origin)) return origin;
+  return 'null';
+}
+
+function isOriginAllowed(req) {
+  if (CORS_ALLOW_ORIGINS.length === 0) return true;
+  const origin = String(req.headers.origin || '').trim();
+  if (!origin) return true;
+  return CORS_ALLOW_ORIGINS.includes(origin);
+}
+
+function json(req, res, statusCode, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': getCorsOrigin(req),
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
+    'Access-Control-Allow-Headers': 'Content-Type',
+    Vary: 'Origin'
   });
   res.end(body);
+}
+
+function fingerprintRequest(req) {
+  const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  const ip = forwarded || req.socket.remoteAddress || 'unknown-ip';
+  const ua = String(req.headers['user-agent'] || 'unknown-ua');
+  return crypto.createHash('sha256').update(`${ip}|${ua}`).digest('hex');
+}
+
+function checkRateLimit(req, action, maxPerMinute) {
+  const key = `${action}:${fingerprintRequest(req)}`;
+  const now = Date.now();
+  const windowMs = 60_000;
+  const bucket = rateBuckets.get(key) || [];
+  const fresh = bucket.filter((ts) => now - ts < windowMs);
+  if (fresh.length >= maxPerMinute) {
+    rateBuckets.set(key, fresh);
+    return false;
+  }
+  fresh.push(now);
+  rateBuckets.set(key, fresh);
+  return true;
 }
 
 async function parseBody(req) {
@@ -131,19 +179,28 @@ function isUnlockValid(candidate) {
   return normalizeUnlockPhrase(candidate) === normalizeUnlockPhrase(CHAT_UNLOCK_PHRASE);
 }
 
-function unlockSession(sessionId) {
-  if (!sessionId) return;
-  const ttl = Number.isFinite(CHAT_UNLOCK_TTL_MS) ? Math.max(60_000, CHAT_UNLOCK_TTL_MS) : 8 * 60 * 60 * 1000;
-  unlockedSessions.set(sessionId, Date.now() + ttl);
+function isSafeSessionId(value) {
+  return /^[A-Za-z0-9._:-]{1,128}$/.test(String(value || ''));
 }
 
-function isSessionUnlocked(sessionId) {
+function unlockKey(sessionId, req) {
+  return `${sessionId}:${fingerprintRequest(req)}`;
+}
+
+function unlockSession(sessionId, req) {
+  if (!sessionId) return;
+  const ttl = Number.isFinite(CHAT_UNLOCK_TTL_MS) ? Math.max(60_000, CHAT_UNLOCK_TTL_MS) : 8 * 60 * 60 * 1000;
+  unlockedSessions.set(unlockKey(sessionId, req), Date.now() + ttl);
+}
+
+function isSessionUnlocked(sessionId, req) {
   if (!CHAT_UNLOCK_PHRASE) return true;
   if (!sessionId) return false;
-  const exp = unlockedSessions.get(sessionId);
+  const key = unlockKey(sessionId, req);
+  const exp = unlockedSessions.get(key);
   if (!exp) return false;
   if (Date.now() > exp) {
-    unlockedSessions.delete(sessionId);
+    unlockedSessions.delete(key);
     return false;
   }
   return true;
@@ -197,11 +254,15 @@ async function callOpenAI({ systemPrompt, history, text }) {
 
 const server = http.createServer(async (req, res) => {
   if (!req.url || !req.method) {
-    json(res, 400, { ok: false, error: 'Bad request' });
+    json(req, res, 400, { ok: false, error: 'Bad request' });
     return;
   }
   if (req.method === 'OPTIONS') {
-    json(res, 200, { ok: true });
+    json(req, res, 200, { ok: true });
+    return;
+  }
+  if (!isOriginAllowed(req)) {
+    json(req, res, 403, { ok: false, error: 'Origin not allowed.' });
     return;
   }
 
@@ -209,7 +270,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && url.pathname === '/api/chat/health') {
     const soulPrompt = loadSoulPrompt();
-    json(res, 200, {
+    json(req, res, 200, {
       ok: true,
       configured: OPENAI_API_KEY.length > 0,
       error: OPENAI_API_KEY.length > 0 ? null : 'Set OPENAI_API_KEY for chat bridge.',
@@ -224,37 +285,48 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && url.pathname === '/api/chat/unlock') {
+    if (!checkRateLimit(req, 'unlock', RATE_LIMIT_UNLOCK_PER_MIN)) {
+      json(req, res, 429, { ok: false, unlocked: false, error: 'Too many unlock attempts. Try again shortly.' });
+      return;
+    }
+
     const body = await parseBody(req);
-    const sessionId = typeof body.sessionId === 'string' ? body.sessionId : '';
+    const sessionId = typeof body.sessionId === 'string' ? body.sessionId.trim() : '';
     const phrase = typeof body.phrase === 'string' ? body.phrase : '';
-    if (!sessionId) {
-      json(res, 400, { ok: false, unlocked: false, error: 'sessionId is required.' });
+    if (!isSafeSessionId(sessionId)) {
+      json(req, res, 400, { ok: false, unlocked: false, error: 'sessionId is invalid.' });
       return;
     }
     if (!isUnlockValid(phrase)) {
-      json(res, 403, { ok: false, unlocked: false, error: 'Invalid secret words.' });
+      json(req, res, 403, { ok: false, unlocked: false, error: 'Invalid secret words.' });
       return;
     }
-    unlockSession(sessionId);
-    json(res, 200, { ok: true, unlocked: true, requiresUnlock: CHAT_UNLOCK_PHRASE.length > 0 });
+    unlockSession(sessionId, req);
+    json(req, res, 200, { ok: true, unlocked: true, requiresUnlock: CHAT_UNLOCK_PHRASE.length > 0 });
     return;
   }
 
   if (req.method === 'POST' && url.pathname === '/api/chat/send') {
+    if (!checkRateLimit(req, 'chat_send', RATE_LIMIT_CHAT_PER_MIN)) {
+      json(req, res, 429, { ok: false, error: 'Rate limit exceeded. Please wait before sending another message.' });
+      return;
+    }
+
     const body = await parseBody(req);
-    const sessionId = typeof body.sessionId === 'string' ? body.sessionId : '';
+    const sessionId = typeof body.sessionId === 'string' ? body.sessionId.trim() : '';
     const text = typeof body.text === 'string' ? body.text.trim() : '';
     const trigger = body.trigger === 'collision' ? 'collision' : 'visitor';
     const blobId = typeof body.blobId === 'string' ? body.blobId : 'blob_alpha';
     const blobLabel = typeof body.blobLabel === 'string' ? body.blobLabel : blobId;
     const systemPrompt = typeof body.systemPrompt === 'string' ? body.systemPrompt : '';
     const history = normalizeHistory(body.history);
-    if (!sessionId || !text) {
-      json(res, 400, { ok: false, error: 'sessionId and text are required.' });
+
+    if (!isSafeSessionId(sessionId) || !text || text.length > MAX_CHAT_TEXT_LENGTH) {
+      json(req, res, 400, { ok: false, error: `sessionId and text (1..${MAX_CHAT_TEXT_LENGTH}) are required.` });
       return;
     }
-    if (!isSessionUnlocked(sessionId)) {
-      json(res, 403, { ok: false, error: 'Chat is locked. Unlock this session first.', code: 'UNAUTHORIZED_CHAT' });
+    if (!isSessionUnlocked(sessionId, req)) {
+      json(req, res, 403, { ok: false, error: 'Chat is locked. Unlock this session first.', code: 'UNAUTHORIZED_CHAT' });
       return;
     }
 
@@ -266,21 +338,21 @@ const server = http.createServer(async (req, res) => {
         await mirrorToTelegram(`${blobLabel}: ${reply}`);
       }
       lastBridgeError = '';
-      json(res, 200, { ok: true, text: reply, blobId, blobLabel });
+      json(req, res, 200, { ok: true, text: reply, blobId, blobLabel });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to call OpenAI.';
       lastBridgeError = message;
-      json(res, 502, { ok: false, error: message });
+      json(req, res, 502, { ok: false, error: message });
     }
     return;
   }
 
   if (req.method === 'GET' && url.pathname === '/api/chat/poll') {
-    json(res, 200, { ok: true, messages: [], lastId: Number(url.searchParams.get('after') || 0) });
+    json(req, res, 200, { ok: true, messages: [], lastId: Number(url.searchParams.get('after') || 0) });
     return;
   }
 
-  json(res, 404, { ok: false, error: 'Not found' });
+  json(req, res, 404, { ok: false, error: 'Not found' });
 });
 
 server.listen(PORT, () => {

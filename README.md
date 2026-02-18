@@ -124,8 +124,14 @@ Frontend hook: `src/hooks/useBlobChatBridge.ts`
 # For deployed static site on IPFS/custom domain:
 VITE_CHAT_API_BASE=https://your-worker-api.example.com
 
+# Optional default base for static/IPFS hosts when VITE_CHAT_API_BASE is not set:
+VITE_DEFAULT_IPFS_CHAT_API_BASE=https://your-worker-api.example.com
+
 # Optional local dev proxy target (Vite only):
 VITE_CHAT_PROXY_TARGET=http://localhost:8787
+
+# Optional comma-separated host allowlist for Vite dev server:
+VITE_DEV_ALLOWED_HOSTS=example.ngrok-free.app
 ```
 
 Notes:
@@ -148,6 +154,10 @@ OPENAI_TIMEOUT_MS=45000
 CHAT_BRIDGE_PORT=8787
 CHAT_UNLOCK_PHRASE=two secret words
 CHAT_UNLOCK_TTL_MS=28800000
+RATE_LIMIT_CHAT_PER_MIN=24
+RATE_LIMIT_UNLOCK_PER_MIN=12
+MAX_CHAT_TEXT_LENGTH=2400
+CORS_ALLOW_ORIGINS=http://localhost:5173,https://archive.bluepointart.uk
 
 # Optional Telegram mirror:
 MIRROR_TO_TELEGRAM=false
@@ -173,6 +183,7 @@ Required GitHub secrets for `.github/workflows/worker-api.yml`:
 - `OPENAI_API_KEY`
 - `CHAT_UNLOCK_PHRASE` (optional; enables visitor phrase gate for `/api/chat/*`)
 - `CHAT_UNLOCK_TTL_SEC` (optional; session unlock lifetime, default 28800)
+- `TEXTURE_WRITE_TOKEN` (required for `PUT /api/textures/:key`)
 
 One-time setup:
 
@@ -181,8 +192,12 @@ One-time setup:
    - `database_id`
    - `kv_namespaces.id`
 3. Optionally set `SOUL_PROMPT` in `worker/wrangler.toml` (project-level framing).
-4. Run Worker deploy workflow.
-5. Set `VITE_CHAT_API_BASE` in frontend build environment to your Worker domain.
+4. Configure origin/rate/upload controls in Worker vars:
+   - `CORS_ALLOW_ORIGINS` (comma-separated allowlist; empty = allow all)
+   - `RATE_LIMIT_CHAT_PER_MIN`, `RATE_LIMIT_UNLOCK_PER_MIN`, `RATE_LIMIT_TEXTURE_PUT_PER_MIN`
+   - `MAX_CHAT_TEXT_LENGTH`, `MAX_SYSTEM_PROMPT_LENGTH`, `MAX_TEXTURE_UPLOAD_BYTES`
+5. Run Worker deploy workflow.
+6. Set `VITE_CHAT_API_BASE` in frontend build environment to your Worker domain.
 
 Current chat endpoints (compatible with existing app):
 

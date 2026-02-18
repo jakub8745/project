@@ -9,6 +9,14 @@ export interface Env {
   DEFAULT_MAX_PRINTS?: string;
   CHAT_UNLOCK_PHRASE?: string;
   CHAT_UNLOCK_TTL_SEC?: string;
+  CORS_ALLOW_ORIGINS?: string;
+  TEXTURE_WRITE_TOKEN?: string;
+  RATE_LIMIT_CHAT_PER_MIN?: string;
+  RATE_LIMIT_UNLOCK_PER_MIN?: string;
+  RATE_LIMIT_TEXTURE_PUT_PER_MIN?: string;
+  MAX_CHAT_TEXT_LENGTH?: string;
+  MAX_SYSTEM_PROMPT_LENGTH?: string;
+  MAX_TEXTURE_UPLOAD_BYTES?: string;
 }
 
 type ChatHistoryItem = { role: 'user' | 'assistant'; content: string };
@@ -27,6 +35,15 @@ type ChatPayload = {
 const DEFAULT_ART_GUARD =
   'You are an art-focused assistant in a virtual gallery. Only discuss art, artworks, curation, media, aesthetics, interpretation, art process, and art history. If asked about unrelated topics, briefly redirect to art perspective.';
 
+const DEFAULT_CHAT_RATE_LIMIT_PER_MIN = 24;
+const DEFAULT_UNLOCK_RATE_LIMIT_PER_MIN = 12;
+const DEFAULT_TEXTURE_PUT_RATE_LIMIT_PER_MIN = 20;
+const DEFAULT_CHAT_TEXT_MAX_CHARS = 2400;
+const DEFAULT_SYSTEM_PROMPT_MAX_CHARS = 4000;
+const DEFAULT_TEXTURE_UPLOAD_MAX_BYTES = 8 * 1024 * 1024;
+
+const unlockedSessionMemory = new Map<string, number>();
+
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -34,13 +51,19 @@ function json(data: unknown, status = 200) {
       'content-type': 'application/json; charset=utf-8',
       'access-control-allow-origin': '*',
       'access-control-allow-methods': 'GET,POST,PUT,OPTIONS',
-      'access-control-allow-headers': 'content-type'
+      'access-control-allow-headers': 'content-type,authorization,x-api-key'
     }
   });
 }
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
+}
+
+function parseIntEnv(raw: string | undefined, fallback: number, min: number, max: number): number {
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  return clamp(Math.floor(parsed), min, max);
 }
 
 async function readJson<T>(request: Request): Promise<T | null> {
@@ -80,42 +103,130 @@ function isUnlockValid(env: Env, candidate: unknown): boolean {
   return normalizeUnlockPhrase(candidate) === configured;
 }
 
-const unlockedSessionMemory = new Map<string, number>();
-
 function unlockTtlSec(env: Env): number {
   const parsed = Number(env.CHAT_UNLOCK_TTL_SEC || 8 * 60 * 60);
   if (!Number.isFinite(parsed)) return 8 * 60 * 60;
   return Math.max(60, Math.floor(parsed));
 }
 
-function unlockCacheKey(sessionId: string): string {
-  return `chat:unlock:${sessionId}`;
+function getAllowedOrigins(env: Env): string[] {
+  return String(env.CORS_ALLOW_ORIGINS || '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
 }
 
-async function markSessionUnlocked(env: Env, sessionId: string): Promise<void> {
+function isOriginAllowed(request: Request, env: Env): boolean {
+  const allowed = getAllowedOrigins(env);
+  if (allowed.length === 0) return true;
+  const origin = (request.headers.get('origin') || '').trim();
+  if (!origin) return true;
+  return allowed.includes(origin);
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function getClientFingerprint(request: Request): Promise<string> {
+  const ip = request.headers.get('cf-connecting-ip') || 'unknown-ip';
+  const ua = request.headers.get('user-agent') || 'unknown-ua';
+  return sha256Hex(`${ip}|${ua}`);
+}
+
+function unlockCacheKey(sessionId: string, clientFingerprint: string): string {
+  return `chat:unlock:${sessionId}:${clientFingerprint}`;
+}
+
+async function markSessionUnlocked(env: Env, sessionId: string, clientFingerprint: string): Promise<void> {
   const ttl = unlockTtlSec(env);
+  const key = unlockCacheKey(sessionId, clientFingerprint);
   if (env.CACHE) {
-    await env.CACHE.put(unlockCacheKey(sessionId), '1', { expirationTtl: ttl });
+    await env.CACHE.put(key, '1', { expirationTtl: ttl });
     return;
   }
-  unlockedSessionMemory.set(sessionId, Date.now() + ttl * 1000);
+  unlockedSessionMemory.set(key, Date.now() + ttl * 1000);
 }
 
-async function isSessionUnlocked(env: Env, sessionId: string): Promise<boolean> {
+async function isSessionUnlocked(env: Env, sessionId: string, clientFingerprint: string): Promise<boolean> {
   const configured = normalizeUnlockPhrase(env.CHAT_UNLOCK_PHRASE || '');
   if (!configured) return true;
-  if (!sessionId) return false;
+  if (!sessionId || !clientFingerprint) return false;
+  const key = unlockCacheKey(sessionId, clientFingerprint);
   if (env.CACHE) {
-    const val = await env.CACHE.get(unlockCacheKey(sessionId));
+    const val = await env.CACHE.get(key);
     return val === '1';
   }
-  const exp = unlockedSessionMemory.get(sessionId);
+  const exp = unlockedSessionMemory.get(key);
   if (!exp) return false;
   if (Date.now() > exp) {
-    unlockedSessionMemory.delete(sessionId);
+    unlockedSessionMemory.delete(key);
     return false;
   }
   return true;
+}
+
+function isSafeSessionId(value: string): boolean {
+  return /^[A-Za-z0-9._:-]{1,128}$/.test(value);
+}
+
+function isSafeStorageKey(key: string): boolean {
+  if (!key || key.length > 200) return false;
+  if (key.includes('..') || key.startsWith('/')) return false;
+  return /^[A-Za-z0-9._\-/]+$/.test(key);
+}
+
+function normalizeContentType(raw: string | null): string {
+  return String(raw || 'application/octet-stream').split(';')[0].trim().toLowerCase();
+}
+
+function isAllowedTextureContentType(contentType: string): boolean {
+  if (!contentType) return true;
+  if (contentType.startsWith('image/')) return true;
+  return [
+    'application/octet-stream',
+    'application/ktx2',
+    'model/gltf-binary',
+    'model/gltf+json',
+    'application/gltf-buffer'
+  ].includes(contentType);
+}
+
+function readBearerOrApiKey(request: Request): string {
+  const auth = request.headers.get('authorization') || '';
+  const match = auth.match(/^Bearer\s+(.+)$/i);
+  if (match?.[1]) return match[1].trim();
+  return (request.headers.get('x-api-key') || '').trim();
+}
+
+function isTextureWriteAuthorized(request: Request, env: Env): boolean {
+  const configured = (env.TEXTURE_WRITE_TOKEN || '').trim();
+  if (!configured) return false;
+  const provided = readBearerOrApiKey(request);
+  return Boolean(provided) && provided === configured;
+}
+
+async function checkRateLimit(env: Env, key: string, limit: number, windowSec: number): Promise<boolean> {
+  if (!env.CACHE) return true;
+  const current = Number(await env.CACHE.get(key) || '0');
+  const next = current + 1;
+  await env.CACHE.put(key, String(next), { expirationTtl: windowSec });
+  return next <= limit;
+}
+
+async function guardRateLimit(
+  env: Env,
+  request: Request,
+  action: string,
+  limit: number,
+  windowSec: number
+): Promise<boolean> {
+  const fingerprint = await getClientFingerprint(request);
+  return checkRateLimit(env, `rate:${action}:${fingerprint}`, limit, windowSec);
 }
 
 async function generateBlobReply(env: Env, payload: ChatPayload): Promise<string> {
@@ -251,8 +362,6 @@ async function listPrints(env: Env, limit: number) {
 
 async function invalidatePrintCache(env: Env) {
   if (!env.CACHE) return;
-  // Small namespace, cheap brute-force invalidation pattern key range is not available.
-  // We only use a few known limits.
   const limits = [100, 250, 500, 1000, 1500];
   await Promise.all(limits.map((limit) => env.CACHE.delete(`prints:latest:${limit}`)));
 }
@@ -261,6 +370,10 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') {
       return json({ ok: true });
+    }
+
+    if (!isOriginAllowed(request, env)) {
+      return json({ ok: false, error: 'Origin not allowed.' }, 403);
     }
 
     const url = new URL(request.url);
@@ -288,15 +401,22 @@ export default {
     }
 
     if (request.method === 'POST' && url.pathname === '/api/chat/unlock') {
+      const unlockLimit = parseIntEnv(env.RATE_LIMIT_UNLOCK_PER_MIN, DEFAULT_UNLOCK_RATE_LIMIT_PER_MIN, 1, 1200);
+      const unlockAllowed = await guardRateLimit(env, request, 'unlock', unlockLimit, 60);
+      if (!unlockAllowed) {
+        return json({ ok: false, unlocked: false, error: 'Too many unlock attempts. Try again shortly.' }, 429);
+      }
+
       const payload = await readJson<{ sessionId?: string; phrase?: string }>(request);
-      const sessionId = typeof payload?.sessionId === 'string' ? payload.sessionId : '';
-      if (!sessionId) {
-        return json({ ok: false, unlocked: false, error: 'sessionId is required.' }, 400);
+      const sessionId = typeof payload?.sessionId === 'string' ? payload.sessionId.trim() : '';
+      if (!isSafeSessionId(sessionId)) {
+        return json({ ok: false, unlocked: false, error: 'sessionId is invalid.' }, 400);
       }
       if (!isUnlockValid(env, payload?.phrase || '')) {
         return json({ ok: false, unlocked: false, error: 'Invalid secret words.' }, 403);
       }
-      await markSessionUnlocked(env, sessionId);
+      const clientFingerprint = await getClientFingerprint(request);
+      await markSessionUnlocked(env, sessionId, clientFingerprint);
       return json({
         ok: true,
         unlocked: true,
@@ -321,35 +441,75 @@ export default {
     }
 
     if (request.method === 'POST' && (url.pathname === '/api/chat' || url.pathname === '/api/chat/send')) {
+      const chatLimit = parseIntEnv(env.RATE_LIMIT_CHAT_PER_MIN, DEFAULT_CHAT_RATE_LIMIT_PER_MIN, 1, 1200);
+      const chatAllowed = await guardRateLimit(env, request, 'chat_send', chatLimit, 60);
+      if (!chatAllowed) {
+        return json({ ok: false, error: 'Rate limit exceeded. Please wait before sending another message.' }, 429);
+      }
+
       const payload = await readJson<ChatPayload>(request);
       if (!payload || !payload.sessionId || !payload.text || !payload.blobId || !payload.blobLabel) {
         return json({ ok: false, error: 'Invalid payload.' }, 400);
       }
-      if (!(await isSessionUnlocked(env, payload.sessionId))) {
+
+      const sessionId = payload.sessionId.trim();
+      const text = payload.text.trim();
+      const blobId = payload.blobId.trim();
+      const blobLabel = payload.blobLabel.trim();
+      const chatTextMax = parseIntEnv(env.MAX_CHAT_TEXT_LENGTH, DEFAULT_CHAT_TEXT_MAX_CHARS, 32, 12000);
+      const systemPromptMax = parseIntEnv(env.MAX_SYSTEM_PROMPT_LENGTH, DEFAULT_SYSTEM_PROMPT_MAX_CHARS, 128, 16000);
+
+      if (!isSafeSessionId(sessionId)) {
+        return json({ ok: false, error: 'sessionId is invalid.' }, 400);
+      }
+      if (!text || text.length > chatTextMax) {
+        return json({ ok: false, error: `text must be 1..${chatTextMax} characters.` }, 400);
+      }
+      if (!blobId || blobId.length > 80 || !/^[A-Za-z0-9._:-]+$/.test(blobId)) {
+        return json({ ok: false, error: 'blobId is invalid.' }, 400);
+      }
+      if (!blobLabel || blobLabel.length > 120) {
+        return json({ ok: false, error: 'blobLabel is invalid.' }, 400);
+      }
+      if (payload.systemPrompt && payload.systemPrompt.length > systemPromptMax) {
+        return json({ ok: false, error: `systemPrompt exceeds ${systemPromptMax} characters.` }, 400);
+      }
+
+      const clientFingerprint = await getClientFingerprint(request);
+      if (!(await isSessionUnlocked(env, sessionId, clientFingerprint))) {
         return json({ ok: false, error: 'Chat is locked. Unlock this session first.', code: 'UNAUTHORIZED_CHAT' }, 403);
       }
 
+      const safePayload: ChatPayload = {
+        ...payload,
+        sessionId,
+        text,
+        blobId,
+        blobLabel,
+        systemPrompt: payload.systemPrompt?.trim()
+      };
+
       try {
         const visitorId = await insertMessage(env, {
-          sessionId: payload.sessionId,
-          blobId: payload.blobId,
+          sessionId: safePayload.sessionId,
+          blobId: safePayload.blobId,
           role: 'visitor',
-          content: payload.text.trim(),
-          trigger: payload.trigger
+          content: safePayload.text,
+          trigger: safePayload.trigger
         });
-        const reply = await generateBlobReply(env, payload);
+        const reply = await generateBlobReply(env, safePayload);
         const blobMsgId = await insertMessage(env, {
-          sessionId: payload.sessionId,
-          blobId: payload.blobId,
+          sessionId: safePayload.sessionId,
+          blobId: safePayload.blobId,
           role: 'blob',
           content: reply,
-          trigger: payload.trigger
+          trigger: safePayload.trigger
         });
         await insertPrintFromMessage(env, {
           messageId: blobMsgId,
-          sessionId: payload.sessionId,
-          blobId: payload.blobId,
-          blobLabel: payload.blobLabel,
+          sessionId: safePayload.sessionId,
+          blobId: safePayload.blobId,
+          blobLabel: safePayload.blobLabel,
           text: reply
         });
         await invalidatePrintCache(env);
@@ -360,9 +520,45 @@ export default {
     }
 
     if (request.method === 'PUT' && url.pathname.startsWith('/api/textures/')) {
+      const textureWriteLimit = parseIntEnv(
+        env.RATE_LIMIT_TEXTURE_PUT_PER_MIN,
+        DEFAULT_TEXTURE_PUT_RATE_LIMIT_PER_MIN,
+        1,
+        1200
+      );
+      const textureWriteAllowed = await guardRateLimit(env, request, 'texture_put', textureWriteLimit, 60);
+      if (!textureWriteAllowed) {
+        return json({ ok: false, error: 'Rate limit exceeded for texture uploads.' }, 429);
+      }
+
+      if (!isTextureWriteAuthorized(request, env)) {
+        return json({ ok: false, error: 'Unauthorized texture upload.' }, 401);
+      }
+
       const key = url.pathname.replace('/api/textures/', '').trim();
-      if (!key) return json({ ok: false, error: 'Texture key required.' }, 400);
-      const contentType = request.headers.get('content-type') || 'application/octet-stream';
+      if (!isSafeStorageKey(key)) {
+        return json({ ok: false, error: 'Texture key is invalid.' }, 400);
+      }
+      if (!request.body) {
+        return json({ ok: false, error: 'Missing upload body.' }, 400);
+      }
+
+      const maxTextureBytes = parseIntEnv(
+        env.MAX_TEXTURE_UPLOAD_BYTES,
+        DEFAULT_TEXTURE_UPLOAD_MAX_BYTES,
+        1024,
+        1024 * 1024 * 256
+      );
+      const contentLength = Number(request.headers.get('content-length') || '0');
+      if (Number.isFinite(contentLength) && contentLength > 0 && contentLength > maxTextureBytes) {
+        return json({ ok: false, error: `Texture exceeds ${maxTextureBytes} bytes.` }, 413);
+      }
+
+      const contentType = normalizeContentType(request.headers.get('content-type'));
+      if (!isAllowedTextureContentType(contentType)) {
+        return json({ ok: false, error: `Unsupported content-type: ${contentType}` }, 415);
+      }
+
       await env.TEXTURE_BUCKET.put(key, request.body, {
         httpMetadata: { contentType }
       });
@@ -371,7 +567,7 @@ export default {
 
     if (request.method === 'GET' && url.pathname.startsWith('/api/textures/')) {
       const key = url.pathname.replace('/api/textures/', '').trim();
-      if (!key) return json({ ok: false, error: 'Texture key required.' }, 400);
+      if (!isSafeStorageKey(key)) return json({ ok: false, error: 'Texture key is invalid.' }, 400);
       const object = await env.TEXTURE_BUCKET.get(key);
       if (!object) return json({ ok: false, error: 'Not found' }, 404);
       return new Response(object.body, {

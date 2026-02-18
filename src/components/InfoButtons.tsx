@@ -2,6 +2,7 @@ import { useState, useEffect, FC } from 'react';
 import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
 import { COMMON_ICONS } from '../data/galleryConfig';
 import { normalizeConfigUrl, toSafeExternalUrl } from '../utils/url';
+import { sanitizeSidebarHtml } from '../utils/sanitizeHtml';
 
 export interface InfoItem {
   id: string;
@@ -109,9 +110,13 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             link: toSafeExternalUrl(link),
           };
         });
-        sidebarCache.set(fetchUrl, normalized);
+        const sanitized: InfoItem[] = normalized.map((item) => ({
+          ...item,
+          content: sanitizeSidebarHtml(item.content)
+        }));
+        sidebarCache.set(fetchUrl, sanitized);
         if (!controller.signal.aborted) {
-          setItems(normalized);
+          setItems(sanitized);
         }
       })
       .catch(err => {

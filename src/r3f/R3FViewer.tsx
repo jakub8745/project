@@ -185,6 +185,14 @@ function getBooleanFromQuery(name: string): boolean {
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 }
 
+function detectIPadLikeDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+  const maxTouch = navigator.maxTouchPoints || 0;
+  return /iPad/i.test(ua) || (platform === 'MacIntel' && maxTouch > 1);
+}
+
 type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes' | 'concrete' | 'plaster';
 type SurfacePrint = {
   id: number;
@@ -606,10 +614,11 @@ function AnimatedProceduralObject({
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh) return;
-    objectRefs.current.set(objectIndex, { mesh, radius: object.collisionRadius });
+    const refs = objectRefs.current;
+    refs.set(objectIndex, { mesh, radius: object.collisionRadius });
     onActorRef?.(actorId, mesh, object.collisionRadius);
     return () => {
-      objectRefs.current.delete(objectIndex);
+      refs.delete(objectIndex);
       onActorRef?.(actorId, null, object.collisionRadius);
     };
   }, [actorId, object.collisionRadius, objectIndex, objectRefs, onActorRef]);
@@ -1119,10 +1128,11 @@ function AnimatedProceduralModel({
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
-    modelRefs.current.set(modelIndex, wrapper);
+    const refs = modelRefs.current;
+    refs.set(modelIndex, wrapper);
     onActorRef?.(actorId, wrapper, model.collisionRadius);
     return () => {
-      modelRefs.current.delete(modelIndex);
+      refs.delete(modelIndex);
       onActorRef?.(actorId, null, model.collisionRadius);
     };
   }, [actorId, model.collisionRadius, modelIndex, modelRefs, onActorRef]);
@@ -1403,6 +1413,7 @@ function ProceduralRoomModel({
   const width = coercePositiveNumber(roomSpec?.width, 16);
   const depth = coercePositiveNumber(roomSpec?.depth, 16);
   const height = coercePositiveNumber(roomSpec?.height, 4);
+  const wallThickness = coercePositiveNumber(roomSpec?.wallThickness, 0.2);
   const floorY = typeof roomSpec?.floorY === 'number' && Number.isFinite(roomSpec.floorY) ? roomSpec.floorY : 0;
   const chatPrintsConfig = roomSpec?.chatPrints && typeof roomSpec.chatPrints === 'object'
     ? (roomSpec.chatPrints as Record<string, unknown>)
@@ -1498,15 +1509,34 @@ function ProceduralRoomModel({
   const renderedSurfacePrints = useMemo(() => {
     const halfW = width / 2;
     const halfD = depth / 2;
-    const wallInset = 0.035;
+    const surfaceGap = 0.01;
+    const wallInnerInset = wallThickness / 2;
+    const seededUnit = (seed: number, salt: number) => {
+      const x = Math.sin(seed * 12.9898 + salt * 78.233) * 43758.5453;
+      return x - Math.floor(x);
+    };
     return surfacePrints.map((print, idx) => {
+      const styleSeed = Number.isFinite(print.id) ? print.id : idx + 1;
+      const fontScaleJitter = 0.82 + seededUnit(styleSeed, 1) * 0.42; // 0.82..1.24
+      const shadeJitter = (seededUnit(styleSeed, 2) - 0.5) * 0.28; // -0.14..0.14
       const layerDepth = idx * 0.0012;
-      const panelWidth = clampValue(1.2 * print.scale, 0.45, 2.8);
+      const panelWidth = clampValue(1.8 * print.scale, 0.45, 4.2);
       const panelHeight = clampValue(0.48 * print.scale, 0.2, 1.25);
-      const fontSize = clampValue(0.11 * print.scale, 0.055, 0.22);
+      const fontSize = clampValue(0.11 * print.scale * fontScaleJitter, 0.05, 0.24);
       const localRotation = print.rotation;
+      // Keep prints away from corners/edges so they don't intersect adjacent walls.
+      const uMarginWall = clampValue(panelWidth / (2 * Math.max(width, depth)) + 0.015, 0, 0.45);
+      const vMarginWall = clampValue(panelHeight / (2 * height) + 0.015, 0, 0.45);
+      const uWall = clampValue(print.u, uMarginWall, 1 - uMarginWall);
+      const vWall = clampValue(print.v, vMarginWall, 1 - vMarginWall);
+      const uMarginFloor = clampValue(panelWidth / (2 * width) + 0.015, 0, 0.45);
+      const vMarginFloor = clampValue(panelHeight / (2 * depth) + 0.015, 0, 0.45);
+      const uFloor = clampValue(print.u, uMarginFloor, 1 - uMarginFloor);
+      const vFloor = clampValue(print.v, vMarginFloor, 1 - vMarginFloor);
       const clippedText =
         print.text.length > chatPrintsMaxChars ? `${print.text.slice(0, chatPrintsMaxChars - 1)}…` : print.text;
+      const variedColor = new Color(print.color);
+      variedColor.offsetHSL(0, 0, shadeJitter);
       let px = 0;
       let py = floorY + height * 0.5;
       let pz = 0;
@@ -1515,28 +1545,28 @@ function ProceduralRoomModel({
       let rz = 0;
 
       if (print.surface === 'north') {
-        px = -halfW + print.u * width;
-        py = floorY + print.v * height;
-        pz = -halfD + wallInset + layerDepth;
+        px = -halfW + uWall * width;
+        py = floorY + vWall * height;
+        pz = -halfD + wallInnerInset + surfaceGap + layerDepth;
       } else if (print.surface === 'south') {
-        px = -halfW + print.u * width;
-        py = floorY + print.v * height;
-        pz = halfD - wallInset - layerDepth;
+        px = -halfW + uWall * width;
+        py = floorY + vWall * height;
+        pz = halfD - wallInnerInset - surfaceGap - layerDepth;
         ry = Math.PI;
       } else if (print.surface === 'west') {
-        px = -halfW + wallInset + layerDepth;
-        py = floorY + print.v * height;
-        pz = -halfD + print.u * depth;
+        px = -halfW + wallInnerInset + surfaceGap + layerDepth;
+        py = floorY + vWall * height;
+        pz = -halfD + uWall * depth;
         ry = Math.PI / 2;
       } else if (print.surface === 'east') {
-        px = halfW - wallInset - layerDepth;
-        py = floorY + print.v * height;
-        pz = -halfD + print.u * depth;
+        px = halfW - wallInnerInset - surfaceGap - layerDepth;
+        py = floorY + vWall * height;
+        pz = -halfD + uWall * depth;
         ry = -Math.PI / 2;
       } else {
-        px = -halfW + print.u * width;
-        py = floorY + wallInset + layerDepth;
-        pz = -halfD + print.v * depth;
+        px = -halfW + uFloor * width;
+        py = floorY + surfaceGap + layerDepth;
+        pz = -halfD + vFloor * depth;
         rx = -Math.PI / 2;
       }
 
@@ -1547,7 +1577,7 @@ function ProceduralRoomModel({
         panelWidth,
         panelHeight,
         fontSize,
-        color: print.color,
+        color: `#${variedColor.getHexString()}`,
         opacity: print.opacity,
         panelOpacity: chatPrintsBackgroundOpacity,
         panelColor: chatPrintsBackgroundColor,
@@ -1562,6 +1592,7 @@ function ProceduralRoomModel({
     depth,
     floorY,
     height,
+    wallThickness,
     surfacePrints,
     width
   ]);
@@ -2824,6 +2855,9 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   }, [config?.images]);
 
   const showLegacyModal = useLegacyModal(legacyImages);
+  const isIPadLike = useMemo(() => detectIPadLikeDevice(), []);
+  const effectiveMaxDpr = isIPadLike ? 1 : 1.5;
+  const useLogDepth = !isIPadLike;
 
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [xrSupported, setXrSupported] = useState(false);
@@ -3064,19 +3098,19 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   return (
     <div className="relative h-full w-full bg-gallery-dark">
       <Canvas
-        shadows
+        shadows={!isIPadLike}
         camera={{ position: [10, 6, -10], fov: 60, near: 0.1, far: 2000 }}
-        dpr={typeof window !== 'undefined' ? [1, Math.min(1.5, window.devicePixelRatio || 1)] : [1, 1.5]}
+        dpr={typeof window !== 'undefined' ? [1, Math.min(effectiveMaxDpr, window.devicePixelRatio || 1)] : [1, effectiveMaxDpr]}
         gl={{
           antialias: true,
           alpha: false,
           powerPreference: 'low-power',
-          logarithmicDepthBuffer: true,
+          logarithmicDepthBuffer: useLogDepth,
           stencil: false
         }}
         onCreated={handleCanvasCreated}
       >
-        <RendererTuning />
+        <RendererTuning lowPowerMode={isIPadLike} />
         <SceneBackground
           textureUrl={config?.backgroundTexture}
           blurriness={backgroundBlurriness}
@@ -3547,18 +3581,20 @@ function AudioSystem({
   );
 }
 
-function RendererTuning() {
+function RendererTuning({ lowPowerMode = false }: { lowPowerMode?: boolean }) {
   const { gl } = useThree();
 
   useEffect(() => {
     //gl.physicallyCorrectLights = true;
     gl.outputColorSpace = SRGBColorSpace;
-    gl.shadowMap.enabled = true;
-    gl.shadowMap.type = PCFSoftShadowMap;
-    if (typeof window !== 'undefined') {
-      gl.setPixelRatio(Math.min(1.5, window.devicePixelRatio || 1));
+    gl.shadowMap.enabled = !lowPowerMode;
+    if (!lowPowerMode) {
+      gl.shadowMap.type = PCFSoftShadowMap;
     }
-  }, [gl]);
+    if (typeof window !== 'undefined') {
+      gl.setPixelRatio(Math.min(lowPowerMode ? 1 : 1.5, window.devicePixelRatio || 1));
+    }
+  }, [gl, lowPowerMode]);
 
   return null;
 }
