@@ -30,7 +30,7 @@ export interface GalleryItem {
     }[];
 }
 
-export const DEFAULT_CONFIG_URL = "./configs/puno85_config.json";
+export const DEFAULT_CONFIG_URL = "./configs/videopoems_config.json";
 import { oracleStaticUrl } from '../utils/ipfs';
 
 // Common reusable sidebar item: Help / How to move

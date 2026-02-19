@@ -1,9 +1,6 @@
 // src/store/galleryStore.ts
 import { create } from 'zustand';
-import { GalleryItem } from '../data/galleryConfig';
-
-const DEFAULT_CONFIG_URL =
-  'https://bafybeiacxiiqnajlgll6naaulp6ervnfte6kbp75hkhsj4gzpzz7wxze7m.ipfs.w3s.link/exhibit_puno85_config.json';
+import { DEFAULT_CONFIG_URL, GALLERIES, GalleryItem } from '../data/galleryConfig';
 
 function getConfigUrlFromQuery(): string | null {
   const params = new URLSearchParams(window.location.search);
@@ -27,13 +24,14 @@ interface GalleryState {
    * Returns, in order:
    * 1. configUrl of the clicked item
    * 2. ?configUrl=… in the URL
-   * 3. DEFAULT_CONFIG_URL
+   * 3. first gallery configUrl
+   * 4. DEFAULT_CONFIG_URL
    */
   getEffectiveConfigUrl: () => string;
 }
 
 export const useGalleryStore = create<GalleryState>((set, get) => ({
-  galleries: [],
+  galleries: GALLERIES,
   selectedGallery: null,
 
   setGalleries: (galleries) => set({ galleries }),
@@ -50,6 +48,7 @@ export const useGalleryStore = create<GalleryState>((set, get) => ({
     if (fromQuery) {
       return fromQuery;
     }
-    return DEFAULT_CONFIG_URL;
+    const firstGalleryConfig = get().galleries[0]?.configUrl ?? GALLERIES[0]?.configUrl;
+    return firstGalleryConfig ?? DEFAULT_CONFIG_URL;
   },
 }));
