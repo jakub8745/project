@@ -93,9 +93,10 @@ jobs:
               const resp = await fetch(api, { method: "PATCH", headers, body });
               const out = await resp.json();
               if (!out.success) { console.error(out); process.exit(1); }
-              console.log(`Updated Web3 hostname ${hostnameId} to ${dnslink}`);
+              console.log(`Updated Cloudflare Web3 hostname: ${hostnameId}`);
             })();
             '
+            exit 0
           fi
           if [ -z "${DNSLINK_RECORD_NAME}" ]; then
             echo "DNSLINK_RECORD_NAME is empty; skipping DNSLink update."
