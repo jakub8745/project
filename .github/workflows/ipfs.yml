@@ -79,7 +79,9 @@ jobs:
           if [ -n "${DNSLINK_RECORD_NAME}" ]; then
             echo "DNSLINK_RECORD_NAME target: ${DNSLINK_RECORD_NAME}"
           fi
+          WEB3_UPDATED=0
           if [ -n "${CF_WEB3_HOSTNAME_ID}" ]; then
+            set +e
             node -e '
             const token = process.env.CF_API_TOKEN;
             const zone = process.env.CF_ZONE_ID;
@@ -96,6 +98,15 @@ jobs:
               console.log(`Updated Cloudflare Web3 hostname: ${hostnameId}`);
             })();
             '
+            WEB3_STATUS=$?
+            set -e
+            if [ "${WEB3_STATUS}" -eq 0 ]; then
+              WEB3_UPDATED=1
+            else
+              echo "Cloudflare Web3 hostname update failed; will continue with DNS TXT fallback."
+            fi
+          fi
+          if [ "${WEB3_UPDATED}" -eq 1 ]; then
             exit 0
           fi
           if [ -z "${DNSLINK_RECORD_NAME}" ]; then
