@@ -1441,14 +1441,6 @@ function ProceduralRoomModel({
         : 72
     )
   );
-  const chatPrintsMaxChars = Math.max(
-    40,
-    Math.floor(
-      typeof chatPrintsConfig?.maxChars === 'number' && Number.isFinite(chatPrintsConfig.maxChars)
-        ? chatPrintsConfig.maxChars
-        : 160
-    )
-  );
   const chatPrintsBackgroundOpacity = clampValue(
     typeof chatPrintsConfig?.backgroundOpacity === 'number' && Number.isFinite(chatPrintsConfig.backgroundOpacity)
       ? chatPrintsConfig.backgroundOpacity
@@ -1533,8 +1525,6 @@ function ProceduralRoomModel({
       const vMarginFloor = clampValue(panelHeight / (2 * depth) + 0.015, 0, 0.45);
       const uFloor = clampValue(print.u, uMarginFloor, 1 - uMarginFloor);
       const vFloor = clampValue(print.v, vMarginFloor, 1 - vMarginFloor);
-      const clippedText =
-        print.text.length > chatPrintsMaxChars ? `${print.text.slice(0, chatPrintsMaxChars - 1)}…` : print.text;
       const variedColor = new Color(print.color);
       variedColor.offsetHSL(0, 0, shadeJitter);
       let px = 0;
@@ -1573,7 +1563,7 @@ function ProceduralRoomModel({
       rz += localRotation;
       return {
         id: print.id,
-        text: clippedText,
+        text: print.text,
         panelWidth,
         panelHeight,
         fontSize,
@@ -1588,7 +1578,6 @@ function ProceduralRoomModel({
   }, [
     chatPrintsBackgroundColor,
     chatPrintsBackgroundOpacity,
-    chatPrintsMaxChars,
     depth,
     floorY,
     height,

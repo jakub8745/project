@@ -31,6 +31,7 @@ interface BlobPersona {
   id: string;
   label: string;
   systemPrompt: string;
+  systemPromptPath?: string;
   collisionPrompt: string;
   chatOnCollision: boolean;
 }
@@ -100,6 +101,10 @@ function parseBlobPersonas(chat: Record<string, unknown>): BlobPersona[] {
             typeof record.systemPrompt === 'string'
               ? record.systemPrompt
               : `You are ${typeof record.label === 'string' ? record.label : id}, an art-focused guide in a virtual gallery. Discuss only art.`,
+          systemPromptPath:
+            typeof record.systemPromptPath === 'string' && record.systemPromptPath.trim()
+              ? record.systemPromptPath.trim()
+              : undefined,
           collisionPrompt:
             typeof record.collisionPrompt === 'string'
               ? record.collisionPrompt
@@ -131,6 +136,24 @@ function parseBlobPersonas(chat: Record<string, unknown>): BlobPersona[] {
   ];
 }
 
+async function resolveBlobPromptsFromPaths(blobs: BlobPersona[], signal: AbortSignal): Promise<BlobPersona[]> {
+  const resolved = await Promise.all(
+    blobs.map(async (blob) => {
+      if (!blob.systemPromptPath) return blob;
+      try {
+        const response = await fetch(blob.systemPromptPath, { signal });
+        if (!response.ok) return blob;
+        const text = (await response.text()).trim();
+        if (!text) return blob;
+        return { ...blob, systemPrompt: text };
+      } catch {
+        return blob;
+      }
+    })
+  );
+  return resolved;
+}
+
 function resolveBlobFromVisitorText(text: string, blobs: BlobPersona[], fallbackBlobId: string | null) {
   const trimmed = text.trim();
   if (!trimmed) return { blob: null as BlobPersona | null, messageText: '' };
@@ -153,6 +176,13 @@ function extractLastQuestion(text: string): string | null {
   if (!matches || matches.length === 0) return null;
   const candidate = matches[matches.length - 1]?.trim() || '';
   return candidate.length > 1 ? candidate : null;
+}
+
+function getLastChatLine(messages: BlobChatMessage[]): { speaker: string; text: string } | null {
+  const last = [...messages].reverse().find((entry) => entry.role === 'visitor' || entry.role === 'blob');
+  if (!last || !last.text.trim()) return null;
+  const speaker = last.role === 'visitor' ? 'Visitor' : (last.senderLabel || 'Blob');
+  return { speaker, text: last.text.trim() };
 }
 
 export default function App() {
@@ -347,7 +377,8 @@ export default function App() {
         if (!response.ok) return;
         const raw = (await response.json()) as Record<string, unknown>;
         const chat = raw.chat && typeof raw.chat === 'object' ? (raw.chat as Record<string, unknown>) : {};
-        const blobs = parseBlobPersonas(chat);
+        const parsedBlobs = parseBlobPersonas(chat);
+        const blobs = await resolveBlobPromptsFromPaths(parsedBlobs, controller.signal);
         const next: BlobChatSettings = {
           enabled: chat.enabled === true,
           title: typeof chat.title === 'string' ? chat.title : DEFAULT_BLOB_CHAT_SETTINGS.title,
@@ -400,28 +431,33 @@ export default function App() {
       trigger: 'visitor' | 'collision';
       messageText: string;
       collisionEvent?: PhysicsCollisionEvent;
-    }) => {
+    }): Promise<string | null> => {
       if (!blobChatSettings.enabled || !bridgeAvailable) {
-        return;
+        return null;
       }
       if (requiresUnlock && !chatUnlocked) {
-        return;
+        return null;
       }
-      if (requestInFlightRef.current) return;
+      if (requestInFlightRef.current) return null;
       requestInFlightRef.current = true;
-      const finalUserMessage =
-        trigger === 'collision'
-          ? messageText.trim()
-            ? `Collision trigger. Continue naturally by responding to this prompt:\n${messageText}`
-            : `${blob.collisionPrompt}\nTrigger payload: ${messageText}`
-          : messageText;
+      const cleanMessage = messageText.trim();
+      const finalUserMessage = [
+        'Continue the ongoing discussion theme between Visitor and blobs.',
+        'Reply directly to the last chat message in context.',
+        'Do not mention collisions, triggers, system mechanics, or game logic.',
+        '',
+        cleanMessage || 'Continue the current art discussion with a concise response.'
+      ].join('\n');
       try {
         const history = chatMessages
-          .filter((entry) => (entry.role === 'visitor' || entry.role === 'blob') && entry.blobId === blob.id)
+          .filter((entry) => entry.role === 'visitor' || entry.role === 'blob')
           .slice(-10)
           .map((entry) => ({
-            role: entry.role === 'visitor' ? 'user' as const : 'assistant' as const,
-            content: entry.text
+            role: entry.role === 'blob' && entry.blobId === blob.id ? ('assistant' as const) : ('user' as const),
+            content:
+              entry.role === 'visitor'
+                ? `Visitor: ${entry.text}`
+                : `${entry.senderLabel || entry.blobId || 'Blob'}: ${entry.text}`
           }));
         const result = await sendToBridge({
           sessionId: chatSessionIdRef.current,
@@ -451,7 +487,9 @@ export default function App() {
               senderLabel: blob.label
             }
           ]);
+          return result.text.trim();
         }
+        return null;
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Chat bridge request failed.';
         setChatMessages((prev) => [
@@ -463,6 +501,7 @@ export default function App() {
             createdAt: Date.now()
           }
         ]);
+        return null;
       } finally {
         requestInFlightRef.current = false;
       }
@@ -521,32 +560,69 @@ export default function App() {
     (event: PhysicsCollisionEvent) => {
       if (!blobChatSettings.enabled) return;
       if (requiresUnlock && !chatUnlocked) return;
-      const blob =
-        blobChatSettings.blobs.find((entry) => entry.id === event.a || entry.id === event.b) || null;
-      if (!blob || !blob.chatOnCollision) return;
+      const blobA = blobChatSettings.blobs.find((entry) => entry.id === event.a) || null;
+      const blobB = blobChatSettings.blobs.find((entry) => entry.id === event.b) || null;
       const hasVisitor = event.a === blobChatSettings.visitorActorId || event.b === blobChatSettings.visitorActorId;
-      if (!hasVisitor) return;
-      const now = Date.now();
-      const lastAt = lastCollisionAtRef.current.get(blob.id) || 0;
-      if (now - lastAt < blobChatSettings.collisionCooldownMs) return;
-      lastCollisionAtRef.current.set(blob.id, now);
-      setActiveBlobId(blob.id);
 
-      const [x, y, z] = event.point;
-      const collisionText = `Collision at (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)}), penetration ${event.penetration.toFixed(3)}.`;
-      const lastBlobMessageForBlob = [...chatMessages]
-        .reverse()
-        .find((entry) => entry.role === 'blob' && entry.blobId === blob.id);
-      const lastBlobQuestion = lastBlobMessageForBlob ? extractLastQuestion(lastBlobMessageForBlob.text) : null;
-      const lastVisitorMessageForBlob = [...chatMessages]
-        .reverse()
-        .find((entry) => entry.role === 'visitor' && entry.blobId === blob.id);
-      void requestBlobReply({
-        blob,
-        trigger: 'collision',
-        messageText: lastBlobQuestion || lastVisitorMessageForBlob?.text || collisionText,
-        collisionEvent: event
-      });
+      void (async () => {
+        if (blobA && blobB && blobA.id !== blobB.id) {
+          if (!blobA.chatOnCollision && !blobB.chatOnCollision) return;
+          const pairKey = blobA.id < blobB.id ? `${blobA.id}__${blobB.id}` : `${blobB.id}__${blobA.id}`;
+          const now = Date.now();
+          const lastAt = lastCollisionAtRef.current.get(pairKey) || 0;
+          if (now - lastAt < blobChatSettings.collisionCooldownMs) return;
+          lastCollisionAtRef.current.set(pairKey, now);
+
+          const lastLine = getLastChatLine(chatMessages);
+          const themedSeed = lastLine
+            ? `${lastLine.speaker}: ${lastLine.text}\nReply to this message and continue the same art discussion theme.`
+            : 'Continue the current art discussion theme with one concise response.';
+          const first = blobA.chatOnCollision
+            ? await requestBlobReply({
+                blob: blobA,
+                trigger: 'collision',
+                messageText: themedSeed,
+                collisionEvent: event
+              })
+            : null;
+          if (!blobB.chatOnCollision) return;
+          const secondPrompt = first
+            ? `${blobA.label}: ${first}\nReply to this message and continue the same art discussion theme.`
+            : themedSeed;
+          await requestBlobReply({
+            blob: blobB,
+            trigger: 'collision',
+            messageText: secondPrompt,
+            collisionEvent: event
+          });
+          setActiveBlobId(blobB.id);
+          return;
+        }
+
+        if (!hasVisitor) return;
+        const blob =
+          blobChatSettings.blobs.find((entry) => entry.id === event.a || entry.id === event.b) || null;
+        if (!blob || !blob.chatOnCollision) return;
+
+        const now = Date.now();
+        const lastAt = lastCollisionAtRef.current.get(blob.id) || 0;
+        if (now - lastAt < blobChatSettings.collisionCooldownMs) return;
+        lastCollisionAtRef.current.set(blob.id, now);
+        setActiveBlobId(blob.id);
+
+        const lastLine = getLastChatLine(chatMessages);
+        const lastBlobMessageForBlob = [...chatMessages].reverse().find((entry) => entry.role === 'blob' && entry.blobId === blob.id);
+        const lastBlobQuestion = lastBlobMessageForBlob ? extractLastQuestion(lastBlobMessageForBlob.text) : null;
+        const seed = lastLine
+          ? `${lastLine.speaker}: ${lastLine.text}\nReply to this message and continue the same art discussion theme.`
+          : 'Continue the current art discussion theme with one concise response.';
+        await requestBlobReply({
+          blob,
+          trigger: 'collision',
+          messageText: lastBlobQuestion || seed,
+          collisionEvent: event
+        });
+      })();
     },
     [blobChatSettings, chatMessages, requestBlobReply, requiresUnlock, chatUnlocked]
   );

@@ -208,12 +208,27 @@
         "radius": 0.95,
         "mass": 1.0,
         "pushable": true
+      },
+      "blob_alpha": {
+        "enabled": true,
+        "radius": 0.68,
+        "mass": 1.4,
+        "pushable": true
+      },
+      "blob_beta": {
+        "enabled": true,
+        "radius": 0.92,
+        "mass": 1.7,
+        "pushable": true
       }
     },
     "pairs": [
       { "a": "visitor", "b": "robot", "enabled": true },
       { "a": "visitor", "b": "robot_2", "enabled": true },
-      { "a": "robot", "b": "robot_2", "enabled": true }
+      { "a": "robot", "b": "robot_2", "enabled": true },
+      { "a": "visitor", "b": "blob_alpha", "enabled": true },
+      { "a": "visitor", "b": "blob_beta", "enabled": true },
+      { "a": "blob_alpha", "b": "blob_beta", "enabled": true }
     ]
   },
   "chat": {
@@ -225,14 +240,14 @@
       {
         "id": "blob_alpha",
         "label": "Blob Alpha",
-        "systemPrompt": "You are Blob Alpha, an art-focused guide in a virtual gallery. You respond in concise, poetic-critical language and stay strictly on art, curation, aesthetics, interpretation, and art history.",
+        "systemPromptPath": "/prompts/blob_alpha_SOUL.md",
         "collisionPrompt": "A collision happened between Blob Alpha and the visitor in the room. Reply with one short, art-focused message.",
         "chatOnCollision": true
       },
       {
         "id": "blob_beta",
         "label": "Blob Beta",
-        "systemPrompt": "You are Blob Beta, a pragmatic art theorist in a virtual gallery. You stay strictly on art topics and respond with short concrete observations about form, medium, and context.",
+        "systemPromptPath": "/prompts/blob_beta_SOUL.md",
         "collisionPrompt": "Blob Beta collided with the visitor. Reply with one short art-only reflection tied to movement, form, or installation context.",
         "chatOnCollision": true
       }

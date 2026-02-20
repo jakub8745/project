@@ -50,8 +50,13 @@ Key features:
   - static world collision via BVH room collider,
   - dynamic actor-vs-actor collision via config `physics` block (`actors`, `pairs`, `iterations`).
 - **Persistent surface prints**:
-  - room can pull `/api/prints` and project chat fragments onto walls/floor,
-  - tune via `proceduralRoom.chatPrints` (`enabled`, `pollMs`, `fetchLimit`, `maxVisible`, `maxChars`).
+  - room pulls shared `/api/prints` records and projects chat fragments onto walls/floor,
+  - includes both visitor and blob messages,
+  - tune via `proceduralRoom.chatPrints` (`enabled`, `pollMs`, `fetchLimit`, `maxVisible`).
+- **Multi-blob chat personas**:
+  - define multiple blobs in `chat.blobs` with distinct `id`, `label`, and prompts,
+  - load persona prompts from files via `systemPromptPath` (for example, per-blob SOUL files in `public/prompts/`),
+  - collision-triggered replies continue the ongoing discussion theme and answer the latest chat line.
 - **Configurable lights**: ambient, hemisphere, directional, and optional spotlight.
 
 ---
@@ -191,7 +196,8 @@ One-time setup:
 2. Put real IDs into `worker/wrangler.toml`:
    - `database_id`
    - `kv_namespaces.id`
-3. Optionally set `SOUL_PROMPT` in `worker/wrangler.toml` (project-level framing).
+3. Optionally set `SOUL_PROMPT` in `worker/wrangler.toml` (global fallback framing).  
+   Per-blob personas can override this from frontend config via `chat.blobs[].systemPrompt` or `chat.blobs[].systemPromptPath`.
 4. Configure origin/rate/upload controls in Worker vars:
    - `CORS_ALLOW_ORIGINS` (comma-separated allowlist; empty = allow all)
    - `RATE_LIMIT_CHAT_PER_MIN`, `RATE_LIMIT_UNLOCK_PER_MIN`, `RATE_LIMIT_TEXTURE_PUT_PER_MIN`

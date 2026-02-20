@@ -497,6 +497,13 @@ export default {
           content: safePayload.text,
           trigger: safePayload.trigger
         });
+        await insertPrintFromMessage(env, {
+          messageId: visitorId,
+          sessionId: safePayload.sessionId,
+          blobId: safePayload.blobId,
+          blobLabel: 'Visitor',
+          text: safePayload.text
+        });
         const reply = await generateBlobReply(env, safePayload);
         const blobMsgId = await insertMessage(env, {
           sessionId: safePayload.sessionId,
