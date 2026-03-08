@@ -81,9 +81,9 @@
       "z": 0
     },
     "visitorEnter": {
-      "x": 1,
-      "y": 2,
-      "z": 8
+      "x": 0,
+      "y": 0,
+      "z": 0
     },
     "rotateOrbit": 10
   }
