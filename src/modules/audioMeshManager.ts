@@ -8,6 +8,7 @@ export interface AudioMeshConfig {
   name?: string;
   url?: string;
   ipfsUrl?: string;
+  autoplayOnEnter?: boolean;
   loop?: boolean;
   refDistance?: number;
   rolloff?: number;
@@ -271,6 +272,11 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
   const { scene, galleryConfig, listener, renderer, camera, transform } = context;
 
   const configMap = new Map((galleryConfig.audio || []).map((cfg) => [cfg.id, cfg]));
+  const shouldAutoplayOnEnter = (galleryConfig.audio || []).some((cfg) => cfg.autoplayOnEnter === true);
+
+  if (shouldAutoplayOnEnter && !audioState.isPlaying) {
+    audioState = { ...audioState, isPlaying: true };
+  }
 
   disposeAudioMeshes({ resetState: false });
 

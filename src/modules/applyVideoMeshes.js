@@ -30,6 +30,7 @@ const _overlayDisposers = new Set(); // track active HTML overlay cleanup fns
 
 // --- Step 1: resource cache ---
 const _videoResourceCache = new Map(); // id -> { video, texture }
+const _syncPlaybackGroups = new Map(); // groupId -> sync state
 
 function getVideoResource(id) {
   return _videoResourceCache.get(id) || {};
@@ -185,6 +186,7 @@ export function openVideoPlayerById(videoId) {
   const video = resource?.video;
   if (!(video instanceof HTMLVideoElement)) return false;
   const cfg = resource?.cfg || { id: videoId };
+  if (cfg?.allowFullscreen === false) return false;
   return openVideoPlayer(cfg, video);
 }
 
@@ -198,6 +200,7 @@ export function disposeAllVideoMeshes() {
   });
   _overlayDisposers.clear();
   Array.from(_videoResourceCache.keys()).forEach((id) => disposeVideoResource(id));
+  _syncPlaybackGroups.clear();
 }
 
 function getMeshDisposers(mesh) {
@@ -218,6 +221,88 @@ function cleanupMeshDecorations(mesh) {
       console.warn('[VideoMesh] cleanup failed', err);
     }
   }
+}
+
+function isVideoReadyForPlayback(video) {
+  return video instanceof HTMLVideoElement && video.readyState >= 2;
+}
+
+function createSyncPlaybackGroups(videos) {
+  const groups = new Map();
+  for (const cfg of videos || []) {
+    if (cfg?.autoplayOnEnter !== true) continue;
+    const groupId = typeof cfg.syncStartGroup === 'string' && cfg.syncStartGroup ? cfg.syncStartGroup : cfg.id;
+    if (!groupId) continue;
+    if (!groups.has(groupId)) {
+      groups.set(groupId, {
+        id: groupId,
+        expectedIds: new Set(),
+        videos: new Map(),
+        readyIds: new Set(),
+        started: false
+      });
+    }
+    groups.get(groupId).expectedIds.add(cfg.id);
+  }
+  return groups;
+}
+
+function queueSyncedPlayback(cfg, video, syncGroups) {
+  if (!cfg || cfg.autoplayOnEnter !== true || !(video instanceof HTMLVideoElement)) return null;
+  const groupId = typeof cfg.syncStartGroup === 'string' && cfg.syncStartGroup ? cfg.syncStartGroup : cfg.id;
+  const group = groupId ? syncGroups.get(groupId) : null;
+  if (!group) return null;
+
+  group.videos.set(cfg.id, video);
+  _syncPlaybackGroups.set(groupId, group);
+
+  const tryStart = () => {
+    if (group.started) return;
+    if (group.videos.size < group.expectedIds.size) return;
+    for (const id of group.expectedIds) {
+      if (!group.videos.has(id) || !group.readyIds.has(id)) {
+        return;
+      }
+    }
+    group.started = true;
+    const targets = [];
+    for (const id of group.expectedIds) {
+      const target = group.videos.get(id);
+      if (target instanceof HTMLVideoElement) {
+        targets.push(target);
+      }
+    }
+    targets.forEach((targetVideo) => {
+      try {
+        targetVideo.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    });
+    requestAnimationFrame(() => {
+      targets.forEach((targetVideo) => {
+        targetVideo.play().catch(() => {});
+      });
+    });
+  };
+
+  const markReady = () => {
+    group.readyIds.add(cfg.id);
+    tryStart();
+  };
+
+  if (isVideoReadyForPlayback(video)) {
+    markReady();
+  }
+
+  const readyEvents = ['loadeddata', 'canplay', 'canplaythrough'];
+  readyEvents.forEach((evt) => video.addEventListener(evt, markReady));
+
+  return () => {
+    readyEvents.forEach((evt) => video.removeEventListener(evt, markReady));
+    group.videos.delete(cfg.id);
+    group.readyIds.delete(cfg.id);
+  };
 }
 
 function resolvePosterUrl(cfg) {
@@ -294,6 +379,23 @@ function ensureVideoElement(cfg) {
   if (!cfg || !cfg.id) return null;
   let video = document.getElementById(cfg.id);
   if (video) {
+    video.loop = cfg.loop ?? true;
+    video.autoplay = false;
+    video.playsInline = true;
+    video.preload = cfg.preload || 'metadata';
+    const forceMuted = cfg.disableAudio === true || cfg.muted === true;
+    const desiredVolume =
+      typeof cfg.volume === 'number'
+        ? Math.min(Math.max(cfg.volume, 0), 1)
+        : DEFAULT_VOLUME;
+    video.muted = forceMuted;
+    if (forceMuted) {
+      video.setAttribute('muted', '');
+      video.volume = 0;
+    } else {
+      video.removeAttribute('muted');
+      video.volume = desiredVolume;
+    }
     const resolvedPoster = resolvePosterUrl(cfg);
     if (resolvedPoster && video.poster !== resolvedPoster) {
       video.poster = resolvedPoster;
@@ -311,8 +413,13 @@ function ensureVideoElement(cfg) {
 
   // Disable autoplay and avoid forcing muted
   video.autoplay = false;
-  video.muted = cfg.muted ?? false;
-  video.removeAttribute('muted');
+  const forceMuted = cfg.disableAudio === true || cfg.muted === true;
+  video.muted = forceMuted;
+  if (forceMuted) {
+    video.setAttribute('muted', '');
+  } else {
+    video.removeAttribute('muted');
+  }
   video.playsInline = true;
   video.preload = cfg.preload || 'metadata';
   video.crossOrigin = 'anonymous';
@@ -320,7 +427,7 @@ function ensureVideoElement(cfg) {
     typeof cfg.volume === 'number'
       ? Math.min(Math.max(cfg.volume, 0), 1)
       : DEFAULT_VOLUME;
-  video.volume = desiredVolume;
+  video.volume = forceMuted ? 0 : desiredVolume;
 
   const resolvedPoster = resolvePosterUrl(cfg);
   if (resolvedPoster) {
@@ -380,8 +487,10 @@ function ensureVideoElement(cfg) {
 
   // Keep paused on ready; emit a custom event consumers can listen for
   video.addEventListener('canplaythrough', () => {
-    video.pause();
-    video.currentTime = video.currentTime;
+    if (cfg.autoplayOnEnter !== true) {
+      video.pause();
+      video.currentTime = video.currentTime;
+    }
     video.dispatchEvent(new Event('videoready'));
   }, { once: true });
 
@@ -528,7 +637,9 @@ function addPlayIcon(mesh, video, camera) {
  * - Ensures depthTest/write for full visibility/
  */
 export function applyVideoMeshes(scene, camera, galleryConfig) {
-  const configMap = new Map((galleryConfig.videos || []).map(cfg => [cfg.id, cfg]));
+  const videoList = galleryConfig.videos || [];
+  const configMap = new Map(videoList.map(cfg => [cfg.id, cfg]));
+  const syncGroups = createSyncPlaybackGroups(videoList);
 
   scene.traverse(obj => {
     if (!obj.isMesh || obj.userData.type !== 'Video') return;
@@ -574,6 +685,8 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
       setVideoResource(cfg.id, { video, texture: videoTexture, posterTexture });
     }
 
+    const meshDisposers = getMeshDisposers(obj);
+
     // Default to poster if available, otherwise show the first video frame
     if (posterTexture) {
       baseMaterial.map = posterTexture;
@@ -587,16 +700,15 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     baseMaterial.side = DoubleSide;
     obj.material = baseMaterial;
 
-    const meshDisposers = getMeshDisposers(obj);
-
     // Spinner appears while loading/buffering
     const spinnerCleanup = addLoadingSpinner(obj, video, camera);
 
     // HTML overlay (play/pause + progress)
-    const overlayCleanup = addHtmlOverlay(obj, video, camera, cfg, scene);
+    const overlayCleanup = cfg.controls === false ? null : addHtmlOverlay(obj, video, camera, cfg, scene);
 
     // Positional audio anchored to the video mesh
-    const audioCleanup = attachPositionalAudio(obj, video, camera, cfg);
+    const audioCleanup = cfg.disableAudio === true ? null : attachPositionalAudio(obj, video, camera, cfg);
+    const syncCleanup = queueSyncedPlayback(cfg, video, syncGroups);
 
     if (typeof spinnerCleanup === 'function') {
       meshDisposers.push(spinnerCleanup);
@@ -610,6 +722,9 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     }
     if (typeof audioCleanup === 'function') {
       meshDisposers.push(audioCleanup);
+    }
+    if (typeof syncCleanup === 'function') {
+      meshDisposers.push(syncCleanup);
     }
 
     let metadataHandled = false;
@@ -632,9 +747,11 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
         }
       };
 
-      // Keep paused until user interacts
-      video.currentTime = 0.01;
-      video.pause();
+      // Keep paused until user interacts for interactive videos only.
+      if (cfg.autoplayOnEnter !== true) {
+        video.currentTime = 0.01;
+        video.pause();
+      }
       if (videoTexture) {
         videoTexture.needsUpdate = true;
       }
@@ -762,16 +879,20 @@ function addLoadingSpinner(mesh, video, camera) {
 
 function addHtmlOverlay(mesh, video, camera, cfg, scene) {
   if (typeof document === 'undefined') return null;
+  const allowFullscreen = cfg?.allowFullscreen !== false;
+  const allowAudio = cfg?.disableAudio !== true;
 
   const container = document.createElement('div');
   container.className = 'video-mesh-overlay';
   const playButton = document.createElement('button');
   playButton.className = 'video-mesh-overlay__button video-mesh-overlay__button--play';
   playButton.setAttribute('aria-label', 'Play');
-  const fullscreenButton = document.createElement('button');
-  fullscreenButton.className = 'video-mesh-overlay__button video-mesh-overlay__button--ghost video-mesh-overlay__button--icon';
-  fullscreenButton.setAttribute('aria-label', 'Open fullscreen player');
-  fullscreenButton.title = 'Fullscreen';
+  const fullscreenButton = allowFullscreen ? document.createElement('button') : null;
+  if (fullscreenButton) {
+    fullscreenButton.className = 'video-mesh-overlay__button video-mesh-overlay__button--ghost video-mesh-overlay__button--icon';
+    fullscreenButton.setAttribute('aria-label', 'Open fullscreen player');
+    fullscreenButton.title = 'Fullscreen';
+  }
   const progress = document.createElement('input');
   progress.className = 'video-mesh-overlay__progress';
   progress.type = 'range';
@@ -796,7 +917,9 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
   container.appendChild(playButton);
   container.appendChild(progress);
   container.appendChild(volume);
-  container.appendChild(fullscreenButton);
+  if (fullscreenButton) {
+    container.appendChild(fullscreenButton);
+  }
   document.body.appendChild(container);
 
   const worldPos = new Vector3();
@@ -918,7 +1041,9 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
     evt.stopPropagation();
     const audioListener = getVideoResource(cfg.id)?.audioListener;
     audioListener?.context?.resume?.().catch?.(() => {});
-    video.muted = false;
+    if (allowAudio) {
+      video.muted = false;
+    }
     if (video.paused) {
       video.play().catch(() => {});
     } else {
@@ -945,10 +1070,12 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
     const target = evt.target;
     const val = Number(target.value);
     if (Number.isFinite(val)) {
-      video.muted = false;
-      video.volume = Math.min(Math.max(val, 0), 1);
-      const audioListener = getVideoResource(cfg.id)?.audioListener;
-      audioListener?.context?.resume?.().catch?.(() => {});
+      if (allowAudio) {
+        video.muted = false;
+        video.volume = Math.min(Math.max(val, 0), 1);
+        const audioListener = getVideoResource(cfg.id)?.audioListener;
+        audioListener?.context?.resume?.().catch?.(() => {});
+      }
     }
   };
 
@@ -957,9 +1084,13 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
   volume.addEventListener('input', handleVolumeInput);
   const handleFullscreenClick = (evt) => {
     evt.stopPropagation();
-    openVideoPlayer(cfg, video);
+    if (allowFullscreen) {
+      openVideoPlayer(cfg, video);
+    }
   };
-  fullscreenButton.addEventListener('click', handleFullscreenClick);
+  if (fullscreenButton) {
+    fullscreenButton.addEventListener('click', handleFullscreenClick);
+  }
 
   const eventHandlers = [
     ['play', updateButton],
@@ -980,7 +1111,9 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
     playButton.removeEventListener('click', handlePlayClick);
     progress.removeEventListener('input', handleProgressInput);
     volume.removeEventListener('input', handleVolumeInput);
-    fullscreenButton.removeEventListener('click', handleFullscreenClick);
+    if (fullscreenButton) {
+      fullscreenButton.removeEventListener('click', handleFullscreenClick);
+    }
     mesh.onBeforeRender = prevOnBeforeRender || null;
     if (container.parentNode) container.parentNode.removeChild(container);
   };

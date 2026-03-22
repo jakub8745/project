@@ -13,6 +13,13 @@ export interface VideoMeshConfig {
   poster?: string;
   ipfsPoster?: string;
   oraclePoster?: string;
+  autoplayOnEnter?: boolean;
+  syncStartGroup?: string;
+  controls?: boolean;
+  allowFullscreen?: boolean;
+  interactive?: boolean;
+  disableAudio?: boolean;
+  volume?: number;
 }
 
 export interface GalleryVideoConfig {

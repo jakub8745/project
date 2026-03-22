@@ -2801,6 +2801,21 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     return map;
   }, [config?.videos]);
 
+  const videosInteraction = useMemo<Record<string, { interactive?: boolean }> | undefined>(() => {
+    if (!Array.isArray(config?.videos)) return undefined;
+    const map: Record<string, { interactive?: boolean }> = {};
+    for (const entry of config.videos) {
+      if (!entry || typeof entry !== 'object') continue;
+      const record = entry as Record<string, unknown>;
+      const id = typeof record.id === 'string' ? record.id : undefined;
+      if (!id) continue;
+      map[id] = {
+        interactive: typeof record.interactive === 'boolean' ? record.interactive : undefined
+      };
+    }
+    return map;
+  }, [config?.videos]);
+
   const sculpturesMeta = useMemo(() => {
     if (config?.sculptures && typeof config.sculptures === 'object') {
       return config.sculptures as Record<string, Record<string, unknown>>;
@@ -2897,6 +2912,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           name: typeof record.name === 'string' ? record.name : undefined,
           url,
           ipfsUrl,
+          autoplayOnEnter: typeof record.autoplayOnEnter === 'boolean' ? record.autoplayOnEnter : undefined,
           loop: typeof record.loop === 'boolean' ? record.loop : undefined,
           refDistance: typeof record.refDistance === 'number' ? record.refDistance : undefined,
           rolloff: typeof record.rolloff === 'number' ? record.rolloff : undefined,
@@ -2943,6 +2959,13 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         sources: mappedSources,
         loop: typeof entry.loop === 'boolean' ? entry.loop : undefined,
         muted: typeof entry.muted === 'boolean' ? entry.muted : undefined,
+        autoplayOnEnter: typeof entry.autoplayOnEnter === 'boolean' ? entry.autoplayOnEnter : undefined,
+        syncStartGroup: typeof entry.syncStartGroup === 'string' ? entry.syncStartGroup : undefined,
+        controls: typeof entry.controls === 'boolean' ? entry.controls : undefined,
+        allowFullscreen: typeof entry.allowFullscreen === 'boolean' ? entry.allowFullscreen : undefined,
+        interactive: typeof entry.interactive === 'boolean' ? entry.interactive : undefined,
+        disableAudio: typeof entry.disableAudio === 'boolean' ? entry.disableAudio : undefined,
+        volume: typeof entry.volume === 'number' ? entry.volume : undefined,
         preload: typeof entry.preload === 'string' ? entry.preload : undefined,
         poster:
           typeof entry.poster === 'string'
@@ -3206,6 +3229,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           links={linkMap}
           imagesMeta={imagesMeta}
           videosMeta={videosMeta}
+          videosInteraction={videosInteraction}
           sculpturesMeta={sculpturesMeta}
         />
         <FirstPersonController

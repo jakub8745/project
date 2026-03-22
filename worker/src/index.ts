@@ -234,7 +234,7 @@ async function generateBlobReply(env: Env, payload: ChatPayload): Promise<string
     throw new Error('Missing OPENAI_API_KEY secret in worker.');
   }
   const history = normalizeHistory(payload.history).slice(-12);
-  const model = env.OPENAI_MODEL || 'gpt-4o-mini';
+  const model = env.OPENAI_MODEL || 'gpt-5-mini';
   const guard = env.ART_ONLY_GUARD || DEFAULT_ART_GUARD;
   const soulPrompt = (env.SOUL_PROMPT || '').trim();
   const messages = [
@@ -253,8 +253,7 @@ async function generateBlobReply(env: Env, payload: ChatPayload): Promise<string
     },
     body: JSON.stringify({
       model,
-      messages,
-      temperature: 0.7
+      messages
     })
   });
   const body = await response.json<{
@@ -395,7 +394,7 @@ export default {
         configured: Boolean(env.OPENAI_API_KEY),
         error: env.OPENAI_API_KEY ? null : 'Missing OPENAI_API_KEY secret in worker.',
         mode: 'worker-api',
-        model: env.OPENAI_MODEL || 'gpt-4o-mini',
+        model: env.OPENAI_MODEL || 'gpt-5-mini',
         requiresUnlock: normalizeUnlockPhrase(env.CHAT_UNLOCK_PHRASE || '').length > 0
       });
     }

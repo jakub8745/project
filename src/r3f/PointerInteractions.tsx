@@ -31,6 +31,7 @@ interface PointerInteractionsProps {
   links?: Record<string, unknown>;
   imagesMeta?: MetaRecord;
   videosMeta?: MetaRecord;
+  videosInteraction?: Record<string, { interactive?: boolean }>;
   sculpturesMeta?: MetaRecord;
   onCloseSidebar?: () => void;
 }
@@ -57,6 +58,7 @@ export function PointerInteractions({
   links = {},
   imagesMeta = {},
   videosMeta = {},
+  videosInteraction = {},
   sculpturesMeta = {},
   onCloseSidebar
 }: PointerInteractionsProps) {
@@ -314,6 +316,10 @@ export function PointerInteractions({
 
       if (type === 'Video') {
         const videoKey = typeof elementID === 'string' && elementID ? elementID : name || hit.object.name;
+        const interactionCfg = videoKey ? videosInteraction?.[videoKey] : undefined;
+        if (interactionCfg?.interactive === false) {
+          return;
+        }
         const opened = openVideoPlayerById(videoKey);
         if (opened) return;
 
@@ -402,7 +408,7 @@ export function PointerInteractions({
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
     };
-  }, [camera, clickIndicator, gl, imagesMeta, links, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosMeta, visitor]);
+  }, [camera, clickIndicator, gl, imagesMeta, links, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
 
   return null;
 }

@@ -3,7 +3,7 @@ main = "src/index.ts"
 compatibility_date = "2026-02-14"
 
 [vars]
-OPENAI_MODEL = "gpt-4o-mini"
+OPENAI_MODEL = "gpt-5-mini"
 ART_ONLY_GUARD = "You are an art-focused assistant in a virtual gallery. Only discuss art, artworks, curation, media, aesthetics, interpretation, art process, and art history. If asked about unrelated topics, briefly redirect to art perspective."
 SOUL_PROMPT = ""
 DEFAULT_MAX_PRINTS = "1500"

@@ -49,6 +49,20 @@ export const COMMON_ICONS = {
 
 export const GALLERIES: GalleryItem[] = [
     {
+        slug: "vectai_prez",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_agentsroom.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_agentsroom.jpg",
+        title: "vectai_pokaz",
+        description: "a proposed layout for after-workshops exhibition",
+        scale: 1,
+        position: [0, 0, 0],
+        configUrl: "./configs/vectai_prez_config.json",
+        keywords: [],
+        ogImage: "",
+        overlayText: "",
+        videos: []
+    },
+    {
         slug: "videopoems_lisbon",
         thumbnailVideo: "/sidebar_thumbnails/thumb_videopoetry.mp4",
         thumbnailPoster: "/sidebar_thumbnails/poster_videopoetry.jpg",
@@ -174,20 +188,7 @@ export const GALLERIES: GalleryItem[] = [
         overlayText: "",
         videos: []
     },
-    {
-        slug: "vectai_prez",
-        thumbnailVideo: "/sidebar_thumbnails/thumb_agentsroom.mp4",
-        thumbnailPoster: "/sidebar_thumbnails/poster_agentsroom.jpg",
-        title: "vectai_pokaz",
-        description: "a proposed layout for after-workshops exhibition",
-        scale: 1,
-        position: [0, 0, 0],
-        configUrl: "./configs/vectai_prez_config.json",
-        keywords: [],
-        ogImage: "",
-        overlayText: "",
-        videos: []
-    },
+    
 
 
 
