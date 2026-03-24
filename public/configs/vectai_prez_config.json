@@ -20,8 +20,17 @@
   "videos": [
     {
       "id": "left_screen",
+      "videoSurface": {
+        "roughness": 0.9,
+        "metalness": 0.02,
+        "envMapIntensity": 0.2,
+        "projection": true,
+        "emissiveIntensity": 0.53,
+        "emissiveColor": "#fff6ea"
+      },
       "autoplayOnEnter": true,
       "syncStartGroup": "vectai_prez_main",
+      "showLoader": false,
       "controls": false,
       "allowFullscreen": false,
       "interactive": false,
@@ -43,8 +52,17 @@
     },
     {
       "id": "middle_screen",
+      "videoSurface": {
+        "roughness": 0.9,
+        "metalness": 0.02,
+        "envMapIntensity": 0.2,
+        "projection": true,
+        "emissiveIntensity": 0.53,
+        "emissiveColor": "#fff6ea"
+      },
       "autoplayOnEnter": true,
       "syncStartGroup": "vectai_prez_main",
+      "showLoader": false,
       "controls": false,
       "allowFullscreen": false,
       "interactive": false,
@@ -66,8 +84,17 @@
     },
     {
       "id": "right_screen",
+      "videoSurface": {
+        "roughness": 0.9,
+        "metalness": 0.02,
+        "envMapIntensity": 0.2,
+        "projection": true,
+        "emissiveIntensity": 0.53,
+        "emissiveColor": "#fff6ea"
+      },
       "autoplayOnEnter": true,
       "syncStartGroup": "vectai_prez_main",
+      "showLoader": false,
       "controls": false,
       "allowFullscreen": false,
       "interactive": false,
@@ -106,8 +133,8 @@
         0.3
       ],
       "coneTarget": [
-        -2,
-        1,
+        0,
+        2,
         0
       ],
       "volume": 1
@@ -128,7 +155,7 @@
         0.3
       ],
       "coneTarget": [
-        4,
+        0,
         2,
         0
       ],
@@ -143,7 +170,7 @@
     "exposureMin": 0.5,
     "exposureMax": 2.5,
     "exposureSampleInterval": 30,
-    "lightIntensity": 1.1,
+    "lightIntensity": 0.7,
     "gravity": -8,
     "visitorSpeed": 2,
     "heightOffset": {

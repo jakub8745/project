@@ -2954,14 +2954,32 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         mappedSources.push(mapped);
       }
       if (mappedSources.length === 0) continue;
+      const surfaceRecord =
+        entry.videoSurface && typeof entry.videoSurface === 'object'
+          ? entry.videoSurface as Record<string, unknown>
+          : null;
       filtered.push({
         id,
         sources: mappedSources,
+        videoSurface: surfaceRecord
+          ? {
+              roughness: typeof surfaceRecord.roughness === 'number' ? surfaceRecord.roughness : undefined,
+              metalness: typeof surfaceRecord.metalness === 'number' ? surfaceRecord.metalness : undefined,
+              envMapIntensity:
+                typeof surfaceRecord.envMapIntensity === 'number' ? surfaceRecord.envMapIntensity : undefined,
+              projection: surfaceRecord.projection === true,
+              emissiveIntensity:
+                typeof surfaceRecord.emissiveIntensity === 'number' ? surfaceRecord.emissiveIntensity : undefined,
+              emissiveColor:
+                typeof surfaceRecord.emissiveColor === 'string' ? surfaceRecord.emissiveColor : undefined
+            }
+          : undefined,
         loop: typeof entry.loop === 'boolean' ? entry.loop : undefined,
         muted: typeof entry.muted === 'boolean' ? entry.muted : undefined,
         autoplayOnEnter: typeof entry.autoplayOnEnter === 'boolean' ? entry.autoplayOnEnter : undefined,
         syncStartGroup: typeof entry.syncStartGroup === 'string' ? entry.syncStartGroup : undefined,
         controls: typeof entry.controls === 'boolean' ? entry.controls : undefined,
+        showLoader: typeof entry.showLoader === 'boolean' ? entry.showLoader : undefined,
         allowFullscreen: typeof entry.allowFullscreen === 'boolean' ? entry.allowFullscreen : undefined,
         interactive: typeof entry.interactive === 'boolean' ? entry.interactive : undefined,
         disableAudio: typeof entry.disableAudio === 'boolean' ? entry.disableAudio : undefined,

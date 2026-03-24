@@ -11,7 +11,8 @@ import {
   Mesh,
   Raycaster,
   PositionalAudio,
-  AudioListener
+  AudioListener,
+  Color
 } from 'three';
 
 const PLAY_ICON_PATH =
@@ -640,6 +641,14 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
   const videoList = galleryConfig.videos || [];
   const configMap = new Map(videoList.map(cfg => [cfg.id, cfg]));
   const syncGroups = createSyncPlaybackGroups(videoList);
+  const clamp01 = (value, fallback) => {
+    const numeric = typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+    return Math.min(1, Math.max(0, numeric));
+  };
+  const clampMinZero = (value, fallback) => {
+    const numeric = typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+    return Math.max(0, numeric);
+  };
 
   scene.traverse(obj => {
     if (!obj.isMesh || obj.userData.type !== 'Video') return;
@@ -698,10 +707,23 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     baseMaterial.depthTest = true;
     baseMaterial.depthWrite = true;
     baseMaterial.side = DoubleSide;
+    if (cfg.videoSurface && typeof cfg.videoSurface === 'object') {
+      // Optional per-screen tuning to make emissive displays feel less glossy.
+      baseMaterial.roughness = clamp01(cfg.videoSurface.roughness, baseMaterial.roughness ?? 0.8);
+      baseMaterial.metalness = clamp01(cfg.videoSurface.metalness, baseMaterial.metalness ?? 0);
+      baseMaterial.envMapIntensity = clampMinZero(cfg.videoSurface.envMapIntensity, baseMaterial.envMapIntensity ?? 1);
+      if (cfg.videoSurface.projection === true) {
+        baseMaterial.emissive = new Color(
+          typeof cfg.videoSurface.emissiveColor === 'string' ? cfg.videoSurface.emissiveColor : '#fff6ea'
+        );
+        baseMaterial.emissiveIntensity = clampMinZero(cfg.videoSurface.emissiveIntensity, 0.14);
+        baseMaterial.emissiveMap = baseMaterial.map || null;
+      }
+    }
     obj.material = baseMaterial;
 
     // Spinner appears while loading/buffering
-    const spinnerCleanup = addLoadingSpinner(obj, video, camera);
+    const spinnerCleanup = cfg.showLoader === false ? null : addLoadingSpinner(obj, video, camera);
 
     // HTML overlay (play/pause + progress)
     const overlayCleanup = cfg.controls === false ? null : addHtmlOverlay(obj, video, camera, cfg, scene);
@@ -736,6 +758,9 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
       const swapToVideo = () => {
         if (videoTexture) {
           baseMaterial.map = videoTexture;
+          if (cfg.videoSurface?.projection === true) {
+            baseMaterial.emissiveMap = videoTexture;
+          }
           baseMaterial.needsUpdate = true;
         }
       };
@@ -743,6 +768,9 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
       const swapToPoster = () => {
         if (!hasPlayed && posterTexture) {
           baseMaterial.map = posterTexture;
+          if (cfg.videoSurface?.projection === true) {
+            baseMaterial.emissiveMap = posterTexture;
+          }
           baseMaterial.needsUpdate = true;
         }
       };

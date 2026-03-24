@@ -2,6 +2,14 @@ import type { Scene, Camera, Group } from 'three';
 
 export interface VideoMeshConfig {
   id: string;
+  videoSurface?: {
+    roughness?: number;
+    metalness?: number;
+    envMapIntensity?: number;
+    projection?: boolean;
+    emissiveIntensity?: number;
+    emissiveColor?: string;
+  };
   sources: Array<{
     src: string;
     type?: string;
@@ -16,6 +24,7 @@ export interface VideoMeshConfig {
   autoplayOnEnter?: boolean;
   syncStartGroup?: string;
   controls?: boolean;
+  showLoader?: boolean;
   allowFullscreen?: boolean;
   interactive?: boolean;
   disableAudio?: boolean;
