@@ -1,5 +1,5 @@
 {
-  "id": "vectai_prez",
+  "id": "vectai_krakow_032026",
   "modelPath": "/models/vectai_room.glb",
   "interactivesPath": "/models/interactives_empty.glb",
   "backgroundTexture": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
@@ -29,7 +29,7 @@
         "emissiveColor": "#fff6ea"
       },
       "autoplayOnEnter": true,
-      "syncStartGroup": "vectai_prez_main",
+      "syncStartGroup": "vectai_krakow_032026_main",
       "showLoader": false,
       "controls": false,
       "allowFullscreen": false,
@@ -61,7 +61,7 @@
         "emissiveColor": "#fff6ea"
       },
       "autoplayOnEnter": true,
-      "syncStartGroup": "vectai_prez_main",
+      "syncStartGroup": "vectai_krakow_032026_main",
       "showLoader": false,
       "controls": false,
       "allowFullscreen": false,
@@ -93,7 +93,7 @@
         "emissiveColor": "#fff6ea"
       },
       "autoplayOnEnter": true,
-      "syncStartGroup": "vectai_prez_main",
+      "syncStartGroup": "vectai_krakow_032026_main",
       "showLoader": false,
       "controls": false,
       "allowFullscreen": false,

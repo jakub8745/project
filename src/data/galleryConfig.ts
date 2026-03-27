@@ -49,14 +49,14 @@ export const COMMON_ICONS = {
 
 export const GALLERIES: GalleryItem[] = [
     {
-        slug: "vectai_prez",
+        slug: "vectai_krakow_032026",
         thumbnailVideo: "/sidebar_thumbnails/thumb_agentsroom.mp4",
         thumbnailPoster: "/sidebar_thumbnails/poster_agentsroom.jpg",
         title: "vectai_pokaz",
         description: "a proposed layout for after-workshops exhibition",
         scale: 1,
         position: [0, 0, 0],
-        configUrl: "./configs/vectai_prez_config.json",
+        configUrl: "./configs/vectai_krakow_032026_config.json",
         keywords: [],
         ogImage: "",
         overlayText: "",
