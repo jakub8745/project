@@ -44,7 +44,7 @@
       "sources": [
         {
           "src_local": "",
-          "src": "/audio/poj_lewy_web_light.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4",
           "type": "video/mp4"
         }
       ]
@@ -76,7 +76,7 @@
       "sources": [
         {
           "src_local": "",
-          "src": "public/audio/poj_srodek_web_light.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4",
           "type": "video/mp4"
         }
       ]
@@ -108,7 +108,7 @@
       "sources": [
         {
           "src_local": "",
-          "src": "public/audio/poj_prawy_web_light.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4",
           "type": "video/mp4"
         }
       ]
