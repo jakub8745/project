@@ -50,10 +50,10 @@ export const COMMON_ICONS = {
 export const GALLERIES: GalleryItem[] = [
     {
         slug: "vectai_krakow_032026",
-        thumbnailVideo: "/sidebar_thumbnails/thumb_agentsroom.mp4",
-        thumbnailPoster: "/sidebar_thumbnails/poster_agentsroom.jpg",
-        title: "vectai_pokaz",
-        description: "a proposed layout for after-workshops exhibition",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_vectai_cracks.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_vectai_cracks.jpg",
+        title: "Cracks of Meaning: Videopoetry in the age of AI",
+        description: "Critical work with AI in art education",
         scale: 1,
         position: [0, 0, 0],
         configUrl: "./configs/vectai_krakow_032026_config.json",

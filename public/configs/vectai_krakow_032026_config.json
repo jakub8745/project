@@ -2,7 +2,7 @@
   "id": "vectai_krakow_032026",
   "modelPath": "/models/vectai_room.glb",
   "interactivesPath": "/models/interactives_empty.glb",
-  "backgroundTexture": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+  "backgroundTexture": "",
   "sidebar": {
     "logo": {
       "text": "VECT-AI workshops and exhibit documentation "
@@ -10,10 +10,9 @@
     "items": [
       {
         "id": "info-icon",
-        "label": "proposed layout",
+        "label": "About Project",
         "target": "info_text",
-        "content": "You are viewing a proposed layout for after-workshops exhibition"
-      }
+        "content": "Pęknięcia sensu to dokumentacja 3D pilotażowego warsztatu VECT-AI zrealizowanego w Krakowie w ramach projektu CAPHE. Projekt bada, jak sztuka może wspierać krytyczne myślenie o AI poprzez pracę z błędem, deformacją i niejednoznacznością. Jego publicznym rezultatem był wideopoemat „OBOWIĄZKI WŁASNEJ RĘKI WCIĄGNIĘTEJ ( ) DO ŚRODKA” — forma łącząca tekst, obraz i dźwięk w nielinearną, wielowarstwową kompozycję. Prezentowana przestrzeń nie tylko archiwizuje rezultat, ale pozwala wrócić do procesu i relacji między obrazem, tekstem, dźwiękiem oraz algorytmicznym domykaniem sensu. Szczegółowe omówienie metody, struktury warsztatu, komponentu refleksyjnego oraz założeń dydaktycznych i badawczych projektu znajduje się w towarzyszącej mu dokumentacji."     }
     ]
   },
   "images": {},
@@ -44,8 +43,8 @@
       "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg",
       "sources": [
         {
-          "src_local": "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4",
-          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/poj_lewy_web.mp4",
+          "src_local": "",
+          "src": "/audio/poj_lewy_web_light.mp4",
           "type": "video/mp4"
         }
       ]
@@ -76,8 +75,8 @@
       "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg",
       "sources": [
         {
-          "src_local": "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4",
-          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/poj_srodek_web.mp4",
+          "src_local": "",
+          "src": "public/audio/poj_srodek_web_light.mp4",
           "type": "video/mp4"
         }
       ]
@@ -108,8 +107,8 @@
       "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg",
       "sources": [
         {
-          "src_local": "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4",
-          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/poj_prawy_web.mp4",
+          "src_local": "",
+          "src": "public/audio/poj_prawy_web_light.mp4",
           "type": "video/mp4"
         }
       ]
@@ -170,7 +169,7 @@
     "exposureMin": 0.5,
     "exposureMax": 2.5,
     "exposureSampleInterval": 30,
-    "lightIntensity": 0.7,
+    "lightIntensity": 0.9,
     "gravity": -8,
     "visitorSpeed": 2,
     "heightOffset": {
