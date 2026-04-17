@@ -1,4 +1,5 @@
 import type { Scene, Camera, Group } from 'three';
+import type { VideoPlaybackMode } from './videoPlaybackMode.js';
 
 export interface VideoMeshConfig {
   id: string;
@@ -26,8 +27,12 @@ export interface VideoMeshConfig {
   controls?: boolean;
   showLoader?: boolean;
   allowFullscreen?: boolean;
+  htmlOverlayControls?: boolean;
   interactive?: boolean;
+  controlsAnchorName?: string;
   disableAudio?: boolean;
+  spatialAudio?: boolean;
+  playbackMode?: VideoPlaybackMode;
   volume?: number;
 }
 

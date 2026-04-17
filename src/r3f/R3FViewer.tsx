@@ -53,6 +53,7 @@ import type { TransformControlsEventMap } from 'three/examples/jsm/controls/Tran
 import type { VisitorParams } from '../modules/Visitor.js';
 import { PointerInteractions } from './PointerInteractions';
 import { applyVideoMeshes, disposeAllVideoMeshes, type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
+import { resolveVideoPlaybackMode, type VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
 import { MaterialModalProvider } from './Modal';
 import type { AudioMeshConfig } from '../modules/audioMeshManager.ts';
@@ -2801,16 +2802,17 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     return map;
   }, [config?.videos]);
 
-  const videosInteraction = useMemo<Record<string, { interactive?: boolean }> | undefined>(() => {
+  const videosInteraction = useMemo<Record<string, { interactive?: boolean; playbackMode?: VideoPlaybackMode }> | undefined>(() => {
     if (!Array.isArray(config?.videos)) return undefined;
-    const map: Record<string, { interactive?: boolean }> = {};
+    const map: Record<string, { interactive?: boolean; playbackMode?: VideoPlaybackMode }> = {};
     for (const entry of config.videos) {
       if (!entry || typeof entry !== 'object') continue;
       const record = entry as Record<string, unknown>;
       const id = typeof record.id === 'string' ? record.id : undefined;
       if (!id) continue;
       map[id] = {
-        interactive: typeof record.interactive === 'boolean' ? record.interactive : undefined
+        interactive: typeof record.interactive === 'boolean' ? record.interactive : undefined,
+        playbackMode: resolveVideoPlaybackMode(record)
       };
     }
     return map;
@@ -2838,6 +2840,9 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
       const imagePath = typeof record.imagePath === 'string' ? record.imagePath : undefined;
       const oracleImagePath = typeof record.oracleImagePath === 'string' ? record.oracleImagePath : undefined;
       const ipfsImagePath = typeof record.ipfsImagePath === 'string' ? record.ipfsImagePath : undefined;
+      const pdfPath = typeof record.pdfPath === 'string' ? record.pdfPath : undefined;
+      const oraclePdfPath = typeof record.oraclePdfPath === 'string' ? record.oraclePdfPath : undefined;
+      const ipfsPdfPath = typeof record.ipfsPdfPath === 'string' ? record.ipfsPdfPath : undefined;
       let img;
       if (record.img && typeof record.img === 'object') {
         const src = (record.img as Record<string, unknown>).src;
@@ -2852,6 +2857,9 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         ...(imagePath ? { imagePath } : {}),
         ...(oracleImagePath ? { oracleImagePath } : {}),
         ...(ipfsImagePath ? { ipfsImagePath } : {}),
+        ...(pdfPath ? { pdfPath } : {}),
+        ...(oraclePdfPath ? { oraclePdfPath } : {}),
+        ...(ipfsPdfPath ? { ipfsPdfPath } : {}),
         ...(img ? { img } : {})
       };
     }
@@ -2860,10 +2868,13 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
   const showLegacyModal = useLegacyModal(legacyImages);
   const isIPadLike = useMemo(() => detectIPadLikeDevice(), []);
-  const effectiveMaxDpr = isIPadLike ? 1 : 1.5;
+  const forceLowQuality = getBooleanFromQuery('lowQuality') || getBooleanFromQuery('performance');
+  const highQualityMode = !isIPadLike && !forceLowQuality;
+  const effectiveMaxDpr = highQualityMode ? 2 : 1;
   const useLogDepth = !isIPadLike;
 
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+  const [isVideoPlayerModalOpen, setIsVideoPlayerModalOpen] = useState(false);
   const [xrSupported, setXrSupported] = useState(false);
   const [xrSessionActive, setXrSessionActive] = useState(false);
   const [xrError, setXrError] = useState<string | null>(null);
@@ -2982,7 +2993,10 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         showLoader: typeof entry.showLoader === 'boolean' ? entry.showLoader : undefined,
         allowFullscreen: typeof entry.allowFullscreen === 'boolean' ? entry.allowFullscreen : undefined,
         interactive: typeof entry.interactive === 'boolean' ? entry.interactive : undefined,
+        controlsAnchorName: typeof entry.controlsAnchorName === 'string' ? entry.controlsAnchorName : undefined,
         disableAudio: typeof entry.disableAudio === 'boolean' ? entry.disableAudio : undefined,
+        spatialAudio: typeof entry.spatialAudio === 'boolean' ? entry.spatialAudio : undefined,
+        playbackMode: resolveVideoPlaybackMode(entry),
         volume: typeof entry.volume === 'number' ? entry.volume : undefined,
         preload: typeof entry.preload === 'string' ? entry.preload : undefined,
         poster:
@@ -3034,6 +3048,18 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const onModalState = (event: Event) => {
+      const custom = event as CustomEvent<{ open?: boolean }>;
+      setIsVideoPlayerModalOpen(custom.detail?.open === true);
+    };
+    window.addEventListener('video-player-modal-state', onModalState as EventListener);
+    return () => {
+      window.removeEventListener('video-player-modal-state', onModalState as EventListener);
     };
   }, []);
 
@@ -3134,13 +3160,13 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         gl={{
           antialias: true,
           alpha: false,
-          powerPreference: 'low-power',
+          powerPreference: highQualityMode ? 'high-performance' : 'low-power',
           logarithmicDepthBuffer: useLogDepth,
           stencil: false
         }}
         onCreated={handleCanvasCreated}
       >
-        <RendererTuning lowPowerMode={isIPadLike} />
+        <RendererTuning highQualityMode={highQualityMode} />
         <SceneBackground
           textureUrl={config?.backgroundTexture}
           blurriness={backgroundBlurriness}
@@ -3226,6 +3252,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
         <OrbitControls
           makeDefault
+          enabled={!isVideoPlayerModalOpen}
           enableDamping
           dampingFactor={0.05}
           autoRotate={thumbnailModeActive && thumbnailCapture.autoRotate}
@@ -3238,6 +3265,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         />
         <PointerInteractions
           visitor={visitorInstance}
+          disabled={isVideoPlayerModalOpen}
           onCloseSidebar={onRequestSidebarClose}
           popupCallback={(payload) => {
             if (payload.type === 'Image') {
@@ -3254,6 +3282,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           collider={collider}
           params={controllerParams}
           enabled={!thumbnailModeActive}
+          interactionLocked={isVideoPlayerModalOpen}
           onVisitorReady={setVisitorInstance}
           onVisitorActivity={onVisitorActivity}
         />
@@ -3319,12 +3348,14 @@ function FirstPersonController({
   collider,
   params,
   enabled,
+  interactionLocked = false,
   onVisitorReady,
   onVisitorActivity
 }: {
   collider: Mesh | null;
   params?: ControllerParams;
   enabled?: boolean;
+  interactionLocked?: boolean;
   onVisitorReady?: (visitor: Visitor | null) => void;
   onVisitorActivity?: () => void;
 }) {
@@ -3360,21 +3391,16 @@ function FirstPersonController({
     if (!visitor) return undefined;
     onVisitorReady?.(visitor);
     scene.add(visitor);
-    visitor.reset?.();
-
     if (controls) {
       controls.enablePan = false;
       controls.enableZoom = false;
       controls.minDistance = 1e-4;
       controls.maxDistance = 1e-4;
-
-      const offset = toVector3(params?.heightOffset, [0, 1.05, 0]);
-      const headPosition = visitor.position.clone().add(offset);
-      controls.target.copy(headPosition);
-      camera.position.copy(headPosition).add(new Vector3(0, 0, 1e-4));
-
+      // Ensure we have a tiny (but non-zero) orbit radius before reset so rotateOrbit can apply.
+      camera.position.copy(controls.target).add(new Vector3(0, 0, 1e-4));
       controls.update();
     }
+    visitor.reset?.();
 
     return () => {
       visitor.dispose?.();
@@ -3382,6 +3408,18 @@ function FirstPersonController({
       onVisitorReady?.(null);
     };
   }, [camera, controls, onVisitorReady, params, scene, visitor]);
+
+  useEffect(() => {
+    if (!visitor) return;
+    if (interactionLocked) {
+      visitor.fwdPressed = false;
+      visitor.bkdPressed = false;
+      visitor.lftPressed = false;
+      visitor.rgtPressed = false;
+      visitor.setJoystickInput(0, 0);
+      visitor.isAutoMoving = false;
+    }
+  }, [interactionLocked, visitor]);
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -3423,6 +3461,10 @@ function FirstPersonController({
 
   useFrame((_, delta) => {
     if (!visitor || !collider) return;
+    if (controls) {
+      controls.enabled = !interactionLocked;
+    }
+    if (interactionLocked) return;
     visitor.update(delta, collider);
 
     const now = performance.now();
@@ -3612,20 +3654,20 @@ function AudioSystem({
   );
 }
 
-function RendererTuning({ lowPowerMode = false }: { lowPowerMode?: boolean }) {
+function RendererTuning({ highQualityMode = true }: { highQualityMode?: boolean }) {
   const { gl } = useThree();
 
   useEffect(() => {
-    //gl.physicallyCorrectLights = true;
+    gl.physicallyCorrectLights = highQualityMode;
     gl.outputColorSpace = SRGBColorSpace;
-    gl.shadowMap.enabled = !lowPowerMode;
-    if (!lowPowerMode) {
+    gl.shadowMap.enabled = highQualityMode;
+    if (highQualityMode) {
       gl.shadowMap.type = PCFSoftShadowMap;
     }
     if (typeof window !== 'undefined') {
-      gl.setPixelRatio(Math.min(lowPowerMode ? 1 : 1.5, window.devicePixelRatio || 1));
+      gl.setPixelRatio(Math.min(highQualityMode ? 2 : 1, window.devicePixelRatio || 1));
     }
-  }, [gl, lowPowerMode]);
+  }, [gl, highQualityMode]);
 
   return null;
 }

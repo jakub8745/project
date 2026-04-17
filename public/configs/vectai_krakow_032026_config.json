@@ -12,13 +12,28 @@
         "id": "info-icon",
         "label": "About Project",
         "target": "info_text",
-        "content": "Pęknięcia sensu to dokumentacja 3D pilotażowego warsztatu VECT-AI zrealizowanego w Krakowie w ramach projektu CAPHE. Projekt bada, jak sztuka może wspierać krytyczne myślenie o AI poprzez pracę z błędem, deformacją i niejednoznacznością. Jego publicznym rezultatem był wideopoemat „OBOWIĄZKI WŁASNEJ RĘKI WCIĄGNIĘTEJ ( ) DO ŚRODKA” — forma łącząca tekst, obraz i dźwięk w nielinearną, wielowarstwową kompozycję. Prezentowana przestrzeń nie tylko archiwizuje rezultat, ale pozwala wrócić do procesu i relacji między obrazem, tekstem, dźwiękiem oraz algorytmicznym domykaniem sensu. Szczegółowe omówienie metody, struktury warsztatu, komponentu refleksyjnego oraz założeń dydaktycznych i badawczych projektu znajduje się w towarzyszącej mu dokumentacji."     }
+        "content": "Pęknięcia sensu to dokumentacja 3D pilotażowego warsztatu VECT-AI zrealizowanego w Krakowie w ramach projektu CAPHE. Projekt bada, jak sztuka może wspierać krytyczne myślenie o AI poprzez pracę z błędem, deformacją i niejednoznacznością. Jego publicznym rezultatem był wideopoemat „OBOWIĄZKI WŁASNEJ RĘKI WCIĄGNIĘTEJ ( ) DO ŚRODKA” — forma łącząca tekst, obraz i dźwięk w nielinearną, wielowarstwową kompozycję. Prezentowana przestrzeń nie tylko archiwizuje rezultat, ale pozwala wrócić do procesu i relacji między obrazem, tekstem, dźwiękiem oraz algorytmicznym domykaniem sensu. Szczegółowe omówienie metody, struktury warsztatu, komponentu refleksyjnego oraz założeń dydaktycznych i badawczych projektu znajduje się w towarzyszącej mu dokumentacji."
+      }
     ]
   },
-  "images": {},
+  "images": {
+    "pdf_manual": {
+      "title": "VECT-AI documentation",
+      "description": "Workshop documentation PDF",
+      "imagePath": "public/textures/thubm_PeknieciaSensu.jpg",
+      "pdfPath": "/pdfs/pęknięcia_sensu.pdf"
+    },
+    "zenodo_manual": {
+      "title": "VECT-AI documentation",
+      "description": "Workshop documentation PDF",
+      "imagePath": "/textures/cueva-de-los-manos_wallpaper.jpg",
+      "pdfPath": "https://zenodo.org/records/19220100"
+    }
+  },
   "videos": [
     {
       "id": "left_screen",
+      "playbackMode": "synced_silent",
       "videoSurface": {
         "roughness": 0.9,
         "metalness": 0.02,
@@ -51,6 +66,7 @@
     },
     {
       "id": "middle_screen",
+      "playbackMode": "synced_silent",
       "videoSurface": {
         "roughness": 0.9,
         "metalness": 0.02,
@@ -83,6 +99,7 @@
     },
     {
       "id": "right_screen",
+      "playbackMode": "synced_silent",
       "videoSurface": {
         "roughness": 0.9,
         "metalness": 0.02,

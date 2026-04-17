@@ -10,65 +10,81 @@
     "items": [
       {
         "id": "info-icon",
-        "label": "O Wystawie",
+        "label": "About",
         "target": "info_text",
-        "content": "The exhibition brings together three videopoems created in the framework of workshops organised within the CAPHE project, developed in diverse settings and through collaboration with different partners. These works transform existing literary texts into immersive audiovisual experiences, demonstrating how videopoetry can function both as artistic reinvention and as cultural transmission. By remediating poetry, the project shows how classic and modern texts acquire new resonances across languages, media, and cultural contexts. It also highlights the educational and popularising dimension of videopoetry, revealing how creative reinterpretations make complex ideas accessible to wider, multilingual audiences. Curated in the Spacial virtual gallery by Jarek Solecki and Justyna Gorzkowicz, the exhibition is experienced through VR headsets (Oculus). Each piece reimagines a poem as a multi-sensory encounter, weaving together word, image, and sound into a unified composition."
+        "content": " This virtual exhibition brings together three videopoems that transform literary texts into immersive audiovisual works, presenting videopoetry as both an artistic practice and a didactic medium for transmitting cultural heritage across languages, media and cultural contexts. Developed through workshops organised within Communities and Artistic Participation in Hybrid Environments (CAPHE, 2023-2025), the exhibition explores how poetry may be reactivated through the interplay of word, image and sound, generating new forms of interpretation and encounter. This archival space documents an exhibition presented simultaneously in two connected formats from 19 to 27 November 2025: as an on-site installation at the Gallery of the Faculty of Fine Arts of the University of Lisbon (Faculdade de Belas-Artes da Universidade de Lisboa) and as a virtual environment in Spacial. Curated by Justyna Gorzkowicz and Jarosław Solecki, the exhibition brought together three videopoems based on works by Stanisław Młodożeniec, Stanisław Vincenz, and Fernando Pessoa with his heteronyms, showing how literary texts can be reimagined through audiovisual form, translation, collaboration and workshop-based practice. The works presented were Jedna ziemia / One Earth, based on Stanisław Młodożeniec's poem W drodze (On the Road); Echoes of a Father, based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer; and Disappearing Mirrors, a collaborative videopoem based on poems by Fernando Pessoa and his heteronyms, developed with students from the Faculty of Fine Arts of the University of Lisbon and the team from the Polish University Abroad (PUNO) in London. Distinctly polyphonic in structure, Disappearing Mirrors combines multiple visual, textual and vocal contributions. It includes Ode Triunfal Redux by Tiago Mendonça, Na Floresta do Alheamento by Carlota Bonito, Estátuas Invisíveis by Margarida Leal, inspired by Cul de Lampe by Álvaro de Campos, and a video by Patrícia Dias based on Tabacaria by Álvaro de Campos. Additional textual layers include Mar Português and Autopsicografia. The work also incorporates Greek translation by Agnieszka Szajner, Italian translation by Giulia Lanciani, vocal contributions by Giuseppe Caprioti, Ellodie Cheikh and Agnieszka Szajner, and editing by Justyna Gorzkowicz and Jarosław Solecki. Although each piece adopts a different strategy, all three are grounded in the same premise: that poetry can move beyond the printed page and be experienced as rhythm, voice, image, movement and audiovisual composition. In this sense, the exhibition presents the videopoem as a medium for the remediation of literary heritage and as a space in which new readings may emerge. Living Heritage proposes that literary works continue to live not only through reading and interpretation, but also through audiovisual transformation, multilingual transmission and shared artistic practice across physical and virtual environments."
       },
       {
-        "label": "",
-        "link": ""
+        "id": "dossier-pdf",
+        "label": "Curatorial Dossier (PDF)",
+        "pdfPath": "/pdfs/Living_Heritage_Curatorial_Dossier.pdf"
+      },
+      {
+        "label": "Strona Główna Blue Point Art",
+        "link": "https://bluepointart.uk/lockdowns-ciechanowska/"
       }
     ]
   },
-  "images": {},
+  "images": {
+    "enter_image": {
+      "title": "Living Heritage: Remediating Through Videopoetry",
+      "description": "",
+      "author": "",
+      "imagePath": "/textures/lisbon_living_heritage_videopem.jpg"
+    }
+  },
   "videos": [
     {
       "id": "jednaziemia",
+      "playbackMode": "spatial_video",
+      "controlsAnchorName": "VideoControlsAnchor_jednaziemia",
       "loop": true,
       "muted": true,
       "playsinline": true,
-      "title": "JEDNA ZIEMIA / ONE EARTH (2024)",
-      "description": "This videopoem is based on W drodze (On the Road) by the Polish futurist Stanisław Młodożeniec. It reimagines the original poem in audiovisual form, highlighting the dynamism of early 20th-century avant-garde poetry while resonating with contemporary ecological and humanist concerns.",
+      "title": "JEDNA ZIEMIA / ONE EARTH",
+      "description": "based on W drodze (On the Road) by Stanisław Młodożeniec videopoem by Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna, London-Sandomierz, 2024",
       "author": "Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna",
       "poster": "/textures/title_jednaZiemia.png",
       "sources": [
         {
           "src_local": "/Volumes/working/Archivum_BPA/video/Mlodozeniec_JednaZiemia.mp4",
-          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
           "type": "video/mp4"
         }
       ]
     },
     {
       "id": "echoes",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,
-      "title": "ECHOES OF A FATHER (2023)",
-      "description": "A remediation and paraphrase of Stanisław Vincenz's poetic interpretation of The Lord's Prayer. Presented in English, this videopoem explores how sacred text, when mediated through image and sound, resonates across cultures and contexts.",
+      "title": "ECHOES OF A FATHER",
+      "description": "based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer videopoem by Justyna Gorzkowicz & Jarosław Solecki English translation by Anna Zaranko, London, 2025",
       "author": "Justyna Gorzkowicz & Jarosław Solecki",
       "poster": "/textures/title_echoes.png",
       "sources": [
         {
           "src_local": "/Volumes/working/Archivum_BPA/video/ECHOES_OF_A_FATHER.mp4",
-          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES_OF_A_FATHER.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
           "type": "video/mp4"
         }
       ]
     },
     {
       "id": "pessoa",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,
-      "title": "DISAPPEARING MIRRORS (2025)",
-      "description": "This videopoem remediates the polyphonic poetics of Fernando Pessoa. Different languages and voices overlap, echo, and dissolve into one another, mirroring the heteronyms and multiple identities of the Portuguese modernist.",
+      "title": "DISAPPEARED MIRRORS",
+      "description": "based on poems by Fernando Pessoa and his heteronyms collaborative videopoem by fine arts students from Lisbon (FBAUL) and the PUNO team edited by Justyna Gorzkowicz & Jarosław Solecki, Lisbon, 2025",
       "author": "Portuguese student & PUNO collaboration (CAPHE project)",
       "poster": "/textures/title_disappeared.png",
       "sources": [
         {
           "src_local": "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4",
-          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Pessoa_DissapearedMirrors.mp4",
+          "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
           "type": "video/mp4"
         }
       ]
@@ -95,6 +111,6 @@
       "y": 4,
       "z": 0
     },
-    "rotateOrbit": -150
+    "rotateOrbit": -30
   }
 }

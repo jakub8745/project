@@ -51,7 +51,8 @@ function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitConfig {
   const images = config.images
     ? Object.fromEntries(
         Object.entries(config.images).map(([key, meta]) => {
-          const normalised = normalizeMediaEntry(meta, bucket, 'imagePath', 'oracleImagePath');
+          const withImage = normalizeMediaEntry(meta, bucket, 'imagePath', 'oracleImagePath');
+          const normalised = normalizeMediaEntry(withImage, bucket, 'pdfPath', 'oraclePdfPath');
           return [key, normalised];
         })
       )

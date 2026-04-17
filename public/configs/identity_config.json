@@ -79,6 +79,7 @@
   "videos": [
     {
       "id": "Unreal",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,
@@ -94,6 +95,7 @@
     },
     {
       "id": "Heritage",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,

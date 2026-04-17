@@ -1,4 +1,5 @@
 import { useState, useEffect, FC } from 'react';
+import { createPortal } from 'react-dom';
 import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
 import { COMMON_ICONS } from '../data/galleryConfig';
 import { normalizeConfigUrl, toSafeExternalUrl } from '../utils/url';
@@ -10,6 +11,7 @@ export interface InfoItem {
   icon: string;
   content?: string;
   link?: string;
+  pdfPath?: string;
 }
 
 interface InfoButtonsProps {
@@ -22,6 +24,7 @@ interface SidebarItemConfig {
   icon?: string;
   content?: string;
   link?: string;
+  pdfPath?: string;
 }
 
 interface ExhibitConfigResponse {
@@ -37,6 +40,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   // ✅ Always declare hooks first
   const [items, setItems] = useState<InfoItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [activePdf, setActivePdf] = useState<{ title: string; src: string } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,6 +86,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           const baseIcon = 'icon' in item ? item.icon ?? '' : '';
           const link = 'link' in item ? item.link : undefined;
           const content = 'content' in item ? item.content : undefined;
+          const pdfPath = 'pdfPath' in item && typeof item.pdfPath === 'string' ? item.pdfPath : undefined;
           // Prefer common icons for well-known ids
           let overrideIcon: string | undefined;
           if (item.id === 'info-icon') overrideIcon = COMMON_ICONS.info;
@@ -108,6 +113,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             icon: resolvedIcon || COMMON_ICONS.info,
             content,
             link: toSafeExternalUrl(link),
+            pdfPath,
           };
         });
         const sanitized: InfoItem[] = normalized.map((item) => ({
@@ -139,6 +145,42 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   if (loading) return <div className="text-slate-400 p-4">Loading info…</div>;
   if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
 
+  const pdfModal =
+    activePdf && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            className="mmodal mmodal--active mmodal--align-top mmodal__bg"
+            role="dialog"
+            aria-modal="true"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setActivePdf(null);
+              }
+            }}
+          >
+            <div className="mmodal__shell">
+              <button className="mmodal__close" onClick={() => setActivePdf(null)} aria-label="Close modal">×</button>
+              <div className="mmodal__panel">
+                <div className="mmodal__content mmodal__content--active">
+                  <div className="mmodal__body mmodal__body--col">
+                    <div className="mmodal__image-wrap">
+                      <iframe className="mmodal__pdf" src={activePdf.src} title={activePdf.title} />
+                    </div>
+                    <div className="mmodal__desc">
+                      <h3>{activePdf.title}</h3>
+                      <p>
+                        <a href={activePdf.src} target="_blank" rel="noreferrer noopener">Open PDF in new tab</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
   return (
     <div className="flex flex-col items-center space-y-4 mt-4">
       {items.map(item => (
@@ -156,7 +198,13 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           ) : (
             <div>
               <button
-                onClick={() => setOpenId(openId === item.id ? null : item.id)}
+                onClick={() => {
+                  if (item.pdfPath) {
+                    setActivePdf({ title: item.label || 'PDF document', src: item.pdfPath });
+                    return;
+                  }
+                  setOpenId(openId === item.id ? null : item.id);
+                }}
                 className="w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition"
               >
                 <img src={item.icon} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
@@ -172,6 +220,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           )}
         </div>
       ))}
+      {pdfModal}
     </div>
   );
 };

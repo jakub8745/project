@@ -17,6 +17,9 @@ export type ModalImageMeta = {
   imagePath?: string;
   oracleImagePath?: string;
   ipfsImagePath?: string;
+  pdfPath?: string;
+  oraclePdfPath?: string;
+  ipfsPdfPath?: string;
 };
 
 export type ModalImageMap = Record<string, ModalImageMeta>;
@@ -29,7 +32,10 @@ type ModalState = {
   title: string | null;
   description: string | null;
   author: string | null;
+  mediaType: 'image' | 'pdf' | null;
   imageSrc: string | null;
+  pdfSrc: string | null;
+  pdfEmbedBlocked: boolean;
   pendingSources: string[];
   contentWidth: number | null;
   status: 'idle' | 'loading' | 'ready' | 'error';
@@ -47,7 +53,10 @@ const defaultState = (): ModalState => ({
   title: null,
   description: null,
   author: null,
+  mediaType: null,
   imageSrc: null,
+  pdfSrc: null,
+  pdfEmbedBlocked: false,
   pendingSources: [],
   contentWidth: null,
   status: 'idle',
@@ -60,6 +69,14 @@ function ipfsToGateway(ipfsUrl: string, gatewayIndex: number) {
   return `${gateway}${cid}`;
 }
 
+function isZenodoUrl(url: string) {
+  try {
+    return new URL(url, window.location.origin).hostname === 'zenodo.org';
+  } catch {
+    return false;
+  }
+}
+
 export function MaterialModalProvider({ children, initialImages }: MaterialModalProviderProps) {
   const [images, setImagesState] = useState<ModalImageMap | undefined>(initialImages);
   const [state, setState] = useState<ModalState>(() => defaultState());
@@ -69,6 +86,7 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
   const modalRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const pdfLoadTimeoutRef = useRef<number | null>(null);
 
   const setImages = useCallback((map: ModalImageMap | undefined) => {
     setImagesState(map);
@@ -126,6 +144,10 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
 
   const hideModal = useCallback(() => {
     activeNameRef.current = null;
+    if (pdfLoadTimeoutRef.current !== null) {
+      window.clearTimeout(pdfLoadTimeoutRef.current);
+      pdfLoadTimeoutRef.current = null;
+    }
     if (contentRef.current) {
       contentRef.current.style.width = '';
     }
@@ -149,6 +171,36 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     return () => window.cancelAnimationFrame(frame);
   }, [state.isOpen, state.imageSrc, syncModalWidth]);
 
+  useEffect(() => {
+    if (pdfLoadTimeoutRef.current !== null) {
+      window.clearTimeout(pdfLoadTimeoutRef.current);
+      pdfLoadTimeoutRef.current = null;
+    }
+
+    if (!state.isOpen || state.mediaType !== 'pdf' || !state.pdfSrc || state.pdfEmbedBlocked || isZenodoUrl(state.pdfSrc)) {
+      return undefined;
+    }
+
+    pdfLoadTimeoutRef.current = window.setTimeout(() => {
+      setState((prev) => {
+        if (!prev.isOpen || prev.mediaType !== 'pdf' || prev.pdfEmbedBlocked) return prev;
+        return {
+          ...prev,
+          pdfEmbedBlocked: true,
+          message: 'This PDF could not be embedded here. Open it in a new tab.'
+        };
+      });
+      pdfLoadTimeoutRef.current = null;
+    }, 4000);
+
+    return () => {
+      if (pdfLoadTimeoutRef.current !== null) {
+        window.clearTimeout(pdfLoadTimeoutRef.current);
+        pdfLoadTimeoutRef.current = null;
+      }
+    };
+  }, [state.isOpen, state.mediaType, state.pdfSrc, state.pdfEmbedBlocked]);
+
   const showModal = useCallback((payload: ModalOpenPayload) => {
     const name = typeof payload?.name === 'string' ? payload.name : undefined;
     if (!name) return;
@@ -157,7 +209,11 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
 
     activeNameRef.current = name;
 
-    const cachedSrc = imageCache.current.get(name) ?? meta.img?.src ?? null;
+    const pdfDirectUrl = meta.pdfPath ?? meta.oraclePdfPath ?? undefined;
+    const pdfIpfsUrl = meta.ipfsPdfPath ?? (pdfDirectUrl?.startsWith('ipfs://') ? pdfDirectUrl : undefined);
+    const hasPdf = Boolean(pdfDirectUrl || pdfIpfsUrl);
+
+    const cachedSrc = hasPdf ? null : (imageCache.current.get(name) ?? meta.img?.src ?? null);
     if (cachedSrc) {
       imageCache.current.set(name, cachedSrc);
     }
@@ -174,32 +230,57 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       sources.push(src);
     };
 
-    addSource(cachedSrc);
-
-    const directUrl = meta.imagePath ?? meta.oracleImagePath ?? undefined;
-    if (directUrl && !directUrl.startsWith('ipfs://')) {
-      addSource(directUrl);
-    }
-
-    if (meta.oracleImagePath && !meta.oracleImagePath.startsWith('ipfs://')) {
-      addSource(meta.oracleImagePath);
-    }
-
-    const ipfsUrl = meta.ipfsImagePath ?? (directUrl?.startsWith('ipfs://') ? directUrl : undefined);
-    if (ipfsUrl) {
-      for (let i = 0; i < ipfsGateways.length; i += 1) {
-        addSource(ipfsToGateway(ipfsUrl, i));
+    if (hasPdf) {
+      if (pdfDirectUrl && !pdfDirectUrl.startsWith('ipfs://')) {
+        addSource(pdfDirectUrl);
       }
-    }
 
-    if (directUrl && directUrl.startsWith('ipfs://')) {
-      // Ensure we try the raw ipfs URI last in case a gateway handler exists
-      addSource(directUrl);
+      if (meta.oraclePdfPath && !meta.oraclePdfPath.startsWith('ipfs://')) {
+        addSource(meta.oraclePdfPath);
+      }
+
+      if (pdfIpfsUrl) {
+        for (let i = 0; i < ipfsGateways.length; i += 1) {
+          addSource(ipfsToGateway(pdfIpfsUrl, i));
+        }
+      }
+
+      if (pdfDirectUrl && pdfDirectUrl.startsWith('ipfs://')) {
+        addSource(pdfDirectUrl);
+      }
+    } else {
+      addSource(cachedSrc);
+
+      const directUrl = meta.imagePath ?? meta.oracleImagePath ?? undefined;
+      if (directUrl && !directUrl.startsWith('ipfs://')) {
+        addSource(directUrl);
+      }
+
+      if (meta.oracleImagePath && !meta.oracleImagePath.startsWith('ipfs://')) {
+        addSource(meta.oracleImagePath);
+      }
+
+      const ipfsUrl = meta.ipfsImagePath ?? (directUrl?.startsWith('ipfs://') ? directUrl : undefined);
+      if (ipfsUrl) {
+        for (let i = 0; i < ipfsGateways.length; i += 1) {
+          addSource(ipfsToGateway(ipfsUrl, i));
+        }
+      }
+
+      if (directUrl && directUrl.startsWith('ipfs://')) {
+        // Ensure we try the raw ipfs URI last in case a gateway handler exists
+        addSource(directUrl);
+      }
     }
 
     const [initialSource, ...nextSources] = sources;
     const isCached = Boolean(cachedSrc && cachedSrc === initialSource);
     const hasSource = Boolean(initialSource);
+    const mediaType = hasPdf ? 'pdf' : 'image';
+    const isZenodoPdf = mediaType === 'pdf' && Boolean(initialSource && isZenodoUrl(initialSource));
+    const pdfWidth = typeof window !== 'undefined'
+      ? Math.round(Math.min(window.innerWidth - 20, 960))
+      : 960;
 
     setState({
       isOpen: true,
@@ -207,16 +288,25 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       title: meta.title,
       description: meta.description ?? null,
       author: meta.author ?? null,
-      imageSrc: initialSource ?? null,
+      mediaType,
+      imageSrc: mediaType === 'image' ? initialSource ?? null : null,
+      pdfSrc: mediaType === 'pdf' ? initialSource ?? null : null,
+      pdfEmbedBlocked: isZenodoPdf,
       pendingSources: nextSources,
-      contentWidth: initialWidth,
-      status: isCached ? 'ready' : hasSource ? 'loading' : 'error',
-      message: !hasSource ? '⚠️ Could not load image.' : isCached ? null : 'Loading image…'
+      contentWidth: mediaType === 'pdf' ? pdfWidth : initialWidth,
+      status: mediaType === 'pdf' ? (hasSource ? 'ready' : 'error') : (isCached ? 'ready' : hasSource ? 'loading' : 'error'),
+      message: !hasSource
+        ? `⚠️ Could not load ${mediaType === 'pdf' ? 'PDF' : 'image'}.`
+        : isZenodoPdf
+          ? 'This Zenodo PDF cannot be embedded here. Open it in a new tab.'
+          : isCached || mediaType === 'pdf'
+            ? null
+            : 'Loading image…'
     });
 
     window.requestAnimationFrame(() => {
       if (contentRef.current) {
-        contentRef.current.style.width = `${initialWidth}px`;
+        contentRef.current.style.width = `${mediaType === 'pdf' ? pdfWidth : initialWidth}px`;
       }
       syncModalWidth();
     });
@@ -291,16 +381,32 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
         const [nextSource, ...rest] = prev.pendingSources;
         return {
           ...prev,
-          imageSrc: nextSource,
+          imageSrc: prev.mediaType === 'image' ? nextSource : prev.imageSrc,
+          pdfSrc: prev.mediaType === 'pdf' ? nextSource : prev.pdfSrc,
           pendingSources: rest,
-          status: 'loading',
-          message: 'Loading image…'
+          status: prev.mediaType === 'pdf' ? 'ready' : 'loading',
+          message: prev.mediaType === 'pdf' ? null : 'Loading image…'
         };
       }
       return {
         ...prev,
         status: 'error',
-        message: '⚠️ Could not load image.'
+        message: `⚠️ Could not load ${prev.mediaType === 'pdf' ? 'PDF' : 'image'}.`
+      };
+    });
+  }, []);
+
+  const handlePdfLoad = useCallback(() => {
+    if (pdfLoadTimeoutRef.current !== null) {
+      window.clearTimeout(pdfLoadTimeoutRef.current);
+      pdfLoadTimeoutRef.current = null;
+    }
+    setState((prev) => {
+      if (prev.mediaType !== 'pdf' || prev.pdfEmbedBlocked) return prev;
+      if (prev.message === null) return prev;
+      return {
+        ...prev,
+        message: null
       };
     });
   }, []);
@@ -332,14 +438,25 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
                   </button>
                   <div className="mmodal__body">
                     <div className="mmodal__image-wrap">
-                      <img
-                        alt={state.title ?? 'modal image'}
-                        hidden={state.status !== 'ready'}
-                        ref={imgRef}
-                        src={state.imageSrc ?? ''}
-                        onLoad={handleImageLoad}
-                        onError={handleImageError}
-                      />
+                      {state.mediaType === 'pdf' ? (
+                        state.pdfSrc && !state.pdfEmbedBlocked && !isZenodoUrl(state.pdfSrc) ? (
+                          <iframe
+                            className="mmodal__pdf"
+                            src={state.pdfSrc}
+                            title={state.title ?? 'PDF document'}
+                            onLoad={handlePdfLoad}
+                          />
+                        ) : null
+                      ) : (
+                        <img
+                          alt={state.title ?? 'modal image'}
+                          hidden={state.status !== 'ready'}
+                          ref={imgRef}
+                          src={state.imageSrc ?? ''}
+                          onLoad={handleImageLoad}
+                          onError={handleImageError}
+                        />
+                      )}
                     </div>
                     <div className="mmodal__desc">
                       {state.title ? <h3>{state.title}</h3> : null}
@@ -352,6 +469,13 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
                       {state.message ? (
                         <p className={state.status === 'loading' ? 'loading-msg animate-flash' : ''} style={state.status === 'error' ? { color: 'red' } : undefined}>
                           {state.message}
+                        </p>
+                      ) : null}
+                      {state.mediaType === 'pdf' && state.pdfSrc ? (
+                        <p>
+                          <a href={state.pdfSrc} target="_blank" rel="noreferrer noopener">
+                            {isZenodoUrl(state.pdfSrc) ? 'Open PDF on Zenodo' : 'Open PDF in new tab'}
+                          </a>
                         </p>
                       ) : null}
                     </div>

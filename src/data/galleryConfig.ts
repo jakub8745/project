@@ -48,6 +48,20 @@ export const COMMON_ICONS = {
 };
 
 export const GALLERIES: GalleryItem[] = [
+        {
+        slug: "videopoem_lisbon_112025",
+        thumbnailVideo: "/sidebar_thumbnails/thumb_lisbon_videopoetry.mp4",
+        thumbnailPoster: "/sidebar_thumbnails/poster_lisbona_videopoetry.jpg",
+        title: 'LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY',
+        description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
+        scale: 0.12,
+        position: [0, 0, 0],
+        configUrl: "./configs/videopoems_config.json",
+        keywords: [],
+        ogImage: "",
+        overlayText: "",
+        videos: []
+    },
     {
         slug: "vectai_krakow_032026",
         thumbnailVideo: "/sidebar_thumbnails/thumb_vectai_cracks.mp4",
@@ -62,20 +76,7 @@ export const GALLERIES: GalleryItem[] = [
         overlayText: "",
         videos: []
     },
-    {
-        slug: "videopoems_lisbon",
-        thumbnailVideo: "/sidebar_thumbnails/thumb_videopoetry.mp4",
-        thumbnailPoster: "/sidebar_thumbnails/poster_videopoetry.jpg",
-        title: 'LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY',
-        description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
-        scale: 0.12,
-        position: [0, 0, 0],
-        configUrl: "./configs/videopoems_config.json",
-        keywords: [],
-        ogImage: "",
-        overlayText: "",
-        videos: []
-    },
+
     {
         slug: "cipriani",
         thumbnailVideo: "/sidebar_thumbnails/thumb_cipriani.mp4",

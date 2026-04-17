@@ -97,6 +97,7 @@
   "videos": [
     {
       "id": "animacja85",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,

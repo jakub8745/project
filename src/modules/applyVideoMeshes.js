@@ -1,9 +1,11 @@
 import {
   VideoTexture,
   TextureLoader,
+  CanvasTexture,
   MeshBasicMaterial,
   DoubleSide,
   SRGBColorSpace,
+  LinearFilter,
   PlaneGeometry,
   RingGeometry,
   Vector3,
@@ -14,6 +16,7 @@ import {
   AudioListener,
   Color
 } from 'three';
+import { resolveVideoPlaybackMode } from './videoPlaybackMode.js';
 
 const PLAY_ICON_PATH =
   'https://bafybeieawhqdesjes54to4u6gmqwzvpzlp2o5ncumaqw3nfiv2mui6i6q4.ipfs.w3s.link/ButtonPlay.png';
@@ -28,6 +31,9 @@ const IPFS_GATEWAYS = [
 const DEFAULT_VOLUME = 0.66;
 const MAX_OVERLAY_DISTANCE = 4; // hide controls when user is far
 const _overlayDisposers = new Set(); // track active HTML overlay cleanup fns
+const _controlIconTextureCache = new Map();
+const PLAY_ICON_URL = '/icons/ButtonPlay.png';
+const PAUSE_ICON_URL = '/icons/ButtonPause.png';
 
 // --- Step 1: resource cache ---
 const _videoResourceCache = new Map(); // id -> { video, texture }
@@ -82,8 +88,103 @@ function disposeVideoResource(id) {
   _videoResourceCache.delete(id);
 }
 
+function getCachedTexture(key, factory) {
+  const existing = _controlIconTextureCache.get(key);
+  if (existing) return existing;
+  const texture = factory();
+  _controlIconTextureCache.set(key, texture);
+  return texture;
+}
+
+function getImageIconTexture(url) {
+  return getCachedTexture(`img:${url}`, () => {
+    const texture = new TextureLoader().load(url);
+    texture.colorSpace = SRGBColorSpace;
+    return texture;
+  });
+}
+
+function getGlyphIconTexture(kind) {
+  return getCachedTexture(`glyph:${kind}`, () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return new CanvasTexture(canvas);
+
+    ctx.clearRect(0, 0, 128, 128);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#f8fafc';
+    ctx.fillStyle = '#f8fafc';
+    ctx.lineWidth = 12;
+
+    if (kind === 'vol_up' || kind === 'vol_down' || kind === 'mute' || kind === 'unmute') {
+      ctx.beginPath();
+      ctx.moveTo(20, 52);
+      ctx.lineTo(34, 52);
+      ctx.lineTo(54, 34);
+      ctx.lineTo(54, 94);
+      ctx.lineTo(34, 76);
+      ctx.lineTo(20, 76);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    if (kind === 'vol_up') {
+      ctx.beginPath();
+      ctx.arc(62, 64, 20, -0.8, 0.8);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(62, 64, 32, -0.8, 0.8);
+      ctx.stroke();
+    } else if (kind === 'vol_down') {
+      ctx.beginPath();
+      ctx.arc(62, 64, 20, -0.8, 0.8);
+      ctx.stroke();
+    } else if (kind === 'mute') {
+      ctx.beginPath();
+      ctx.moveTo(64, 42);
+      ctx.lineTo(102, 86);
+      ctx.moveTo(102, 42);
+      ctx.lineTo(64, 86);
+      ctx.stroke();
+    } else if (kind === 'unmute') {
+      ctx.beginPath();
+      ctx.arc(62, 64, 20, -0.8, 0.8);
+      ctx.stroke();
+    } else if (kind === 'fullscreen') {
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.moveTo(28, 48); ctx.lineTo(28, 28); ctx.lineTo(48, 28);
+      ctx.moveTo(80, 28); ctx.lineTo(100, 28); ctx.lineTo(100, 48);
+      ctx.moveTo(28, 80); ctx.lineTo(28, 100); ctx.lineTo(48, 100);
+      ctx.moveTo(80, 100); ctx.lineTo(100, 100); ctx.lineTo(100, 80);
+      ctx.stroke();
+    } else if (kind === 'dot') {
+      ctx.beginPath();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.arc(64, 64, 24, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    const texture = new CanvasTexture(canvas);
+    texture.colorSpace = SRGBColorSpace;
+    return texture;
+  });
+}
+
 function openVideoPlayer(cfg, video) {
   if (typeof document === 'undefined' || !(video instanceof HTMLVideoElement)) return false;
+
+  const dispatchModalState = (open) => {
+    if (typeof window === 'undefined') return;
+    window.dispatchEvent(
+      new CustomEvent('video-player-modal-state', {
+        detail: { open }
+      })
+    );
+  };
 
   const overlay = document.createElement('div');
   overlay.className = 'video-modal-overlay';
@@ -119,6 +220,7 @@ function openVideoPlayer(cfg, video) {
   modal.appendChild(modalVideo);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
+  dispatchModalState(true);
 
   const wasPlaying = !video.paused && !video.ended;
   const currentTime = Number.isFinite(video.currentTime) ? video.currentTime : 0;
@@ -135,7 +237,8 @@ function openVideoPlayer(cfg, video) {
       }
     }
     if (wasPlaying) {
-      video.muted = false;
+      setVideoResource(cfg.id, { userMuted: false });
+      resumeVideoAudio(getVideoResource(cfg.id));
       video.play().catch(() => {});
     }
   };
@@ -147,6 +250,7 @@ function openVideoPlayer(cfg, video) {
     closeBtn.removeEventListener('click', closeHandler);
     document.removeEventListener('keydown', escHandler);
     if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    dispatchModalState(false);
   };
 
   const overlayHandler = (evt) => {
@@ -187,7 +291,12 @@ export function openVideoPlayerById(videoId) {
   const video = resource?.video;
   if (!(video instanceof HTMLVideoElement)) return false;
   const cfg = resource?.cfg || { id: videoId };
+  const mode = resource?.playbackMode || resolveVideoPlaybackMode(cfg);
+  if (mode === 'synced_silent') return false;
   if (cfg?.allowFullscreen === false) return false;
+  // User gesture: treat opening modal as intent to enable audio for this video.
+  setVideoResource(videoId, { userMuted: false });
+  resumeVideoAudio(getVideoResource(videoId));
   return openVideoPlayer(cfg, video);
 }
 
@@ -350,7 +459,6 @@ function attachPositionalAudio(mesh, video, camera, cfg) {
 
   try {
     positionalAudio.setMediaElementSource(video);
-    video.muted = true; // avoid duplicate output; spatial audio handles playback
   } catch (err) {
     console.warn('Failed to attach positional audio', err);
     return null;
@@ -362,6 +470,7 @@ function attachPositionalAudio(mesh, video, camera, cfg) {
   mesh.add(positionalAudio);
 
   setVideoResource(cfg.id, { ...existing, positionalAudio, audioSourceNode: positionalAudio.source, audioListener: listener });
+  resumeVideoAudio(getVideoResource(cfg.id));
 
   return () => {
     try {
@@ -374,29 +483,167 @@ function attachPositionalAudio(mesh, video, camera, cfg) {
   };
 }
 
+function resolveDesiredVolume(cfg, video, resource) {
+  if (resource && typeof resource.userVolume === 'number' && Number.isFinite(resource.userVolume)) {
+    return Math.min(Math.max(resource.userVolume, 0), 1);
+  }
+  if (cfg && typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)) {
+    return Math.min(Math.max(cfg.volume, 0), 1);
+  }
+  if (typeof video?.volume === 'number' && Number.isFinite(video.volume) && video.volume > 0) {
+    return Math.min(Math.max(video.volume, 0), 1);
+  }
+  return DEFAULT_VOLUME;
+}
+
+function resumeVideoAudio(resource) {
+  const video = resource?.video;
+  const cfg = resource?.cfg;
+  if (!(video instanceof HTMLVideoElement)) return false;
+  const videoId = (cfg && typeof cfg.id === 'string' && cfg.id) || video.id;
+
+  const allowAudio = cfg?.disableAudio !== true;
+  if (!allowAudio) return false;
+
+  // Best-effort resume of WebAudio context (for positional audio).
+  const audioListener = resource?.audioListener;
+  audioListener?.context?.resume?.().catch?.(() => {});
+
+  let desiredVolume = resolveDesiredVolume(cfg, video, resource);
+  if (desiredVolume <= 0 && !(cfg && typeof cfg.volume === 'number')) {
+    desiredVolume = DEFAULT_VOLUME;
+  }
+  const userMuted = typeof resource?.userMuted === 'boolean' ? resource.userMuted : cfg?.muted === true;
+
+  // Spatial mode: when user unmutes, keep positional channel active and ensure
+  // media element itself is not muted so MediaElementSource remains audible.
+  if (resource?.positionalAudio) {
+    if (userMuted) {
+      video.muted = true;
+      video.setAttribute('muted', '');
+      resource.positionalAudio.setVolume(0);
+    } else {
+      video.muted = false;
+      video.removeAttribute('muted');
+      video.volume = desiredVolume;
+      resource.positionalAudio.setVolume(desiredVolume);
+    }
+    if (videoId) setVideoResource(videoId, { userMuted, userVolume: desiredVolume });
+    return true;
+  }
+
+  // Fallback path when no positional audio is present.
+  if (userMuted) {
+    video.muted = true;
+    video.setAttribute('muted', '');
+    if (videoId) setVideoResource(videoId, { userMuted: true, userVolume: desiredVolume });
+    return true;
+  }
+
+  video.muted = false;
+  video.removeAttribute('muted');
+  if (videoId) setVideoResource(videoId, { userMuted: false, userVolume: desiredVolume });
+  video.volume = desiredVolume;
+  return true;
+}
+
+export function resumeVideoAudioById(videoId) {
+  if (!videoId) return false;
+  setVideoResource(videoId, { userMuted: false });
+  const resource = getVideoResource(videoId);
+  return resumeVideoAudio(resource);
+}
+
+export function invokeVideoControlById(videoId, action, value) {
+  if (!videoId || !action) return false;
+  const resource = getVideoResource(videoId);
+  const video = resource?.video;
+  if (!(video instanceof HTMLVideoElement)) return false;
+
+  if (action === 'play_pause') {
+    if (video.paused || video.ended) {
+      setVideoResource(videoId, { userMuted: false });
+      resumeVideoAudio(getVideoResource(videoId));
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+    return true;
+  }
+
+  if (action === 'mute_toggle') {
+    const muted = typeof resource?.userMuted === 'boolean' ? resource.userMuted : !!video.muted;
+    setVideoResource(videoId, { userMuted: !muted });
+    resumeVideoAudio(getVideoResource(videoId));
+    return true;
+  }
+
+  if (action === 'volume_up' || action === 'volume_down') {
+    const base =
+      typeof resource?.userVolume === 'number' && Number.isFinite(resource.userVolume)
+        ? resource.userVolume
+        : Math.min(Math.max(video.volume ?? DEFAULT_VOLUME, 0), 1);
+    const delta = action === 'volume_up' ? 0.1 : -0.1;
+    const nextVolume = Math.min(1, Math.max(0, base + delta));
+    setVideoResource(videoId, { userMuted: false, userVolume: nextVolume });
+    resumeVideoAudio(getVideoResource(videoId));
+    return true;
+  }
+
+  if (action === 'fullscreen_toggle') {
+    return openVideoPlayerById(videoId);
+  }
+
+  if (action === 'seek_to') {
+    const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 0;
+    if (duration <= 0) return false;
+    const ratio = typeof value === 'number' && Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0;
+    try {
+      video.currentTime = ratio * duration;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+export function resumeAllVideoAudio() {
+  let resumed = 0;
+  _videoResourceCache.forEach((resource) => {
+    if (resumeVideoAudio(resource)) resumed++;
+  });
+  return resumed;
+}
+
 
 // Ensure a <video> element exists and is configured
 function ensureVideoElement(cfg) {
   if (!cfg || !cfg.id) return null;
+  const mode = resolveVideoPlaybackMode(cfg);
   let video = document.getElementById(cfg.id);
+  const resource = getVideoResource(cfg.id);
   if (video) {
     video.loop = cfg.loop ?? true;
     video.autoplay = false;
     video.playsInline = true;
     video.preload = cfg.preload || 'metadata';
-    const forceMuted = cfg.disableAudio === true || cfg.muted === true;
+    const initialMuted = mode === 'synced_silent' || cfg.disableAudio === true || cfg.muted === true;
+    const muted = typeof resource?.userMuted === 'boolean' ? resource.userMuted : initialMuted;
     const desiredVolume =
-      typeof cfg.volume === 'number'
-        ? Math.min(Math.max(cfg.volume, 0), 1)
-        : DEFAULT_VOLUME;
-    video.muted = forceMuted;
-    if (forceMuted) {
+      typeof resource?.userVolume === 'number' && Number.isFinite(resource.userVolume)
+        ? Math.min(Math.max(resource.userVolume, 0), 1)
+        : typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)
+          ? Math.min(Math.max(cfg.volume, 0), 1)
+          : DEFAULT_VOLUME;
+    video.muted = muted;
+    if (muted) {
       video.setAttribute('muted', '');
-      video.volume = 0;
     } else {
       video.removeAttribute('muted');
-      video.volume = desiredVolume;
     }
+    video.volume = desiredVolume;
     const resolvedPoster = resolvePosterUrl(cfg);
     if (resolvedPoster && video.poster !== resolvedPoster) {
       video.poster = resolvedPoster;
@@ -414,9 +661,10 @@ function ensureVideoElement(cfg) {
 
   // Disable autoplay and avoid forcing muted
   video.autoplay = false;
-  const forceMuted = cfg.disableAudio === true || cfg.muted === true;
-  video.muted = forceMuted;
-  if (forceMuted) {
+  const initialMuted = mode === 'synced_silent' || cfg.disableAudio === true || cfg.muted === true;
+  const muted = typeof resource?.userMuted === 'boolean' ? resource.userMuted : initialMuted;
+  video.muted = muted;
+  if (muted) {
     video.setAttribute('muted', '');
   } else {
     video.removeAttribute('muted');
@@ -425,10 +673,12 @@ function ensureVideoElement(cfg) {
   video.preload = cfg.preload || 'metadata';
   video.crossOrigin = 'anonymous';
   const desiredVolume =
-    typeof cfg.volume === 'number'
-      ? Math.min(Math.max(cfg.volume, 0), 1)
-      : DEFAULT_VOLUME;
-  video.volume = forceMuted ? 0 : desiredVolume;
+    typeof resource?.userVolume === 'number' && Number.isFinite(resource.userVolume)
+      ? Math.min(Math.max(resource.userVolume, 0), 1)
+      : typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)
+        ? Math.min(Math.max(cfg.volume, 0), 1)
+        : DEFAULT_VOLUME;
+  video.volume = desiredVolume;
 
   const resolvedPoster = resolvePosterUrl(cfg);
   if (resolvedPoster) {
@@ -517,6 +767,377 @@ function getWorldBounds(mesh) {
   center.multiply(mesh.scale);
 
   return { size, center };
+}
+
+function resolveControlsAnchorNode(mesh, scene, cfg) {
+  const configured =
+    typeof cfg?.controlsAnchorName === 'string' && cfg.controlsAnchorName.trim()
+      ? cfg.controlsAnchorName.trim()
+      : null;
+  const candidates = [
+    configured,
+    cfg?.id ? `VideoControlsAnchor_${cfg.id}` : null,
+    cfg?.id ? `VideoControlsAnchor-${cfg.id}` : null,
+    cfg?.id ? `VideoControlsAnchor.${cfg.id}` : null
+  ].filter(Boolean);
+
+  for (const name of candidates) {
+    const fromMesh = mesh.getObjectByName(name);
+    if (fromMesh) return fromMesh;
+    const fromScene = scene?.getObjectByName?.(name);
+    if (fromScene) return fromScene;
+  }
+  return null;
+}
+
+function addInWorldControlObject(mesh, cfg, scene) {
+  if (cfg?.controls === false) return null;
+
+  const anchor = resolveControlsAnchorNode(mesh, scene, cfg);
+  const { size } = getWorldBounds(mesh);
+  const desiredWidth = Math.max(0.26, Math.min(0.78, (size.x || 1) * 0.55));
+  const desiredHeight = Math.max(0.045, desiredWidth * 0.14);
+  const panelGeo = new PlaneGeometry(1, 1);
+  const panelMat = new MeshBasicMaterial({
+    color: 0x020617,
+    transparent: true,
+    opacity: 0.88,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const panel = new Mesh(panelGeo, panelMat);
+  panel.name = `VideoControlRig_${cfg.id}`;
+  panel.renderOrder = 998;
+  panel.userData.__isVideoControlProxy = true;
+
+  const playTexture = getImageIconTexture(PLAY_ICON_URL);
+  const pauseTexture = getImageIconTexture(PAUSE_ICON_URL);
+  const muteTexture = getGlyphIconTexture('mute');
+  const unmuteTexture = getGlyphIconTexture('unmute');
+  const fullscreenTexture = getGlyphIconTexture('fullscreen');
+  const knobTexture = getGlyphIconTexture('dot');
+
+  const addBar = (name, x, y, width, height, color, opacity, z = 0.001) => {
+    const barGeo = new PlaneGeometry(width, height);
+    const barMat = new MeshBasicMaterial({
+      color,
+      transparent: true,
+      opacity,
+      side: DoubleSide,
+      depthTest: false,
+      depthWrite: false
+    });
+    const bar = new Mesh(barGeo, barMat);
+    bar.name = `${name}_${cfg.id}`;
+    bar.position.set(x, y, z);
+    bar.renderOrder = 999;
+    bar.userData.__isVideoControlProxy = true;
+    panel.add(bar);
+    return bar;
+  };
+
+  addBar('VideoControlInnerBg', 0, 0, 0.96, 0.82, 0x000814, 0.35);
+
+  const addIconButton = (name, x, texture, action) => {
+    const hitGeo = new PlaneGeometry(0.082, 0.56);
+    const hitMat = new MeshBasicMaterial({
+      color: 0x0f172a,
+      transparent: true,
+      opacity: 0.001,
+      side: DoubleSide,
+      depthTest: false,
+      depthWrite: false
+    });
+    const button = new Mesh(hitGeo, hitMat);
+    button.name = `VideoControlButton_${cfg.id}_${name}`;
+    button.position.set(x, 0, 0.002);
+    button.renderOrder = 999;
+    button.userData.type = 'VideoControl';
+    button.userData.elementID = cfg.id;
+    button.userData.action = action;
+    button.userData.__isVideoControlProxy = true;
+
+    const iconGeo = new PlaneGeometry(0.048, 0.34);
+    const iconMat = new MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.94,
+      side: DoubleSide,
+      depthTest: false,
+      depthWrite: false
+    });
+    const icon = new Mesh(iconGeo, iconMat);
+    icon.position.set(0, 0, 0.001);
+    icon.renderOrder = 1000;
+    icon.userData.type = 'VideoControl';
+    icon.userData.elementID = cfg.id;
+    icon.userData.action = action;
+    icon.userData.__isVideoControlProxy = true;
+    button.add(icon);
+    panel.add(button);
+
+    return { button, icon, iconMat };
+  };
+
+  const playPause = addIconButton('playPause', -0.455, playTexture, 'play_pause');
+  const mute = addIconButton('mute', 0.245, muteTexture, 'mute_toggle');
+  addIconButton('fullscreen', 0.455, fullscreenTexture, 'fullscreen_toggle');
+
+  const progressWidth = 0.34;
+  const progressHeight = 0.065;
+  const progressCenterX = -0.155;
+  const progressY = 0;
+  addBar('VideoControlProgressTrack', progressCenterX, progressY, progressWidth, progressHeight, 0x0f172a, 0.95, 0.0015);
+  const progressFillMat = new MeshBasicMaterial({
+    color: 0x0ea5e9,
+    transparent: true,
+    opacity: 1,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const progressFill = new Mesh(new PlaneGeometry(1, progressHeight * 0.82), progressFillMat);
+  progressFill.name = `VideoControlProgressFill_${cfg.id}`;
+  progressFill.position.set(progressCenterX, progressY, 0.0018);
+  progressFill.renderOrder = 999;
+  progressFill.userData.__isVideoControlProxy = true;
+  panel.add(progressFill);
+  const progressKnobGeo = new PlaneGeometry(0.024, 0.24);
+  const progressKnobMat = new MeshBasicMaterial({
+    map: knobTexture,
+    transparent: true,
+    opacity: 0.98,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const progressKnob = new Mesh(progressKnobGeo, progressKnobMat);
+  progressKnob.position.set(progressCenterX - progressWidth * 0.5, progressY, 0.002);
+  progressKnob.renderOrder = 1000;
+  progressKnob.userData.__isVideoControlProxy = true;
+  panel.add(progressKnob);
+
+  const progressHitZoneGeo = new PlaneGeometry(progressWidth, 0.26);
+  const progressHitZoneMat = new MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.001,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const progressHitZone = new Mesh(progressHitZoneGeo, progressHitZoneMat);
+  progressHitZone.name = `VideoControlButton_${cfg.id}_seek`;
+  progressHitZone.position.set(progressCenterX, progressY, 0.0022);
+  progressHitZone.renderOrder = 1001;
+  progressHitZone.userData.type = 'VideoControl';
+  progressHitZone.userData.elementID = cfg.id;
+  progressHitZone.userData.action = 'seek_to';
+  progressHitZone.userData.seekMinX = -progressWidth * 0.5;
+  progressHitZone.userData.seekMaxX = progressWidth * 0.5;
+  progressHitZone.userData.__isVideoControlProxy = true;
+  panel.add(progressHitZone);
+
+  const volumeWidth = 0.16;
+  const volumeHeight = 0.065;
+  const volumeCenterX = 0.355;
+  addBar('VideoControlVolumeTrack', volumeCenterX, 0, volumeWidth, volumeHeight, 0x334155, 0.9, 0.0015);
+  const volumeFillMat = new MeshBasicMaterial({
+    color: 0xe2e8f0,
+    transparent: true,
+    opacity: 0.96,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const volumeFill = new Mesh(new PlaneGeometry(1, volumeHeight * 0.72), volumeFillMat);
+  volumeFill.name = `VideoControlVolumeFill_${cfg.id}`;
+  volumeFill.position.set(volumeCenterX, 0, 0.0018);
+  volumeFill.renderOrder = 999;
+  volumeFill.userData.__isVideoControlProxy = true;
+  panel.add(volumeFill);
+  const volumeKnobGeo = new PlaneGeometry(0.02, 0.2);
+  const volumeKnobMat = new MeshBasicMaterial({
+    map: knobTexture,
+    transparent: true,
+    opacity: 0.96,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const volumeKnob = new Mesh(volumeKnobGeo, volumeKnobMat);
+  volumeKnob.position.set(volumeCenterX - volumeWidth * 0.5, 0, 0.002);
+  volumeKnob.renderOrder = 1000;
+  volumeKnob.userData.__isVideoControlProxy = true;
+  panel.add(volumeKnob);
+
+  const addVolumeZone = (name, x, action) => {
+    const zoneGeo = new PlaneGeometry(volumeWidth * 0.5, 0.32);
+    const zoneMat = new MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.001,
+      side: DoubleSide,
+      depthTest: false,
+      depthWrite: false
+    });
+    const zone = new Mesh(zoneGeo, zoneMat);
+    zone.name = `VideoControlButton_${cfg.id}_${name}`;
+    zone.position.set(x, 0, 0.0022);
+    zone.renderOrder = 1001;
+    zone.userData.type = 'VideoControl';
+    zone.userData.elementID = cfg.id;
+    zone.userData.action = action;
+    zone.userData.__isVideoControlProxy = true;
+    panel.add(zone);
+  };
+  addVolumeZone('volDownZone', volumeCenterX - volumeWidth * 0.25, 'volume_down');
+  addVolumeZone('volUpZone', volumeCenterX + volumeWidth * 0.25, 'volume_up');
+
+  const timeCanvas = document.createElement('canvas');
+  timeCanvas.width = 1024;
+  timeCanvas.height = 256;
+  const timeCtx = timeCanvas.getContext('2d');
+  const timeTexture = new CanvasTexture(timeCanvas);
+  timeTexture.colorSpace = SRGBColorSpace;
+  timeTexture.minFilter = LinearFilter;
+  timeTexture.magFilter = LinearFilter;
+  timeTexture.generateMipmaps = false;
+  timeTexture.needsUpdate = true;
+  const timeMat = new MeshBasicMaterial({
+    map: timeTexture,
+    transparent: true,
+    opacity: 0.98,
+    toneMapped: false,
+    side: DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+  const timeMesh = new Mesh(new PlaneGeometry(0.185, 0.16), timeMat);
+  timeMesh.position.set(0.105, 0, 0.0018);
+  timeMesh.renderOrder = 1000;
+  timeMesh.userData.__isVideoControlProxy = true;
+  panel.add(timeMesh);
+
+  const formatClock = (seconds) => {
+    if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
+    const total = Math.floor(seconds);
+    const mins = Math.floor(total / 60);
+    const secs = total % 60;
+    return `${mins}:${String(secs).padStart(2, '0')}`;
+  };
+  let lastTimeLabel = '';
+  const updateTimeLabel = (video) => {
+    if (!timeCtx) return;
+    const label = `${formatClock(video.currentTime)} / ${formatClock(video.duration)}`;
+    if (label === lastTimeLabel) return;
+    lastTimeLabel = label;
+    timeCtx.clearRect(0, 0, timeCanvas.width, timeCanvas.height);
+    timeCtx.fillStyle = 'rgba(2, 6, 23, 0.35)';
+    timeCtx.fillRect(0, 0, timeCanvas.width, timeCanvas.height);
+    timeCtx.lineJoin = 'round';
+    timeCtx.lineWidth = 10;
+    timeCtx.strokeStyle = 'rgba(2, 6, 23, 0.95)';
+    timeCtx.font = '700 112px "SF Mono", "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace';
+    timeCtx.textAlign = 'center';
+    timeCtx.textBaseline = 'middle';
+    timeCtx.strokeText(label, timeCanvas.width / 2, timeCanvas.height / 2);
+    timeCtx.fillStyle = '#e2e8f0';
+    timeCtx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+    timeCtx.shadowBlur = 8;
+    timeCtx.shadowOffsetX = 0;
+    timeCtx.shadowOffsetY = 1;
+    timeCtx.fillText(label, timeCanvas.width / 2, timeCanvas.height / 2);
+    timeCtx.shadowColor = 'transparent';
+    timeCtx.shadowBlur = 0;
+    timeTexture.needsUpdate = true;
+  };
+
+  const updateButtonStates = () => {
+    const resource = getVideoResource(cfg.id);
+    const video = resource?.video;
+    if (!(video instanceof HTMLVideoElement)) return;
+
+    playPause.iconMat.map = video.paused || video.ended ? playTexture : pauseTexture;
+    playPause.iconMat.needsUpdate = true;
+
+    const isMuted = typeof resource?.userMuted === 'boolean' ? resource.userMuted : !!video.muted;
+    mute.iconMat.map = isMuted ? muteTexture : unmuteTexture;
+    mute.iconMat.needsUpdate = true;
+
+    const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 0;
+    const current = Number.isFinite(video.currentTime) ? Math.min(Math.max(video.currentTime, 0), duration || 0) : 0;
+    const progressRatio = duration > 0 ? Math.min(1, Math.max(0, current / duration)) : 0;
+    const progressFillWidth = Math.max(0.0001, progressWidth * progressRatio);
+    progressFill.scale.x = progressFillWidth;
+    progressFill.position.x = progressCenterX - progressWidth * 0.5 + progressFillWidth * 0.5;
+    progressKnob.position.x = progressCenterX - progressWidth * 0.5 + progressWidth * progressRatio;
+
+    const currentVolume =
+      typeof resource?.userVolume === 'number' && Number.isFinite(resource.userVolume)
+        ? Math.min(Math.max(resource.userVolume, 0), 1)
+        : Math.min(Math.max(video.volume ?? DEFAULT_VOLUME, 0), 1);
+    const volumeRatio = isMuted ? 0 : currentVolume;
+    const volumeFillWidth = Math.max(0.0001, volumeWidth * volumeRatio);
+    volumeFill.scale.x = volumeFillWidth;
+    volumeFill.position.x = volumeCenterX - volumeWidth * 0.5 + volumeFillWidth * 0.5;
+    volumeKnob.position.x = volumeCenterX - volumeWidth * 0.5 + volumeWidth * volumeRatio;
+    updateTimeLabel(video);
+  };
+
+  const resource = getVideoResource(cfg.id);
+  const video = resource?.video;
+  const onState = () => updateButtonStates();
+  if (video instanceof HTMLVideoElement) {
+    video.addEventListener('play', onState);
+    video.addEventListener('pause', onState);
+    video.addEventListener('ended', onState);
+    video.addEventListener('volumechange', onState);
+    video.addEventListener('timeupdate', onState);
+    video.addEventListener('loadedmetadata', onState);
+    video.addEventListener('durationchange', onState);
+  }
+  updateButtonStates();
+
+  if (anchor) {
+    // Respect anchor scaling from DCC (Blender). Keep a small clamp for safety.
+    const anchorScale = new Vector3();
+    anchor.getWorldScale(anchorScale);
+    const safeX = Math.min(10, Math.max(0.01, Math.abs(anchorScale.x)));
+    const safeY = Math.min(10, Math.max(0.01, Math.abs(anchorScale.y)));
+    panel.scale.set(desiredWidth, desiredHeight, 1);
+    panel.position.set(0, 0, 0.015);
+    // Apply clamped factor via local scale so artist edits to anchor scale are visible.
+    panel.scale.multiply(new Vector3(safeX, safeY, 1));
+    anchor.add(panel);
+  } else {
+    const { center, size } = getWorldBounds(mesh);
+    panel.position.copy(center);
+    panel.position.z += 0.03 * Math.max(size.x || 1, size.y || 1);
+    panel.scale.set(desiredWidth, desiredHeight, 1);
+    mesh.add(panel);
+  }
+
+  return () => {
+    if (video instanceof HTMLVideoElement) {
+      video.removeEventListener('play', onState);
+      video.removeEventListener('pause', onState);
+      video.removeEventListener('ended', onState);
+      video.removeEventListener('volumechange', onState);
+      video.removeEventListener('timeupdate', onState);
+      video.removeEventListener('loadedmetadata', onState);
+      video.removeEventListener('durationchange', onState);
+    }
+    timeTexture.dispose();
+    panel.traverse((child) => {
+      if (child.isMesh) {
+        child.geometry?.dispose?.();
+        child.material?.dispose?.();
+      }
+    });
+    panel.parent?.remove(panel);
+  };
 }
 
 function addPlayIcon(mesh, video, camera) {
@@ -652,12 +1273,14 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
 
   scene.traverse(obj => {
     if (!obj.isMesh || obj.userData.type !== 'Video') return;
+    if (obj.userData.__isVideoControlProxy === true) return;
 
     const cfg = configMap.get(obj.userData.elementID);
     if (!cfg) {
       console.warn(`No video config for ID ${obj.userData.elementID}`);
       return;
     }
+    const playbackMode = resolveVideoPlaybackMode(cfg);
 
     if (!obj.userData._videoCleanupAttached) {
       obj.userData._videoCleanupAttached = true;
@@ -670,7 +1293,7 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     cleanupMeshDecorations(obj);
     const video = ensureVideoElement(cfg);
     if (!video) return;
-    setVideoResource(cfg.id, { cfg });
+    setVideoResource(cfg.id, { cfg, playbackMode });
 
     const resolvedPoster = resolvePosterUrl(cfg);
     let { posterTexture, texture: cachedTexture } = getVideoResource(cfg.id);
@@ -725,11 +1348,23 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     // Spinner appears while loading/buffering
     const spinnerCleanup = cfg.showLoader === false ? null : addLoadingSpinner(obj, video, camera);
 
-    // HTML overlay (play/pause + progress)
-    const overlayCleanup = cfg.controls === false ? null : addHtmlOverlay(obj, video, camera, cfg, scene);
+    // HTML overlay controls are legacy. Default to 3D in-world controls only.
+    // Set `htmlOverlayControls: true` on a video config entry to opt back in.
+    const useHtmlOverlayControls = cfg?.htmlOverlayControls === true;
+    const overlayCleanup =
+      !useHtmlOverlayControls || playbackMode === 'synced_silent' || cfg.controls === false
+        ? null
+        : addHtmlOverlay(obj, video, camera, cfg, scene);
+    const controlObjectCleanup =
+      playbackMode === 'synced_silent' || cfg.controls === false
+        ? null
+        : addInWorldControlObject(obj, cfg, scene);
 
-    // Positional audio anchored to the video mesh
-    const audioCleanup = cfg.disableAudio === true ? null : attachPositionalAudio(obj, video, camera, cfg);
+    // Positional audio is only for spatial_video mode.
+    const audioCleanup =
+      playbackMode !== 'spatial_video' || cfg.disableAudio === true
+        ? null
+        : attachPositionalAudio(obj, video, camera, cfg);
     const syncCleanup = queueSyncedPlayback(cfg, video, syncGroups);
 
     if (typeof spinnerCleanup === 'function') {
@@ -741,6 +1376,9 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
         overlayCleanup();
         _overlayDisposers.delete(overlayCleanup);
       });
+    }
+    if (typeof controlObjectCleanup === 'function') {
+      meshDisposers.push(controlObjectCleanup);
     }
     if (typeof audioCleanup === 'function') {
       meshDisposers.push(audioCleanup);
@@ -909,6 +1547,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
   if (typeof document === 'undefined') return null;
   const allowFullscreen = cfg?.allowFullscreen !== false;
   const allowAudio = cfg?.disableAudio !== true;
+  const controlsAnchor = resolveControlsAnchorNode(mesh, scene, cfg);
 
   const container = document.createElement('div');
   container.className = 'video-mesh-overlay';
@@ -952,7 +1591,68 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
 
   const worldPos = new Vector3();
   const corners = Array.from({ length: 8 }, () => new Vector3());
+  const cameraPos = new Vector3();
+  const anchorWorld = new Vector3();
+  const anchorWorldQuat = new Quaternion();
+  const anchorForward = new Vector3();
+  const anchorPlaced = new Vector3();
+  const projectedAnchor = new Vector3();
+  const rayTarget = new Vector3();
   const updatePosition = (renderer, activeCam) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+
+    if (controlsAnchor) {
+      controlsAnchor.getWorldPosition(anchorWorld);
+      controlsAnchor.getWorldQuaternion(anchorWorldQuat);
+      anchorForward.set(0, 0, 1).applyQuaternion(anchorWorldQuat).normalize();
+      const { size } = getWorldBounds(mesh);
+      const forwardOffset = 0.03 * Math.max(size.x || 1, size.y || 1);
+      anchorPlaced.copy(anchorWorld).addScaledVector(anchorForward, forwardOffset);
+
+      projectedAnchor.copy(anchorPlaced).project(activeCam);
+      if (projectedAnchor.z < -1 || projectedAnchor.z > 1) {
+        container.style.display = 'none';
+        return;
+      }
+
+      if (scene && activeCam) {
+        activeCam.getWorldPosition(cameraPos);
+        if (cameraPos.distanceTo(anchorPlaced) > MAX_OVERLAY_DISTANCE) {
+          container.style.display = 'none';
+          return;
+        }
+
+        rayTarget.copy(anchorPlaced).sub(cameraPos).normalize();
+        const raycaster = new Raycaster();
+        raycaster.set(cameraPos, rayTarget);
+        raycaster.far = cameraPos.distanceTo(anchorPlaced) + 0.1;
+        const hits = raycaster.intersectObjects(scene.children, true);
+        if (hits.length > 0) {
+          const firstHit = hits[0].object;
+          let current = firstHit;
+          let belongsToMesh = false;
+          while (current) {
+            if (current === mesh) {
+              belongsToMesh = true;
+              break;
+            }
+            current = current.parent;
+          }
+          if (!belongsToMesh) {
+            container.style.display = 'none';
+            return;
+          }
+        }
+      }
+
+      const x = (projectedAnchor.x * 0.5 + 0.5) * rect.width + rect.left;
+      const y = (-projectedAnchor.y * 0.5 + 0.5) * rect.height + rect.top;
+      container.style.display = 'flex';
+      container.style.left = `${x}px`;
+      container.style.top = `${y}px`;
+      return;
+    }
+
     const geom = mesh.geometry;
     if (!geom.boundingBox) geom.computeBoundingBox?.();
     if (!geom.boundingBox) {
@@ -966,8 +1666,6 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
       [min.x, min.y, max.z], [max.x, min.y, max.z], [min.x, max.y, max.z], [max.x, max.y, max.z]
     ];
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, behind = 0;
-    const rect = renderer.domElement.getBoundingClientRect();
-
     for (let i = 0; i < pts.length; i++) {
       const [x, y, z] = pts[i];
       corners[i].set(x, y, z);
@@ -989,8 +1687,8 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
 
     // Occlusion + distance checks
     if (scene && activeCam) {
-      const cameraPos = activeCam.getWorldPosition(new Vector3());
-      const centerWorld = new Vector3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
+      activeCam.getWorldPosition(cameraPos);
+      const centerWorld = rayTarget.set((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
       mesh.localToWorld(centerWorld);
 
       // Too far? Hide
@@ -1000,7 +1698,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
       }
 
       const raycaster = new Raycaster();
-      raycaster.set(cameraPos, centerWorld.clone().sub(cameraPos).normalize());
+      raycaster.set(cameraPos, rayTarget.copy(centerWorld).sub(cameraPos).normalize());
       raycaster.far = cameraPos.distanceTo(centerWorld) + 0.1;
       const hits = raycaster.intersectObjects(scene.children, true);
       if (hits.length > 0) {
@@ -1067,10 +1765,14 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
 
   const handlePlayClick = (evt) => {
     evt.stopPropagation();
-    const audioListener = getVideoResource(cfg.id)?.audioListener;
-    audioListener?.context?.resume?.().catch?.(() => {});
     if (allowAudio) {
-      video.muted = false;
+      setVideoResource(cfg.id, { userMuted: false });
+      const resource = getVideoResource(cfg.id);
+      if (resource?.video instanceof HTMLVideoElement && resource.video.volume <= 0) {
+        resource.video.volume = DEFAULT_VOLUME;
+        setVideoResource(cfg.id, { userVolume: DEFAULT_VOLUME });
+      }
+      resumeVideoAudio(getVideoResource(cfg.id));
     }
     if (video.paused) {
       video.play().catch(() => {});
@@ -1099,10 +1801,14 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
     const val = Number(target.value);
     if (Number.isFinite(val)) {
       if (allowAudio) {
-        video.muted = false;
-        video.volume = Math.min(Math.max(val, 0), 1);
-        const audioListener = getVideoResource(cfg.id)?.audioListener;
-        audioListener?.context?.resume?.().catch?.(() => {});
+        const clamped = Math.min(Math.max(val, 0), 1);
+        video.volume = clamped;
+        setVideoResource(cfg.id, { userMuted: false, userVolume: clamped });
+        const resource = getVideoResource(cfg.id);
+        resumeVideoAudio(resource);
+        if (resource?.positionalAudio) {
+          resource.positionalAudio.setVolume(clamped);
+        }
       }
     }
   };

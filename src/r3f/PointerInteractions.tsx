@@ -14,7 +14,8 @@ import {
 import { createTooltip } from '../modules/Tooltip.js';
 import type Visitor from '../modules/Visitor';
 import { toSafeExternalUrl } from '../utils/url';
-import { openVideoPlayerById } from '../modules/applyVideoMeshes.js';
+import { invokeVideoControlById, openVideoPlayerById, resumeVideoAudioById } from '../modules/applyVideoMeshes.js';
+import type { VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 
 type MetaRecord = Record<string, Record<string, unknown>>;
 
@@ -31,9 +32,10 @@ interface PointerInteractionsProps {
   links?: Record<string, unknown>;
   imagesMeta?: MetaRecord;
   videosMeta?: MetaRecord;
-  videosInteraction?: Record<string, { interactive?: boolean }>;
+  videosInteraction?: Record<string, { interactive?: boolean; playbackMode?: VideoPlaybackMode }>;
   sculpturesMeta?: MetaRecord;
   onCloseSidebar?: () => void;
+  disabled?: boolean;
 }
 
 function createClickIndicator() {
@@ -60,7 +62,8 @@ export function PointerInteractions({
   videosMeta = {},
   videosInteraction = {},
   sculpturesMeta = {},
-  onCloseSidebar
+  onCloseSidebar,
+  disabled = false
 }: PointerInteractionsProps) {
   const { camera, scene, gl } = useThree();
 
@@ -75,6 +78,7 @@ export function PointerInteractions({
   const isDraggingRef = useRef(false);
   const startCoordsRef = useRef({ x: 0, y: 0 });
   const lastTapRef = useRef(0);
+  const seekDragRef = useRef<{ videoKey: string | null }>({ videoKey: null });
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -101,7 +105,7 @@ export function PointerInteractions({
 
     const canvas = gl.domElement;
 
-    const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video', 'Link'];
+    const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
 
     const hideHoverTooltip = () => {
       tooltip.hide();
@@ -204,6 +208,10 @@ export function PointerInteractions({
     };
 
     const handleHover = (event: PointerEvent) => {
+      if (disabled) {
+        hideHoverTooltip();
+        return;
+      }
       const bounds = gl.domElement.getBoundingClientRect();
       const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
       const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
@@ -287,6 +295,7 @@ export function PointerInteractions({
     };
 
     const handleClick = (event: PointerEvent) => {
+      if (disabled) return;
       hideHoverTooltip();
       const bounds = gl.domElement.getBoundingClientRect();
       const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
@@ -320,15 +329,27 @@ export function PointerInteractions({
         if (interactionCfg?.interactive === false) {
           return;
         }
-        const opened = openVideoPlayerById(videoKey);
+        const playbackMode = interactionCfg?.playbackMode ?? 'direct_modal';
+        if (playbackMode === 'synced_silent') {
+          return;
+        }
+        const opened = playbackMode !== 'synced_silent' ? openVideoPlayerById(videoKey) : false;
         if (opened) return;
 
         const videoElement = videoKey ? document.getElementById(videoKey) : null;
 
         if (videoElement instanceof HTMLVideoElement) {
-          videoElement.muted = false;
+          resumeVideoAudioById(videoKey);
           videoElement.play().catch((err) => console.warn("Couldn't autoplay:", err));
         }
+        return;
+      }
+
+      if (type === 'VideoControl') {
+        const videoKey = typeof elementID === 'string' && elementID ? elementID : name || hit.object.name;
+        const action =
+          typeof hit.object.userData.action === 'string' ? hit.object.userData.action : 'play_pause';
+        invokeVideoControlById(videoKey, action);
         return;
       }
 
@@ -364,11 +385,91 @@ export function PointerInteractions({
       }
     };
 
+    const resolveVideoControlHit = (event: PointerEvent) => {
+      const bounds = gl.domElement.getBoundingClientRect();
+      const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+      pointer.set(x, y);
+      raycaster.setFromCamera(pointer, camera);
+      const prevFirstHitOnly = raycaster.firstHitOnly;
+      raycaster.firstHitOnly = false;
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      raycaster.firstHitOnly = prevFirstHitOnly;
+      if (!intersects.length) return { consumed: false as const };
+
+      let touchedControlRig = false;
+
+      for (const hit of intersects) {
+        let node: typeof hit.object | null = hit.object;
+
+        while (node) {
+          const userData = node.userData as Record<string, unknown> | undefined;
+          if (userData?.__isVideoControlProxy === true) {
+            touchedControlRig = true;
+          }
+          if (userData?.type === 'VideoControl') {
+            const videoKey =
+              (typeof userData.elementID === 'string' && userData.elementID) ||
+              (typeof userData.name === 'string' && userData.name) ||
+              node.name;
+            const action =
+              typeof userData.action === 'string' && userData.action
+                ? userData.action
+                : 'play_pause';
+            let value: number | undefined;
+            if (action === 'seek_to') {
+              const seekMin = typeof userData.seekMinX === 'number' ? userData.seekMinX : NaN;
+              const seekMax = typeof userData.seekMaxX === 'number' ? userData.seekMaxX : NaN;
+              if (Number.isFinite(seekMin) && Number.isFinite(seekMax) && seekMax > seekMin) {
+                const localPoint = node.worldToLocal(hit.point.clone());
+                const ratio = (localPoint.x - seekMin) / (seekMax - seekMin);
+                value = Math.min(1, Math.max(0, ratio));
+              }
+            }
+            return {
+              consumed: true as const,
+              action,
+              videoKey,
+              value
+            };
+          }
+          node = node.parent;
+        }
+      }
+
+      // Click landed on control panel/background but not a specific button:
+      // consume it so floor/wall teleport doesn't fire through controls.
+      if (touchedControlRig) {
+        return { consumed: true as const };
+      }
+
+      return { consumed: false as const };
+    };
+
     const onPointerDown = (event: PointerEvent) => {
+      if (disabled) {
+        hideHoverTooltip();
+        return;
+      }
       event.preventDefault();
       hideHoverTooltip();
       startCoordsRef.current = { x: event.clientX, y: event.clientY };
       isDraggingRef.current = false;
+
+      const controlHit = resolveVideoControlHit(event);
+      if (controlHit.consumed) {
+        if (controlHit.videoKey && controlHit.action) {
+          invokeVideoControlById(controlHit.videoKey, controlHit.action, controlHit.value);
+          if (controlHit.action === 'seek_to') {
+            seekDragRef.current.videoKey = controlHit.videoKey;
+          } else {
+            seekDragRef.current.videoKey = null;
+          }
+        }
+        // Do not forward control clicks into double-tap or teleport flow.
+        lastTapRef.current = 0;
+        return;
+      }
 
       const now = performance.now();
       const delta = now - lastTapRef.current;
@@ -380,6 +481,24 @@ export function PointerInteractions({
     };
 
     const onPointerMove = (event: PointerEvent) => {
+      if (disabled) {
+        hideHoverTooltip();
+        return;
+      }
+      if (seekDragRef.current.videoKey && event.buttons !== 0) {
+        const seekHit = resolveVideoControlHit(event);
+        if (
+          seekHit.consumed &&
+          seekHit.action === 'seek_to' &&
+          seekHit.videoKey === seekDragRef.current.videoKey &&
+          typeof seekHit.value === 'number'
+        ) {
+          invokeVideoControlById(seekHit.videoKey, 'seek_to', seekHit.value);
+        }
+        hideHoverTooltip();
+        return;
+      }
+
       if (event.buttons !== 0) {
         const { x, y } = startCoordsRef.current;
         if (Math.abs(event.clientX - x) > moveThreshold || Math.abs(event.clientY - y) > moveThreshold) {
@@ -395,6 +514,7 @@ export function PointerInteractions({
     const onPointerUp = () => {
       hideHoverTooltip();
       isDraggingRef.current = false;
+      seekDragRef.current.videoKey = null;
     };
 
     canvas.addEventListener('pointerdown', onPointerDown);
@@ -408,7 +528,7 @@ export function PointerInteractions({
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
     };
-  }, [camera, clickIndicator, gl, imagesMeta, links, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
+  }, [camera, clickIndicator, disabled, gl, imagesMeta, links, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
 
   return null;
 }

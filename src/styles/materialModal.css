@@ -132,6 +132,14 @@
   border: 1px solid rgba(0,0,0,0.35); /* subtle dark border */
   border-radius: 6px; /* gentle rounding on image */
 }
+.mmodal__pdf {
+  display: block;
+  width: min(calc(95vw - 20px), 960px);
+  height: min(80vh, 1100px);
+  border: 1px solid rgba(0,0,0,0.35);
+  border-radius: 6px;
+  background: #ffffff;
+}
 .mmodal__desc {
   flex: 1 1 auto;
   min-height: 0; /* allow flex child to shrink */

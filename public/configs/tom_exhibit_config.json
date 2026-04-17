@@ -27,6 +27,7 @@
   "videos": [
     {
       "id": "Video",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,
@@ -42,6 +43,7 @@
     },
     {
       "id": "Screen",
+      "playbackMode": "spatial_video",
       "loop": true,
       "muted": true,
       "playsinline": true,

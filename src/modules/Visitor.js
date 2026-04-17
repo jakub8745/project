@@ -311,24 +311,35 @@ export default class Visitor extends Mesh {
 
     this.visitorVelocity.set(0, 0, 0);
 
-    this.position.copy(this.params.visitorEnter || new Vector3(0, 10, 0));
+    this.position.copy(this.params.visitorEnter ?? new Vector3(0, 10, 0));
 
     // Optional: reset capsule target or height
     this.target.copy(this.position.clone().add(new Vector3(0, 10.5, 0)));
 
     // Update controls, camera or rig
-    const offset = this.params.heightOffset || new Vector3(0, 4.5, 0);
+    const offset = this.params.heightOffset ?? new Vector3(0, 4.5, 0);
     const target = this.position.clone().add(offset);
     if (this.renderer?.xr?.isPresenting && this.xrRig) {
       // Place rig at target height; camera orientation comes from HMD
       this.xrRig.position.copy(target);
     } else {
+      const cameraOffset = this.camera.position.clone().sub(this.controls.target);
       this.controls.target.copy(target);
-      this.camera.position.copy(target.clone().add(new Vector3(0, 0, 5))); // fallback offset
+      // Preserve current camera offset (first-person controllers keep this very small).
+      // If somehow the camera is exactly on the target, use a small fallback offset.
+      if (cameraOffset.lengthSq() < 1e-12) {
+        this.camera.position.copy(target).add(new Vector3(0, 0, 5));
+      } else {
+        this.camera.position.copy(target).add(cameraOffset);
+      }
     }
 
     // Camera rotation
-    rotateOrbit(this.camera, this.controls, this.params.rotateOrbit || -120);
+    const angle =
+      typeof this.params.rotateOrbit === 'number' && Number.isFinite(this.params.rotateOrbit)
+        ? this.params.rotateOrbit
+        : -120;
+    rotateOrbit(this.camera, this.controls, angle);
   }
 
 }
