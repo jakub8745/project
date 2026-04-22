@@ -2924,6 +2924,8 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           url,
           ipfsUrl,
           autoplayOnEnter: typeof record.autoplayOnEnter === 'boolean' ? record.autoplayOnEnter : undefined,
+          labelPlaying: typeof record.labelPlaying === 'string' ? record.labelPlaying : undefined,
+          labelPaused: typeof record.labelPaused === 'string' ? record.labelPaused : undefined,
           loop: typeof record.loop === 'boolean' ? record.loop : undefined,
           refDistance: typeof record.refDistance === 'number' ? record.refDistance : undefined,
           rolloff: typeof record.rolloff === 'number' ? record.rolloff : undefined,
@@ -2940,6 +2942,24 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
       .filter((cfg): cfg is AudioMeshConfig => cfg !== null);
     return sanitized.length ? sanitized : undefined;
   }, [config?.audio]);
+
+  const audioControlLabels = useMemo(() => {
+    if (!Array.isArray(audioConfig) || audioConfig.length === 0) {
+      return undefined;
+    }
+    const labelSource = audioConfig.find(
+      (entry) => typeof entry.labelPlaying === 'string' || typeof entry.labelPaused === 'string'
+    );
+    if (!labelSource) return undefined;
+    return {
+      labelPlaying: typeof labelSource.labelPlaying === 'string' && labelSource.labelPlaying.trim()
+        ? labelSource.labelPlaying
+        : undefined,
+      labelPaused: typeof labelSource.labelPaused === 'string' && labelSource.labelPaused.trim()
+        ? labelSource.labelPaused
+        : undefined
+    };
+  }, [audioConfig]);
 
   const videosConfig = useMemo<VideoMeshConfig[] | undefined>(() => {
     if (!Array.isArray(config?.videos)) {
@@ -3296,7 +3316,10 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} sceneVersion={sceneVersion} />
         <AutoExposureControl params={rawParams} />
       </Canvas>
-      <AudioPlayerControls />
+      <AudioPlayerControls
+        labelPlaying={audioControlLabels?.labelPlaying}
+        labelPaused={audioControlLabels?.labelPaused}
+      />
       <OnscreenJoystick visitor={visitorInstance} />
       {!thumbnailModeActive ? <Loader /> : null}
       {loading && (

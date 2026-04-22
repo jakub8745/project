@@ -7,6 +7,7 @@ import { InfoButtons } from './components/InfoButtons';
 import BlobChatWindow, { type BlobChatMessage } from './components/BlobChatWindow';
 import { GALLERIES } from './data/galleryConfig';
 import { useBlobChatBridge } from './hooks/useBlobChatBridge';
+import { unlockAudioPlayback } from './modules/audioMeshManager';
 
 const R3FViewer = lazy(async () => {
   const module = await import('./r3f/R3FViewer');
@@ -201,6 +202,7 @@ export default function App() {
   const [chatUnlocked, setChatUnlocked] = useState(false);
   const mainRef = useRef<HTMLElement | null>(null);
   const autoHideTimerRef = useRef<number | null>(null);
+  const audioUnlockAttemptedRef = useRef(false);
   const chatSessionIdRef = useRef<string>('default-session');
   const lastCollisionAtRef = useRef<Map<string, number>>(new Map());
   const requestInFlightRef = useRef(false);
@@ -298,6 +300,36 @@ export default function App() {
       });
     };
   }, [scheduleSidebarAutoHide]);
+
+  useEffect(() => {
+    if (audioUnlockAttemptedRef.current) {
+      return undefined;
+    }
+
+    const unlockOnFirstGesture = () => {
+      if (audioUnlockAttemptedRef.current) {
+        return;
+      }
+      audioUnlockAttemptedRef.current = true;
+      void unlockAudioPlayback();
+      window.removeEventListener('pointerdown', unlockOnFirstGesture, true);
+      window.removeEventListener('touchstart', unlockOnFirstGesture, true);
+      window.removeEventListener('keydown', unlockOnFirstGesture, true);
+      window.removeEventListener('mousedown', unlockOnFirstGesture, true);
+    };
+
+    window.addEventListener('pointerdown', unlockOnFirstGesture, true);
+    window.addEventListener('touchstart', unlockOnFirstGesture, true);
+    window.addEventListener('keydown', unlockOnFirstGesture, true);
+    window.addEventListener('mousedown', unlockOnFirstGesture, true);
+
+    return () => {
+      window.removeEventListener('pointerdown', unlockOnFirstGesture, true);
+      window.removeEventListener('touchstart', unlockOnFirstGesture, true);
+      window.removeEventListener('keydown', unlockOnFirstGesture, true);
+      window.removeEventListener('mousedown', unlockOnFirstGesture, true);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -687,12 +719,12 @@ export default function App() {
       </main>
 
       {!isThumbnailMode && showHowToModal && (
-        <div className="fixed inset-0 z-[1200] bg-black/70 flex items-end md:items-center justify-center p-2 sm:p-3 md:p-6">
+        <div className="fixed inset-x-0 bottom-6 z-[1200] flex justify-center px-3 pointer-events-none">
           <div
             role="dialog"
             aria-modal="true"
             aria-label="How to move instructions"
-            className="relative w-full max-w-4xl h-auto max-h-[95dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100 text-slate-900 shadow-2xl"
+            className="pointer-events-auto relative w-full max-w-2xl h-auto max-h-[70dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100 text-slate-900 shadow-2xl"
           >
             <button
               type="button"
@@ -706,7 +738,7 @@ export default function App() {
               <img
                 src="/icons/archive_how_to_move_icons.jpg"
                 alt="How to move in the gallery instructions"
-                className="w-full h-auto max-h-[calc(95dvh-4rem)] object-contain"
+                className="w-full h-auto max-h-[calc(70dvh-4rem)] object-contain"
               />
             </div>
           </div>

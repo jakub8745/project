@@ -9,6 +9,8 @@ export interface AudioMeshConfig {
   url?: string;
   ipfsUrl?: string;
   autoplayOnEnter?: boolean;
+  labelPlaying?: string;
+  labelPaused?: string;
   loop?: boolean;
   refDistance?: number;
   rolloff?: number;
@@ -51,14 +53,20 @@ interface AudioManagerState {
   available: boolean;
   isPlaying: boolean;
   volume: number;
+  labelPlaying: string;
+  labelPaused: string;
 }
 
 const audioObjectsRef: ManagedAudio[] = [];
+let audioLoadGeneration = 0;
+let desiredPlayback = false;
 
 let audioState: AudioManagerState = {
   available: false,
   isPlaying: false,
-  volume: 0.5
+  volume: 0.5,
+  labelPlaying: 'Audio is playing',
+  labelPaused: 'Play Audio'
 };
 
 type AudioStateListener = (state: AudioManagerState) => void;
@@ -114,7 +122,7 @@ function updateFallbackControls() {
   const isPlaying = audioState.isPlaying;
   fallbackButton.style.backgroundImage = `url(${isPlaying ? '/icons/ButtonPause.png' : '/icons/ButtonPlay.png'})`;
   fallbackButton.setAttribute('aria-label', isPlaying ? 'Pause audio' : 'Play audio');
-  fallbackButton.title = isPlaying ? 'Pause audio' : 'Play audio';
+  fallbackButton.title = isPlaying ? audioState.labelPlaying : audioState.labelPaused;
 }
 
 function notifyState() {
@@ -133,9 +141,28 @@ function setAvailability(available: boolean) {
   notifyState();
 }
 
+function setPlaybackLabels(labelPlaying?: string, labelPaused?: string): void {
+  const nextPlaying = typeof labelPlaying === 'string' && labelPlaying.trim() ? labelPlaying : 'Audio is playing';
+  const nextPaused = typeof labelPaused === 'string' && labelPaused.trim() ? labelPaused : 'Play Audio';
+  if (audioState.labelPlaying === nextPlaying && audioState.labelPaused === nextPaused) return;
+  audioState = {
+    ...audioState,
+    labelPlaying: nextPlaying,
+    labelPaused: nextPaused
+  };
+  notifyState();
+}
+
 function applyVolumeToSound(sound: ManagedAudio) {
   const base = typeof sound.userData?.__baseVolume === 'number' ? sound.userData.__baseVolume : 1;
   sound.setVolume(base * audioState.volume);
+}
+
+function syncPlaybackState(): void {
+  const isPlaying = audioObjectsRef.some((audio) => audio.isPlaying);
+  if (audioState.isPlaying === isPlaying) return;
+  audioState = { ...audioState, isPlaying };
+  notifyState();
 }
 
 interface DisposeOptions {
@@ -144,10 +171,12 @@ interface DisposeOptions {
 
 export function disposeAudioMeshes(options: DisposeOptions = {}): void {
   const { resetState = true } = options;
+  audioLoadGeneration += 1;
   audioObjectsRef.splice(0).forEach((sound) => {
     if (sound.isPlaying) sound.stop();
     sound.disconnect();
     sound.parent?.remove(sound);
+    (sound as ManagedAudio & { buffer: AudioBuffer | null }).buffer = null;
   });
   if (resetState) {
     setAvailability(false);
@@ -166,6 +195,7 @@ export function subscribeToAudioState(listener: AudioStateListener): () => void 
 }
 
 export async function setAudioPlaying(shouldPlay: boolean): Promise<void> {
+  desiredPlayback = shouldPlay;
   if (shouldPlay) {
     const ctx = audioObjectsRef[0]?.context;
     if (ctx && ctx.state === 'suspended') {
@@ -176,12 +206,14 @@ export async function setAudioPlaying(shouldPlay: boolean): Promise<void> {
         audio.play();
       }
     });
+    syncPlaybackState();
   } else {
     audioObjectsRef.forEach((audio) => {
       if (audio.isPlaying) {
         audio.pause();
       }
     });
+    syncPlaybackState();
   }
 
   if (audioState.isPlaying !== shouldPlay) {
@@ -200,6 +232,13 @@ export function setAudioVolume(volume: number): void {
 
 export function getAudioState(): AudioManagerState {
   return { ...audioState };
+}
+
+export async function unlockAudioPlayback(): Promise<void> {
+  if (!desiredPlayback) {
+    return;
+  }
+  await setAudioPlaying(true);
 }
 
 function loadAudioWithFallback(
@@ -272,13 +311,15 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
   const { scene, galleryConfig, listener, renderer, camera, transform } = context;
 
   const configMap = new Map((galleryConfig.audio || []).map((cfg) => [cfg.id, cfg]));
+  const labelConfig = (galleryConfig.audio || []).find(
+    (cfg) => typeof cfg.labelPlaying === 'string' || typeof cfg.labelPaused === 'string'
+  );
+  setPlaybackLabels(labelConfig?.labelPlaying, labelConfig?.labelPaused);
   const shouldAutoplayOnEnter = (galleryConfig.audio || []).some((cfg) => cfg.autoplayOnEnter === true);
-
-  if (shouldAutoplayOnEnter && !audioState.isPlaying) {
-    audioState = { ...audioState, isPlaying: true };
-  }
+  desiredPlayback = shouldAutoplayOnEnter;
 
   disposeAudioMeshes({ resetState: false });
+  const generation = audioLoadGeneration;
 
   let foundAny = false;
 
@@ -297,7 +338,13 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
       sound.name = cfg.name || obj.userData.name || obj.name;
 
       loadAudioWithFallback(cfg, (buffer) => {
+        if (generation !== audioLoadGeneration) return;
         const playbackBuffer = cfg.reverse ? reverseAudioBuffer(buffer, sound.context) : buffer;
+        const baseOnEnded = sound.onEnded.bind(sound);
+        sound.onEnded = () => {
+          baseOnEnded();
+          syncPlaybackState();
+        };
         sound.setBuffer(playbackBuffer);
         sound.setLoop(cfg.loop ?? true);
         sound.setRefDistance(cfg.refDistance ?? 1);
@@ -322,14 +369,16 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
         obj.add(sound);
         audioObjectsRef.push(sound);
 
-        if (audioState.isPlaying) {
+        if (desiredPlayback) {
           const ctx = sound.context;
           if (ctx.state === 'suspended') {
             ctx.resume().then(() => {
               if (!sound.isPlaying) sound.play();
+              syncPlaybackState();
             });
           } else if (!sound.isPlaying) {
             sound.play();
+            syncPlaybackState();
           }
         }
       });

@@ -90,6 +90,27 @@
       ]
     }
   ],
+  "audio": [
+    {
+      "id": "introduction_audio",
+      "name": "introduction_audio",
+      "url": "/audio/introduction_to_living_heritage.mp3",
+      "autoplayOnEnter": true,
+      "labelPlaying": "Intro is playing",
+      "labelPaused": "Play Intro",
+      "loop": false,
+      "refDistance": 3,
+      "rolloff": 1,
+      "maxDistance": 20,
+      "distanceModel": "linear",
+      "coneTarget": [
+        0,
+        2,
+        0
+      ],
+      "volume": 1
+    }
+  ],
   "sculptures": {},
   "params": {
     "exposure": 1.0,

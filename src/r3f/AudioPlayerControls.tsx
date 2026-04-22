@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import {
   subscribeToAudioState,
   setAudioPlaying,
@@ -10,6 +10,13 @@ interface AudioStateSnapshot {
   available: boolean;
   isPlaying: boolean;
   volume: number;
+  labelPlaying: string;
+  labelPaused: string;
+}
+
+interface AudioPlayerControlsProps {
+  labelPlaying?: string;
+  labelPaused?: string;
 }
 
 function VolumeIcon({ className }: { className?: string }) {
@@ -45,10 +52,14 @@ function CloseIcon({ className }: { className?: string }) {
   );
 }
 
-export function AudioPlayerControls() {
+export function AudioPlayerControls({ labelPlaying, labelPaused }: AudioPlayerControlsProps) {
   const [state, setState] = useState<AudioStateSnapshot>(() => getAudioState());
   const [isWorking, setIsWorking] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const controlsRef = useRef<HTMLDivElement | null>(null);
+  const playingLabel = typeof labelPlaying === 'string' && labelPlaying.trim() ? labelPlaying : state.labelPlaying;
+  const pausedLabel = typeof labelPaused === 'string' && labelPaused.trim() ? labelPaused : state.labelPaused;
+  const label = state.isPlaying ? playingLabel : pausedLabel;
 
   useEffect(() => {
     return subscribeToAudioState((next) => {
@@ -78,6 +89,14 @@ export function AudioPlayerControls() {
     setIsExpanded((prev) => !prev);
   }, []);
 
+  const closeExpanded = useCallback(() => {
+    setIsExpanded(false);
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement && controlsRef.current?.contains(activeElement)) {
+      activeElement.blur();
+    }
+  }, []);
+
   if (!state.available) {
     return null;
   }
@@ -85,6 +104,8 @@ export function AudioPlayerControls() {
   return (
     <div className="pointer-events-none absolute bottom-6 right-6 z-30 max-w-[90vw]">
       <div
+        ref={controlsRef}
+        onPointerLeave={closeExpanded}
         className={`pointer-events-auto flex items-center gap-3 rounded-full bg-black/80 text-white shadow-xl backdrop-blur transition-all duration-200 ${
           isExpanded ? 'px-4 py-3' : 'px-2 py-2'
         }`}
@@ -94,8 +115,8 @@ export function AudioPlayerControls() {
           onClick={handleToggle}
           disabled={isWorking}
           aria-label={state.isPlaying ? 'Pause audio' : 'Play audio'}
-          title={state.isPlaying ? 'Pause audio' : 'Play audio'}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+          title={label}
+          className="flex h-12 min-w-[156px] items-center gap-2 rounded-full bg-white/10 px-3 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <img
             src={state.isPlaying ? '/icons/ButtonPause.png' : '/icons/ButtonPlay.png'}
@@ -103,6 +124,9 @@ export function AudioPlayerControls() {
             className="h-7 w-7 select-none"
             draggable={false}
           />
+          <span className="whitespace-nowrap text-sm font-medium tracking-wide">
+            {label}
+          </span>
         </button>
 
         {isExpanded ? (
