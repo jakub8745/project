@@ -7,7 +7,6 @@ import {
   SRGBColorSpace,
   LinearFilter,
   PlaneGeometry,
-  RingGeometry,
   Vector3,
   Quaternion,
   Mesh,
@@ -51,6 +50,90 @@ function setVideoResource(id, data) {
     prev.texture.dispose();
   }
   _videoResourceCache.set(id, { ...prev, ...data });
+}
+
+function getPrimaryVideoSource(cfg) {
+  const srcObj = Array.isArray(cfg?.sources) ? cfg.sources[0] : null;
+  const primary = typeof srcObj?.src === 'string' ? srcObj.src : '';
+  const ipfsUrl = typeof srcObj?.ipfsSrc === 'string'
+    ? srcObj.ipfsSrc
+    : primary.startsWith('ipfs://')
+      ? primary
+      : null;
+  return { srcObj, primary, ipfsUrl };
+}
+
+function shouldDeferVideoLoad(cfg) {
+  if (!cfg) return false;
+  if (cfg.autoplayOnEnter === true) return false;
+  if (cfg.deferLoadUntilPlay === true) return true;
+  return typeof cfg.preload === 'string' && cfg.preload.toLowerCase() === 'none';
+}
+
+function loadVideoSource(video, cfg) {
+  if (!(video instanceof HTMLVideoElement) || !cfg?.id) return false;
+  const existing = getVideoResource(cfg.id);
+  if (existing.sourceLoaded || existing.sourceLoading || video.currentSrc || video.src) return true;
+
+  const { srcObj, primary, ipfsUrl } = getPrimaryVideoSource(cfg);
+  if (!srcObj && !primary && !ipfsUrl) return false;
+
+  setVideoResource(cfg.id, { sourceLoading: true });
+
+  const ipfsGateways = IPFS_GATEWAYS;
+  let gwIndex = 0;
+  const markLoaded = () => {
+    setVideoResource(cfg.id, { sourceLoaded: true, sourceLoading: false });
+  };
+  const markFailed = () => {
+    setVideoResource(cfg.id, { sourceLoading: false });
+  };
+  const loadIpfs = () => {
+    if (!ipfsUrl) {
+      console.error(`[VideoMesh] Primary failed and no IPFS fallback: ${primary}`);
+      markFailed();
+      return;
+    }
+    if (gwIndex >= ipfsGateways.length) {
+      console.error(`[VideoMesh] Failed to load video from all gateways: ${ipfsUrl}`);
+      markFailed();
+      return;
+    }
+    const cid = ipfsUrl.replace("ipfs://", "");
+    const src = ipfsGateways[gwIndex] + cid;
+    gwIndex++;
+    video.src = src;
+    video.type = srcObj?.type || '';
+    video.load();
+    video.onerror = () => {
+      console.warn(`[VideoMesh] Retrying IPFS gateway ${gwIndex}/${ipfsGateways.length}`);
+      setTimeout(loadIpfs, 200);
+    };
+    markLoaded();
+  };
+
+  const loadPrimary = () => {
+    if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
+      loadIpfs();
+      return;
+    }
+    if (!primary) {
+      loadIpfs();
+      return;
+    }
+    video.src = primary;
+    video.type = srcObj?.type || '';
+    video.load();
+    video.onerror = () => {
+      console.warn(`[VideoMesh] Primary source failed, falling back to IPFS: ${primary}`);
+      setVideoResource(cfg.id, { sourceLoaded: false, sourceLoading: false });
+      loadIpfs();
+    };
+    markLoaded();
+  };
+
+  loadPrimary();
+  return true;
 }
 
 function disposeVideoResource(id) {
@@ -239,6 +322,7 @@ function openVideoPlayer(cfg, video) {
     }
     if (wasPlaying) {
       setVideoResource(cfg.id, { userMuted: false });
+      loadVideoSource(video, cfg);
       resumeVideoAudio(getVideoResource(cfg.id));
       video.play().catch(() => {});
     }
@@ -332,6 +416,11 @@ function cleanupMeshDecorations(mesh) {
       console.warn('[VideoMesh] cleanup failed', err);
     }
   }
+}
+
+function isInternalVideoObject(object) {
+  const userData = object?.userData;
+  return userData?.__isVideoControlProxy === true || userData?.__isVideoDecoration === true;
 }
 
 function isVideoReadyForPlayback(video) {
@@ -552,6 +641,9 @@ export function resumeVideoAudioById(videoId) {
   if (!videoId) return false;
   setVideoResource(videoId, { userMuted: false });
   const resource = getVideoResource(videoId);
+  if (resource?.video instanceof HTMLVideoElement) {
+    loadVideoSource(resource.video, resource.cfg);
+  }
   return resumeVideoAudio(resource);
 }
 
@@ -564,6 +656,7 @@ export function invokeVideoControlById(videoId, action, value) {
   if (action === 'play_pause') {
     if (video.paused || video.ended) {
       setVideoResource(videoId, { userMuted: false });
+      loadVideoSource(video, getVideoResource(videoId)?.cfg);
       resumeVideoAudio(getVideoResource(videoId));
       video.play().catch(() => {});
     } else {
@@ -649,6 +742,9 @@ function ensureVideoElement(cfg) {
     if (resolvedPoster && video.poster !== resolvedPoster) {
       video.poster = resolvedPoster;
     }
+    if (!shouldDeferVideoLoad(cfg)) {
+      loadVideoSource(video, cfg);
+    }
     return video;
   }
 
@@ -686,55 +782,9 @@ function ensureVideoElement(cfg) {
     video.poster = resolvedPoster;
   }
 
-  // Oracle-first with IPFS fallback support
-  const ipfsGateways = IPFS_GATEWAYS;
-
-  const srcObj = cfg.sources[0]; // assume single video per cfg
-  const primary = srcObj?.src || ""; // may be Oracle http(s) or ipfs://
-  const ipfsUrl = srcObj?.ipfsSrc || (primary.startsWith("ipfs://") ? primary : null);
-
-  let gwIndex = 0;
-  const loadIpfs = () => {
-    if (!ipfsUrl) {
-      console.error(`[VideoMesh] Primary failed and no IPFS fallback: ${primary}`);
-      return;
-    }
-    if (gwIndex >= ipfsGateways.length) {
-      console.error(`[VideoMesh] Failed to load video from all gateways: ${ipfsUrl}`);
-      return;
-    }
-    const cid = ipfsUrl.replace("ipfs://", "");
-    const src = ipfsGateways[gwIndex] + cid;
-    gwIndex++;
-    video.src = src;
-    video.type = srcObj.type;
-    video.load();
-    video.onerror = () => {
-      console.warn(`[VideoMesh] Retrying IPFS gateway ${gwIndex}/${ipfsGateways.length}`);
-      setTimeout(loadIpfs, 200);
-    };
-  };
-
-  const loadPrimary = () => {
-    // If primary is ipfs://, go straight to IPFS flow
-    if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
-      loadIpfs();
-      return;
-    }
-    if (!primary) {
-      loadIpfs();
-      return;
-    }
-    video.src = primary;
-    video.type = srcObj.type;
-    video.load();
-    video.onerror = () => {
-      console.warn(`[VideoMesh] Primary source failed, falling back to IPFS: ${primary}`);
-      loadIpfs();
-    };
-  };
-
-  loadPrimary();
+  if (!shouldDeferVideoLoad(cfg)) {
+    loadVideoSource(video, cfg);
+  }
   document.body.appendChild(video);
 
   // Keep paused on ready; emit a custom event consumers can listen for
@@ -1188,6 +1238,7 @@ function addPlayIcon(mesh, video, camera) {
     iconMesh = new Mesh(iconGeo, iconMat);
     iconMesh.name = `playIcon_${video.id}`;
     iconMesh.renderOrder = 999;
+    iconMesh.userData.__isVideoDecoration = true;
 
     if (worldCenter) iconMesh.position.copy(worldCenter);
     const eps = -0.03 * Math.max(worldSize.x || 1, worldSize.y || 1);
@@ -1273,13 +1324,17 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     return Math.max(0, numeric);
   };
 
+  const videoTargets = [];
   scene.traverse(obj => {
     if (!obj.isMesh) return;
-    if (obj.userData.__isVideoControlProxy === true) return;
+    if (isInternalVideoObject(obj)) return;
 
     const runtimeData = resolveObjectRuntimeData(obj, objectRegistry);
     if (runtimeData?.type !== 'Video') return;
+    videoTargets.push({ obj, runtimeData });
+  });
 
+  videoTargets.forEach(({ obj, runtimeData }) => {
     const videoId = runtimeData.ref || obj.userData.elementID || obj.userData.name || obj.name;
     const cfg = configMap.get(videoId);
     if (!cfg) {
@@ -1351,9 +1406,6 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     }
     obj.material = baseMaterial;
 
-    // Spinner appears while loading/buffering
-    const spinnerCleanup = cfg.showLoader === false ? null : addLoadingSpinner(obj, video, camera);
-
     // HTML overlay controls are legacy. Default to 3D in-world controls only.
     // Set `htmlOverlayControls: true` on a video config entry to opt back in.
     const useHtmlOverlayControls = cfg?.htmlOverlayControls === true;
@@ -1373,9 +1425,6 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
         : attachPositionalAudio(obj, video, camera, cfg);
     const syncCleanup = queueSyncedPlayback(cfg, video, syncGroups);
 
-    if (typeof spinnerCleanup === 'function') {
-      meshDisposers.push(spinnerCleanup);
-    }
     if (typeof overlayCleanup === 'function') {
       _overlayDisposers.add(overlayCleanup);
       meshDisposers.push(() => {
@@ -1475,78 +1524,6 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     }
 
   });
-}
-
-function addLoadingSpinner(mesh, video, camera) {
-  const { size: worldSize, center: worldCenter } = getWorldBounds(mesh);
-  const baseSize = 0.15 * Math.min(worldSize.x || 0, worldSize.y || 0) || 0.1;
-
-  const spinnerGeo = new RingGeometry(baseSize * 0.7, baseSize, 32, 1, 0, Math.PI * 1.5);
-  const spinnerMat = new MeshBasicMaterial({
-    color: 0x87ceeb, // sky-blue
-    transparent: true,
-    opacity: 0.9,
-    side: DoubleSide
-  });
-  const spinnerMesh = new Mesh(spinnerGeo, spinnerMat);
-  spinnerMesh.name = `spinner_${video.id}`;
-
-  const pivot = new Mesh();
-  pivot.name = `spinnerPivot_${video.id}`;
-  pivot.renderOrder = 999;
-
-  if (worldCenter) pivot.position.copy(worldCenter);
-  const eps = -0.03 * Math.max(worldSize.x || 1, worldSize.y || 1);
-  pivot.position.addScalar(eps);
-
-  pivot.add(spinnerMesh);
-  mesh.add(pivot);
-
-  // Billboard
-  const qParent = new Quaternion();
-  const qCam = new Quaternion();
-  const qLocal = new Quaternion();
-  pivot.onBeforeRender = (renderer, scene, cam) => {
-    const activeCam = camera || cam;
-    mesh.getWorldQuaternion(qParent);
-    activeCam.getWorldQuaternion(qCam);
-    qLocal.copy(qParent).invert().multiply(qCam);
-    pivot.quaternion.copy(qLocal);
-  };
-
-  // Spin clockwise
-  let rafId = 0;
-  let active = true;
-  const animate = () => {
-    if (!active) return;
-    if (spinnerMesh.visible) spinnerMesh.rotation.z -= 0.1;
-    rafId = requestAnimationFrame(animate);
-  };
-  rafId = requestAnimationFrame(animate);
-
-  // Visibility rules
-  const hide = () => (spinnerMesh.visible = false);
-  const showIfPlaying = () => (spinnerMesh.visible = !video.paused && !video.ended);
-
-  const hideEvents = ["loadeddata", "canplaythrough", "playing", "ended", "error"];
-  hideEvents.forEach(evt => video.addEventListener(evt, hide));
-
-  // Show when buffering while playing
-  const showEvents = ["waiting", "stalled", "seeking"];
-  showEvents.forEach(evt => video.addEventListener(evt, showIfPlaying));
-
-  // Start visible
-  spinnerMesh.visible = true;
-
-  return () => {
-    active = false;
-    if (rafId) cancelAnimationFrame(rafId);
-    hideEvents.forEach(evt => video.removeEventListener(evt, hide));
-    showEvents.forEach(evt => video.removeEventListener(evt, showIfPlaying));
-    pivot.parent?.remove(pivot);
-    spinnerMesh.geometry?.dispose?.();
-    spinnerMesh.material?.dispose?.();
-  };
 }
 
 function addHtmlOverlay(mesh, video, camera, cfg, scene) {
@@ -1781,6 +1758,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
       resumeVideoAudio(getVideoResource(cfg.id));
     }
     if (video.paused) {
+      loadVideoSource(video, cfg);
       video.play().catch(() => {});
     } else {
       video.pause();

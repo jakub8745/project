@@ -30,7 +30,7 @@ export interface GalleryItem {
     }[];
 }
 
-export const DEFAULT_CONFIG_URL = "./configs/videopoems_config.json";
+export const DEFAULT_CONFIG_URL = "./configs/videopoem_lisbon_112025_config.json";
 import { oracleStaticUrl } from '../utils/ipfs';
 
 // Common reusable sidebar item: Help / How to move
@@ -70,7 +70,7 @@ export const GALLERIES: GalleryItem[] = [
         description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
         scale: 0.12,
         position: [0, 0, 0],
-        configUrl: "./configs/videopoems_config.json",
+        configUrl: "./configs/videopoem_lisbon_112025_config.json",
         keywords: [],
         ogImage: "",
         overlayText: "",

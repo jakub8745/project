@@ -26,13 +26,13 @@ export interface VideoMeshConfig {
   autoplayOnEnter?: boolean;
   syncStartGroup?: string;
   controls?: boolean;
-  showLoader?: boolean;
   allowFullscreen?: boolean;
   htmlOverlayControls?: boolean;
   interactive?: boolean;
   controlsAnchorName?: string;
   disableAudio?: boolean;
   spatialAudio?: boolean;
+  deferLoadUntilPlay?: boolean;
   playbackMode?: VideoPlaybackMode;
   volume?: number;
 }
