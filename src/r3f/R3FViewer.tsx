@@ -3008,16 +3008,16 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   const ambientLightColor = typeof lights?.ambientColor === 'string' ? lights.ambientColor : '#ffffff';
   const ambientLightIntensity = typeof lights?.ambientIntensity === 'number'
     ? lights.ambientIntensity
-    : 0.55 * lightIntensity;
+    : lightIntensity;
   const hemisphereSkyColor = typeof lights?.hemisphereSkyColor === 'string' ? lights.hemisphereSkyColor : '#e8eeff';
   const hemisphereGroundColor = typeof lights?.hemisphereGroundColor === 'string' ? lights.hemisphereGroundColor : '#3b4352';
   const hemisphereIntensity = typeof lights?.hemisphereIntensity === 'number'
     ? lights.hemisphereIntensity
-    : 0.65 * lightIntensity;
+    : 0;
   const directionalColor = typeof lights?.directionalColor === 'string' ? lights.directionalColor : '#ffffff';
   const directionalIntensity = typeof lights?.directionalIntensity === 'number'
     ? lights.directionalIntensity
-    : 0.25 * lightIntensity;
+    : 0;
   const directionalPosition = coerceVector(lights?.directionalPosition, [4, 8, 2]);
   const directionalCastShadow = typeof lights?.directionalCastShadow === 'boolean' ? lights.directionalCastShadow : true;
   const directionalShadowMapSize = coercePositiveNumber(lights?.directionalShadowMapSize, 2048);

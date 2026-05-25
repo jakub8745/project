@@ -79,7 +79,21 @@
   "videos": [
     {
       "id": "Unreal",
-      "playbackMode": "spatial_video",
+      "playbackMode": "synced_silent",
+      "videoSurface": {
+        "roughness": 0.9,
+        "metalness": 0.02,
+        "envMapIntensity": 0.2,
+        "projection": true,
+        "emissiveIntensity": 0.53,
+        "emissiveColor": "#fff6ea"
+      },
+      "autoplayOnEnter": true,
+      "syncStartGroup": "identity_main",
+      "controls": false,
+      "allowFullscreen": false,
+      "interactive": false,
+      "disableAudio": true,
       "loop": true,
       "muted": true,
       "playsinline": true,
@@ -95,7 +109,21 @@
     },
     {
       "id": "Heritage",
-      "playbackMode": "spatial_video",
+      "playbackMode": "synced_silent",
+      "videoSurface": {
+        "roughness": 0.9,
+        "metalness": 0.02,
+        "envMapIntensity": 0.2,
+        "projection": true,
+        "emissiveIntensity": 0.53,
+        "emissiveColor": "#fff6ea"
+      },
+      "autoplayOnEnter": true,
+      "syncStartGroup": "identity_main",
+      "controls": false,
+      "allowFullscreen": false,
+      "interactive": false,
+      "disableAudio": true,
       "loop": true,
       "muted": true,
       "playsinline": true,
@@ -120,10 +148,16 @@
   "params": {
     "exposure": 1.0,
     "autoExposure": true,
-    "exposureTarget": 0.5,
+    "toneMapping": "neutral",
+    "exposureTarget": 0.68,
     "exposureMin": 0.5,
-    "exposureMax": 2.5,
+    "exposureMax": 1.65,
     "exposureSampleInterval": 30,
+    "colorGrade": {
+      "brightness": 1.0,
+      "contrast": 0.9,
+      "saturate": 0.68
+    },
     "lightIntensity": 1.5,
     "gravity": -8,
     "visitorSpeed": 2,

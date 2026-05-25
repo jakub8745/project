@@ -757,13 +757,18 @@
     "shadows": false,
     "logarithmicDepthBuffer": false,
     "exposure": 1,
-    "autoExposure": false,
-    "autoExposureFirefox": false,
-    "exposureTarget": 0.5,
+    "autoExposure": true,
+    "toneMapping": "neutral",
+    "exposureTarget": 0.7,
     "exposureMin": 0.5,
-    "exposureMax": 2.5,
+    "exposureMax": 1.65,
     "exposureSampleInterval": 30,
-    "lightIntensity": 1.5,
+    "colorGrade": {
+      "brightness": 1.0,
+      "contrast": 0.9,
+      "saturate": 0.68
+    },
+    "lightIntensity": 1.7,
     "gravity": -8,
     "visitorSpeed": 2,
     "heightOffset": {

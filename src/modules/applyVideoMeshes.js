@@ -846,8 +846,8 @@ function addInWorldControlObject(mesh, cfg, scene) {
 
   const anchor = resolveControlsAnchorNode(mesh, scene, cfg);
   const { size } = getWorldBounds(mesh);
-  const desiredWidth = Math.max(0.26, Math.min(0.78, (size.x || 1) * 0.55));
-  const desiredHeight = Math.max(0.045, desiredWidth * 0.14);
+  const desiredWidth = Math.max(0.36, Math.min(1.05, (size.x || 1) * 0.72));
+  const desiredHeight = Math.max(0.06, desiredWidth * 0.16);
   const panelGeo = new PlaneGeometry(1, 1);
   const panelMat = new MeshBasicMaterial({
     color: 0x020617,
@@ -932,12 +932,12 @@ function addInWorldControlObject(mesh, cfg, scene) {
   };
 
   const playPause = addIconButton('playPause', -0.455, playTexture, 'play_pause');
-  const mute = addIconButton('mute', 0.245, muteTexture, 'mute_toggle');
+  const mute = addIconButton('mute', 0.285, muteTexture, 'mute_toggle');
   addIconButton('fullscreen', 0.455, fullscreenTexture, 'fullscreen_toggle');
 
-  const progressWidth = 0.34;
+  const progressWidth = 0.38;
   const progressHeight = 0.065;
-  const progressCenterX = -0.155;
+  const progressCenterX = -0.18;
   const progressY = 0;
   addBar('VideoControlProgressTrack', progressCenterX, progressY, progressWidth, progressHeight, 0x0f172a, 0.95, 0.0015);
   const progressFillMat = new MeshBasicMaterial({
@@ -990,9 +990,9 @@ function addInWorldControlObject(mesh, cfg, scene) {
   progressHitZone.userData.__isVideoControlProxy = true;
   panel.add(progressHitZone);
 
-  const volumeWidth = 0.16;
+  const volumeWidth = 0.14;
   const volumeHeight = 0.065;
-  const volumeCenterX = 0.355;
+  const volumeCenterX = 0.37;
   addBar('VideoControlVolumeTrack', volumeCenterX, 0, volumeWidth, volumeHeight, 0x334155, 0.9, 0.0015);
   const volumeFillMat = new MeshBasicMaterial({
     color: 0xe2e8f0,
@@ -1047,13 +1047,15 @@ function addInWorldControlObject(mesh, cfg, scene) {
   addVolumeZone('volUpZone', volumeCenterX + volumeWidth * 0.25, 'volume_up');
 
   const timeCanvas = document.createElement('canvas');
-  timeCanvas.width = 1024;
+  timeCanvas.width = 768;
   timeCanvas.height = 256;
   const timeCtx = timeCanvas.getContext('2d');
   const timeTexture = new CanvasTexture(timeCanvas);
   timeTexture.colorSpace = SRGBColorSpace;
+  timeTexture.flipY = false;
   timeTexture.minFilter = LinearFilter;
   timeTexture.magFilter = LinearFilter;
+  timeTexture.anisotropy = 8;
   timeTexture.generateMipmaps = false;
   timeTexture.needsUpdate = true;
   const timeMat = new MeshBasicMaterial({
@@ -1065,8 +1067,8 @@ function addInWorldControlObject(mesh, cfg, scene) {
     depthTest: false,
     depthWrite: false
   });
-  const timeMesh = new Mesh(new PlaneGeometry(0.185, 0.16), timeMat);
-  timeMesh.position.set(0.105, 0, 0.0018);
+  const timeMesh = new Mesh(new PlaneGeometry(0.17, 0.34), timeMat);
+  timeMesh.position.set(0.09, 0, 0.0018);
   timeMesh.renderOrder = 1000;
   timeMesh.userData.__isVideoControlProxy = true;
   panel.add(timeMesh);
@@ -1081,22 +1083,22 @@ function addInWorldControlObject(mesh, cfg, scene) {
   let lastTimeLabel = '';
   const updateTimeLabel = (video) => {
     if (!timeCtx) return;
-    const label = `${formatClock(video.currentTime)} / ${formatClock(video.duration)}`;
+    const label = formatClock(video.currentTime);
     if (label === lastTimeLabel) return;
     lastTimeLabel = label;
     timeCtx.clearRect(0, 0, timeCanvas.width, timeCanvas.height);
-    timeCtx.fillStyle = 'rgba(2, 6, 23, 0.35)';
+    timeCtx.fillStyle = 'rgba(2, 6, 23, 0.78)';
     timeCtx.fillRect(0, 0, timeCanvas.width, timeCanvas.height);
     timeCtx.lineJoin = 'round';
-    timeCtx.lineWidth = 10;
-    timeCtx.strokeStyle = 'rgba(2, 6, 23, 0.95)';
-    timeCtx.font = '700 112px "SF Mono", "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace';
+    timeCtx.lineWidth = 18;
+    timeCtx.strokeStyle = 'rgba(0, 0, 0, 0.98)';
+    timeCtx.font = '800 154px "SF Mono", "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace';
     timeCtx.textAlign = 'center';
     timeCtx.textBaseline = 'middle';
     timeCtx.strokeText(label, timeCanvas.width / 2, timeCanvas.height / 2);
-    timeCtx.fillStyle = '#e2e8f0';
-    timeCtx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-    timeCtx.shadowBlur = 8;
+    timeCtx.fillStyle = '#ffffff';
+    timeCtx.shadowColor = 'rgba(14, 165, 233, 0.55)';
+    timeCtx.shadowBlur = 10;
     timeCtx.shadowOffsetX = 0;
     timeCtx.shadowOffsetY = 1;
     timeCtx.fillText(label, timeCanvas.width / 2, timeCanvas.height / 2);
