@@ -70,6 +70,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
               thumbnailPoster={item.thumbnailPoster}
               title={item.title}
               description={item.description}
+              activePreview={isSelected}
             />
           </div>
         );

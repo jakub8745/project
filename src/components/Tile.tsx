@@ -8,6 +8,7 @@ export interface TileProps {
   thumbnailPoster?: string;
   title?: string;
   description?: string;
+  activePreview?: boolean;
 }
 
 const Tile: React.FC<TileProps> = ({
@@ -15,9 +16,10 @@ const Tile: React.FC<TileProps> = ({
   thumbnailPoster,
   title = '3D Model',
   description = 'Loading preview…',
+  activePreview = false,
 }) => {
   const [tileRef, inViewport] = useInViewport<HTMLDivElement>(0.35);
-  const shouldRenderVideo = inViewport;
+  const shouldRenderVideo = inViewport && activePreview;
 
   return (
     <div

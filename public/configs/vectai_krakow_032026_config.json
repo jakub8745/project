@@ -1,5 +1,12 @@
 {
   "id": "vectai_krakow_032026",
+  "metadata": {
+    "title": "Cracks of Meaning: Videopoetry in the age of AI",
+    "description": "Critical work with AI in art education",
+    "ogImage": "/textures/vectai/og_image_vectai.jpg",
+    "ogImageWidth": 1200,
+    "ogImageHeight": 630
+  },
   "modelPath": "/models/vectai_room_ktx.glb",
   "interactivesPath": "/models/interactives_empty.glb",
   "backgroundTexture": "",

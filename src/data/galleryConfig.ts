@@ -58,7 +58,7 @@ export const GALLERIES: GalleryItem[] = [
         position: [0, 0, 0],
         configUrl: "./configs/vectai_krakow_032026_config.json",
         keywords: [],
-        ogImage: "",
+        ogImage: "/textures/vectai/og_image_vectai.jpg",
         overlayText: "",
         videos: []
     },

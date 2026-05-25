@@ -5,7 +5,7 @@ import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import { InfoButtons } from './components/InfoButtons';
 import BlobChatWindow, { type BlobChatMessage } from './components/BlobChatWindow';
-import { GALLERIES } from './data/galleryConfig';
+import { GALLERIES, type GalleryItem } from './data/galleryConfig';
 import { useBlobChatBridge } from './hooks/useBlobChatBridge';
 import { unlockAudioPlayback } from './modules/audioMeshManager';
 
@@ -45,6 +45,23 @@ interface BlobChatSettings {
   blobs: BlobPersona[];
 }
 
+interface PageMetadata {
+  title: string;
+  description: string;
+  ogImage: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+}
+
+const SITE_ORIGIN = 'https://archive.bluepointart.uk';
+const DEFAULT_PAGE_METADATA: PageMetadata = {
+  title: 'Blue Point Art Archive',
+  description: 'Explore 3D projects in an interactive gallery',
+  ogImage: '/og_image_archivum.jpg',
+  ogImageWidth: 1200,
+  ogImageHeight: 630
+};
+
 const DEFAULT_BLOB_CHAT_SETTINGS: BlobChatSettings = {
   enabled: false,
   title: 'Blob Chat',
@@ -68,6 +85,80 @@ function createMessageId(prefix: string) {
     return `${prefix}_${crypto.randomUUID()}`;
   }
   return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
+}
+
+function toAbsoluteUrl(path: string): string {
+  const cleanPath = path.trim();
+  if (!cleanPath) return toAbsoluteUrl(DEFAULT_PAGE_METADATA.ogImage);
+  if (/^https?:\/\//i.test(cleanPath)) return cleanPath;
+  if (cleanPath.startsWith('//')) return `https:${cleanPath}`;
+  const withoutPublic = cleanPath.replace(/^public\//, '');
+  const normalized = withoutPublic.startsWith('/') ? withoutPublic : `/${withoutPublic.replace(/^\.\//, '')}`;
+  return `${SITE_ORIGIN}${normalized}`;
+}
+
+function setMetaContent(selector: string, content: string) {
+  if (typeof document === 'undefined') return;
+  const el = document.head.querySelector<HTMLMetaElement>(selector);
+  if (el) {
+    el.content = content;
+  }
+}
+
+function applyPageMetadata(metadata: PageMetadata) {
+  if (typeof document === 'undefined') return;
+  const title = metadata.title || DEFAULT_PAGE_METADATA.title;
+  const description = metadata.description || DEFAULT_PAGE_METADATA.description;
+  const image = toAbsoluteUrl(metadata.ogImage || DEFAULT_PAGE_METADATA.ogImage);
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : `${SITE_ORIGIN}/`;
+
+  document.title = title;
+  setMetaContent('meta[name="description"]', description);
+  setMetaContent('meta[property="og:title"]', title);
+  setMetaContent('meta[property="og:description"]', description);
+  setMetaContent('meta[property="og:image"]', image);
+  setMetaContent('meta[property="og:url"]', currentUrl);
+  setMetaContent('meta[property="og:image:width"]', String(metadata.ogImageWidth ?? DEFAULT_PAGE_METADATA.ogImageWidth));
+  setMetaContent('meta[property="og:image:height"]', String(metadata.ogImageHeight ?? DEFAULT_PAGE_METADATA.ogImageHeight));
+  setMetaContent('meta[name="twitter:title"]', title);
+  setMetaContent('meta[name="twitter:description"]', description);
+  setMetaContent('meta[name="twitter:image"]', image);
+}
+
+function metadataFromGallery(gallery: GalleryItem | null | undefined): PageMetadata {
+  if (!gallery) return DEFAULT_PAGE_METADATA;
+  return {
+    title: gallery.title || DEFAULT_PAGE_METADATA.title,
+    description: gallery.description || DEFAULT_PAGE_METADATA.description,
+    ogImage: gallery.ogImage || gallery.thumbnailPoster || DEFAULT_PAGE_METADATA.ogImage,
+    ogImageWidth: DEFAULT_PAGE_METADATA.ogImageWidth,
+    ogImageHeight: DEFAULT_PAGE_METADATA.ogImageHeight
+  };
+}
+
+function metadataFromConfig(config: unknown, fallback: PageMetadata): PageMetadata {
+  if (!config || typeof config !== 'object') return fallback;
+  const record = config as Record<string, unknown>;
+  const raw = record.metadata;
+  if (!raw || typeof raw !== 'object') return fallback;
+  const metadata = raw as Record<string, unknown>;
+
+  return {
+    title: typeof metadata.title === 'string' && metadata.title.trim() ? metadata.title : fallback.title,
+    description:
+      typeof metadata.description === 'string' && metadata.description.trim()
+        ? metadata.description
+        : fallback.description,
+    ogImage: typeof metadata.ogImage === 'string' && metadata.ogImage.trim() ? metadata.ogImage : fallback.ogImage,
+    ogImageWidth:
+      typeof metadata.ogImageWidth === 'number' && Number.isFinite(metadata.ogImageWidth)
+        ? metadata.ogImageWidth
+        : fallback.ogImageWidth,
+    ogImageHeight:
+      typeof metadata.ogImageHeight === 'number' && Number.isFinite(metadata.ogImageHeight)
+        ? metadata.ogImageHeight
+        : fallback.ogImageHeight
+  };
 }
 
 function getBooleanFromQuery(name: string): boolean {
@@ -258,6 +349,36 @@ export default function App() {
   const handleGallerySelect = useCallback((gallery: Gallery) => {
     window.location.hash = gallery.slug;
   }, []);
+
+  useEffect(() => {
+    const selectedGallery =
+      (selectedSlug ? GALLERIES.find((gallery) => gallery.slug === selectedSlug) : null) ??
+      GALLERIES.find((gallery) => gallery.configUrl === selectedConfigUrl);
+    const fallbackMetadata = metadataFromGallery(selectedGallery);
+    applyPageMetadata(fallbackMetadata);
+
+    if (!selectedConfigUrl) return undefined;
+
+    const controller = new AbortController();
+    const configUrl = selectedConfigUrl.startsWith('/')
+      ? selectedConfigUrl
+      : selectedConfigUrl.replace(/^\.\//, '/');
+
+    fetch(configUrl, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Metadata config request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((config) => {
+        applyPageMetadata(metadataFromConfig(config, fallbackMetadata));
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        console.warn('Gallery metadata update failed:', error);
+      });
+
+    return () => controller.abort();
+  }, [selectedConfigUrl, selectedSlug]);
 
   const scheduleSidebarAutoHide = useCallback(() => {
     if (!sidebarOpen) {

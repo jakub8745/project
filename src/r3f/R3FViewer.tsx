@@ -2,7 +2,7 @@ import { Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState
 import type { MutableRefObject } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import type { RootState } from '@react-three/fiber';
-import { Html, Loader, OrbitControls, Text } from '@react-three/drei';
+import { Html, OrbitControls, Text } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
 import {
   AmbientLight,
@@ -422,6 +422,11 @@ function detectIPadLikeDevice(): boolean {
   const platform = navigator.platform || '';
   const maxTouch = navigator.maxTouchPoints || 0;
   return /iPad/i.test(ua) || (platform === 'MacIntel' && maxTouch > 1);
+}
+
+function detectFirefoxBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /firefox/i.test(navigator.userAgent || '');
 }
 
 type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes' | 'concrete' | 'plaster';
@@ -2639,6 +2644,22 @@ function ThumbnailRecorderMode({
   );
 }
 
+function SceneLoadingOverlay({ visible, label = 'Loading exhibit' }: { visible: boolean; label?: string }) {
+  if (!visible) return null;
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[900] flex items-center justify-center bg-slate-950/90 text-white">
+      <div className="w-64 max-w-[70vw]">
+        <div className="mb-3 text-center text-sm font-semibold tracking-wide text-white/80">
+          {label}
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-white/15">
+          <div className="h-full w-1/2 animate-pulse rounded-full bg-sky-300" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, onPhysicsCollision }: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
@@ -3051,6 +3072,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
   const [sceneAssetsReady, setSceneAssetsReady] = useState(false);
+  const [sceneLoadArmed, setSceneLoadArmed] = useState(false);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
   const lastSceneVersionRef = useRef(sceneVersion);
   const dynamicActorsRef = useRef<Map<string, { object: Object3D; radius: number }>>(new Map());
@@ -3204,10 +3226,17 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
   const showLegacyModal = useLegacyModal(legacyImages);
   const isIPadLike = useMemo(() => detectIPadLikeDevice(), []);
-  const forceLowQuality = getBooleanFromQuery('lowQuality') || getBooleanFromQuery('performance');
+  const configPerformanceMode = rawParams?.performanceMode === true || rawParams?.lowQuality === true;
+  const forceLowQuality = getBooleanFromQuery('lowQuality') || getBooleanFromQuery('performance') || configPerformanceMode;
   const highQualityMode = !isIPadLike && !forceLowQuality;
-  const effectiveMaxDpr = highQualityMode ? 2 : 1;
-  const useLogDepth = !isIPadLike;
+  const configuredMaxDpr =
+    typeof rawParams?.maxDpr === 'number' && Number.isFinite(rawParams.maxDpr)
+      ? Math.max(0.5, Math.min(2, rawParams.maxDpr))
+      : undefined;
+  const effectiveMaxDpr = configuredMaxDpr ?? (highQualityMode ? 2 : 1);
+  const useLogDepth = !isIPadLike && rawParams?.logarithmicDepthBuffer !== false && rawParams?.logDepth !== false;
+  const useAntialias = rawParams?.antialias !== false && highQualityMode;
+  const useShadows = rawParams?.shadows !== false && !isIPadLike && highQualityMode;
 
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [isVideoPlayerModalOpen, setIsVideoPlayerModalOpen] = useState(false);
@@ -3739,7 +3768,16 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
   useEffect(() => {
     setSceneAssetsReady(false);
-  }, [configUrl]);
+    setSceneLoadArmed(false);
+    let raf = 0;
+    const timeout = window.setTimeout(() => {
+      raf = window.requestAnimationFrame(() => setSceneLoadArmed(true));
+    }, 80);
+    return () => {
+      window.clearTimeout(timeout);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [configUrl, modelPath, interactivesPath, useProceduralRoom]);
 
   const handleSceneReady = useCallback(() => {
     setSceneAssetsReady(true);
@@ -3751,11 +3789,11 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   return (
     <div className="relative h-full w-full bg-gallery-dark">
       <Canvas
-        shadows={!isIPadLike}
+        shadows={useShadows}
         camera={{ position: [10, 6, -10], fov: 60, near: 0.1, far: 2000 }}
         dpr={typeof window !== 'undefined' ? [1, Math.min(effectiveMaxDpr, window.devicePixelRatio || 1)] : [1, effectiveMaxDpr]}
         gl={{
-          antialias: true,
+          antialias: useAntialias,
           alpha: false,
           powerPreference: highQualityMode ? 'high-performance' : 'low-power',
           logarithmicDepthBuffer: useLogDepth,
@@ -3763,7 +3801,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         }}
         onCreated={handleCanvasCreated}
       >
-        <RendererTuning highQualityMode={highQualityMode} params={activeRendererParams} />
+        <RendererTuning highQualityMode={highQualityMode} maxDpr={effectiveMaxDpr} params={activeRendererParams} />
         <SceneBackground
           textureUrl={config?.backgroundTexture}
           blurriness={backgroundBlurriness}
@@ -3775,7 +3813,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
 
         <Suspense fallback={<Html center className="text-white">Loading exhibit…</Html>}>
-          {modelPath ? (
+          {!sceneLoadArmed ? null : modelPath ? (
             <ExhibitModel
               modelPath={modelPath}
               interactivesPath={interactivesPath}
@@ -3900,7 +3938,10 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
       />
       <AudioSubtitles tracks={audioConfig} language={subtitleLanguage} />
       <OnscreenJoystick visitor={visitorInstance} />
-      {!thumbnailModeActive && !sceneAssetsReady ? <Loader /> : null}
+      <SceneLoadingOverlay
+        visible={!thumbnailModeActive && (!sceneLoadArmed || !sceneAssetsReady)}
+        label={sceneLoadArmed ? 'Loading exhibit' : 'Preparing exhibit'}
+      />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-white bg-black/40">
           Loading configuration…
@@ -4375,7 +4416,15 @@ function AudioSystem({
   );
 }
 
-function RendererTuning({ highQualityMode = true, params }: { highQualityMode?: boolean; params?: Record<string, unknown> }) {
+function RendererTuning({
+  highQualityMode = true,
+  maxDpr = highQualityMode ? 2 : 1,
+  params
+}: {
+  highQualityMode?: boolean;
+  maxDpr?: number;
+  params?: Record<string, unknown>;
+}) {
   const { gl } = useThree();
   const colorGradeFilter = useMemo(() => createColorGradeFilter(params), [params]);
   const toneMapping = toneMappingValueForName(params?.toneMapping);
@@ -4388,9 +4437,9 @@ function RendererTuning({ highQualityMode = true, params }: { highQualityMode?: 
       gl.shadowMap.type = PCFSoftShadowMap;
     }
     if (typeof window !== 'undefined') {
-      gl.setPixelRatio(Math.min(highQualityMode ? 2 : 1, window.devicePixelRatio || 1));
+      gl.setPixelRatio(Math.min(maxDpr, window.devicePixelRatio || 1));
     }
-  }, [gl, highQualityMode]);
+  }, [gl, highQualityMode, maxDpr]);
 
   useEffect(() => {
     gl.toneMapping = toneMapping;
@@ -4413,7 +4462,8 @@ function RendererTuning({ highQualityMode = true, params }: { highQualityMode?: 
 
 function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
   const { gl, scene, camera } = useThree();
-  const autoExposure = params?.autoExposure !== false;
+  const firefoxAutoExposure = params?.autoExposureFirefox === true;
+  const autoExposure = params?.autoExposure !== false && (!detectFirefoxBrowser() || firefoxAutoExposure);
   const targetExposure = typeof params?.exposure === 'number' && Number.isFinite(params.exposure)
     ? params.exposure
     : 1.1;
