@@ -2,6 +2,19 @@ import { AudioLoader, MathUtils, PositionalAudio, type AudioListener, type Camer
 import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
 import type { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { applyPitcherControls } from './applyPitcherControls.js';
+import { resolveObjectRuntimeData, type ObjectRegistry } from './objectRegistry.js';
+
+export interface AudioSubtitleCue {
+  start: number;
+  end: number;
+  text: string;
+}
+
+export interface AudioSubtitleTrack {
+  language: string;
+  label?: string;
+  cues: AudioSubtitleCue[];
+}
 
 export interface AudioMeshConfig {
   id: string;
@@ -12,6 +25,7 @@ export interface AudioMeshConfig {
   labelPlaying?: string;
   labelPaused?: string;
   loop?: boolean;
+  autoplayDelayMs?: number;
   refDistance?: number;
   rolloff?: number;
   maxDistance?: number;
@@ -21,10 +35,12 @@ export interface AudioMeshConfig {
   coneTarget?: [x: number, y: number, z: number];
   startOffset?: number;
   reverse?: boolean;
+  subtitleTracks?: AudioSubtitleTrack[];
 }
 
 export interface GalleryAudioConfig {
   audio?: AudioMeshConfig[];
+  objectRegistry?: ObjectRegistry;
 }
 
 export interface AudioMeshContext {
@@ -46,8 +62,25 @@ const ipfsGateways = [
 ];
 
 type ManagedAudio = PositionalAudio & {
-  userData: PositionalAudio['userData'] & { __baseVolume?: number };
+  userData: PositionalAudio['userData'] & {
+    __audioId?: string;
+    __autoplayOnEnter?: boolean;
+    __autoplayReadyAt?: number;
+    __baseVolume?: number;
+  };
 };
+
+type PlaybackTrackedAudio = ManagedAudio & {
+  _progress?: number;
+  _startedAt?: number;
+};
+
+export interface AudioPlaybackSnapshot {
+  id: string;
+  currentTime: number;
+  duration: number;
+  isPlaying: boolean;
+}
 
 interface AudioManagerState {
   available: boolean;
@@ -60,6 +93,10 @@ interface AudioManagerState {
 const audioObjectsRef: ManagedAudio[] = [];
 let audioLoadGeneration = 0;
 let desiredPlayback = false;
+let controlTargetIds: Set<string> | null = null;
+let pendingPlayIds = new Set<string>();
+let canceledAutoplayIds = new Set<string>();
+const autoplayTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 let audioState: AudioManagerState = {
   available: false,
@@ -158,11 +195,53 @@ function applyVolumeToSound(sound: ManagedAudio) {
   sound.setVolume(base * audioState.volume);
 }
 
+function getControlAudioObjects(): ManagedAudio[] {
+  if (controlTargetIds === null) {
+    return audioObjectsRef;
+  }
+  if (controlTargetIds.size === 0) {
+    return [];
+  }
+  return audioObjectsRef.filter((audio) => {
+    const audioId = audio.userData.__audioId || audio.name;
+    return Boolean(audioId && controlTargetIds?.has(audioId));
+  });
+}
+
+function normalizeIds(ids: string[]): string[] {
+  return ids.filter((id) => typeof id === 'string' && id.trim()).map((id) => id.trim());
+}
+
+function getAudioObjectsByIds(ids: string[]): ManagedAudio[] {
+  const idSet = new Set(normalizeIds(ids));
+  if (idSet.size === 0) {
+    return [];
+  }
+  return audioObjectsRef.filter((audio) => {
+    const audioId = audio.userData.__audioId || audio.name;
+    return Boolean(audioId && idSet.has(audioId));
+  });
+}
+
 function syncPlaybackState(): void {
-  const isPlaying = audioObjectsRef.some((audio) => audio.isPlaying);
-  if (audioState.isPlaying === isPlaying) return;
-  audioState = { ...audioState, isPlaying };
+  const controlObjects = getControlAudioObjects();
+  const available = controlTargetIds === null ? audioObjectsRef.length > 0 : controlTargetIds.size > 0;
+  const isPlaying = controlObjects.some((audio) => audio.isPlaying);
+  if (audioState.available === available && audioState.isPlaying === isPlaying) return;
+  audioState = { ...audioState, available, isPlaying: available ? isPlaying : false };
   notifyState();
+}
+
+function clearAutoplayTimer(id: string): void {
+  const timer = autoplayTimers.get(id);
+  if (!timer) return;
+  clearTimeout(timer);
+  autoplayTimers.delete(id);
+}
+
+function clearAutoplayTimers(): void {
+  autoplayTimers.forEach((timer) => clearTimeout(timer));
+  autoplayTimers.clear();
 }
 
 interface DisposeOptions {
@@ -172,6 +251,9 @@ interface DisposeOptions {
 export function disposeAudioMeshes(options: DisposeOptions = {}): void {
   const { resetState = true } = options;
   audioLoadGeneration += 1;
+  pendingPlayIds = new Set<string>();
+  canceledAutoplayIds = new Set<string>();
+  clearAutoplayTimers();
   audioObjectsRef.splice(0).forEach((sound) => {
     if (sound.isPlaying) sound.stop();
     sound.disconnect();
@@ -196,30 +278,73 @@ export function subscribeToAudioState(listener: AudioStateListener): () => void 
 
 export async function setAudioPlaying(shouldPlay: boolean): Promise<void> {
   desiredPlayback = shouldPlay;
+  const controlObjects = getControlAudioObjects();
   if (shouldPlay) {
+    if (controlTargetIds && controlTargetIds.size > 0) {
+      controlTargetIds.forEach((id) => pendingPlayIds.add(id));
+    }
     const ctx = audioObjectsRef[0]?.context;
     if (ctx && ctx.state === 'suspended') {
       await ctx.resume();
     }
-    audioObjectsRef.forEach((audio) => {
+    controlObjects.forEach((audio) => {
       if (!audio.isPlaying && audio.buffer) {
         audio.play();
+        const audioId = audio.userData.__audioId || audio.name;
+        if (audioId) pendingPlayIds.delete(audioId);
       }
     });
     syncPlaybackState();
   } else {
-    audioObjectsRef.forEach((audio) => {
+    if (controlTargetIds) {
+      controlTargetIds.forEach((id) => pendingPlayIds.delete(id));
+    }
+    controlObjects.forEach((audio) => {
       if (audio.isPlaying) {
         audio.pause();
       }
     });
     syncPlaybackState();
   }
+}
 
-  if (audioState.isPlaying !== shouldPlay) {
-    audioState = { ...audioState, isPlaying: shouldPlay };
-    notifyState();
+export function setAudioControlTargetIds(ids?: string[] | null): void {
+  controlTargetIds = Array.isArray(ids)
+    ? new Set(ids.filter((id) => typeof id === 'string' && id.trim()).map((id) => id.trim()))
+    : null;
+  syncPlaybackState();
+}
+
+export async function playAudioByIds(ids: string[]): Promise<void> {
+  const normalizedIds = normalizeIds(ids);
+  normalizedIds.forEach((id) => pendingPlayIds.add(id));
+  const audioObjects = getAudioObjectsByIds(ids);
+  const ctx = audioObjects[0]?.context ?? audioObjectsRef[0]?.context;
+  if (ctx && ctx.state === 'suspended') {
+    await ctx.resume();
   }
+  audioObjects.forEach((audio) => {
+    if (!audio.isPlaying && audio.buffer) {
+      audio.play();
+      const audioId = audio.userData.__audioId || audio.name;
+      if (audioId) pendingPlayIds.delete(audioId);
+    }
+  });
+  syncPlaybackState();
+}
+
+export function stopAudioByIds(ids: string[]): void {
+  normalizeIds(ids).forEach((id) => {
+    pendingPlayIds.delete(id);
+    canceledAutoplayIds.add(id);
+    clearAutoplayTimer(id);
+  });
+  getAudioObjectsByIds(ids).forEach((audio) => {
+    if (audio.isPlaying) {
+      audio.stop();
+    }
+  });
+  syncPlaybackState();
 }
 
 export function setAudioVolume(volume: number): void {
@@ -234,11 +359,93 @@ export function getAudioState(): AudioManagerState {
   return { ...audioState };
 }
 
+export function getAudioPlaybackSnapshot(id: string): AudioPlaybackSnapshot | null {
+  const audio = getAudioObjectsByIds([id])[0] as PlaybackTrackedAudio | undefined;
+  if (!audio?.buffer) {
+    return null;
+  }
+
+  const progress = typeof audio._progress === 'number' ? audio._progress : 0;
+  const startedAt = typeof audio._startedAt === 'number' ? audio._startedAt : audio.context.currentTime;
+  const elapsed = audio.isPlaying
+    ? Math.max(audio.context.currentTime - startedAt, 0) * audio.playbackRate
+    : 0;
+  const rawCurrentTime = audio.offset + progress + elapsed;
+  const duration = audio.duration ?? audio.buffer.duration;
+
+  return {
+    id,
+    currentTime: MathUtils.clamp(rawCurrentTime, 0, duration),
+    duration,
+    isPlaying: audio.isPlaying
+  };
+}
+
 export async function unlockAudioPlayback(): Promise<void> {
   if (!desiredPlayback) {
     return;
   }
-  await setAudioPlaying(true);
+  const ctx = audioObjectsRef[0]?.context;
+  if (ctx && ctx.state === 'suspended') {
+    await ctx.resume();
+  }
+  audioObjectsRef.forEach((audio) => {
+    const audioId = audio.userData.__audioId || audio.name;
+    if (!audio.userData.__autoplayOnEnter || (audioId && canceledAutoplayIds.has(audioId))) return;
+    const readyAt = typeof audio.userData.__autoplayReadyAt === 'number' ? audio.userData.__autoplayReadyAt : 0;
+    if (readyAt > performance.now()) {
+      scheduleAutoplay(audio, audioLoadGeneration);
+      return;
+    }
+    if (!audio.isPlaying && audio.buffer) {
+      audio.play();
+    }
+  });
+  syncPlaybackState();
+}
+
+function tryPlayAutoplayAudio(sound: ManagedAudio, generation: number): void {
+  const audioId = sound.userData.__audioId || sound.name;
+  if (generation !== audioLoadGeneration || !desiredPlayback || !sound.buffer) return;
+  if (audioId && canceledAutoplayIds.has(audioId)) return;
+  const ctx = sound.context;
+  if (ctx.state === 'suspended') {
+    ctx.resume()
+      .then(() => {
+        if (generation !== audioLoadGeneration || !desiredPlayback) return;
+        if (audioId && canceledAutoplayIds.has(audioId)) return;
+        if (!sound.isPlaying) sound.play();
+        syncPlaybackState();
+      })
+      .catch(() => {
+        syncPlaybackState();
+      });
+    return;
+  }
+  if (!sound.isPlaying) {
+    sound.play();
+    syncPlaybackState();
+  }
+}
+
+function scheduleAutoplay(sound: ManagedAudio, generation: number): void {
+  const audioId = sound.userData.__audioId || sound.name;
+  if (!audioId) {
+    tryPlayAutoplayAudio(sound, generation);
+    return;
+  }
+  clearAutoplayTimer(audioId);
+  const readyAt = typeof sound.userData.__autoplayReadyAt === 'number' ? sound.userData.__autoplayReadyAt : 0;
+  const delayMs = Math.max(0, readyAt - performance.now());
+  if (delayMs <= 0) {
+    tryPlayAutoplayAudio(sound, generation);
+    return;
+  }
+  const timer = setTimeout(() => {
+    autoplayTimers.delete(audioId);
+    tryPlayAutoplayAudio(sound, generation);
+  }, delayMs);
+  autoplayTimers.set(audioId, timer);
 }
 
 function loadAudioWithFallback(
@@ -315,27 +522,32 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
     (cfg) => typeof cfg.labelPlaying === 'string' || typeof cfg.labelPaused === 'string'
   );
   setPlaybackLabels(labelConfig?.labelPlaying, labelConfig?.labelPaused);
+  setAudioControlTargetIds(labelConfig ? [labelConfig.id] : null);
   const shouldAutoplayOnEnter = (galleryConfig.audio || []).some((cfg) => cfg.autoplayOnEnter === true);
   desiredPlayback = shouldAutoplayOnEnter;
 
   disposeAudioMeshes({ resetState: false });
   const generation = audioLoadGeneration;
+  const sceneReadyAt = performance.now();
 
   let foundAny = false;
 
   scene.traverse((obj) => {
-    const type = obj.userData?.type;
+    const runtimeData = resolveObjectRuntimeData(obj, galleryConfig.objectRegistry);
+    const type = runtimeData?.type || obj.userData?.type;
     if (type === 'Audio' || type === 'Pitcher') {
-      const cfg = configMap.get(obj.userData.name);
+      const audioId = runtimeData?.ref || obj.userData.name || obj.name;
+      const cfg = configMap.get(audioId);
       if (!cfg) {
-        console.warn(`No audio config for ID ${obj.userData.name}`);
+        console.warn(`No audio config for ID ${audioId}`);
         return;
       }
 
       foundAny = true;
 
       const sound = new PositionalAudio(listener) as ManagedAudio;
-      sound.name = cfg.name || obj.userData.name || obj.name;
+      sound.name = cfg.name || audioId || obj.name;
+      sound.userData.__audioId = audioId;
 
       loadAudioWithFallback(cfg, (buffer) => {
         if (generation !== audioLoadGeneration) return;
@@ -355,6 +567,8 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
           sound.offset = Math.max(0, cfg.startOffset);
         }
         const baseVolume = cfg.volume ?? 1;
+        sound.userData.__autoplayOnEnter = cfg.autoplayOnEnter === true;
+        sound.userData.__autoplayReadyAt = sceneReadyAt + Math.max(0, cfg.autoplayDelayMs ?? 0);
         sound.userData.__baseVolume = baseVolume;
         applyVolumeToSound(sound);
         if (Array.isArray(cfg.directionalCone)) {
@@ -368,16 +582,21 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
 
         obj.add(sound);
         audioObjectsRef.push(sound);
+        syncPlaybackState();
 
-        if (desiredPlayback) {
+        if (desiredPlayback && sound.userData.__autoplayOnEnter) {
+          scheduleAutoplay(sound, generation);
+        } else if (pendingPlayIds.has(audioId)) {
           const ctx = sound.context;
           if (ctx.state === 'suspended') {
             ctx.resume().then(() => {
               if (!sound.isPlaying) sound.play();
+              pendingPlayIds.delete(audioId);
               syncPlaybackState();
             });
           } else if (!sound.isPlaying) {
             sound.play();
+            pendingPlayIds.delete(audioId);
             syncPlaybackState();
           }
         }

@@ -4,6 +4,7 @@ import {
   Line3,
   Vector3,
   Vector2,
+  Quaternion,
   Raycaster,
   Box3,
   Matrix4,
@@ -75,6 +76,144 @@ export default class Visitor extends Mesh {
     deps.visitor = this;
 
 
+  }
+
+  _findEnterAnchor() {
+    const root = this.parent;
+    if (!root || typeof root.traverse !== 'function') {
+      return null;
+    }
+
+    const preferredRoots = [];
+    if (Array.isArray(root.children)) {
+      const displayRoot = root.children.find((child) => child?.name === 'r3f-display-root');
+      const proceduralRoot = root.children.find((child) => child?.name === 'r3f-procedural-room');
+      if (displayRoot) {
+        preferredRoots.push(displayRoot);
+      }
+      if (proceduralRoot && proceduralRoot !== displayRoot) {
+        preferredRoots.push(proceduralRoot);
+      }
+    }
+
+    const searchRoots = preferredRoots.length > 0 ? preferredRoots : [root];
+
+    for (const searchRoot of searchRoots) {
+      searchRoot.updateMatrixWorld?.(true);
+
+      let enterAnchor = null;
+      searchRoot.traverse((object) => {
+        if (enterAnchor) return;
+        const type = object?.userData?.type;
+        if (typeof type === 'string' && type.toLowerCase() === 'enter') {
+          enterAnchor = object;
+        }
+      });
+
+      if (enterAnchor) {
+        return enterAnchor;
+      }
+    }
+
+    return null;
+  }
+
+  _resolveSpawnPosition() {
+    return this._resolveSpawnPositionFromAnchor(this._findEnterAnchor());
+  }
+
+  _resolveSpawnPositionFromAnchor(enterAnchor) {
+    if (enterAnchor) {
+      const spawnPosition = new Vector3();
+      enterAnchor.getWorldPosition(spawnPosition);
+      return spawnPosition;
+    }
+
+    return this.params.visitorEnter ?? new Vector3(0, 10, 0);
+  }
+
+  _resolveLocalForwardAxis(anchor) {
+    const userData = anchor?.userData;
+    const axisValue =
+      userData && typeof userData === 'object'
+        ? userData.forwardAxis ?? userData.lookAxis ?? userData.directionAxis ?? userData.direction
+        : undefined;
+
+    const axis = this._coerceDirectionVector(axisValue);
+    if (axis) return axis;
+
+    // Blender single-arrow empties start along +Z, so that is the default forward axis.
+    return new Vector3(0, 0, 1);
+  }
+
+  _coerceDirectionVector(value) {
+    if (!value) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'x' || normalized === '+x' || normalized === 'east') return new Vector3(1, 0, 0);
+      if (normalized === '-x' || normalized === 'west') return new Vector3(-1, 0, 0);
+      if (normalized === 'y' || normalized === '+y' || normalized === 'up') return new Vector3(0, 1, 0);
+      if (normalized === '-y' || normalized === 'down') return new Vector3(0, -1, 0);
+      if (normalized === 'z' || normalized === '+z' || normalized === 'south') return new Vector3(0, 0, 1);
+      if (normalized === '-z' || normalized === 'north') return new Vector3(0, 0, -1);
+    }
+
+    if (Array.isArray(value) && value.length === 3) {
+      return new Vector3(
+        Number(value[0]) || 0,
+        Number(value[1]) || 0,
+        Number(value[2]) || 0
+      );
+    }
+
+    if (value && typeof value === 'object') {
+      const vector = value;
+      return new Vector3(
+        Number(vector.x) || 0,
+        Number(vector.y) || 0,
+        Number(vector.z) || 0
+      );
+    }
+
+    return null;
+  }
+
+  _resolveSpawnDirection(enterAnchor) {
+    if (!enterAnchor) {
+      return null;
+    }
+
+    const userData = enterAnchor.userData;
+    const explicitWorldDirection =
+      userData && typeof userData === 'object'
+        ? this._coerceDirectionVector(userData.spawnDirection ?? userData.lookDirection ?? userData.worldDirection)
+        : null;
+
+    if (explicitWorldDirection && explicitWorldDirection.lengthSq() >= 1e-6) {
+      explicitWorldDirection.y = 0;
+      if (explicitWorldDirection.lengthSq() >= 1e-6) {
+        return explicitWorldDirection.normalize();
+      }
+    }
+
+    const localForward = this._resolveLocalForwardAxis(enterAnchor);
+    if (localForward.lengthSq() < 1e-6) {
+      return null;
+    }
+
+    const worldQuaternion = new Quaternion();
+    enterAnchor.getWorldQuaternion(worldQuaternion);
+
+    const worldForward = localForward.clone().applyQuaternion(worldQuaternion);
+    worldForward.y = 0;
+    if (worldForward.lengthSq() < 1e-6) {
+      return null;
+    }
+
+    return worldForward.normalize();
   }
 
   _setupInput() {
@@ -308,10 +447,24 @@ export default class Visitor extends Mesh {
   }
 
   reset() {
+    const enterAnchor = this._findEnterAnchor();
+    const spawnPosition = this._resolveSpawnPositionFromAnchor(enterAnchor);
+    const spawnDirection = this._resolveSpawnDirection(enterAnchor);
 
     this.visitorVelocity.set(0, 0, 0);
+    this.visitorIsOnGround = true;
+    this.verticalCollisionDetected = false;
+    this.isAutoMoving = false;
+    if (this.clickIndicator) {
+      this.clickIndicator.visible = false;
+    }
+    this.lastFloorName = null;
 
-    this.position.copy(this.params.visitorEnter ?? new Vector3(0, 10, 0));
+    this.position.copy(spawnPosition);
+    if (spawnDirection) {
+      const spawnYaw = Math.atan2(spawnDirection.x, spawnDirection.z);
+      this.rotation.set(0, spawnYaw, 0);
+    }
 
     // Optional: reset capsule target or height
     this.target.copy(this.position.clone().add(new Vector3(0, 10.5, 0)));
@@ -322,12 +475,28 @@ export default class Visitor extends Mesh {
     if (this.renderer?.xr?.isPresenting && this.xrRig) {
       // Place rig at target height; camera orientation comes from HMD
       this.xrRig.position.copy(target);
+      if (spawnDirection) {
+        const spawnYaw = Math.atan2(spawnDirection.x, spawnDirection.z);
+        this.xrRig.rotation.set(0, spawnYaw, 0);
+      }
     } else {
       const cameraOffset = this.camera.position.clone().sub(this.controls.target);
+      const orbitRadius = Math.max(1e-4, cameraOffset.length());
       this.controls.target.copy(target);
-      // Preserve current camera offset (first-person controllers keep this very small).
-      // If somehow the camera is exactly on the target, use a small fallback offset.
-      if (cameraOffset.lengthSq() < 1e-12) {
+      if (spawnDirection) {
+        const flatForward = spawnDirection.clone();
+        flatForward.y = 0;
+        if (flatForward.lengthSq() > 1e-6) {
+          flatForward.normalize();
+          this.camera.position.copy(target).addScaledVector(flatForward, -orbitRadius);
+          this.camera.lookAt(target);
+          this.controls.update();
+        } else if (cameraOffset.lengthSq() < 1e-12) {
+          this.camera.position.copy(target).add(new Vector3(0, 0, 5));
+        } else {
+          this.camera.position.copy(target).add(cameraOffset);
+        }
+      } else if (cameraOffset.lengthSq() < 1e-12) {
         this.camera.position.copy(target).add(new Vector3(0, 0, 5));
       } else {
         this.camera.position.copy(target).add(cameraOffset);
@@ -335,11 +504,13 @@ export default class Visitor extends Mesh {
     }
 
     // Camera rotation
-    const angle =
-      typeof this.params.rotateOrbit === 'number' && Number.isFinite(this.params.rotateOrbit)
-        ? this.params.rotateOrbit
-        : -120;
-    rotateOrbit(this.camera, this.controls, angle);
+    if (!spawnDirection) {
+      const angle =
+        typeof this.params.rotateOrbit === 'number' && Number.isFinite(this.params.rotateOrbit)
+          ? this.params.rotateOrbit
+          : -120;
+      rotateOrbit(this.camera, this.controls, angle);
+    }
   }
 
 }

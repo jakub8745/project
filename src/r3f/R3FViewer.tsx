@@ -5,17 +5,21 @@ import type { RootState } from '@react-three/fiber';
 import { Html, Loader, OrbitControls, Text } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
 import {
+  AmbientLight,
   AudioListener,
+  Box3,
   BufferAttribute,
   BufferGeometry,
   BoxGeometry,
   CanvasTexture,
   Color,
+  DirectionalLight,
   DoubleSide,
   Euler,
   Vector3,
   Mesh,
   Group,
+  HemisphereLight,
   Material,
   MeshBasicMaterial,
   MeshPhysicalMaterial,
@@ -25,6 +29,11 @@ import {
   WebGLCubeRenderTarget,
   CubeCamera,
   Object3D,
+  NoToneMapping,
+  LinearToneMapping,
+  ReinhardToneMapping,
+  CineonToneMapping,
+  ACESFilmicToneMapping,
   NeutralToneMapping,
   PCFSoftShadowMap,
   SRGBColorSpace,
@@ -54,14 +63,24 @@ import type { VisitorParams } from '../modules/Visitor.js';
 import { PointerInteractions } from './PointerInteractions';
 import { applyVideoMeshes, disposeAllVideoMeshes, type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
 import { resolveVideoPlaybackMode, type VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
+import { applyObjectRuntimeData, normalizeObjectRegistry, type ObjectRegistry } from '../modules/objectRegistry.js';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
 import { MaterialModalProvider } from './Modal';
-import type { AudioMeshConfig } from '../modules/audioMeshManager.ts';
+import {
+  playAudioByIds,
+  setAudioControlTargetIds,
+  stopAudioByIds,
+  type AudioMeshConfig,
+  type AudioSubtitleCue,
+  type AudioSubtitleTrack
+} from '../modules/audioMeshManager.ts';
 import { AudioMeshes } from './AudioMeshes';
-import { AudioPlayerControls } from './AudioPlayerControls';
+import { AudioPlayerControls, type AudioSubtitleLanguageOption } from './AudioPlayerControls';
+import { AudioSubtitles } from './AudioSubtitles';
 import { getKtx2Loader } from '../loaders/ktx2Loader';
 import { OnscreenJoystick } from './OnscreenJoystick';
 import { chatApiUrl } from '../utils/chatApi';
+import { ObjectHoldRotation } from './ObjectHoldRotation';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -155,6 +174,34 @@ interface R3FViewerProps {
   }) => void;
 }
 
+const TONE_MAPPING_OPTIONS = [
+  { value: 'neutral', label: 'Natural', toneMapping: NeutralToneMapping },
+  { value: 'aces', label: 'ACES Filmic', toneMapping: ACESFilmicToneMapping },
+  { value: 'cineon', label: 'Cineon', toneMapping: CineonToneMapping },
+  { value: 'reinhard', label: 'Reinhard', toneMapping: ReinhardToneMapping },
+  { value: 'linear', label: 'Linear', toneMapping: LinearToneMapping },
+  { value: 'none', label: 'None', toneMapping: NoToneMapping }
+] as const;
+
+type ToneMappingName = typeof TONE_MAPPING_OPTIONS[number]['value'];
+
+function normalizeToneMappingName(source: unknown): ToneMappingName {
+  if (typeof source !== 'string') return 'neutral';
+  const compact = source.trim().replace(/[\s_-]+/g, '').toLowerCase();
+  if (compact === 'aces' || compact === 'acesfilmic') return 'aces';
+  if (compact === 'cineon') return 'cineon';
+  if (compact === 'reinhard') return 'reinhard';
+  if (compact === 'linear') return 'linear';
+  if (compact === 'none' || compact === 'no' || compact === 'notone') return 'none';
+  if (compact === 'neutral' || compact === 'natural') return 'neutral';
+  return 'neutral';
+}
+
+function toneMappingValueForName(name: unknown): number {
+  const normalized = normalizeToneMappingName(name);
+  return TONE_MAPPING_OPTIONS.find((option) => option.value === normalized)?.toneMapping ?? NeutralToneMapping;
+}
+
 function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3Tuple {
   if (Array.isArray(source) && source.length === 3) {
     return [Number(source[0]) || 0, Number(source[1]) || 0, Number(source[2]) || 0];
@@ -176,6 +223,189 @@ function coercePositiveNumber(source: unknown, fallback: number): number {
     return source;
   }
   return fallback;
+}
+
+function coerceColorGradeValue(source: unknown, fallback: number, min: number, max: number): number {
+  if (typeof source === 'number' && Number.isFinite(source)) {
+    return clampValue(source, min, max);
+  }
+  return fallback;
+}
+
+function createColorGradeFilter(params?: Record<string, unknown>): string {
+  const colorGrade = params?.colorGrade && typeof params.colorGrade === 'object'
+    ? params.colorGrade as Record<string, unknown>
+    : undefined;
+  if (!colorGrade) return '';
+
+  const brightness = coerceColorGradeValue(colorGrade.brightness, 1, 0.25, 3);
+  const contrast = coerceColorGradeValue(colorGrade.contrast, 1, 0.25, 3);
+  const saturate = coerceColorGradeValue(colorGrade.saturate, 1, 0, 3);
+  const hueRotate = coerceColorGradeValue(colorGrade.hueRotate, 0, -180, 180);
+  const filters = [
+    contrast !== 1 ? `contrast(${contrast})` : '',
+    brightness !== 1 ? `brightness(${brightness})` : '',
+    saturate !== 1 ? `saturate(${saturate})` : '',
+    hueRotate !== 0 ? `hue-rotate(${hueRotate}deg)` : ''
+  ].filter(Boolean);
+
+  return filters.join(' ');
+}
+
+type AudioFloorRoute = {
+  surfaces: string[];
+  floors: string[];
+  playAudioIds: string[];
+  stopAudioIds: string[];
+  controlAudioIds?: string[];
+};
+
+type LightZoneRoute = {
+  id?: string;
+  surfaces: string[];
+  lights?: Record<string, unknown>;
+  params?: Record<string, unknown>;
+  transitionSeconds?: number;
+};
+
+type SceneLightSettings = {
+  ambientColor: string;
+  ambientIntensity: number;
+  hemisphereSkyColor: string;
+  hemisphereGroundColor: string;
+  hemisphereIntensity: number;
+  directionalColor: string;
+  directionalIntensity: number;
+  directionalPosition: Vector3Tuple;
+  directionalCastShadow: boolean;
+  directionalShadowMapSize: number;
+  directionalShadowBias: number;
+  directionalShadowNormalBias: number;
+  directionalShadowCameraSize: number;
+  spotColor: string;
+  spotIntensity: number;
+  spotPosition: Vector3Tuple;
+  spotTarget: Vector3Tuple;
+  spotAngle: number;
+  spotPenumbra: number;
+  spotDistance: number;
+  spotDecay: number;
+  spotCastShadow: boolean;
+  spotShadowMapSize: number;
+  spotShadowBias: number;
+  spotShadowNormalBias: number;
+  transitionSeconds: number;
+};
+
+function coerceStringList(source: unknown): string[] {
+  if (Array.isArray(source)) {
+    return source.filter((value): value is string => typeof value === 'string' && value.trim()).map((value) => value.trim());
+  }
+  return typeof source === 'string' && source.trim() ? [source.trim()] : [];
+}
+
+function getSurfaceRouteNames(surface: Object3D | null): string[] {
+  if (!surface) return [];
+  const userData = surface.userData && typeof surface.userData === 'object'
+    ? (surface.userData as Record<string, unknown>)
+    : {};
+  return [
+    surface.name,
+    userData.__objectRegistryKey,
+    userData.__objectName,
+    userData.__objectRef,
+    userData.name,
+    userData.id,
+    userData.elementID
+  ].filter((value): value is string => typeof value === 'string' && value.trim());
+}
+
+function audioFloorRouteKey(route: AudioFloorRoute): string {
+  return route.surfaces.join('|');
+}
+
+function surfaceZoneRouteKey(route: { id?: string; surfaces: string[] }): string {
+  return route.id || route.surfaces.join('|');
+}
+
+function coerceOptionalNumber(source: unknown): number | undefined {
+  return typeof source === 'number' && Number.isFinite(source) ? source : undefined;
+}
+
+function coerceNonNegativeNumber(source: unknown): number | undefined {
+  return typeof source === 'number' && Number.isFinite(source) ? Math.max(0, source) : undefined;
+}
+
+function mergeZoneExposureParams(params: Record<string, unknown>, exposure: unknown): Record<string, unknown> {
+  if (!exposure || typeof exposure !== 'object' || Array.isArray(exposure)) return params;
+  const record = exposure as Record<string, unknown>;
+  const result = { ...params };
+  if (typeof record.value === 'number') result.exposure = record.value;
+  if (typeof record.exposure === 'number') result.exposure = record.exposure;
+  if (typeof record.target === 'number') result.exposureTarget = record.target;
+  if (typeof record.exposureTarget === 'number') result.exposureTarget = record.exposureTarget;
+  if (typeof record.min === 'number') result.exposureMin = record.min;
+  if (typeof record.exposureMin === 'number') result.exposureMin = record.exposureMin;
+  if (typeof record.max === 'number') result.exposureMax = record.max;
+  if (typeof record.exposureMax === 'number') result.exposureMax = record.exposureMax;
+  if (typeof record.sampleInterval === 'number') result.exposureSampleInterval = record.sampleInterval;
+  if (typeof record.exposureSampleInterval === 'number') result.exposureSampleInterval = record.exposureSampleInterval;
+  if (typeof record.autoExposure === 'boolean') result.autoExposure = record.autoExposure;
+  return result;
+}
+
+function sanitizeSubtitleCues(source: unknown): AudioSubtitleCue[] | undefined {
+  if (!Array.isArray(source)) {
+    return undefined;
+  }
+  const cues = source
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const cue = entry as Record<string, unknown>;
+      const start = typeof cue.start === 'number' ? cue.start : Number(cue.start);
+      const end = typeof cue.end === 'number' ? cue.end : Number(cue.end);
+      const text = typeof cue.text === 'string' ? cue.text.trim() : '';
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || !text) {
+        return null;
+      }
+      return { start: Math.max(0, start), end, text } satisfies AudioSubtitleCue;
+    })
+    .filter((cue): cue is AudioSubtitleCue => cue !== null)
+    .sort((left, right) => left.start - right.start);
+  return cues.length > 0 ? cues : undefined;
+}
+
+function sanitizeSubtitleLanguage(source: unknown): string | undefined {
+  return typeof source === 'string' && source.trim() ? source.trim().toLowerCase() : undefined;
+}
+
+function sanitizeAudioSubtitleTracks(record: Record<string, unknown>): AudioSubtitleTrack[] | undefined {
+  const parsedTracks = Array.isArray(record.subtitleTracks)
+    ? record.subtitleTracks
+        .map((entry) => {
+          if (!entry || typeof entry !== 'object') return null;
+          const track = entry as Record<string, unknown>;
+          const language = sanitizeSubtitleLanguage(track.language);
+          const cues = sanitizeSubtitleCues(track.cues);
+          if (!language || !cues) return null;
+          return {
+            language,
+            label: typeof track.label === 'string' && track.label.trim() ? track.label.trim() : undefined,
+            cues
+          } satisfies AudioSubtitleTrack;
+        })
+        .filter((track): track is AudioSubtitleTrack => track !== null)
+    : [];
+  const legacyCues = sanitizeSubtitleCues(record.subtitles);
+  if (legacyCues) {
+    const language = sanitizeSubtitleLanguage(record.subtitleLanguage) ?? 'en';
+    parsedTracks.push({
+      language,
+      label: language.toUpperCase(),
+      cues: legacyCues
+    });
+  }
+  return parsedTracks.length > 0 ? parsedTracks : undefined;
 }
 
 function getBooleanFromQuery(name: string): boolean {
@@ -507,7 +737,8 @@ function AnimatedProceduralObject({
   collider,
   visitor,
   objectRefs,
-  onActorRef
+  onActorRef,
+  objectRegistry
 }: {
   object: ProceduralObjectSpec;
   objectIndex: number;
@@ -516,6 +747,7 @@ function AnimatedProceduralObject({
   visitor: Visitor | null;
   objectRefs: MutableRefObject<Map<number, { mesh: Mesh; radius: number }>>;
   onActorRef?: ProceduralActorRefCallback;
+  objectRegistry?: ObjectRegistry;
 }) {
   const { gl, scene } = useThree();
   const meshRef = useRef<Mesh | null>(null);
@@ -615,6 +847,7 @@ function AnimatedProceduralObject({
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh) return;
+    applyObjectRuntimeData(mesh, objectRegistry);
     const refs = objectRefs.current;
     refs.set(objectIndex, { mesh, radius: object.collisionRadius });
     onActorRef?.(actorId, mesh, object.collisionRadius);
@@ -622,7 +855,7 @@ function AnimatedProceduralObject({
       refs.delete(objectIndex);
       onActorRef?.(actorId, null, object.collisionRadius);
     };
-  }, [actorId, object.collisionRadius, objectIndex, objectRefs, onActorRef]);
+  }, [actorId, object.collisionRadius, objectIndex, objectRefs, objectRegistry, onActorRef]);
 
   useEffect(() => {
     if (!object.animation?.collisionAware) {
@@ -828,6 +1061,7 @@ function AnimatedProceduralObject({
   return (
     <mesh
       ref={meshRef}
+      name={actorId}
       position={object.position}
       rotation={object.rotation}
       scale={object.scale}
@@ -884,13 +1118,15 @@ function ProceduralObjects({
   roomBounds,
   collider,
   visitor,
-  onActorRef
+  onActorRef,
+  objectRegistry
 }: {
   objects: ProceduralObjectSpec[];
   roomBounds?: ProceduralRoomBounds;
   collider: Mesh | null;
   visitor: Visitor | null;
   onActorRef?: ProceduralActorRefCallback;
+  objectRegistry?: ObjectRegistry;
 }) {
   const objectRefs = useRef<Map<number, { mesh: Mesh; radius: number }>>(new Map());
   return (
@@ -907,6 +1143,7 @@ function ProceduralObjects({
             visitor={visitor}
             objectRefs={objectRefs}
             onActorRef={onActorRef}
+            objectRegistry={objectRegistry}
           />
         );
       })}
@@ -922,7 +1159,8 @@ function ExhibitModel({
   scale,
   onColliderReady,
   onSceneReady,
-  videosConfig
+  videosConfig,
+  objectRegistry
 }: {
   modelPath: string;
   interactivesPath?: string;
@@ -932,6 +1170,7 @@ function ExhibitModel({
   onColliderReady?: (collider: Mesh | null) => void;
   onSceneReady?: () => void;
   videosConfig?: VideoMeshConfig[];
+  objectRegistry?: ObjectRegistry;
 }) {
   const loadTargets = useMemo(() => {
     const targets = [modelPath];
@@ -960,6 +1199,7 @@ function ExhibitModel({
     const display = mainGltf.scene.clone(true) as Group;
     display.name = 'r3f-display-root';
     display.traverse((object) => {
+      applyObjectRuntimeData(object, objectRegistry);
       if (object instanceof Mesh) {
         object.castShadow = true;
         object.receiveShadow = true;
@@ -975,6 +1215,7 @@ function ExhibitModel({
       const interactives = interactivesGltf.scene.clone(true);
       interactives.name = 'r3f-interactives-layer';
       interactives.traverse((object) => {
+        applyObjectRuntimeData(object, objectRegistry);
         if (!(object instanceof Mesh)) return;
         const mesh = object as InteractiveMesh;
         if (mesh.userData?.type === 'Video') {
@@ -1027,7 +1268,7 @@ function ExhibitModel({
     colliderMesh.updateMatrixWorld(true);
 
     return { displayScene: display, collider: colliderMesh };
-  }, [interactivesGltf, mainGltf, position, rotation, scale]);
+  }, [interactivesGltf, mainGltf, objectRegistry, position, rotation, scale]);
 
   useEffect(() => {
     onColliderReady?.(collider);
@@ -1045,11 +1286,11 @@ function ExhibitModel({
       disposeAllVideoMeshes();
       return;
     }
-    applyVideoMeshes(displayScene, camera, { videos: videosConfig });
+    applyVideoMeshes(displayScene, camera, { videos: videosConfig, objectRegistry });
     return () => {
       disposeAllVideoMeshes();
     };
-  }, [camera, displayScene, videosConfig]);
+  }, [camera, displayScene, objectRegistry, videosConfig]);
 
   if (!displayScene) {
     return null;
@@ -1296,13 +1537,15 @@ function ProceduralRoomModels({
   roomBounds,
   collider,
   visitor,
-  onActorRef
+  onActorRef,
+  objectRegistry
 }: {
   models: ProceduralModelSpec[];
   roomBounds?: ProceduralRoomBounds;
   collider: Mesh | null;
   visitor: Visitor | null;
   onActorRef?: ProceduralActorRefCallback;
+  objectRegistry?: ObjectRegistry;
 }) {
   const gltfs = useConfiguredGLTFs(models.map((item) => item.path));
   const modelRefs = useRef<Map<number, Group>>(new Map());
@@ -1313,7 +1556,9 @@ function ProceduralRoomModels({
         const gltf = gltfs[index] as GLTF | undefined;
         if (!gltf?.scene) return null;
         const clone = gltf.scene.clone(true);
+        clone.name = item.id || clone.name;
         clone.traverse((object) => {
+          applyObjectRuntimeData(object, objectRegistry);
           if (object instanceof Mesh) {
             object.castShadow = true;
             object.receiveShadow = true;
@@ -1362,7 +1607,8 @@ function ProceduralRoomModel({
   rotation,
   scale,
   onColliderReady,
-  onSceneReady
+  onSceneReady,
+  objectRegistry
 }: {
   roomSpec?: ProceduralRoomSpec;
   models?: ProceduralModelSpec[];
@@ -1373,6 +1619,7 @@ function ProceduralRoomModel({
   scale: number;
   onColliderReady?: (collider: Mesh | null) => void;
   onSceneReady?: () => void;
+  objectRegistry?: ObjectRegistry;
 }) {
   const wallBendRef = useRef<{
     speed: number;
@@ -1981,6 +2228,7 @@ function ProceduralRoomModel({
           collider={collider}
           visitor={visitor}
           onActorRef={onActorRef}
+          objectRegistry={objectRegistry}
         />
       ) : null}
     </group>
@@ -2120,63 +2368,122 @@ function SceneEnvironment({
   return null;
 }
 
-function ConfiguredSpotLight({
-  color,
-  position,
-  target,
-  intensity,
-  angle,
-  penumbra,
-  distance,
-  decay,
-  castShadow,
-  shadowMapSize,
-  shadowBias,
-  shadowNormalBias
-}: {
-  color: string;
-  position: Vector3Tuple;
-  target: Vector3Tuple;
-  intensity: number;
-  angle: number;
-  penumbra: number;
-  distance: number;
-  decay: number;
-  castShadow: boolean;
-  shadowMapSize: number;
-  shadowBias: number;
-  shadowNormalBias: number;
-}) {
-  const lightRef = useRef<SpotLight | null>(null);
+function SceneLightRig({ settings }: { settings: SceneLightSettings }) {
+  const ambientRef = useRef<AmbientLight | null>(null);
+  const hemisphereRef = useRef<HemisphereLight | null>(null);
+  const directionalRef = useRef<DirectionalLight | null>(null);
+  const spotRef = useRef<SpotLight | null>(null);
   const { scene } = useThree();
+  const currentRef = useRef({
+    ambientColor: new Color(settings.ambientColor),
+    ambientIntensity: settings.ambientIntensity,
+    hemisphereSkyColor: new Color(settings.hemisphereSkyColor),
+    hemisphereGroundColor: new Color(settings.hemisphereGroundColor),
+    hemisphereIntensity: settings.hemisphereIntensity,
+    directionalColor: new Color(settings.directionalColor),
+    directionalIntensity: settings.directionalIntensity,
+    directionalPosition: new Vector3(...settings.directionalPosition),
+    spotColor: new Color(settings.spotColor),
+    spotIntensity: settings.spotIntensity,
+    spotPosition: new Vector3(...settings.spotPosition),
+    spotTarget: new Vector3(...settings.spotTarget),
+    spotAngle: settings.spotAngle,
+    spotPenumbra: settings.spotPenumbra,
+    spotDistance: settings.spotDistance,
+    spotDecay: settings.spotDecay
+  });
 
   useEffect(() => {
-    const light = lightRef.current;
+    const light = spotRef.current;
     if (!light) return;
-    light.target.position.set(...target);
     scene.add(light.target);
-    light.target.updateMatrixWorld();
     return () => {
       scene.remove(light.target);
     };
-  }, [scene, target]);
+  }, [scene]);
+
+  useFrame((_, delta) => {
+    const transition = Math.max(0, settings.transitionSeconds);
+    const factor = transition <= 0 ? 1 : 1 - Math.exp(-delta / transition);
+    const current = currentRef.current;
+
+    current.ambientColor.lerp(new Color(settings.ambientColor), factor);
+    current.ambientIntensity += (settings.ambientIntensity - current.ambientIntensity) * factor;
+    current.hemisphereSkyColor.lerp(new Color(settings.hemisphereSkyColor), factor);
+    current.hemisphereGroundColor.lerp(new Color(settings.hemisphereGroundColor), factor);
+    current.hemisphereIntensity += (settings.hemisphereIntensity - current.hemisphereIntensity) * factor;
+    current.directionalColor.lerp(new Color(settings.directionalColor), factor);
+    current.directionalIntensity += (settings.directionalIntensity - current.directionalIntensity) * factor;
+    current.directionalPosition.lerp(new Vector3(...settings.directionalPosition), factor);
+    current.spotColor.lerp(new Color(settings.spotColor), factor);
+    current.spotIntensity += (settings.spotIntensity - current.spotIntensity) * factor;
+    current.spotPosition.lerp(new Vector3(...settings.spotPosition), factor);
+    current.spotTarget.lerp(new Vector3(...settings.spotTarget), factor);
+    current.spotAngle += (settings.spotAngle - current.spotAngle) * factor;
+    current.spotPenumbra += (settings.spotPenumbra - current.spotPenumbra) * factor;
+    current.spotDistance += (settings.spotDistance - current.spotDistance) * factor;
+    current.spotDecay += (settings.spotDecay - current.spotDecay) * factor;
+
+    const ambient = ambientRef.current;
+    if (ambient) {
+      ambient.color.copy(current.ambientColor);
+      ambient.intensity = current.ambientIntensity;
+    }
+    const hemisphere = hemisphereRef.current;
+    if (hemisphere) {
+      hemisphere.color.copy(current.hemisphereSkyColor);
+      hemisphere.groundColor.copy(current.hemisphereGroundColor);
+      hemisphere.intensity = current.hemisphereIntensity;
+    }
+    const directional = directionalRef.current;
+    if (directional) {
+      directional.color.copy(current.directionalColor);
+      directional.intensity = current.directionalIntensity;
+      directional.position.copy(current.directionalPosition);
+      directional.updateMatrixWorld();
+    }
+    const spot = spotRef.current;
+    if (spot) {
+      spot.color.copy(current.spotColor);
+      spot.intensity = current.spotIntensity;
+      spot.position.copy(current.spotPosition);
+      spot.angle = current.spotAngle;
+      spot.penumbra = current.spotPenumbra;
+      spot.distance = current.spotDistance;
+      spot.decay = current.spotDecay;
+      spot.target.position.copy(current.spotTarget);
+      spot.target.updateMatrixWorld();
+      spot.updateMatrixWorld();
+    }
+  });
 
   return (
-    <spotLight
-      ref={lightRef}
-      color={color}
-      position={position}
-      intensity={intensity}
-      angle={angle}
-      penumbra={penumbra}
-      distance={distance}
-      decay={decay}
-      castShadow={castShadow}
-      shadow-mapSize-width={shadowMapSize}
-      shadow-mapSize-height={shadowMapSize}
-      shadow-bias={shadowBias}
-      shadow-normalBias={shadowNormalBias}
-    />
+    <>
+      <ambientLight ref={ambientRef} />
+      <hemisphereLight ref={hemisphereRef} />
+      <directionalLight
+        ref={directionalRef}
+        castShadow={settings.directionalCastShadow}
+        shadow-mapSize-width={settings.directionalShadowMapSize}
+        shadow-mapSize-height={settings.directionalShadowMapSize}
+        shadow-bias={settings.directionalShadowBias}
+        shadow-normalBias={settings.directionalShadowNormalBias}
+        shadow-camera-near={0.1}
+        shadow-camera-far={80}
+        shadow-camera-left={-settings.directionalShadowCameraSize}
+        shadow-camera-right={settings.directionalShadowCameraSize}
+        shadow-camera-top={settings.directionalShadowCameraSize}
+        shadow-camera-bottom={-settings.directionalShadowCameraSize}
+      />
+      <spotLight
+        ref={spotRef}
+        castShadow={settings.spotCastShadow}
+        shadow-mapSize-width={settings.spotShadowMapSize}
+        shadow-mapSize-height={settings.spotShadowMapSize}
+        shadow-bias={settings.spotShadowBias}
+        shadow-normalBias={settings.spotShadowNormalBias}
+      />
+    </>
   );
 }
 
@@ -2338,6 +2645,10 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   const modelPath = config?.modelPath;
   const proceduralRoom = config?.proceduralRoom as Record<string, unknown> | undefined;
   const useProceduralRoom = !modelPath && Boolean(proceduralRoom);
+  const objectRegistry = useMemo(
+    () => normalizeObjectRegistry(config?.objects ?? config?.objectRegistry),
+    [config?.objects, config?.objectRegistry]
+  );
   const proceduralModels = useMemo<ProceduralModelSpec[] | undefined>(() => {
     if (!Array.isArray(config?.models)) return undefined;
     const mapped = config.models
@@ -2636,6 +2947,11 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   const rotation = useMemo(() => coerceVector(config?.rotation), [config?.rotation]);
   const scale = typeof config?.scale === 'number' ? config.scale : 1;
   const rawParams = config?.params as Record<string, unknown> | undefined;
+  const configuredToneMapping = normalizeToneMappingName(rawParams?.toneMapping);
+  const [toneMappingName, setToneMappingName] = useState<ToneMappingName>(configuredToneMapping);
+  useEffect(() => {
+    setToneMappingName(configuredToneMapping);
+  }, [configUrl, configuredToneMapping]);
   const heightOffsetVector = useMemo(() => toVector3(rawParams?.heightOffset, [0, 1.05, 0]), [rawParams?.heightOffset]);
   const visitorEnterVector = useMemo(() => toVector3(rawParams?.visitorEnter, [0, 2, 0]), [rawParams?.visitorEnter]);
   const controllerParams = useMemo<ControllerParams | undefined>(() => {
@@ -2729,10 +3045,14 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     ? typeof thumbnailCaptureRecord?.backgroundColor === 'string'
       ? thumbnailCaptureRecord.backgroundColor
       : '#c8ced6'
-    : undefined;
+    : typeof config?.backgroundColor === 'string'
+      ? config.backgroundColor
+      : undefined;
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
+  const [sceneAssetsReady, setSceneAssetsReady] = useState(false);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
+  const lastSceneVersionRef = useRef(sceneVersion);
   const dynamicActorsRef = useRef<Map<string, { object: Object3D; radius: number }>>(new Map());
   const physicsConfig = useMemo<PhysicsConfig | undefined>(() => {
     if (!config?.physics || typeof config.physics !== 'object') return undefined;
@@ -2773,6 +3093,18 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     }
     dynamicActorsRef.current.set(id, { object, radius });
   }, []);
+
+  useEffect(() => {
+    if (!visitorInstance) {
+      return;
+    }
+    if (lastSceneVersionRef.current === sceneVersion) {
+      return;
+    }
+    lastSceneVersionRef.current = sceneVersion;
+    // Snap the visitor back onto the latest scene-defined spawn anchor.
+    visitorInstance.reset?.();
+  }, [sceneVersion, visitorInstance]);
 
   const linkMap = useMemo(() => {
     if (config?.links && typeof config.links === 'object') {
@@ -2841,6 +3173,8 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
       const oracleImagePath = typeof record.oracleImagePath === 'string' ? record.oracleImagePath : undefined;
       const ipfsImagePath = typeof record.ipfsImagePath === 'string' ? record.ipfsImagePath : undefined;
       const pdfPath = typeof record.pdfPath === 'string' ? record.pdfPath : undefined;
+      const pdfOpenPath = typeof record.pdfOpenPath === 'string' ? record.pdfOpenPath : undefined;
+      const pdfExternalUrl = typeof record.pdfExternalUrl === 'string' ? record.pdfExternalUrl : undefined;
       const oraclePdfPath = typeof record.oraclePdfPath === 'string' ? record.oraclePdfPath : undefined;
       const ipfsPdfPath = typeof record.ipfsPdfPath === 'string' ? record.ipfsPdfPath : undefined;
       let img;
@@ -2858,6 +3192,8 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         ...(oracleImagePath ? { oracleImagePath } : {}),
         ...(ipfsImagePath ? { ipfsImagePath } : {}),
         ...(pdfPath ? { pdfPath } : {}),
+        ...(pdfOpenPath ? { pdfOpenPath } : {}),
+        ...(pdfExternalUrl ? { pdfExternalUrl } : {}),
         ...(oraclePdfPath ? { oraclePdfPath } : {}),
         ...(ipfsPdfPath ? { ipfsPdfPath } : {}),
         ...(img ? { img } : {})
@@ -2875,6 +3211,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
   const [isVideoPlayerModalOpen, setIsVideoPlayerModalOpen] = useState(false);
+  const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
   const [xrSupported, setXrSupported] = useState(false);
   const [xrSessionActive, setXrSessionActive] = useState(false);
   const [xrError, setXrError] = useState<string | null>(null);
@@ -2898,6 +3235,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         const url = typeof record.url === 'string' ? record.url : undefined;
         const ipfsUrl = typeof record.ipfsUrl === 'string' ? record.ipfsUrl : undefined;
         if (!url && !ipfsUrl) return null;
+        const subtitleTracks = sanitizeAudioSubtitleTracks(record);
         let directionalCone: [number, number, number] | undefined;
         if (Array.isArray(record.directionalCone)) {
           const cone = (record.directionalCone as unknown[])
@@ -2924,6 +3262,11 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           url,
           ipfsUrl,
           autoplayOnEnter: typeof record.autoplayOnEnter === 'boolean' ? record.autoplayOnEnter : undefined,
+          autoplayDelayMs: typeof record.autoplayDelayMs === 'number'
+            ? record.autoplayDelayMs
+            : typeof record.autoplayDelaySeconds === 'number'
+              ? record.autoplayDelaySeconds * 1000
+              : undefined,
           labelPlaying: typeof record.labelPlaying === 'string' ? record.labelPlaying : undefined,
           labelPaused: typeof record.labelPaused === 'string' ? record.labelPaused : undefined,
           loop: typeof record.loop === 'boolean' ? record.loop : undefined,
@@ -2935,7 +3278,8 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           directionalCone,
           coneTarget,
           startOffset: typeof record.startOffset === 'number' ? record.startOffset : undefined,
-          reverse: typeof record.reverse === 'boolean' ? record.reverse : undefined
+          reverse: typeof record.reverse === 'boolean' ? record.reverse : undefined,
+          subtitleTracks
         };
         return sanitized;
       })
@@ -2960,6 +3304,216 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         : undefined
     };
   }, [audioConfig]);
+
+  const subtitleLanguageOptions = useMemo<AudioSubtitleLanguageOption[]>(() => {
+    const options = new Map<string, AudioSubtitleLanguageOption>();
+    audioConfig?.forEach((audio) => {
+      audio.subtitleTracks?.forEach((track) => {
+        if (options.has(track.language)) return;
+        options.set(track.language, {
+          value: track.language,
+          label: track.label || track.language.toUpperCase()
+        });
+      });
+    });
+    return Array.from(options.values());
+  }, [audioConfig]);
+  const [subtitleLanguage, setSubtitleLanguage] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (subtitleLanguageOptions.length === 0) {
+      if (subtitleLanguage !== undefined) {
+        setSubtitleLanguage(undefined);
+      }
+      return;
+    }
+    if (subtitleLanguage === undefined) {
+      setSubtitleLanguage(subtitleLanguageOptions[0].value);
+      return;
+    }
+    if (subtitleLanguage !== null && !subtitleLanguageOptions.some((option) => option.value === subtitleLanguage)) {
+      setSubtitleLanguage(subtitleLanguageOptions[0].value);
+    }
+  }, [subtitleLanguage, subtitleLanguageOptions]);
+
+  const audioFloorRoutes = useMemo<AudioFloorRoute[]>(() => {
+    if (!Array.isArray(config?.audioZones)) {
+      return [];
+    }
+    return config.audioZones
+      .map((entry) => {
+        if (!entry || typeof entry !== 'object') return null;
+        const record = entry as Record<string, unknown>;
+        const floors = [
+          ...coerceStringList(record.surface),
+          ...coerceStringList(record.surfaces),
+          ...coerceStringList(record.object),
+          ...coerceStringList(record.objects),
+          ...coerceStringList(record.floor),
+          ...coerceStringList(record.floors)
+        ];
+        if (floors.length === 0) return null;
+        const playAudioIds = [
+          ...coerceStringList(record.playAudioId),
+          ...coerceStringList(record.playAudioIds),
+          ...coerceStringList(record.startAudioId),
+          ...coerceStringList(record.startAudioIds)
+        ];
+        const stopAudioIds = [
+          ...coerceStringList(record.stopAudioId),
+          ...coerceStringList(record.stopAudioIds)
+        ];
+        const controlAudioIds = 'controlAudioIds' in record || 'controlAudioId' in record
+          ? [
+              ...coerceStringList(record.controlAudioId),
+              ...coerceStringList(record.controlAudioIds)
+            ]
+          : undefined;
+        return { surfaces: floors, floors, playAudioIds, stopAudioIds, controlAudioIds };
+      })
+      .filter((route): route is AudioFloorRoute => route !== null);
+  }, [config?.audioZones]);
+
+  const applyAudioFloorRoute = useCallback((route: AudioFloorRoute) => {
+    if (route.stopAudioIds.length > 0) {
+      stopAudioByIds(route.stopAudioIds);
+    }
+    if (route.controlAudioIds !== undefined) {
+      setAudioControlTargetIds(route.controlAudioIds);
+    }
+    if (route.playAudioIds.length > 0) {
+      void playAudioByIds(route.playAudioIds);
+    }
+  }, []);
+
+  const lightZoneRoutes = useMemo<LightZoneRoute[]>(() => {
+    if (!Array.isArray(config?.lightZones)) {
+      return [];
+    }
+    return config.lightZones
+      .map((entry) => {
+        if (!entry || typeof entry !== 'object') return null;
+        const record = entry as Record<string, unknown>;
+        const surfaces = [
+          ...coerceStringList(record.surface),
+          ...coerceStringList(record.surfaces),
+          ...coerceStringList(record.object),
+          ...coerceStringList(record.objects),
+          ...coerceStringList(record.floor),
+          ...coerceStringList(record.floors)
+        ];
+        if (surfaces.length === 0) return null;
+        const lights = record.lights && typeof record.lights === 'object' && !Array.isArray(record.lights)
+          ? record.lights as Record<string, unknown>
+          : undefined;
+        const paramsSource = record.params && typeof record.params === 'object' && !Array.isArray(record.params)
+          ? record.params as Record<string, unknown>
+          : {};
+        const params = mergeZoneExposureParams(paramsSource, record.exposure);
+        const transitionSeconds =
+          typeof record.transitionSeconds === 'number' && Number.isFinite(record.transitionSeconds)
+            ? Math.max(0, record.transitionSeconds)
+            : typeof record.transitionMs === 'number' && Number.isFinite(record.transitionMs)
+              ? Math.max(0, record.transitionMs / 1000)
+              : undefined;
+        return {
+          id: typeof record.id === 'string' && record.id.trim() ? record.id.trim() : undefined,
+          surfaces,
+          lights,
+          params: Object.keys(params).length > 0 ? params : undefined,
+          transitionSeconds
+        };
+      })
+      .filter((route): route is LightZoneRoute => route !== null);
+  }, [config?.lightZones]);
+
+  const [activeLightZone, setActiveLightZone] = useState<LightZoneRoute | null>(null);
+
+  useEffect(() => {
+    setActiveLightZone(null);
+  }, [config?.lightZones]);
+
+  const activeRendererParams = useMemo<Record<string, unknown> | undefined>(() => {
+    const base = {
+      ...(rawParams || {}),
+      toneMapping: toneMappingName
+    };
+    if (!activeLightZone?.params) {
+      return base;
+    }
+    return {
+      ...base,
+      ...activeLightZone.params,
+      exposureTransitionSeconds: activeLightZone.transitionSeconds
+    };
+  }, [activeLightZone?.params, activeLightZone?.transitionSeconds, rawParams, toneMappingName]);
+
+  const effectiveToneMappingName = normalizeToneMappingName(activeRendererParams?.toneMapping);
+
+  const lightRigSettings = useMemo<SceneLightSettings>(() => {
+    const zoneLights = activeLightZone?.lights;
+    const transitionSeconds =
+      typeof activeLightZone?.transitionSeconds === 'number'
+        ? activeLightZone.transitionSeconds
+        : 0.65;
+    return {
+      ambientColor: typeof zoneLights?.ambientColor === 'string' ? zoneLights.ambientColor : ambientLightColor,
+      ambientIntensity: coerceOptionalNumber(zoneLights?.ambientIntensity) ?? ambientLightIntensity,
+      hemisphereSkyColor: typeof zoneLights?.hemisphereSkyColor === 'string' ? zoneLights.hemisphereSkyColor : hemisphereSkyColor,
+      hemisphereGroundColor: typeof zoneLights?.hemisphereGroundColor === 'string' ? zoneLights.hemisphereGroundColor : hemisphereGroundColor,
+      hemisphereIntensity: coerceOptionalNumber(zoneLights?.hemisphereIntensity) ?? hemisphereIntensity,
+      directionalColor: typeof zoneLights?.directionalColor === 'string' ? zoneLights.directionalColor : directionalColor,
+      directionalIntensity: coerceOptionalNumber(zoneLights?.directionalIntensity) ?? directionalIntensity,
+      directionalPosition: zoneLights?.directionalPosition !== undefined
+        ? coerceVector(zoneLights.directionalPosition, directionalPosition)
+        : directionalPosition,
+      directionalCastShadow: typeof zoneLights?.directionalCastShadow === 'boolean' ? zoneLights.directionalCastShadow : directionalCastShadow,
+      directionalShadowMapSize: coercePositiveNumber(zoneLights?.directionalShadowMapSize, directionalShadowMapSize),
+      directionalShadowBias: coerceOptionalNumber(zoneLights?.directionalShadowBias) ?? directionalShadowBias,
+      directionalShadowNormalBias: coerceOptionalNumber(zoneLights?.directionalShadowNormalBias) ?? directionalShadowNormalBias,
+      directionalShadowCameraSize: coercePositiveNumber(zoneLights?.directionalShadowCameraSize, directionalShadowCameraSize),
+      spotColor: typeof zoneLights?.spotColor === 'string' ? zoneLights.spotColor : spotColor,
+      spotIntensity: coerceOptionalNumber(zoneLights?.spotIntensity) ?? spotIntensity,
+      spotPosition: zoneLights?.spotPosition !== undefined ? coerceVector(zoneLights.spotPosition, spotPosition) : spotPosition,
+      spotTarget: zoneLights?.spotTarget !== undefined ? coerceVector(zoneLights.spotTarget, spotTarget) : spotTarget,
+      spotAngle: coerceOptionalNumber(zoneLights?.spotAngle) ?? spotAngle,
+      spotPenumbra: coerceOptionalNumber(zoneLights?.spotPenumbra) ?? spotPenumbra,
+      spotDistance: coerceNonNegativeNumber(zoneLights?.spotDistance) ?? spotDistance,
+      spotDecay: coerceOptionalNumber(zoneLights?.spotDecay) ?? spotDecay,
+      spotCastShadow: typeof zoneLights?.spotCastShadow === 'boolean' ? zoneLights.spotCastShadow : spotCastShadow,
+      spotShadowMapSize: coercePositiveNumber(zoneLights?.spotShadowMapSize, spotShadowMapSize),
+      spotShadowBias: coerceOptionalNumber(zoneLights?.spotShadowBias) ?? spotShadowBias,
+      spotShadowNormalBias: coerceOptionalNumber(zoneLights?.spotShadowNormalBias) ?? spotShadowNormalBias,
+      transitionSeconds
+    };
+  }, [
+    activeLightZone,
+    ambientLightColor,
+    ambientLightIntensity,
+    directionalCastShadow,
+    directionalColor,
+    directionalIntensity,
+    directionalPosition,
+    directionalShadowBias,
+    directionalShadowCameraSize,
+    directionalShadowMapSize,
+    directionalShadowNormalBias,
+    hemisphereGroundColor,
+    hemisphereIntensity,
+    hemisphereSkyColor,
+    spotAngle,
+    spotCastShadow,
+    spotColor,
+    spotDecay,
+    spotDistance,
+    spotIntensity,
+    spotPenumbra,
+    spotPosition,
+    spotShadowBias,
+    spotShadowMapSize,
+    spotShadowNormalBias,
+    spotTarget
+  ]);
 
   const videosConfig = useMemo<VideoMeshConfig[] | undefined>(() => {
     if (!Array.isArray(config?.videos)) {
@@ -3084,7 +3638,19 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   }, []);
 
   useEffect(() => {
-    if (!renderer) return;
+    if (typeof window === 'undefined') return undefined;
+    const onModalState = (event: Event) => {
+      const custom = event as CustomEvent<{ open?: boolean }>;
+      setIsMaterialModalOpen(custom.detail?.open === true);
+    };
+    window.addEventListener('material-modal-state', onModalState as EventListener);
+    return () => {
+      window.removeEventListener('material-modal-state', onModalState as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+  if (!renderer) return;
     const xrManager = renderer.xr;
     const handleSessionStart = () => {
       setXrSessionActive(true);
@@ -3171,6 +3737,17 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     }
   }, [modelPath, useProceduralRoom]);
 
+  useEffect(() => {
+    setSceneAssetsReady(false);
+  }, [configUrl]);
+
+  const handleSceneReady = useCallback(() => {
+    setSceneAssetsReady(true);
+    bumpSceneVersion();
+  }, []);
+
+  const sceneInteractionsLocked = isVideoPlayerModalOpen || isMaterialModalOpen;
+
   return (
     <div className="relative h-full w-full bg-gallery-dark">
       <Canvas
@@ -3186,7 +3763,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         }}
         onCreated={handleCanvasCreated}
       >
-        <RendererTuning highQualityMode={highQualityMode} />
+        <RendererTuning highQualityMode={highQualityMode} params={activeRendererParams} />
         <SceneBackground
           textureUrl={config?.backgroundTexture}
           blurriness={backgroundBlurriness}
@@ -3194,40 +3771,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           fallbackColorHex={thumbnailBackgroundColor}
         />
         <SceneEnvironment textureUrl={environmentTexture} intensity={environmentIntensity} />
-        <ambientLight color={ambientLightColor} intensity={ambientLightIntensity} />
-        <hemisphereLight args={[new Color(hemisphereSkyColor), new Color(hemisphereGroundColor), hemisphereIntensity]} />
-        <directionalLight
-          color={directionalColor}
-          position={directionalPosition}
-          intensity={directionalIntensity}
-          castShadow={directionalCastShadow}
-          shadow-mapSize-width={directionalShadowMapSize}
-          shadow-mapSize-height={directionalShadowMapSize}
-          shadow-bias={directionalShadowBias}
-          shadow-normalBias={directionalShadowNormalBias}
-          shadow-camera-near={0.1}
-          shadow-camera-far={80}
-          shadow-camera-left={-directionalShadowCameraSize}
-          shadow-camera-right={directionalShadowCameraSize}
-          shadow-camera-top={directionalShadowCameraSize}
-          shadow-camera-bottom={-directionalShadowCameraSize}
-        />
-        {spotIntensity > 0 ? (
-          <ConfiguredSpotLight
-            color={spotColor}
-            position={spotPosition}
-            target={spotTarget}
-            intensity={spotIntensity}
-            angle={spotAngle}
-            penumbra={spotPenumbra}
-            distance={spotDistance}
-            decay={spotDecay}
-            castShadow={spotCastShadow}
-            shadowMapSize={spotShadowMapSize}
-            shadowBias={spotShadowBias}
-            shadowNormalBias={spotShadowNormalBias}
-          />
-        ) : null}
+        <SceneLightRig settings={lightRigSettings} />
 
 
         <Suspense fallback={<Html center className="text-white">Loading exhibit…</Html>}>
@@ -3239,8 +3783,9 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
               rotation={rotation}
               scale={scale}
               onColliderReady={setCollider}
-              onSceneReady={bumpSceneVersion}
+              onSceneReady={handleSceneReady}
               videosConfig={videosConfig}
+              objectRegistry={objectRegistry}
             />
           ) : useProceduralRoom ? (
             <ProceduralRoomModel
@@ -3252,7 +3797,8 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
               rotation={rotation}
               scale={scale}
               onColliderReady={setCollider}
-              onSceneReady={bumpSceneVersion}
+              onSceneReady={handleSceneReady}
+              objectRegistry={objectRegistry}
             />
           ) : (
             <Html center className="text-white">Missing modelPath or proceduralRoom in config</Html>
@@ -3264,6 +3810,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
               collider={collider}
               visitor={visitorInstance}
               onActorRef={handleProceduralActorRef}
+              objectRegistry={objectRegistry}
             />
           ) : null}
         </Suspense>
@@ -3272,7 +3819,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
         <OrbitControls
           makeDefault
-          enabled={!isVideoPlayerModalOpen}
+          enabled={!sceneInteractionsLocked}
           enableDamping
           dampingFactor={0.05}
           autoRotate={thumbnailModeActive && thumbnailCapture.autoRotate}
@@ -3285,7 +3832,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         />
         <PointerInteractions
           visitor={visitorInstance}
-          disabled={isVideoPlayerModalOpen}
+          disabled={sceneInteractionsLocked}
           onCloseSidebar={onRequestSidebarClose}
           popupCallback={(payload) => {
             if (payload.type === 'Image') {
@@ -3297,14 +3844,33 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           videosMeta={videosMeta}
           videosInteraction={videosInteraction}
           sculpturesMeta={sculpturesMeta}
+          objectRegistry={objectRegistry}
+        />
+        <ObjectHoldRotation
+          enabled={!sceneInteractionsLocked}
+          objectRegistry={objectRegistry}
         />
         <FirstPersonController
           collider={collider}
           params={controllerParams}
           enabled={!thumbnailModeActive}
-          interactionLocked={isVideoPlayerModalOpen}
+          interactionLocked={sceneInteractionsLocked}
           onVisitorReady={setVisitorInstance}
           onVisitorActivity={onVisitorActivity}
+        />
+        <SurfaceZoneSensor
+          visitor={visitorInstance}
+          routes={audioFloorRoutes}
+          sceneVersion={sceneVersion}
+          getRouteKey={audioFloorRouteKey}
+          onRouteChange={applyAudioFloorRoute}
+        />
+        <SurfaceZoneSensor
+          visitor={visitorInstance}
+          routes={lightZoneRoutes}
+          sceneVersion={sceneVersion}
+          getRouteKey={surfaceZoneRouteKey}
+          onRouteChange={setActiveLightZone}
         />
         <ScenePhysics
           config={physicsConfig}
@@ -3313,15 +3879,28 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           onCollision={onPhysicsCollision}
         />
         <ThumbnailRecorderMode config={thumbnailCapture} active={thumbnailModeActive} />
-        <AudioSystem audioConfig={audioConfig} ready={Boolean(collider)} sceneVersion={sceneVersion} />
-        <AutoExposureControl params={rawParams} />
+        <AudioSystem
+          audioConfig={audioConfig}
+          ready={Boolean(collider)}
+          sceneVersion={sceneVersion}
+          objectRegistry={objectRegistry}
+        />
+        <AutoExposureControl params={activeRendererParams} />
       </Canvas>
+      <ToneMappingMenu
+        value={effectiveToneMappingName}
+        onChange={setToneMappingName}
+      />
       <AudioPlayerControls
         labelPlaying={audioControlLabels?.labelPlaying}
         labelPaused={audioControlLabels?.labelPaused}
+        subtitleLanguages={subtitleLanguageOptions}
+        subtitleLanguage={subtitleLanguage}
+        onSubtitleLanguageChange={(language) => setSubtitleLanguage(language)}
       />
+      <AudioSubtitles tracks={audioConfig} language={subtitleLanguage} />
       <OnscreenJoystick visitor={visitorInstance} />
-      {!thumbnailModeActive ? <Loader /> : null}
+      {!thumbnailModeActive && !sceneAssetsReady ? <Loader /> : null}
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-white bg-black/40">
           Loading configuration…
@@ -3365,6 +3944,117 @@ export function R3FViewer(props: R3FViewerProps) {
 
 export default R3FViewer;
 
+function ToneMappingMenu({
+  value,
+  onChange
+}: {
+  value: ToneMappingName;
+  onChange: (value: ToneMappingName) => void;
+}) {
+  return (
+    <div className="pointer-events-none absolute right-6 top-6 z-30 max-w-[calc(100vw-3rem)]">
+      <label className="pointer-events-auto flex items-center gap-2 rounded-full bg-black/75 px-3 py-2 text-xs font-medium text-white shadow-xl backdrop-blur">
+        <span className="whitespace-nowrap text-white/70">Tone</span>
+        <select
+          value={value}
+          onChange={(event) => onChange(normalizeToneMappingName(event.target.value))}
+          aria-label="Tone mapping"
+          className="h-8 rounded-full border border-white/15 bg-white/10 px-3 text-xs font-semibold text-white outline-none transition hover:bg-white/20 focus:border-white/50"
+        >
+          {TONE_MAPPING_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value} className="bg-slate-950 text-white">
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+  );
+}
+
+function SurfaceZoneSensor<Route extends { surfaces: string[] }>({
+  visitor,
+  routes,
+  sceneVersion,
+  getRouteKey,
+  onRouteChange
+}: {
+  visitor: Visitor | null;
+  routes: Route[];
+  sceneVersion: number;
+  getRouteKey: (route: Route) => string;
+  onRouteChange: (route: Route) => void;
+}) {
+  const { scene } = useThree();
+  const activeRouteKeyRef = useRef<string | null>(null);
+
+  const zones = useMemo(() => {
+    void sceneVersion;
+    if (routes.length === 0) {
+      return [];
+    }
+    const routeBySurface = new Map<string, Route>();
+    routes.forEach((route) => {
+      route.surfaces.forEach((surfaceName) => routeBySurface.set(surfaceName, route));
+    });
+    const collected: Array<{
+      box: Box3;
+      route: Route;
+      routeKey: string;
+    }> = [];
+    scene.updateMatrixWorld(true);
+    scene.traverse((object) => {
+      const names = getSurfaceRouteNames(object);
+      const routeName = names.find((name) => routeBySurface.has(name));
+      if (!routeName) return;
+      const box = new Box3().setFromObject(object);
+      if (box.isEmpty()) return;
+      const route = routeBySurface.get(routeName);
+      if (!route) return;
+      collected.push({
+        box,
+        route,
+        routeKey: getRouteKey(route)
+      });
+    });
+    return collected;
+  }, [getRouteKey, routes, scene, sceneVersion]);
+
+  useFrame(() => {
+    if (!visitor || zones.length === 0) return;
+    const position = visitor.position;
+    const matchingZones = zones
+      .filter(({ box }) => {
+        const xPadding = Math.max(0.2, (box.max.x - box.min.x) * 0.02);
+        const zPadding = Math.max(0.2, (box.max.z - box.min.z) * 0.02);
+        return (
+          position.x >= box.min.x - xPadding &&
+          position.x <= box.max.x + xPadding &&
+          position.z >= box.min.z - zPadding &&
+          position.z <= box.max.z + zPadding
+        );
+      })
+      .map((zone) => {
+        const { box } = zone;
+        const yDistance = position.y < box.min.y
+          ? box.min.y - position.y
+          : position.y > box.max.y
+            ? position.y - box.max.y
+            : 0;
+        const area = Math.max(0.0001, (box.max.x - box.min.x) * (box.max.z - box.min.z));
+        return { ...zone, area, yDistance };
+      })
+      .sort((a, b) => a.yDistance - b.yDistance || a.area - b.area);
+
+    const activeZone = matchingZones[0];
+    if (!activeZone || activeZone.routeKey === activeRouteKeyRef.current) return;
+    activeRouteKeyRef.current = activeZone.routeKey;
+    onRouteChange(activeZone.route);
+  });
+
+  return null;
+}
+
 type ControllerParams = Partial<VisitorParams> & Record<string, unknown>;
 
 function FirstPersonController({
@@ -3373,7 +4063,8 @@ function FirstPersonController({
   enabled,
   interactionLocked = false,
   onVisitorReady,
-  onVisitorActivity
+  onVisitorActivity,
+  onFloorChange
 }: {
   collider: Mesh | null;
   params?: ControllerParams;
@@ -3381,6 +4072,7 @@ function FirstPersonController({
   interactionLocked?: boolean;
   onVisitorReady?: (visitor: Visitor | null) => void;
   onVisitorActivity?: () => void;
+  onFloorChange?: (floor: Object3D | null) => void;
 }) {
   const { camera, gl, scene } = useThree();
   const controls = useThree((state) => state.controls) as OrbitControlsImpl | undefined;
@@ -3488,7 +4180,10 @@ function FirstPersonController({
       controls.enabled = !interactionLocked;
     }
     if (interactionLocked) return;
-    visitor.update(delta, collider);
+    const floorUpdate = visitor.update(delta, collider);
+    if (floorUpdate.changed) {
+      onFloorChange?.(floorUpdate.newFloor);
+    }
 
     const now = performance.now();
     if (!lastPosition.current) {
@@ -3577,11 +4272,13 @@ function ScenePhysics({
 function AudioSystem({
   audioConfig,
   ready,
-  sceneVersion
+  sceneVersion,
+  objectRegistry
 }: {
   audioConfig: AudioMeshConfig[] | undefined;
   ready: boolean;
   sceneVersion: number;
+  objectRegistry?: ObjectRegistry;
 }) {
   const { camera, controls: orbitControls, gl, scene } = useThree();
   const listener = useMemo(() => new AudioListener(), []);
@@ -3673,12 +4370,15 @@ function AudioSystem({
       transform={transform}
       ready={ready}
       sceneVersion={sceneVersion}
+      objectRegistry={objectRegistry}
     />
   );
 }
 
-function RendererTuning({ highQualityMode = true }: { highQualityMode?: boolean }) {
+function RendererTuning({ highQualityMode = true, params }: { highQualityMode?: boolean; params?: Record<string, unknown> }) {
   const { gl } = useThree();
+  const colorGradeFilter = useMemo(() => createColorGradeFilter(params), [params]);
+  const toneMapping = toneMappingValueForName(params?.toneMapping);
 
   useEffect(() => {
     gl.physicallyCorrectLights = highQualityMode;
@@ -3692,12 +4392,35 @@ function RendererTuning({ highQualityMode = true }: { highQualityMode?: boolean 
     }
   }, [gl, highQualityMode]);
 
+  useEffect(() => {
+    gl.toneMapping = toneMapping;
+  }, [gl, toneMapping]);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const previousFilter = canvas.style.filter;
+    const previousWillChange = canvas.style.willChange;
+    canvas.style.filter = colorGradeFilter;
+    canvas.style.willChange = colorGradeFilter ? 'filter' : previousWillChange;
+    return () => {
+      canvas.style.filter = previousFilter;
+      canvas.style.willChange = previousWillChange;
+    };
+  }, [colorGradeFilter, gl]);
+
   return null;
 }
 
 function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
   const { gl, scene, camera } = useThree();
   const autoExposure = params?.autoExposure !== false;
+  const targetExposure = typeof params?.exposure === 'number' && Number.isFinite(params.exposure)
+    ? params.exposure
+    : 1.1;
+  const exposureTransitionSeconds =
+    typeof params?.exposureTransitionSeconds === 'number' && Number.isFinite(params.exposureTransitionSeconds)
+      ? Math.max(0, params.exposureTransitionSeconds)
+      : 0;
   const targetGray = typeof params?.exposureTarget === 'number' ? params.exposureTarget : 0.6;
   const exposureMin = typeof params?.exposureMin === 'number' ? params.exposureMin : 0.75;
   const exposureMax = typeof params?.exposureMax === 'number' ? params.exposureMax : 1.6;
@@ -3707,15 +4430,14 @@ function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
   const targetRef = useMemo(() => ({ current: null as WebGLRenderTarget | null }), []);
   const bufferRef = useMemo(() => ({ current: null as Uint8Array | null }), []);
   const frameRef = useMemo(() => ({ current: 0 }), []);
+  const initializedExposureRef = useRef(false);
 
   useEffect(() => {
-    gl.toneMapping = NeutralToneMapping;
-    if (typeof params?.exposure === 'number' && Number.isFinite(params.exposure)) {
-      gl.toneMappingExposure = params.exposure;
-    } else {
-      gl.toneMappingExposure = 1.1;
+    if (!initializedExposureRef.current || exposureTransitionSeconds <= 0) {
+      gl.toneMappingExposure = targetExposure;
+      initializedExposureRef.current = true;
     }
-  }, [gl, params?.exposure]);
+  }, [exposureTransitionSeconds, gl, targetExposure]);
 
   useEffect(() => {
     if (!autoExposure) {
@@ -3734,8 +4456,15 @@ function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
     };
   }, [autoExposure, sampleSize, targetRef, bufferRef]);
 
-  useFrame(() => {
-    if (!autoExposure) return;
+  useFrame((_, delta) => {
+    if (!autoExposure) {
+      if (exposureTransitionSeconds > 0) {
+        const factor = 1 - Math.exp(-delta / exposureTransitionSeconds);
+        const currentExposure = gl.toneMappingExposure ?? targetExposure;
+        gl.toneMappingExposure = currentExposure + (targetExposure - currentExposure) * factor;
+      }
+      return;
+    }
     const target = targetRef.current;
     const pixels = bufferRef.current;
     if (!target || !pixels) return;

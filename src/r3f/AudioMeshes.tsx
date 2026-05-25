@@ -7,6 +7,7 @@ import {
   disposeAudioMeshes,
   type AudioMeshConfig
 } from '../modules/audioMeshManager.ts';
+import type { ObjectRegistry } from '../modules/objectRegistry.js';
 
 interface AudioMeshesProps {
   audioConfig?: AudioMeshConfig[];
@@ -15,6 +16,7 @@ interface AudioMeshesProps {
   ready: boolean;
   sceneVersion?: number;
   enableHelpers?: boolean;
+  objectRegistry?: ObjectRegistry;
 }
 
 export function AudioMeshes({
@@ -23,7 +25,8 @@ export function AudioMeshes({
   transform,
   ready,
   sceneVersion,
-  enableHelpers = false
+  enableHelpers = false,
+  objectRegistry
 }: AudioMeshesProps) {
   const { scene, gl, camera } = useThree();
 
@@ -35,7 +38,7 @@ export function AudioMeshes({
 
     applyAudioMeshesToScene({
       scene,
-      galleryConfig: { audio: audioConfig },
+      galleryConfig: { audio: audioConfig, objectRegistry },
       listener,
       renderer: gl,
       camera,
@@ -46,7 +49,7 @@ export function AudioMeshes({
     return () => {
       disposeAudioMeshes();
     };
-  }, [audioConfig, ready, scene, listener, gl, camera, transform, enableHelpers, sceneVersion]);
+  }, [audioConfig, ready, scene, listener, gl, camera, transform, enableHelpers, objectRegistry, sceneVersion]);
 
   return null;
 }

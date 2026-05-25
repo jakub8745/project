@@ -18,6 +18,8 @@ export type ModalImageMeta = {
   oracleImagePath?: string;
   ipfsImagePath?: string;
   pdfPath?: string;
+  pdfOpenPath?: string;
+  pdfExternalUrl?: string;
   oraclePdfPath?: string;
   ipfsPdfPath?: string;
 };
@@ -35,6 +37,7 @@ type ModalState = {
   mediaType: 'image' | 'pdf' | null;
   imageSrc: string | null;
   pdfSrc: string | null;
+  pdfOpenSrc: string | null;
   pdfEmbedBlocked: boolean;
   pendingSources: string[];
   contentWidth: number | null;
@@ -56,6 +59,7 @@ const defaultState = (): ModalState => ({
   mediaType: null,
   imageSrc: null,
   pdfSrc: null,
+  pdfOpenSrc: null,
   pdfEmbedBlocked: false,
   pendingSources: [],
   contentWidth: null,
@@ -75,6 +79,15 @@ function isZenodoUrl(url: string) {
   } catch {
     return false;
   }
+}
+
+function dispatchMaterialModalState(open: boolean) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(
+    new CustomEvent('material-modal-state', {
+      detail: { open }
+    })
+  );
 }
 
 export function MaterialModalProvider({ children, initialImages }: MaterialModalProviderProps) {
@@ -151,7 +164,14 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     if (contentRef.current) {
       contentRef.current.style.width = '';
     }
+    dispatchMaterialModalState(false);
     setState(() => defaultState());
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatchMaterialModalState(false);
+    };
   }, []);
 
   useEffect(() => {
@@ -210,6 +230,7 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     activeNameRef.current = name;
 
     const pdfDirectUrl = meta.pdfPath ?? meta.oraclePdfPath ?? undefined;
+    const pdfOpenUrl = meta.pdfOpenPath ?? meta.pdfExternalUrl ?? undefined;
     const pdfIpfsUrl = meta.ipfsPdfPath ?? (pdfDirectUrl?.startsWith('ipfs://') ? pdfDirectUrl : undefined);
     const hasPdf = Boolean(pdfDirectUrl || pdfIpfsUrl);
 
@@ -291,6 +312,7 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       mediaType,
       imageSrc: mediaType === 'image' ? initialSource ?? null : null,
       pdfSrc: mediaType === 'pdf' ? initialSource ?? null : null,
+      pdfOpenSrc: mediaType === 'pdf' ? pdfOpenUrl ?? initialSource ?? null : null,
       pdfEmbedBlocked: isZenodoPdf,
       pendingSources: nextSources,
       contentWidth: mediaType === 'pdf' ? pdfWidth : initialWidth,
@@ -303,6 +325,7 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
             ? null
             : 'Loading image…'
     });
+    dispatchMaterialModalState(true);
 
     window.requestAnimationFrame(() => {
       if (contentRef.current) {
@@ -460,6 +483,13 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
                     </div>
                     <div className="mmodal__desc">
                       {state.title ? <h3>{state.title}</h3> : null}
+                      {state.mediaType === 'pdf' && state.pdfOpenSrc ? (
+                        <p>
+                          <a href={state.pdfOpenSrc} target="_blank" rel="noreferrer noopener">
+                            {isZenodoUrl(state.pdfOpenSrc) ? 'Open PDF on Zenodo' : 'Open PDF in new tab'}
+                          </a>
+                        </p>
+                      ) : null}
                       {state.description ? <p>{state.description}</p> : null}
                       {state.author ? (
                         <p>
@@ -469,13 +499,6 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
                       {state.message ? (
                         <p className={state.status === 'loading' ? 'loading-msg animate-flash' : ''} style={state.status === 'error' ? { color: 'red' } : undefined}>
                           {state.message}
-                        </p>
-                      ) : null}
-                      {state.mediaType === 'pdf' && state.pdfSrc ? (
-                        <p>
-                          <a href={state.pdfSrc} target="_blank" rel="noreferrer noopener">
-                            {isZenodoUrl(state.pdfSrc) ? 'Open PDF on Zenodo' : 'Open PDF in new tab'}
-                          </a>
                         </p>
                       ) : null}
                     </div>

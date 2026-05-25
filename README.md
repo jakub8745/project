@@ -106,6 +106,38 @@ Notes:
 
 ---
 
+## Audio subtitles
+
+Narrated audio entries can carry timed subtitle cues in the exhibit config. Cue times are seconds on the same audio timeline as the track:
+
+```json
+{
+  "audio": [
+    {
+      "id": "introduction_audio",
+      "url": "/audio/introduction.mp3",
+      "subtitleTracks": [
+        {
+          "language": "en",
+          "label": "EN",
+          "cues": [
+            {
+              "start": 0.4,
+              "end": 4.8,
+              "text": "This virtual exhibition brings together\nthree videopoems."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+The viewer shows the active cue while that audio track is playing. Multiple tracks expose language choices in the audio player CC control. Use a transcript with checked timestamps for lector recordings so the text follows pauses and sentence pacing.
+
+---
+
 ## Project structure highlights
 
 - `src/App.tsx` – application shell, sidebar navigation, and lazy-loaded viewer.

@@ -17,6 +17,7 @@ import {
   Color
 } from 'three';
 import { resolveVideoPlaybackMode } from './videoPlaybackMode.js';
+import { resolveObjectRuntimeData } from './objectRegistry.js';
 
 const PLAY_ICON_PATH =
   'https://bafybeieawhqdesjes54to4u6gmqwzvpzlp2o5ncumaqw3nfiv2mui6i6q4.ipfs.w3s.link/ButtonPlay.png';
@@ -1261,6 +1262,7 @@ function addPlayIcon(mesh, video, camera) {
 export function applyVideoMeshes(scene, camera, galleryConfig) {
   const videoList = galleryConfig.videos || [];
   const configMap = new Map(videoList.map(cfg => [cfg.id, cfg]));
+  const objectRegistry = galleryConfig.objectRegistry;
   const syncGroups = createSyncPlaybackGroups(videoList);
   const clamp01 = (value, fallback) => {
     const numeric = typeof value === 'number' && Number.isFinite(value) ? value : fallback;
@@ -1272,12 +1274,16 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
   };
 
   scene.traverse(obj => {
-    if (!obj.isMesh || obj.userData.type !== 'Video') return;
+    if (!obj.isMesh) return;
     if (obj.userData.__isVideoControlProxy === true) return;
 
-    const cfg = configMap.get(obj.userData.elementID);
+    const runtimeData = resolveObjectRuntimeData(obj, objectRegistry);
+    if (runtimeData?.type !== 'Video') return;
+
+    const videoId = runtimeData.ref || obj.userData.elementID || obj.userData.name || obj.name;
+    const cfg = configMap.get(videoId);
     if (!cfg) {
-      console.warn(`No video config for ID ${obj.userData.elementID}`);
+      console.warn(`No video config for ID ${videoId}`);
       return;
     }
     const playbackMode = resolveVideoPlaybackMode(cfg);

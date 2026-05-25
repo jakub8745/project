@@ -16,6 +16,7 @@ import type Visitor from '../modules/Visitor';
 import { toSafeExternalUrl } from '../utils/url';
 import { invokeVideoControlById, openVideoPlayerById, resumeVideoAudioById } from '../modules/applyVideoMeshes.js';
 import type { VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
+import { resolveObjectRuntimeData, type ObjectRegistry } from '../modules/objectRegistry.js';
 
 type MetaRecord = Record<string, Record<string, unknown>>;
 
@@ -34,6 +35,7 @@ interface PointerInteractionsProps {
   videosMeta?: MetaRecord;
   videosInteraction?: Record<string, { interactive?: boolean; playbackMode?: VideoPlaybackMode }>;
   sculpturesMeta?: MetaRecord;
+  objectRegistry?: ObjectRegistry;
   onCloseSidebar?: () => void;
   disabled?: boolean;
 }
@@ -62,6 +64,7 @@ export function PointerInteractions({
   videosMeta = {},
   videosInteraction = {},
   sculpturesMeta = {},
+  objectRegistry,
   onCloseSidebar,
   disabled = false
 }: PointerInteractionsProps) {
@@ -105,7 +108,31 @@ export function PointerInteractions({
 
     const canvas = gl.domElement;
 
-    const validTypes = ['Image', 'Wall', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
+    const validTypes = ['Image', 'Wall', 'Walls', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
+
+    const resolveHitRuntime = (object: Mesh) => {
+      const runtimeData = resolveObjectRuntimeData(object, objectRegistry);
+      const userData = { ...(object.userData || {}) } as Record<string, unknown>;
+      if (runtimeData?.type) userData.type = runtimeData.type;
+      if (runtimeData?.ref) {
+        userData.name = runtimeData.ref;
+        if (runtimeData.type === 'Video' || runtimeData.type === 'VideoControl') {
+          userData.elementID = runtimeData.ref;
+        }
+      }
+      const type = typeof userData.type === 'string' ? userData.type : runtimeData?.type;
+      const key =
+        runtimeData?.ref ||
+        (typeof userData.name === 'string' ? userData.name : undefined) ||
+        object.name;
+      const elementID =
+        typeof userData.elementID === 'string'
+          ? userData.elementID
+          : runtimeData?.type === 'Video' || runtimeData?.type === 'VideoControl'
+            ? runtimeData.ref
+            : undefined;
+      return { type, key, elementID, userData };
+    };
 
     const hideHoverTooltip = () => {
       tooltip.hide();
@@ -221,7 +248,7 @@ export function PointerInteractions({
       raycaster.firstHitOnly = true;
       const intersects = raycaster.intersectObjects(scene.children, true);
       const hit = intersects.find((i) => {
-        const t = i.object.userData?.type;
+        const t = resolveHitRuntime(i.object as Mesh).type;
         return t === 'Link' || t === 'Image' || t === 'Video' || t === 'Sculpture';
       });
 
@@ -230,12 +257,11 @@ export function PointerInteractions({
         return;
       }
 
-      const { type, name, elementID } = hit.object.userData || {};
-      const key = name || hit.object.name;
+      const { type, key, elementID, userData } = resolveHitRuntime(hit.object as Mesh);
       let displayText = '';
 
       if (type === 'Link') {
-        const linkInfo = resolveLinkTarget(key, hit.object.userData as Record<string, unknown>);
+        const linkInfo = resolveLinkTarget(key, userData);
         if (!linkInfo?.url) {
           hideHoverTooltip();
           return;
@@ -250,7 +276,7 @@ export function PointerInteractions({
         displayText = imageInfo.author ? `${imageInfo.title} — ${imageInfo.author}` : imageInfo.title;
       } else if (type === 'Video') {
         const videoKey = elementID || key;
-        const videoInfo = resolveVideoMeta(videoKey, hit.object.userData as Record<string, unknown>);
+        const videoInfo = resolveVideoMeta(videoKey, userData);
         if (!videoInfo) {
           hideHoverTooltip();
           return;
@@ -261,7 +287,7 @@ export function PointerInteractions({
         if (videoInfo.description) parts.push(videoInfo.description);
         displayText = parts.length ? parts.join(' — ') : videoKey;
       } else if (type === 'Sculpture') {
-        const sculptureInfo = resolveSculptureMeta(key, hit.object.userData as Record<string, unknown>);
+        const sculptureInfo = resolveSculptureMeta(key, userData);
         if (!sculptureInfo) {
           hideHoverTooltip();
           return;
@@ -305,26 +331,28 @@ export function PointerInteractions({
       raycaster.setFromCamera(pointer, camera);
       raycaster.firstHitOnly = true;
       const intersects = raycaster.intersectObjects(scene.children, true);
-      const hit = intersects.find((i) => i.object.userData && validTypes.includes(i.object.userData.type));
+      const hit = intersects.find((i) => {
+        const { type } = resolveHitRuntime(i.object as Mesh);
+        return Boolean(type && validTypes.includes(type));
+      });
 
-      if (!hit || !hit.object.userData) return;
+      if (!hit) return;
 
-      const { type, elementID, name } = hit.object.userData;
+      const { type, elementID, key, userData } = resolveHitRuntime(hit.object as Mesh);
 
       if (type === 'Image' && popupCallback) {
-        const key = name || hit.object.name;
         const meta = key ? imagesMeta?.[key] : undefined;
         popupCallback({
           type,
           key,
-          userData: { ...hit.object.userData },
+          userData,
           meta
         });
         return;
       }
 
       if (type === 'Video') {
-        const videoKey = typeof elementID === 'string' && elementID ? elementID : name || hit.object.name;
+        const videoKey = typeof elementID === 'string' && elementID ? elementID : key;
         const interactionCfg = videoKey ? videosInteraction?.[videoKey] : undefined;
         if (interactionCfg?.interactive === false) {
           return;
@@ -346,16 +374,16 @@ export function PointerInteractions({
       }
 
       if (type === 'VideoControl') {
-        const videoKey = typeof elementID === 'string' && elementID ? elementID : name || hit.object.name;
+        const videoKey = typeof elementID === 'string' && elementID ? elementID : key;
         const action =
-          typeof hit.object.userData.action === 'string' ? hit.object.userData.action : 'play_pause';
+          typeof userData.action === 'string' ? userData.action : 'play_pause';
         invokeVideoControlById(videoKey, action);
         return;
       }
 
       if (type === 'Link') {
-        const linkKey = name || hit.object.name;
-        const linkInfo = resolveLinkTarget(linkKey, hit.object.userData as Record<string, unknown>);
+        const linkKey = key;
+        const linkInfo = resolveLinkTarget(linkKey, userData);
 
         if (linkInfo?.url) {
           const safeUrl = toSafeExternalUrl(linkInfo.url);
@@ -374,7 +402,7 @@ export function PointerInteractions({
         return;
       }
 
-      if (['Floor', 'Room', 'Wall'].includes(type)) {
+      if (['Floor', 'Room', 'Wall', 'Walls'].includes(type)) {
         const point = hit.point.clone();
         const localNormal = hit.face?.normal?.clone();
         if (!localNormal) return;
@@ -528,7 +556,7 @@ export function PointerInteractions({
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
     };
-  }, [camera, clickIndicator, disabled, gl, imagesMeta, links, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
+  }, [camera, clickIndicator, disabled, gl, imagesMeta, links, objectRegistry, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
 
   return null;
 }

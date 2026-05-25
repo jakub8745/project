@@ -84,6 +84,47 @@ canvas {
   left: 0;
 }
 
+.audio-intro-soft-flash-button {
+  animation: audio-intro-button-glow 4s ease-in-out infinite;
+}
+
+.audio-intro-soft-flash-icon {
+  animation: audio-intro-icon-flash 4s ease-in-out infinite;
+}
+
+@keyframes audio-intro-button-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
+    background-color: rgba(255, 255, 255, 0.16);
+  }
+}
+
+@keyframes audio-intro-icon-flash {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+    opacity: 0.76;
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.32));
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audio-intro-soft-flash-button,
+  .audio-intro-soft-flash-icon {
+    animation: none;
+  }
+}
+
 .pointer-tooltip {
   position: fixed;
   z-index: 10000;

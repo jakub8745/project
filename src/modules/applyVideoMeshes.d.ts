@@ -1,5 +1,6 @@
 import type { Scene, Camera, Group } from 'three';
 import type { VideoPlaybackMode } from './videoPlaybackMode.js';
+import type { ObjectRegistry } from './objectRegistry.js';
 
 export interface VideoMeshConfig {
   id: string;
@@ -38,6 +39,7 @@ export interface VideoMeshConfig {
 
 export interface GalleryVideoConfig {
   videos?: VideoMeshConfig[];
+  objectRegistry?: ObjectRegistry;
 }
 
 export function applyVideoMeshes(scene: Scene | Group, camera: Camera, galleryConfig: GalleryVideoConfig): void;
