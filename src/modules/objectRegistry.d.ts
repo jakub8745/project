@@ -40,10 +40,34 @@ export interface ObjectRegistryEntry extends Record<string, unknown> {
   holdRotate?: boolean;
   holdRotation?: boolean;
   holdRotateSpeed?: number;
+  transformControls?: boolean | {
+    mode?: 'translate' | 'rotate' | 'scale';
+    size?: number;
+    hover?: boolean;
+    light?: {
+      enabled?: boolean;
+      color?: string | number;
+      intensity?: number;
+      yOffset?: number;
+      angle?: number;
+      penumbra?: number;
+      decay?: number;
+      distance?: number;
+      castShadow?: boolean;
+      shadowMapSize?: number;
+      shadowBias?: number;
+      shadowNormalBias?: number;
+      shadowRadius?: number;
+      shadowCameraNear?: number;
+      shadowCameraFar?: number;
+    };
+  };
   interactions?: {
     holdRotate?: boolean;
     holdRotation?: boolean;
     holdRotateSpeed?: number;
+    transformControls?: boolean | ObjectRegistryEntry['transformControls'];
+    gizmo?: boolean | ObjectRegistryEntry['transformControls'];
     [key: string]: unknown;
   };
 }

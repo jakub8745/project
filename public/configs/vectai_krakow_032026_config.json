@@ -121,22 +121,54 @@
     "scan_baletnica": {
       "category": "sculpture",
       "ref": "scan_baletnica",
-      "holdRotate": true
+      "holdRotate": false,
+      "transformControls": {
+        "mode": "rotate",
+        "size": 0.3,
+        "hover": true,
+        "light": {
+          "enabled": false
+        }
+      }
     },
     "scan_parasol": {
       "category": "sculpture",
       "ref": "scan_parasol",
-      "holdRotate": true
+      "holdRotate": false,
+      "transformControls": {
+        "mode": "rotate",
+        "size": 0.3,
+        "hover": true,
+        "light": {
+          "enabled": false
+        }
+      }
     },
     "scan_snake": {
       "category": "sculpture",
       "ref": "scan_snake",
-      "holdRotate": true
+      "holdRotate": false,
+      "transformControls": {
+        "mode": "rotate",
+        "size": 0.3,
+        "hover": true,
+        "light": {
+          "enabled": false
+        }
+      }
     },
     "scan_zajac": {
       "category": "sculpture",
       "ref": "scan_zajac",
-      "holdRotate": true
+      "holdRotate": false,
+      "transformControls": {
+        "mode": "rotate",
+        "size": 0.3,
+        "hover": true,
+        "light": {
+          "enabled": false
+        }
+      }
     }
   },
   "images": {
@@ -314,22 +346,22 @@
   "sculptures": {
     "scan_zajac": {
       "title": "Scan 3D",
-      "description": "Click and hold the sculpture to rotate it slowly clockwise.",
+      "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
       "author": "Grupa 4"
     },
     "scan_parasol": {
       "title": "Scan 3D",
-      "description": "Click and hold the sculpture to rotate it slowly clockwise.",
+      "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
       "author": "Grupa 4"
     },
     "scan_snake": {
       "title": "Scan 3D",
-      "description": "Click and hold the sculpture to rotate it slowly clockwise.",
+      "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
       "author": "Grupa 4"
     },
     "scan_baletnica": {
       "title": "Scan 3D",
-      "description": "Click and hold the sculpture to rotate it slowly clockwise.",
+      "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
       "author": "Grupa 4"
     }
   },
@@ -765,7 +797,7 @@
       },
       "lights": {
         "ambientIntensity": 3.0,
-        "hemisphereIntensity": 0.0,
+        "hemisphereIntensity": 1.0,
         "directionalIntensity": 0,
         "spotIntensity": 0
       },
@@ -789,7 +821,7 @@
         "toneMapping": "aces"
       },
       "lights": {
-        "ambientIntensity": 0.5,
+        "ambientIntensity": 0.65,
         "hemisphereIntensity": 0,
         "directionalIntensity": 0,
         "spotIntensity": 0
@@ -870,7 +902,7 @@
       },
       {
         "category": "sculptures",
-        "description": "Hover over a scan to see its label. Click and hold a scan to rotate it slowly clockwise; release to stop. This interaction is enabled for objects marked with holdRotate in the scene configuration.",
+        "description": "The scan objects use transformControls instead of holdRotate. Hovering a scan shows its label and rotation gizmo. Dragging the gizmo ring rotates the selected scan manually; moving to another scan reattaches the same shared gizmo to that scan. When the pointer leaves the scan and no gizmo drag is active, the gizmo remains available for about 2 seconds and then hides automatically. Click-and-hold auto-rotation is disabled for these scans.",
         "objects": [
           "scan_baletnica",
           "scan_parasol",

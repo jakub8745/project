@@ -29,6 +29,7 @@ export interface PointerPopupPayload {
 
 interface PointerInteractionsProps {
   visitor: Visitor | null;
+  collider?: Mesh | null;
   popupCallback?: (payload: PointerPopupPayload) => void;
   links?: Record<string, unknown>;
   imagesMeta?: MetaRecord;
@@ -58,6 +59,7 @@ function createClickIndicator() {
 
 export function PointerInteractions({
   visitor,
+  collider,
   popupCallback,
   links = {},
   imagesMeta = {},
@@ -146,8 +148,89 @@ export function PointerInteractions({
       clickIndicator.visible = true;
     };
 
-    const moveVisitor = (point: Vector3) => {
-      visitor.target = point.clone();
+    const findSupportedDestination = (point: Vector3, worldNormal: Vector3, hitType?: string) => {
+      if (!collider) return null;
+
+      const horizontalNormal = worldNormal.clone();
+      horizontalNormal.y = 0;
+      if (horizontalNormal.lengthSq() > 1e-6) {
+        horizontalNormal.normalize();
+      }
+
+      const toVisitor = visitor.position.clone().sub(point);
+      toVisitor.y = 0;
+      if (toVisitor.lengthSq() > 1e-6) {
+        toVisitor.normalize();
+      }
+
+      const offsets = hitType === 'Wall' || hitType === 'Walls'
+        ? [
+            new Vector3(0, 0, 0),
+            toVisitor.clone().multiplyScalar(0.75),
+            toVisitor.clone().multiplyScalar(1.25),
+            horizontalNormal.clone().multiplyScalar(0.75),
+            horizontalNormal.clone().multiplyScalar(-0.75),
+            horizontalNormal.clone().multiplyScalar(1.25),
+            horizontalNormal.clone().multiplyScalar(-1.25)
+          ]
+        : [
+            new Vector3(0, 0, 0),
+            toVisitor.clone().multiplyScalar(0.25),
+            horizontalNormal.clone().multiplyScalar(0.25),
+            horizontalNormal.clone().multiplyScalar(-0.25)
+          ];
+
+      const probeRaycaster = new Raycaster();
+      probeRaycaster.firstHitOnly = false;
+      const up = new Vector3(0, 1, 0);
+      const down = new Vector3(0, -1, 0);
+      const normalMatrix = new Matrix3().getNormalMatrix(collider.matrixWorld);
+      let best: { point: Vector3; normal: Vector3; score: number } | null = null;
+
+      for (const offset of offsets) {
+        const origin = point.clone().add(offset);
+        origin.y = Math.max(point.y, visitor.position.y) + 4;
+        probeRaycaster.set(origin, down);
+        probeRaycaster.far = 12;
+        const hits = probeRaycaster.intersectObject(collider, false);
+        for (const candidate of hits) {
+          if (!candidate.face) continue;
+          const candidateNormal = candidate.face.normal.clone().applyMatrix3(normalMatrix).normalize();
+          if (candidateNormal.dot(up) < 0.55) continue;
+          const verticalDistance = Math.abs(candidate.point.y - visitor.position.y);
+          if (verticalDistance > 3) continue;
+          const horizontalDistance = Math.hypot(
+            candidate.point.x - visitor.position.x,
+            candidate.point.z - visitor.position.z
+          );
+          const clickDistance = Math.hypot(candidate.point.x - point.x, candidate.point.z - point.z);
+          const score = clickDistance + horizontalDistance * 0.05;
+          if (!best || score < best.score) {
+            best = {
+              point: candidate.point.clone().addScaledVector(candidateNormal, 0.04),
+              normal: candidateNormal,
+              score
+            };
+          }
+          break;
+        }
+      }
+
+      return best;
+    };
+
+    const moveVisitor = (point: Vector3, worldNormal: Vector3, hitType?: string) => {
+      const destination = findSupportedDestination(point, worldNormal, hitType);
+      if (!destination) {
+        visitor.isAutoMoving = false;
+        if (visitor.clickIndicator) {
+          visitor.clickIndicator.visible = false;
+        }
+        console.warn('PointerInteractions: ignored movement click without supported floor below target.');
+        return;
+      }
+      placeClickIndicator(destination.point, destination.normal);
+      visitor.target = destination.point.clone();
       visitor.isAutoMoving = true;
     };
 
@@ -408,8 +491,7 @@ export function PointerInteractions({
         if (!localNormal) return;
         const normalMatrix = new Matrix3().getNormalMatrix(hit.object.matrixWorld);
         const worldNormal = localNormal.applyMatrix3(normalMatrix).normalize();
-        placeClickIndicator(point, worldNormal);
-        moveVisitor(point);
+        moveVisitor(point, worldNormal, type);
       }
     };
 
@@ -556,7 +638,7 @@ export function PointerInteractions({
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
     };
-  }, [camera, clickIndicator, disabled, gl, imagesMeta, links, objectRegistry, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
+  }, [camera, clickIndicator, collider, disabled, gl, imagesMeta, links, objectRegistry, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
 
   return null;
 }

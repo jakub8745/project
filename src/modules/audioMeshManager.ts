@@ -2,6 +2,7 @@ import { AudioLoader, MathUtils, PositionalAudio, type AudioListener, type Camer
 import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
 import type { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { applyPitcherControls } from './applyPitcherControls.js';
+import { applyObjectTransformControls, type ObjectTransformControlOptions } from './applyObjectTransformControls.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from './objectRegistry.js';
 
 export interface AudioSubtitleCue {
@@ -35,7 +36,10 @@ export interface AudioMeshConfig {
   coneTarget?: [x: number, y: number, z: number];
   startOffset?: number;
   reverse?: boolean;
+  subtitleOffsetMs?: number;
+  subtitleOffsetSeconds?: number;
   subtitleTracks?: AudioSubtitleTrack[];
+  transformControls?: boolean | ObjectTransformControlOptions;
 }
 
 export interface GalleryAudioConfig {
@@ -67,6 +71,7 @@ type ManagedAudio = PositionalAudio & {
     __autoplayOnEnter?: boolean;
     __autoplayReadyAt?: number;
     __baseVolume?: number;
+    __subtitleOffsetSeconds?: number;
   };
 };
 
@@ -367,16 +372,27 @@ export function getAudioPlaybackSnapshot(id: string): AudioPlaybackSnapshot | nu
 
   const progress = typeof audio._progress === 'number' ? audio._progress : 0;
   const startedAt = typeof audio._startedAt === 'number' ? audio._startedAt : audio.context.currentTime;
+  const playbackRate = typeof audio.playbackRate === 'number' && Number.isFinite(audio.playbackRate)
+    ? audio.playbackRate
+    : 1;
   const elapsed = audio.isPlaying
-    ? Math.max(audio.context.currentTime - startedAt, 0) * audio.playbackRate
+    ? Math.max(audio.context.currentTime - startedAt, 0) * playbackRate
     : 0;
-  const rawCurrentTime = audio.offset + progress + elapsed;
   const duration = audio.duration ?? audio.buffer.duration;
+  const playableDuration = Number.isFinite(duration) && duration > 0 ? duration : audio.buffer.duration;
+  const rawCurrentTime = audio.offset + progress + elapsed;
+  const normalizedCurrentTime =
+    audio.loop && playableDuration > 0
+      ? rawCurrentTime % playableDuration
+      : MathUtils.clamp(rawCurrentTime, 0, playableDuration);
+  const subtitleOffset = typeof audio.userData.__subtitleOffsetSeconds === 'number'
+    ? audio.userData.__subtitleOffsetSeconds
+    : 0;
 
   return {
     id,
-    currentTime: MathUtils.clamp(rawCurrentTime, 0, duration),
-    duration,
+    currentTime: MathUtils.clamp(normalizedCurrentTime + subtitleOffset, 0, playableDuration),
+    duration: playableDuration,
     isPlaying: audio.isPlaying
   };
 }
@@ -512,7 +528,30 @@ function reverseAudioBuffer(buffer: AudioBuffer, context: BaseAudioContext): Aud
   return reversed;
 }
 
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
 
+function resolveTransformControlOptions(
+  runtimeData: ReturnType<typeof resolveObjectRuntimeData>,
+  cfg: AudioMeshConfig | undefined,
+  type: string | undefined
+): ObjectTransformControlOptions | null {
+  const entry = asRecord(runtimeData?.entry);
+  const interactions = asRecord(entry?.interactions);
+  const raw =
+    entry?.transformControls ??
+    entry?.transform ??
+    interactions?.transformControls ??
+    interactions?.gizmo ??
+    cfg?.transformControls;
+
+  if (raw === false) return null;
+  if (raw === true) return {};
+  const rawRecord = asRecord(raw);
+  if (rawRecord) return rawRecord as ObjectTransformControlOptions;
+  return type === 'Pitcher' ? {} : null;
+}
 
 export function applyAudioMeshes(context: AudioMeshContext): void {
   const { scene, galleryConfig, listener, renderer, camera, transform } = context;
@@ -535,84 +574,95 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
   scene.traverse((obj) => {
     const runtimeData = resolveObjectRuntimeData(obj, galleryConfig.objectRegistry);
     const type = runtimeData?.type || obj.userData?.type;
+    const audioId = runtimeData?.ref || obj.userData.name || obj.name;
+    const cfg = configMap.get(audioId);
     if (type === 'Audio' || type === 'Pitcher') {
-      const audioId = runtimeData?.ref || obj.userData.name || obj.name;
-      const cfg = configMap.get(audioId);
       if (!cfg) {
         console.warn(`No audio config for ID ${audioId}`);
-        return;
-      }
+      } else {
 
-      foundAny = true;
+        foundAny = true;
 
-      const sound = new PositionalAudio(listener) as ManagedAudio;
-      sound.name = cfg.name || audioId || obj.name;
-      sound.userData.__audioId = audioId;
+        const sound = new PositionalAudio(listener) as ManagedAudio;
+        sound.name = cfg.name || audioId || obj.name;
+        sound.userData.__audioId = audioId;
 
-      loadAudioWithFallback(cfg, (buffer) => {
-        if (generation !== audioLoadGeneration) return;
-        const playbackBuffer = cfg.reverse ? reverseAudioBuffer(buffer, sound.context) : buffer;
-        const baseOnEnded = sound.onEnded.bind(sound);
-        sound.onEnded = () => {
-          baseOnEnded();
+        loadAudioWithFallback(cfg, (buffer) => {
+          if (generation !== audioLoadGeneration) return;
+          const playbackBuffer = cfg.reverse ? reverseAudioBuffer(buffer, sound.context) : buffer;
+          const baseOnEnded = sound.onEnded.bind(sound);
+          sound.onEnded = () => {
+            baseOnEnded();
+            syncPlaybackState();
+          };
+          sound.setBuffer(playbackBuffer);
+          sound.setLoop(cfg.loop ?? true);
+          sound.setRefDistance(cfg.refDistance ?? 1);
+          sound.setRolloffFactor(cfg.rolloff ?? 1);
+          sound.setMaxDistance(cfg.maxDistance ?? 5);
+          sound.setDistanceModel(cfg.distanceModel ?? 'linear');
+          if (typeof cfg.startOffset === 'number' && Number.isFinite(cfg.startOffset)) {
+            sound.offset = Math.max(0, cfg.startOffset);
+          }
+          const baseVolume = cfg.volume ?? 1;
+          sound.userData.__autoplayOnEnter = cfg.autoplayOnEnter === true;
+          sound.userData.__autoplayReadyAt = sceneReadyAt + Math.max(0, cfg.autoplayDelayMs ?? 0);
+          sound.userData.__baseVolume = baseVolume;
+          sound.userData.__subtitleOffsetSeconds =
+            typeof cfg.subtitleOffsetSeconds === 'number' && Number.isFinite(cfg.subtitleOffsetSeconds)
+              ? cfg.subtitleOffsetSeconds
+              : typeof cfg.subtitleOffsetMs === 'number' && Number.isFinite(cfg.subtitleOffsetMs)
+                ? cfg.subtitleOffsetMs / 1000
+                : 0;
+          applyVolumeToSound(sound);
+          if (Array.isArray(cfg.directionalCone)) {
+            sound.setDirectionalCone(...cfg.directionalCone);
+          }
+
+          if (context.enableHelpers) {
+            const helper = new PositionalAudioHelper(sound, (cfg.refDistance ?? 1) * 2);
+            sound.add(helper);
+          }
+
+          obj.add(sound);
+          audioObjectsRef.push(sound);
           syncPlaybackState();
-        };
-        sound.setBuffer(playbackBuffer);
-        sound.setLoop(cfg.loop ?? true);
-        sound.setRefDistance(cfg.refDistance ?? 1);
-        sound.setRolloffFactor(cfg.rolloff ?? 1);
-        sound.setMaxDistance(cfg.maxDistance ?? 5);
-        sound.setDistanceModel(cfg.distanceModel ?? 'linear');
-        if (typeof cfg.startOffset === 'number' && Number.isFinite(cfg.startOffset)) {
-          sound.offset = Math.max(0, cfg.startOffset);
-        }
-        const baseVolume = cfg.volume ?? 1;
-        sound.userData.__autoplayOnEnter = cfg.autoplayOnEnter === true;
-        sound.userData.__autoplayReadyAt = sceneReadyAt + Math.max(0, cfg.autoplayDelayMs ?? 0);
-        sound.userData.__baseVolume = baseVolume;
-        applyVolumeToSound(sound);
-        if (Array.isArray(cfg.directionalCone)) {
-          sound.setDirectionalCone(...cfg.directionalCone);
-        }
 
-        if (context.enableHelpers) {
-          const helper = new PositionalAudioHelper(sound, (cfg.refDistance ?? 1) * 2);
-          sound.add(helper);
-        }
-
-        obj.add(sound);
-        audioObjectsRef.push(sound);
-        syncPlaybackState();
-
-        if (desiredPlayback && sound.userData.__autoplayOnEnter) {
-          scheduleAutoplay(sound, generation);
-        } else if (pendingPlayIds.has(audioId)) {
-          const ctx = sound.context;
-          if (ctx.state === 'suspended') {
-            ctx.resume().then(() => {
+          if (desiredPlayback && sound.userData.__autoplayOnEnter) {
+            scheduleAutoplay(sound, generation);
+          } else if (pendingPlayIds.has(audioId)) {
+            const ctx = sound.context;
+            if (ctx.state === 'suspended') {
+              ctx.resume().then(() => {
+                if (!sound.isPlaying) sound.play();
+                pendingPlayIds.delete(audioId);
+                syncPlaybackState();
+              });
+            } else if (!sound.isPlaying) {
               if (!sound.isPlaying) sound.play();
               pendingPlayIds.delete(audioId);
               syncPlaybackState();
-            });
-          } else if (!sound.isPlaying) {
-            sound.play();
-            pendingPlayIds.delete(audioId);
-            syncPlaybackState();
+            }
           }
-        }
-      });
+        });
 
-      obj.scale.setScalar(0.1);
-      if (Array.isArray(cfg.coneTarget)) {
-        obj.lookAt(cfg.coneTarget[0], cfg.coneTarget[1], cfg.coneTarget[2]);
-      } else {
-        obj.rotateX(Math.PI / 2);
-        obj.rotation.y += MathUtils.degToRad(120);
+        obj.scale.setScalar(0.1);
+        if (Array.isArray(cfg.coneTarget)) {
+          obj.lookAt(cfg.coneTarget[0], cfg.coneTarget[1], cfg.coneTarget[2]);
+        } else {
+          obj.rotateX(Math.PI / 2);
+          obj.rotation.y += MathUtils.degToRad(120);
+        }
       }
     }
 
-    if (type === 'Pitcher' && transform) {
-      applyPitcherControls(obj, scene, renderer, camera, transform);
+    const transformOptions = resolveTransformControlOptions(runtimeData, cfg, type);
+    if (transform && transformOptions) {
+      if (type === 'Pitcher' && !runtimeData?.entry?.transformControls) {
+        applyPitcherControls(obj, scene, renderer, camera, transform, transformOptions);
+      } else {
+        applyObjectTransformControls(obj, scene, renderer, camera, transform, transformOptions);
+      }
     }
   });
 

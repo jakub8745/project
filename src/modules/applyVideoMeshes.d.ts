@@ -42,5 +42,6 @@ export interface GalleryVideoConfig {
   objectRegistry?: ObjectRegistry;
 }
 
+export function setVideoScenePlaybackEnabled(enabled: boolean): void;
 export function applyVideoMeshes(scene: Scene | Group, camera: Camera, galleryConfig: GalleryVideoConfig): void;
 export function disposeAllVideoMeshes(): void;

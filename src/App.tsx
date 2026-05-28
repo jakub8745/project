@@ -280,7 +280,8 @@ function getLastChatLine(messages: BlobChatMessage[]): { speaker: string; text: 
 export default function App() {
   const isThumbnailMode = getBooleanFromQuery('thumbnailMode') || getBooleanFromQuery('recordThumb');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showHowToModal, setShowHowToModal] = useState(true);
+  const [showHowToModal, setShowHowToModal] = useState(false);
+  const [howToModalShownForConfig, setHowToModalShownForConfig] = useState<string | null>(null);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -349,6 +350,17 @@ export default function App() {
   const handleGallerySelect = useCallback((gallery: Gallery) => {
     window.location.hash = gallery.slug;
   }, []);
+
+  useEffect(() => {
+    setShowHowToModal(false);
+    setHowToModalShownForConfig(null);
+  }, [selectedConfigUrl]);
+
+  const handleVisitorEntered = useCallback(() => {
+    if (!selectedConfigUrl || howToModalShownForConfig === selectedConfigUrl) return;
+    setHowToModalShownForConfig(selectedConfigUrl);
+    setShowHowToModal(true);
+  }, [howToModalShownForConfig, selectedConfigUrl]);
 
   useEffect(() => {
     const selectedGallery =
@@ -821,6 +833,7 @@ export default function App() {
             >
               <R3FViewer
                 configUrl={selectedConfigUrl}
+                onVisitorEntered={handleVisitorEntered}
                 onPhysicsCollision={handlePhysicsCollision}
               />
             </Suspense>

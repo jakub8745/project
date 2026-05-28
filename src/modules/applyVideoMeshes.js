@@ -38,6 +38,17 @@ const PAUSE_ICON_URL = '/icons/ButtonPause.png';
 // --- Step 1: resource cache ---
 const _videoResourceCache = new Map(); // id -> { video, texture }
 const _syncPlaybackGroups = new Map(); // groupId -> sync state
+let _videoScenePlaybackEnabled = false;
+
+export function setVideoScenePlaybackEnabled(enabled) {
+  _videoScenePlaybackEnabled = enabled === true;
+  if (!_videoScenePlaybackEnabled) return;
+  _syncPlaybackGroups.forEach((group) => {
+    if (typeof group?.tryStart === 'function') {
+      group.tryStart();
+    }
+  });
+}
 
 function getVideoResource(id) {
   return _videoResourceCache.get(id) || {};
@@ -371,6 +382,7 @@ function openVideoPlayer(cfg, video) {
 }
 
 export function openVideoPlayerById(videoId) {
+  if (!_videoScenePlaybackEnabled) return false;
   if (!videoId) return false;
   const resource = getVideoResource(videoId);
   const video = resource?.video;
@@ -386,6 +398,7 @@ export function openVideoPlayerById(videoId) {
 }
 
 export function disposeAllVideoMeshes() {
+  _videoScenePlaybackEnabled = false;
   _overlayDisposers.forEach((dispose) => {
     try {
       dispose();
@@ -439,7 +452,8 @@ function createSyncPlaybackGroups(videos) {
         expectedIds: new Set(),
         videos: new Map(),
         readyIds: new Set(),
-        started: false
+        started: false,
+        tryStart: null
       });
     }
     groups.get(groupId).expectedIds.add(cfg.id);
@@ -457,6 +471,7 @@ function queueSyncedPlayback(cfg, video, syncGroups) {
   _syncPlaybackGroups.set(groupId, group);
 
   const tryStart = () => {
+    if (!_videoScenePlaybackEnabled) return;
     if (group.started) return;
     if (group.videos.size < group.expectedIds.size) return;
     for (const id of group.expectedIds) {
@@ -485,6 +500,7 @@ function queueSyncedPlayback(cfg, video, syncGroups) {
       });
     });
   };
+  group.tryStart = tryStart;
 
   const markReady = () => {
     group.readyIds.add(cfg.id);
@@ -648,6 +664,7 @@ export function resumeVideoAudioById(videoId) {
 }
 
 export function invokeVideoControlById(videoId, action, value) {
+  if (!_videoScenePlaybackEnabled) return false;
   if (!videoId || !action) return false;
   const resource = getVideoResource(videoId);
   const video = resource?.video;
@@ -1584,6 +1601,10 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
   const projectedAnchor = new Vector3();
   const rayTarget = new Vector3();
   const updatePosition = (renderer, activeCam) => {
+    if (!_videoScenePlaybackEnabled) {
+      container.style.display = 'none';
+      return;
+    }
     const rect = renderer.domElement.getBoundingClientRect();
 
     if (controlsAnchor) {
@@ -1750,6 +1771,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
 
   const handlePlayClick = (evt) => {
     evt.stopPropagation();
+    if (!_videoScenePlaybackEnabled) return;
     if (allowAudio) {
       setVideoResource(cfg.id, { userMuted: false });
       const resource = getVideoResource(cfg.id);
@@ -1769,6 +1791,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
 
   const handleProgressInput = (evt) => {
     evt.stopPropagation();
+    if (!_videoScenePlaybackEnabled) return;
     const target = evt.target;
     const val = Number(target.value);
     if (Number.isFinite(val) && Number.isFinite(video.duration) && video.duration > 0) {
@@ -1783,6 +1806,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
 
   const handleVolumeInput = (evt) => {
     evt.stopPropagation();
+    if (!_videoScenePlaybackEnabled) return;
     const target = evt.target;
     const val = Number(target.value);
     if (Number.isFinite(val)) {
@@ -1804,6 +1828,7 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
   volume.addEventListener('input', handleVolumeInput);
   const handleFullscreenClick = (evt) => {
     evt.stopPropagation();
+    if (!_videoScenePlaybackEnabled) return;
     if (allowFullscreen) {
       openVideoPlayer(cfg, video);
     }

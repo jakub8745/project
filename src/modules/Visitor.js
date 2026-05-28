@@ -285,18 +285,19 @@ export default class Visitor extends Mesh {
   }
 
   update(delta, collider) {
+    const stepDelta = Number.isFinite(delta) ? Math.min(Math.max(delta, 0), 1 / 30) : 0;
 
     if (this.visitorIsOnGround) {
       this.visitorVelocity.y = 0;
     } else {
-      this.visitorVelocity.y += delta * this.params.gravity;
+      this.visitorVelocity.y += stepDelta * this.params.gravity;
     }
 
     const angle = this.controls.getAzimuthalAngle();
-    if (this.fwdPressed) this._move(0, 0, -1, angle, delta);
-    if (this.bkdPressed) this._move(0, 0, 1, angle, delta);
-    if (this.lftPressed) this._move(-1, 0, 0, angle, delta);
-    if (this.rgtPressed) this._move(1, 0, 0, angle, delta);
+    if (this.fwdPressed) this._move(0, 0, -1, angle, stepDelta);
+    if (this.bkdPressed) this._move(0, 0, 1, angle, stepDelta);
+    if (this.lftPressed) this._move(-1, 0, 0, angle, stepDelta);
+    if (this.rgtPressed) this._move(1, 0, 0, angle, stepDelta);
 
     const joystickStrengthSq = this.joystickVector.lengthSq();
     if (joystickStrengthSq > 1e-4) {
@@ -304,7 +305,7 @@ export default class Visitor extends Mesh {
       this.tempVector
         .set(this.joystickVector.x, 0, -this.joystickVector.y)
         .applyAxisAngle(this.upVector, angle);
-      this.position.addScaledVector(this.tempVector, this.params.visitorSpeed * delta * strength);
+      this.position.addScaledVector(this.tempVector, this.params.visitorSpeed * stepDelta * strength);
     }
 
     if (this.isAutoMoving && this.target) {
@@ -317,7 +318,7 @@ export default class Visitor extends Mesh {
 
       if (distance > 0.1) {
         direction.normalize();
-        this.position.addScaledVector(direction, this.autoMoveSpeed * delta);
+        this.position.addScaledVector(direction, this.autoMoveSpeed * stepDelta);
       } else {
         this.isAutoMoving = false;
         this.clickIndicator.visible = false;
@@ -326,9 +327,9 @@ export default class Visitor extends Mesh {
     }
 
 
-    this.position.addScaledVector(this.visitorVelocity, delta);
+    this.position.addScaledVector(this.visitorVelocity, stepDelta);
     this.updateMatrixWorld();
-    this.handleCollisions(delta, collider);
+    this.handleCollisions(stepDelta, collider);
 
     if (this.position.y < -10) {
       console.warn('Visitor fell below floor. Resetting.');

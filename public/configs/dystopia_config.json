@@ -28,6 +28,34 @@
             "imagePath": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg"
         }
     },
+    "objects": {
+        "dzbanDystopia": {
+            "category": "pitcher",
+            "ref": "dzbanDystopia",
+            "transformControls": {
+                "mode": "rotate",
+                "size": 0.3,
+                "hover": true,
+                "light": {
+                    "enabled": true,
+                    "color": 16777215,
+                    "intensity": 40,
+                    "yOffset": 3,
+                    "angle": 0.4487989505128276,
+                    "penumbra": 0.3,
+                    "decay": 2,
+                    "distance": 35,
+                    "castShadow": true,
+                    "shadowMapSize": 2048,
+                    "shadowBias": 0,
+                    "shadowNormalBias": 0.02,
+                    "shadowRadius": 2,
+                    "shadowCameraNear": 0.5,
+                    "shadowCameraFar": 40
+                }
+            }
+        }
+    },
     "audio": [
         {
             "id": "dzbanDystopia",

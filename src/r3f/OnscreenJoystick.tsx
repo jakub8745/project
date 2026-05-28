@@ -105,7 +105,7 @@ export function OnscreenJoystick({ visitor }: OnscreenJoystickProps) {
 
   const travel = 28; // px offset from center for the knob
 
-  if (!isTouch) {
+  if (!isTouch || !visitor) {
     return null;
   }
 

@@ -2,7 +2,7 @@ import { Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState
 import type { MutableRefObject } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import type { RootState } from '@react-three/fiber';
-import { Html, OrbitControls, Text } from '@react-three/drei';
+import { Html, OrbitControls, Text, useProgress } from '@react-three/drei';
 import type { Event, Vector3Tuple } from 'three';
 import {
   AmbientLight,
@@ -61,7 +61,12 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import type { TransformControlsEventMap } from 'three/examples/jsm/controls/TransformControls.js';
 import type { VisitorParams } from '../modules/Visitor.js';
 import { PointerInteractions } from './PointerInteractions';
-import { applyVideoMeshes, disposeAllVideoMeshes, type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
+import {
+  applyVideoMeshes,
+  disposeAllVideoMeshes,
+  setVideoScenePlaybackEnabled,
+  type VideoMeshConfig
+} from '../modules/applyVideoMeshes.js';
 import { resolveVideoPlaybackMode, type VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import { applyObjectRuntimeData, normalizeObjectRegistry, type ObjectRegistry } from '../modules/objectRegistry.js';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
@@ -165,6 +170,7 @@ interface R3FViewerProps {
   configUrl: string | null;
   onRequestSidebarClose?: () => void;
   onVisitorActivity?: () => void;
+  onVisitorEntered?: () => void;
   onPhysicsCollision?: (event: {
     a: string;
     b: string;
@@ -414,6 +420,19 @@ function getBooleanFromQuery(name: string): boolean {
   const value = params.get(name);
   if (!value) return false;
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
+}
+
+function formatLoadingItem(item?: string): string | undefined {
+  if (!item) return undefined;
+  try {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+    const parsed = new URL(item, baseUrl);
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    return decodeURIComponent(parts[parts.length - 1] || parsed.pathname || item);
+  } catch {
+    const parts = item.split('/').filter(Boolean);
+    return parts[parts.length - 1] || item;
+  }
 }
 
 function detectIPadLikeDevice(): boolean {
@@ -2644,7 +2663,15 @@ function ThumbnailRecorderMode({
   );
 }
 
-function SceneLoadingOverlay({ visible, label = 'Loading exhibit' }: { visible: boolean; label?: string }) {
+function SceneLoadingOverlay({
+  visible,
+  label = 'Loading exhibit',
+  detail
+}: {
+  visible: boolean;
+  label?: string;
+  detail?: string;
+}) {
   if (!visible) return null;
   return (
     <div className="pointer-events-none absolute inset-0 z-[900] flex items-center justify-center bg-slate-950/90 text-white">
@@ -2652,6 +2679,11 @@ function SceneLoadingOverlay({ visible, label = 'Loading exhibit' }: { visible: 
         <div className="mb-3 text-center text-sm font-semibold tracking-wide text-white/80">
           {label}
         </div>
+        {detail ? (
+          <div className="mb-3 truncate text-center text-xs text-white/55" title={detail}>
+            {detail}
+          </div>
+        ) : null}
         <div className="h-1.5 overflow-hidden rounded-full bg-white/15">
           <div className="h-full w-1/2 animate-pulse rounded-full bg-sky-300" />
         </div>
@@ -2660,7 +2692,13 @@ function SceneLoadingOverlay({ visible, label = 'Loading exhibit' }: { visible: 
   );
 }
 
-function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, onPhysicsCollision }: R3FViewerProps) {
+function R3FViewerInner({
+  configUrl,
+  onRequestSidebarClose,
+  onVisitorActivity,
+  onVisitorEntered,
+  onPhysicsCollision
+}: R3FViewerProps) {
   const { config, loading, error } = useExhibitConfig(configUrl);
 
   const modelPath = config?.modelPath;
@@ -3062,6 +3100,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     };
   }, [thumbnailCaptureRecord]);
   const thumbnailModeActive = getBooleanFromQuery('thumbnailMode') || getBooleanFromQuery('recordThumb');
+  const debugLoading = getBooleanFromQuery('debugLoading') || getBooleanFromQuery('loadingDebug');
   const thumbnailBackgroundColor = thumbnailModeActive
     ? typeof thumbnailCaptureRecord?.backgroundColor === 'string'
       ? thumbnailCaptureRecord.backgroundColor
@@ -3072,9 +3111,18 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
   const [sceneAssetsReady, setSceneAssetsReady] = useState(false);
+  const [sceneAssetLoadsSettled, setSceneAssetLoadsSettled] = useState(false);
   const [sceneLoadArmed, setSceneLoadArmed] = useState(false);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
+  const {
+    active: sceneAssetsLoading,
+    item: sceneLoadingItem,
+    loaded: sceneLoadedCount,
+    total: sceneTotalCount,
+    progress: sceneLoadProgress
+  } = useProgress();
   const lastSceneVersionRef = useRef(sceneVersion);
+  const lastLoadingLogRef = useRef<string | null>(null);
   const dynamicActorsRef = useRef<Map<string, { object: Object3D; radius: number }>>(new Map());
   const physicsConfig = useMemo<PhysicsConfig | undefined>(() => {
     if (!config?.physics || typeof config.physics !== 'object') return undefined;
@@ -3308,6 +3356,15 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           coneTarget,
           startOffset: typeof record.startOffset === 'number' ? record.startOffset : undefined,
           reverse: typeof record.reverse === 'boolean' ? record.reverse : undefined,
+          subtitleOffsetMs: typeof record.subtitleOffsetMs === 'number' ? record.subtitleOffsetMs : undefined,
+          subtitleOffsetSeconds:
+            typeof record.subtitleOffsetSeconds === 'number' ? record.subtitleOffsetSeconds : undefined,
+          transformControls:
+            typeof record.transformControls === 'boolean'
+              ? record.transformControls
+              : record.transformControls && typeof record.transformControls === 'object' && !Array.isArray(record.transformControls)
+                ? record.transformControls as AudioMeshConfig['transformControls']
+                : undefined,
           subtitleTracks
         };
         return sanitized;
@@ -3768,6 +3825,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
 
   useEffect(() => {
     setSceneAssetsReady(false);
+    setSceneAssetLoadsSettled(false);
     setSceneLoadArmed(false);
     let raf = 0;
     const timeout = window.setTimeout(() => {
@@ -3779,12 +3837,60 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
     };
   }, [configUrl, modelPath, interactivesPath, useProceduralRoom]);
 
+  useEffect(() => {
+    if (!sceneAssetsReady || sceneAssetsLoading || sceneAssetLoadsSettled) return undefined;
+    const raf = window.requestAnimationFrame(() => {
+      setSceneAssetLoadsSettled(true);
+    });
+    return () => {
+      window.cancelAnimationFrame(raf);
+    };
+  }, [sceneAssetLoadsSettled, sceneAssetsLoading, sceneAssetsReady]);
+
+  useEffect(() => {
+    if (!debugLoading) return;
+    const percentage = Number.isFinite(sceneLoadProgress) ? Math.round(sceneLoadProgress) : 0;
+    const loadingKey = `${sceneAssetsLoading}:${sceneLoadedCount}:${sceneTotalCount}:${percentage}:${sceneLoadingItem || ''}`;
+    if (lastLoadingLogRef.current === loadingKey) return;
+    lastLoadingLogRef.current = loadingKey;
+    const status = sceneAssetsLoading ? 'loading' : 'settled';
+    console.info(
+      `[SceneLoader] ${status} ${sceneLoadedCount}/${sceneTotalCount} ${percentage}%`,
+      sceneLoadingItem || '(no active item)'
+    );
+  }, [debugLoading, sceneAssetsLoading, sceneLoadedCount, sceneLoadingItem, sceneLoadProgress, sceneTotalCount]);
+
   const handleSceneReady = useCallback(() => {
     setSceneAssetsReady(true);
     bumpSceneVersion();
   }, []);
 
-  const sceneInteractionsLocked = isVideoPlayerModalOpen || isMaterialModalOpen;
+  const sceneReadyForVisitor =
+    sceneAssetsReady &&
+    sceneAssetLoadsSettled &&
+    Boolean(collider) &&
+    (thumbnailModeActive || Boolean(visitorInstance)) &&
+    !loading &&
+    !error;
+  const visitorEntryReady =
+    sceneAssetsReady &&
+    sceneAssetLoadsSettled &&
+    Boolean(collider) &&
+    !loading &&
+    !error;
+  const sceneInteractionsLocked = !sceneReadyForVisitor || isVideoPlayerModalOpen || isMaterialModalOpen;
+
+  useEffect(() => {
+    setVideoScenePlaybackEnabled(sceneReadyForVisitor);
+    return () => {
+      setVideoScenePlaybackEnabled(false);
+    };
+  }, [sceneReadyForVisitor, configUrl]);
+
+  useEffect(() => {
+    if (!sceneReadyForVisitor) return;
+    onVisitorEntered?.();
+  }, [onVisitorEntered, sceneReadyForVisitor]);
 
   return (
     <div className="relative h-full w-full bg-gallery-dark">
@@ -3812,7 +3918,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         <SceneLightRig settings={lightRigSettings} />
 
 
-        <Suspense fallback={<Html center className="text-white">Loading exhibit…</Html>}>
+        <Suspense fallback={null}>
           {!sceneLoadArmed ? null : modelPath ? (
             <ExhibitModel
               modelPath={modelPath}
@@ -3869,7 +3975,8 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
           maxPolarAngle={Math.PI}
         />
         <PointerInteractions
-          visitor={visitorInstance}
+          visitor={sceneReadyForVisitor ? visitorInstance : null}
+          collider={collider}
           disabled={sceneInteractionsLocked}
           onCloseSidebar={onRequestSidebarClose}
           popupCallback={(payload) => {
@@ -3891,20 +3998,20 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         <FirstPersonController
           collider={collider}
           params={controllerParams}
-          enabled={!thumbnailModeActive}
+          enabled={!thumbnailModeActive && visitorEntryReady}
           interactionLocked={sceneInteractionsLocked}
           onVisitorReady={setVisitorInstance}
           onVisitorActivity={onVisitorActivity}
         />
         <SurfaceZoneSensor
-          visitor={visitorInstance}
+          visitor={sceneReadyForVisitor ? visitorInstance : null}
           routes={audioFloorRoutes}
           sceneVersion={sceneVersion}
           getRouteKey={audioFloorRouteKey}
           onRouteChange={applyAudioFloorRoute}
         />
         <SurfaceZoneSensor
-          visitor={visitorInstance}
+          visitor={sceneReadyForVisitor ? visitorInstance : null}
           routes={lightZoneRoutes}
           sceneVersion={sceneVersion}
           getRouteKey={surfaceZoneRouteKey}
@@ -3919,7 +4026,7 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         <ThumbnailRecorderMode config={thumbnailCapture} active={thumbnailModeActive} />
         <AudioSystem
           audioConfig={audioConfig}
-          ready={Boolean(collider)}
+          ready={sceneReadyForVisitor}
           sceneVersion={sceneVersion}
           objectRegistry={objectRegistry}
         />
@@ -3937,10 +4044,11 @@ function R3FViewerInner({ configUrl, onRequestSidebarClose, onVisitorActivity, o
         onSubtitleLanguageChange={(language) => setSubtitleLanguage(language)}
       />
       <AudioSubtitles tracks={audioConfig} language={subtitleLanguage} />
-      <OnscreenJoystick visitor={visitorInstance} />
+      <OnscreenJoystick visitor={sceneReadyForVisitor ? visitorInstance : null} />
       <SceneLoadingOverlay
-        visible={!thumbnailModeActive && (!sceneLoadArmed || !sceneAssetsReady)}
+        visible={!thumbnailModeActive && (!sceneLoadArmed || !sceneReadyForVisitor)}
         label={sceneLoadArmed ? 'Loading exhibit' : 'Preparing exhibit'}
+        detail={formatLoadingItem(sceneLoadingItem)}
       />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-white bg-black/40">
