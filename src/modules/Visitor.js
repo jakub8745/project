@@ -36,6 +36,10 @@ export default class Visitor extends Mesh {
     this.xrRig = deps.xrRig || null;
 
     this.visitorVelocity = new Vector3();
+    this.horizontalVelocity = new Vector3();
+    this.desiredVelocity = new Vector3();
+    this.desiredMove = new Vector3();
+    this.autoMoveDirection = new Vector3();
     this.visitorIsOnGround = true;
     this.verticalCollisionDetected = false;
     this.target = new Vector3(2, 10, 2);
@@ -43,6 +47,9 @@ export default class Visitor extends Mesh {
 
     this.isAutoMoving = false;
     this.autoMoveSpeed = 5;
+    this.autoMoveBlockedSeconds = 0;
+    this.autoMoveLastDistance = Infinity;
+    this.autoMoveWasActive = false;
     this.clickIndicator = null;
     this.joystickVector = new Vector2(0, 0);
 
@@ -177,7 +184,12 @@ export default class Visitor extends Mesh {
 
   _resolveSpawnDirection(enterAnchor) {
     if (!enterAnchor) {
-      return null;
+      const fallbackDirection = this._coerceDirectionVector(this.params.spawnDirection ?? this.params.visitorDirection);
+      if (!fallbackDirection || fallbackDirection.lengthSq() < 1e-6) {
+        return null;
+      }
+      fallbackDirection.y = 0;
+      return fallbackDirection.lengthSq() >= 1e-6 ? fallbackDirection.normalize() : null;
     }
 
     const userData = enterAnchor.userData;
@@ -279,7 +291,7 @@ export default class Visitor extends Mesh {
   }
 
   update(delta, collider) {
-    const stepDelta = Number.isFinite(delta) ? Math.min(Math.max(delta, 0), 1 / 30) : 0;
+    const stepDelta = Number.isFinite(delta) ? Math.min(Math.max(delta, 0), 1 / 20) : 0;
 
     if (this.visitorIsOnGround) {
       this.visitorVelocity.y = 0;
@@ -288,42 +300,64 @@ export default class Visitor extends Mesh {
     }
 
     const angle = this.controls.getAzimuthalAngle();
-    if (this.fwdPressed) this._move(0, 0, -1, angle, stepDelta);
-    if (this.bkdPressed) this._move(0, 0, 1, angle, stepDelta);
-    if (this.lftPressed) this._move(-1, 0, 0, angle, stepDelta);
-    if (this.rgtPressed) this._move(1, 0, 0, angle, stepDelta);
+    const keyX = (this.rgtPressed ? 1 : 0) - (this.lftPressed ? 1 : 0);
+    const keyZ = (this.bkdPressed ? 1 : 0) - (this.fwdPressed ? 1 : 0);
+    this.desiredMove.set(
+      keyX + this.joystickVector.x,
+      0,
+      keyZ - this.joystickVector.y
+    );
 
-    const joystickStrengthSq = this.joystickVector.lengthSq();
-    if (joystickStrengthSq > 1e-4) {
-      const strength = Math.min(1, Math.sqrt(joystickStrengthSq));
-      this.tempVector
-        .set(this.joystickVector.x, 0, -this.joystickVector.y)
-        .applyAxisAngle(this.upVector, angle);
-      this.position.addScaledVector(this.tempVector, this.params.visitorSpeed * stepDelta * strength);
-    }
-
-    if (this.isAutoMoving && this.target) {
-
-
-      const direction = this.target.clone().sub(this.position);
-      direction.y = 0; // 🔥 Ignore vertical difference
-
-      const distance = direction.length();
+    const hasManualInput = this.desiredMove.lengthSq() > 1e-4;
+    let targetSpeed = this.params.visitorSpeed;
+    if (hasManualInput) {
+      this.isAutoMoving = false;
+      if (this.clickIndicator) {
+        this.clickIndicator.visible = false;
+      }
+      if (this.desiredMove.lengthSq() > 1) {
+        this.desiredMove.normalize();
+      }
+      this.desiredMove.applyAxisAngle(this.upVector, angle);
+    } else if (this.isAutoMoving && this.target) {
+      this.autoMoveDirection.subVectors(this.target, this.position);
+      this.autoMoveDirection.y = 0;
+      const distance = this.autoMoveDirection.length();
 
       if (distance > 0.1) {
-        direction.normalize();
-        this.position.addScaledVector(direction, this.autoMoveSpeed * stepDelta);
+        if (!this.autoMoveWasActive) {
+          this.autoMoveBlockedSeconds = 0;
+          this.autoMoveLastDistance = distance;
+        }
+        this.desiredMove.copy(this.autoMoveDirection).multiplyScalar(1 / distance);
+        targetSpeed = this.params.autoMoveSpeed ?? this.autoMoveSpeed;
       } else {
-        this.isAutoMoving = false;
-        this.clickIndicator.visible = false;
-
+        this.cancelAutoMove();
+        this.desiredMove.set(0, 0, 0);
       }
     }
 
+    const hasMovementTarget = this.desiredMove.lengthSq() > 1e-4;
+    if (hasMovementTarget) {
+      this.desiredVelocity.copy(this.desiredMove).multiplyScalar(targetSpeed);
+    } else {
+      this.desiredVelocity.set(0, 0, 0);
+    }
+
+    const acceleration = hasMovementTarget
+      ? (this.params.movementAcceleration ?? 12)
+      : (this.params.movementDeceleration ?? 18);
+    const smoothing = 1 - Math.exp(-Math.max(0, acceleration) * stepDelta);
+    this.horizontalVelocity.lerp(this.desiredVelocity, smoothing);
+    if (!hasMovementTarget && this.horizontalVelocity.lengthSq() < 1e-5) {
+      this.horizontalVelocity.set(0, 0, 0);
+    }
+    this.position.addScaledVector(this.horizontalVelocity, stepDelta);
 
     this.position.addScaledVector(this.visitorVelocity, stepDelta);
     this.updateMatrixWorld();
     this.handleCollisions(stepDelta, collider);
+    this.resolveAutoMoveBlock(stepDelta);
 
     if (this.position.y < -10) {
       console.warn('Visitor fell below floor. Resetting.');
@@ -342,9 +376,50 @@ export default class Visitor extends Mesh {
     }
   }
 
+  cancelAutoMove() {
+    this.isAutoMoving = false;
+    this.autoMoveBlockedSeconds = 0;
+    this.autoMoveLastDistance = Infinity;
+    this.autoMoveWasActive = false;
+    this.desiredMove.set(0, 0, 0);
+    this.desiredVelocity.set(0, 0, 0);
+    this.horizontalVelocity.set(0, 0, 0);
+    if (this.clickIndicator) {
+      this.clickIndicator.visible = false;
+    }
+  }
+
+  resolveAutoMoveBlock(delta) {
+    if (!this.isAutoMoving || !this.target) {
+      this.autoMoveBlockedSeconds = 0;
+      this.autoMoveLastDistance = Infinity;
+      this.autoMoveWasActive = false;
+      return;
+    }
+
+    const remaining = Math.hypot(this.target.x - this.position.x, this.target.z - this.position.z);
+    const progress = this.autoMoveLastDistance - remaining;
+    const expectedMove = this.horizontalVelocity.length() * delta;
+    const minProgress = Math.max(0.006, expectedMove * 0.12);
+
+    if (this.verticalCollisionDetected && progress < minProgress) {
+      this.autoMoveBlockedSeconds += delta;
+    } else {
+      this.autoMoveBlockedSeconds = Math.max(0, this.autoMoveBlockedSeconds - delta * 2);
+    }
+
+    this.autoMoveLastDistance = remaining;
+    this.autoMoveWasActive = true;
+
+    if (this.autoMoveBlockedSeconds > 0.35) {
+      console.warn('Visitor auto-move target is blocked. Cancelling movement.');
+      this.cancelAutoMove();
+    }
+  }
+
   teleportTo(point) {
     this.position.set(point.x, this.position.y, point.z);
-    this.isAutoMoving = false;
+    this.cancelAutoMove();
     this.target = null;
   }
 
@@ -431,12 +506,12 @@ export default class Visitor extends Mesh {
     const spawnDirection = this._resolveSpawnDirection(enterAnchor);
 
     this.visitorVelocity.set(0, 0, 0);
+    this.horizontalVelocity.set(0, 0, 0);
+    this.desiredVelocity.set(0, 0, 0);
+    this.desiredMove.set(0, 0, 0);
     this.visitorIsOnGround = true;
     this.verticalCollisionDetected = false;
-    this.isAutoMoving = false;
-    if (this.clickIndicator) {
-      this.clickIndicator.visible = false;
-    }
+    this.cancelAutoMove();
     this.position.copy(spawnPosition);
     if (spawnDirection) {
       const spawnYaw = Math.atan2(spawnDirection.x, spawnDirection.z);
@@ -444,6 +519,9 @@ export default class Visitor extends Mesh {
     }
 
     // Optional: reset capsule target or height
+    if (!this.target) {
+      this.target = new Vector3();
+    }
     this.target.copy(this.position.clone().add(new Vector3(0, 10.5, 0)));
 
     // Update controls, camera or rig

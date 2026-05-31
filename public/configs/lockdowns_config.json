@@ -1,12 +1,819 @@
 {
+  "schemaVersion": "2.0.0",
   "id": "lockdowns",
-  "modelPath": "ipfs://bafybeifze5a47hgujyx2seprukkdxooh4sr7semaagsglbiumyrhhyou7e/exhibition_lockdowns_ktx.glb",
-  "interactivesPath": "ipfs://bafybeidm577izibt6ixk6tjlt6has7njcyphveflsq74vbzhmkwtgipdkq/interactives_lockdowns.glb",
-  "backgroundTexture": "ipfs://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda/bg_lockdowns.ktx2",
-  "sidebar": {
-    "logo": {
-      "text": "Joanna Ciechanowska's Exhibition"
+  "kind": "exhibit",
+  "metadata": {
+    "title": "Joanna Ciechanowska: Lockdowns",
+    "description": "Joanna Ciechanowska's works presented at the Lockdowns exhibition offer a specific understanding of isolation. They are anchored in multi-dimensional references to social and historical time, but above all - to personal time. Despite revealing fears related to participating in an unknown situation, they steer clear of catastrophism. They become the artist's inner painting and poetic journey. They are a flash of rediscovery of those few simple images in the presence of which the human heart is closedand opened for the first time.",
+    "language": "en",
+    "authors": [
+      {
+        "name": "Joanna Ciechanowska",
+        "role": "artist"
+      }
+    ]
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/exhibition_lockdowns_merged.glb",
+      "mimeType": "model/gltf-binary"
     },
+    "background_texture": {
+      "kind": "texture",
+      "uri": "ipfs://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda/bg_lockdowns.ktx2",
+      "mimeType": "image/ktx2"
+    },
+    "78_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/78.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "LobsterPyjamas_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LobsterPyjamas.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "IndigoBlue_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/IndigoBlue.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "1000years_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/1000years.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "BlueRain_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/BlueRain.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "LastEvening_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LastEvening.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Touch_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Touch.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "TheMan_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/TheMan.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Svalbard_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Svalbard.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "AncientFears_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/AncientFears.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "LastFlight_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LastFlight.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "City_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/City.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Cauchemar_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Cauchemar.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Shadow_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Shadow.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Waves_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Waves.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Boat_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Boat.jpg",
+      "mimeType": "image/jpeg"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "backgroundAsset": "background_texture",
+      "blurriness": 0.1,
+      "intensity": 0.5
+    },
+    "spawn": {
+      "position": [
+        3,
+        2,
+        1
+      ]
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "autoExposure": true,
+      "exposure": 1,
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "antialias": false,
+      "shadows": false,
+      "maxDpr": 1
+    }
+  },
+  "nodes": {
+    "78": {
+      "kind": "image_anchor",
+      "ref": "78",
+      "media": "78",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "78 Degrees North. ",
+        "description": "Acrylic on canvas, 50x76 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click 78 to open the artwork panel for \"78 Degrees North. \" with its catalog metadata and full image."
+      }
+    },
+    "FloorLockdowns_1.002": {
+      "kind": "room",
+      "ref": "FloorLockdowns_1.002",
+      "metadata": {
+        "title": "Lockdowns room",
+        "interactionDescription": "The merged GLB contains the visible Lockdowns room and its interactive artwork anchors in one scene. This room mesh supplies the walkable exhibition shell while artwork behavior is declared in config."
+      }
+    },
+    "napisy.na.scianach": {
+      "kind": "wall",
+      "ref": "napisy.na.scianach",
+      "metadata": {
+        "title": "Wall text",
+        "interactionDescription": "Static wall text remains part of the visible scene model and is not interactive."
+      }
+    },
+    "Wall.lockdowns.0org": {
+      "kind": "wall",
+      "ref": "Wall.lockdowns.0org",
+      "metadata": {
+        "title": "Lockdowns walls",
+        "interactionDescription": "Static gallery wall geometry remains part of the visible scene model and contributes to collision."
+      }
+    },
+    "LobsterPyjamas": {
+      "kind": "image_anchor",
+      "ref": "LobsterPyjamas",
+      "media": "LobsterPyjamas",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Self Portrait in Lobster Pyjamas",
+        "description": "Oil on canvas, 100x70cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click LobsterPyjamas to open the artwork panel for \"Self Portrait in Lobster Pyjamas\" with its catalog metadata and full image."
+      }
+    },
+    "IndigoBlue": {
+      "kind": "image_anchor",
+      "ref": "IndigoBlue",
+      "media": "IndigoBlue",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "What Will I Do if I Run Out of Indigo Blue",
+        "description": "Oil on canvas, 100x76 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click IndigoBlue to open the artwork panel for \"What Will I Do if I Run Out of Indigo Blue\" with its catalog metadata and full image."
+      }
+    },
+    "1000years": {
+      "kind": "image_anchor",
+      "ref": "1000years",
+      "media": "1000years",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Who Says We'll Live for 1000 years?",
+        "description": "Oil and collage on canvas, 100x70 cm, 2019",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click 1000years to open the artwork panel for \"Who Says We'll Live for 1000 years?\" with its catalog metadata and full image."
+      }
+    },
+    "BlueRain": {
+      "kind": "image_anchor",
+      "ref": "BlueRain",
+      "media": "BlueRain",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Blue Rain",
+        "description": "Blue Rain. Oil on canvas, 76x50 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click BlueRain to open the artwork panel for \"Blue Rain\" with its catalog metadata and full image."
+      }
+    },
+    "LastEvening": {
+      "kind": "image_anchor",
+      "ref": "LastEvening",
+      "media": "LastEvening",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "The Last Evening Before Silence. The Woman",
+        "description": "Oil on canvas, 76x60 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click LastEvening to open the artwork panel for \"The Last Evening Before Silence. The Woman\" with its catalog metadata and full image."
+      }
+    },
+    "Touch": {
+      "kind": "image_anchor",
+      "ref": "Touch",
+      "media": "Touch",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Don’t Touch Me",
+        "description": "Oil on canvas, 76x50 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click Touch to open the artwork panel for \"Don’t Touch Me\" with its catalog metadata and full image."
+      }
+    },
+    "TheMan": {
+      "kind": "image_anchor",
+      "ref": "TheMan",
+      "media": "TheMan",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "The Last Evening Before Silence. The Man",
+        "description": "Oil on canvas, 76x60 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click TheMan to open the artwork panel for \"The Last Evening Before Silence. The Man\" with its catalog metadata and full image."
+      }
+    },
+    "Svalbard": {
+      "kind": "image_anchor",
+      "ref": "Svalbard",
+      "media": "Svalbard",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Take Me to Svalbard Again",
+        "description": "Acrylic on canvas, 50x76 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click Svalbard to open the artwork panel for \"Take Me to Svalbard Again\" with its catalog metadata and full image."
+      }
+    },
+    "AncientFears": {
+      "kind": "image_anchor",
+      "ref": "AncientFears",
+      "media": "AncientFears",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Ancient Fears",
+        "description": "Oil on canvas, 100x76 cm, 2009-2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click AncientFears to open the artwork panel for \"Ancient Fears\" with its catalog metadata and full image."
+      }
+    },
+    "LastFlight": {
+      "kind": "image_anchor",
+      "ref": "LastFlight",
+      "media": "LastFlight",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "The Last Flight",
+        "description": "Acrylic on canvas, 70x100 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click LastFlight to open the artwork panel for \"The Last Flight\" with its catalog metadata and full image."
+      }
+    },
+    "City": {
+      "kind": "image_anchor",
+      "ref": "City",
+      "media": "City",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Imagine a City that Never Happened",
+        "description": "Oil on canvas, 100x76 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click City to open the artwork panel for \"Imagine a City that Never Happened\" with its catalog metadata and full image."
+      }
+    },
+    "Cauchemar": {
+      "kind": "image_anchor",
+      "ref": "Cauchemar",
+      "media": "Cauchemar",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Cauchemar",
+        "description": "Oil on canvas, 60x60 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click Cauchemar to open the artwork panel for \"Cauchemar\" with its catalog metadata and full image."
+      }
+    },
+    "Shadow": {
+      "kind": "image_anchor",
+      "ref": "Shadow",
+      "media": "Shadow",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Shadow Crossing",
+        "description": "Oil on canvas, 60x60 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click Shadow to open the artwork panel for \"Shadow Crossing\" with its catalog metadata and full image."
+      }
+    },
+    "Waves": {
+      "kind": "image_anchor",
+      "ref": "Waves",
+      "media": "Waves",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Dreaming Waves",
+        "description": "Acrylic on canvas, 50x76 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click Waves to open the artwork panel for \"Dreaming Waves\" with its catalog metadata and full image."
+      }
+    },
+    "Boat": {
+      "kind": "image_anchor",
+      "ref": "Boat",
+      "media": "Boat",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "I Was On that Boat, Once",
+        "description": "Acrylic on canvas, 50x76 cm, 2020",
+        "author": "Joanna Ciechanowska",
+        "interactionDescription": "Click Boat to open the artwork panel for \"I Was On that Boat, Once\" with its catalog metadata and full image."
+      }
+    }
+  },
+  "media": {
+    "78": {
+      "kind": "image",
+      "title": "78 Degrees North. ",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "78_image"
+      }
+    },
+    "LobsterPyjamas": {
+      "kind": "image",
+      "title": "Self Portrait in Lobster Pyjamas",
+      "description": "Oil on canvas, 100x70cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "LobsterPyjamas_image"
+      }
+    },
+    "IndigoBlue": {
+      "kind": "image",
+      "title": "What Will I Do if I Run Out of Indigo Blue",
+      "description": "Oil on canvas, 100x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "IndigoBlue_image"
+      }
+    },
+    "1000years": {
+      "kind": "image",
+      "title": "Who Says We'll Live for 1000 years?",
+      "description": "Oil and collage on canvas, 100x70 cm, 2019",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "1000years_image"
+      }
+    },
+    "BlueRain": {
+      "kind": "image",
+      "title": "Blue Rain",
+      "description": "Blue Rain. Oil on canvas, 76x50 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "BlueRain_image"
+      }
+    },
+    "LastEvening": {
+      "kind": "image",
+      "title": "The Last Evening Before Silence. The Woman",
+      "description": "Oil on canvas, 76x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "LastEvening_image"
+      }
+    },
+    "Touch": {
+      "kind": "image",
+      "title": "Don’t Touch Me",
+      "description": "Oil on canvas, 76x50 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "Touch_image"
+      }
+    },
+    "TheMan": {
+      "kind": "image",
+      "title": "The Last Evening Before Silence. The Man",
+      "description": "Oil on canvas, 76x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "TheMan_image"
+      }
+    },
+    "Svalbard": {
+      "kind": "image",
+      "title": "Take Me to Svalbard Again",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "Svalbard_image"
+      }
+    },
+    "AncientFears": {
+      "kind": "image",
+      "title": "Ancient Fears",
+      "description": "Oil on canvas, 100x76 cm, 2009-2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "AncientFears_image"
+      }
+    },
+    "LastFlight": {
+      "kind": "image",
+      "title": "The Last Flight",
+      "description": "Acrylic on canvas, 70x100 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "LastFlight_image"
+      }
+    },
+    "City": {
+      "kind": "image",
+      "title": "Imagine a City that Never Happened",
+      "description": "Oil on canvas, 100x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "City_image"
+      }
+    },
+    "Cauchemar": {
+      "kind": "image",
+      "title": "Cauchemar",
+      "description": "Oil on canvas, 60x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "Cauchemar_image"
+      }
+    },
+    "Shadow": {
+      "kind": "image",
+      "title": "Shadow Crossing",
+      "description": "Oil on canvas, 60x60 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "Shadow_image"
+      }
+    },
+    "Waves": {
+      "kind": "image",
+      "title": "Dreaming Waves",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "Waves_image"
+      }
+    },
+    "Boat": {
+      "kind": "image",
+      "title": "I Was On that Boat, Once",
+      "description": "Acrylic on canvas, 50x76 cm, 2020",
+      "author": "Joanna Ciechanowska",
+      "image": {
+        "asset": "Boat_image"
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "78_open_image",
+      "targetNode": "78",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "78"
+      },
+      "ui": {
+        "title": "78 Degrees North. ",
+        "description": "Clicking 78 opens the artwork panel for \"78 Degrees North. \". The invisible mesh anchor named 78 is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking 78 opens the artwork panel for \"78 Degrees North. \". The invisible mesh anchor named 78 is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "LobsterPyjamas_open_image",
+      "targetNode": "LobsterPyjamas",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "LobsterPyjamas"
+      },
+      "ui": {
+        "title": "Self Portrait in Lobster Pyjamas",
+        "description": "Clicking LobsterPyjamas opens the artwork panel for \"Self Portrait in Lobster Pyjamas\". The invisible mesh anchor named LobsterPyjamas is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking LobsterPyjamas opens the artwork panel for \"Self Portrait in Lobster Pyjamas\". The invisible mesh anchor named LobsterPyjamas is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "IndigoBlue_open_image",
+      "targetNode": "IndigoBlue",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "IndigoBlue"
+      },
+      "ui": {
+        "title": "What Will I Do if I Run Out of Indigo Blue",
+        "description": "Clicking IndigoBlue opens the artwork panel for \"What Will I Do if I Run Out of Indigo Blue\". The invisible mesh anchor named IndigoBlue is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking IndigoBlue opens the artwork panel for \"What Will I Do if I Run Out of Indigo Blue\". The invisible mesh anchor named IndigoBlue is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "1000years_open_image",
+      "targetNode": "1000years",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "1000years"
+      },
+      "ui": {
+        "title": "Who Says We'll Live for 1000 years?",
+        "description": "Clicking 1000years opens the artwork panel for \"Who Says We'll Live for 1000 years?\". The invisible mesh anchor named 1000years is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking 1000years opens the artwork panel for \"Who Says We'll Live for 1000 years?\". The invisible mesh anchor named 1000years is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "BlueRain_open_image",
+      "targetNode": "BlueRain",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "BlueRain"
+      },
+      "ui": {
+        "title": "Blue Rain",
+        "description": "Clicking BlueRain opens the artwork panel for \"Blue Rain\". The invisible mesh anchor named BlueRain is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking BlueRain opens the artwork panel for \"Blue Rain\". The invisible mesh anchor named BlueRain is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "LastEvening_open_image",
+      "targetNode": "LastEvening",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "LastEvening"
+      },
+      "ui": {
+        "title": "The Last Evening Before Silence. The Woman",
+        "description": "Clicking LastEvening opens the artwork panel for \"The Last Evening Before Silence. The Woman\". The invisible mesh anchor named LastEvening is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking LastEvening opens the artwork panel for \"The Last Evening Before Silence. The Woman\". The invisible mesh anchor named LastEvening is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Touch_open_image",
+      "targetNode": "Touch",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Touch"
+      },
+      "ui": {
+        "title": "Don’t Touch Me",
+        "description": "Clicking Touch opens the artwork panel for \"Don’t Touch Me\". The invisible mesh anchor named Touch is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Touch opens the artwork panel for \"Don’t Touch Me\". The invisible mesh anchor named Touch is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "TheMan_open_image",
+      "targetNode": "TheMan",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "TheMan"
+      },
+      "ui": {
+        "title": "The Last Evening Before Silence. The Man",
+        "description": "Clicking TheMan opens the artwork panel for \"The Last Evening Before Silence. The Man\". The invisible mesh anchor named TheMan is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking TheMan opens the artwork panel for \"The Last Evening Before Silence. The Man\". The invisible mesh anchor named TheMan is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Svalbard_open_image",
+      "targetNode": "Svalbard",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Svalbard"
+      },
+      "ui": {
+        "title": "Take Me to Svalbard Again",
+        "description": "Clicking Svalbard opens the artwork panel for \"Take Me to Svalbard Again\". The invisible mesh anchor named Svalbard is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Svalbard opens the artwork panel for \"Take Me to Svalbard Again\". The invisible mesh anchor named Svalbard is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "AncientFears_open_image",
+      "targetNode": "AncientFears",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "AncientFears"
+      },
+      "ui": {
+        "title": "Ancient Fears",
+        "description": "Clicking AncientFears opens the artwork panel for \"Ancient Fears\". The invisible mesh anchor named AncientFears is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking AncientFears opens the artwork panel for \"Ancient Fears\". The invisible mesh anchor named AncientFears is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "LastFlight_open_image",
+      "targetNode": "LastFlight",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "LastFlight"
+      },
+      "ui": {
+        "title": "The Last Flight",
+        "description": "Clicking LastFlight opens the artwork panel for \"The Last Flight\". The invisible mesh anchor named LastFlight is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking LastFlight opens the artwork panel for \"The Last Flight\". The invisible mesh anchor named LastFlight is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "City_open_image",
+      "targetNode": "City",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "City"
+      },
+      "ui": {
+        "title": "Imagine a City that Never Happened",
+        "description": "Clicking City opens the artwork panel for \"Imagine a City that Never Happened\". The invisible mesh anchor named City is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking City opens the artwork panel for \"Imagine a City that Never Happened\". The invisible mesh anchor named City is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Cauchemar_open_image",
+      "targetNode": "Cauchemar",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Cauchemar"
+      },
+      "ui": {
+        "title": "Cauchemar",
+        "description": "Clicking Cauchemar opens the artwork panel for \"Cauchemar\". The invisible mesh anchor named Cauchemar is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Cauchemar opens the artwork panel for \"Cauchemar\". The invisible mesh anchor named Cauchemar is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Shadow_open_image",
+      "targetNode": "Shadow",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Shadow"
+      },
+      "ui": {
+        "title": "Shadow Crossing",
+        "description": "Clicking Shadow opens the artwork panel for \"Shadow Crossing\". The invisible mesh anchor named Shadow is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Shadow opens the artwork panel for \"Shadow Crossing\". The invisible mesh anchor named Shadow is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Waves_open_image",
+      "targetNode": "Waves",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Waves"
+      },
+      "ui": {
+        "title": "Dreaming Waves",
+        "description": "Clicking Waves opens the artwork panel for \"Dreaming Waves\". The invisible mesh anchor named Waves is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Waves opens the artwork panel for \"Dreaming Waves\". The invisible mesh anchor named Waves is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Boat_open_image",
+      "targetNode": "Boat",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Boat"
+      },
+      "ui": {
+        "title": "I Was On that Boat, Once",
+        "description": "Clicking Boat opens the artwork panel for \"I Was On that Boat, Once\". The invisible mesh anchor named Boat is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Boat opens the artwork panel for \"I Was On that Boat, Once\". The invisible mesh anchor named Boat is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    }
+  ],
+  "viewer": {
+    "params": {
+      "exposure": 1,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 1.5,
+      "gravity": -8,
+      "visitorSpeed": 2,
+      "heightOffset": {
+        "x": 0,
+        "y": 0.6,
+        "z": 0
+      },
+      "visitorEnter": {
+        "x": 3,
+        "y": 2,
+        "z": 1
+      },
+      "rotateOrbit": 30,
+      "backgroundBlurriness": 0.1,
+      "backgroundIntensity": 0.5,
+      "performanceMode": true,
+      "maxDpr": 1,
+      "antialias": false,
+      "shadows": false,
+      "logarithmicDepthBuffer": false
+    }
+  },
+  "sidebar": {
+    "logoText": "Joanna Ciechanowska's Exhibition",
     "items": [
       {
         "id": "info-icon",
@@ -20,132 +827,15 @@
       }
     ]
   },
-  "images": {
-    "78": {
-      "title": "78 Degrees North. ",
-      "description": "Acrylic on canvas, 50x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/78.jpg"
-    },
-    "LobsterPyjamas": {
-      "title": "Self Portrait in Lobster Pyjamas",
-      "description": "Oil on canvas, 100x70cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LobsterPyjamas.jpg"
-    },
-    "IndigoBlue": {
-      "title": "What Will I Do if I Run Out of Indigo Blue",
-      "description": "Oil on canvas, 100x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/IndigoBlue.jpg"
-    },
-    "1000years": {
-      "title": "Who Says We'll Live for 1000 years?",
-      "description": "Oil and collage on canvas, 100x70 cm, 2019",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/1000years.jpg"
-    },
-    "BlueRain": {
-      "title": "Blue Rain",
-      "description": "Blue Rain. Oil on canvas, 76x50 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/BlueRain.jpg"
-    },
-    "LastEvening": {
-      "title": "The Last Evening Before Silence. The Woman",
-      "description": "Oil on canvas, 76x60 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LastEvening.jpg"
-    },
-    "Touch": {
-      "title": "Don’t Touch Me",
-      "description": "Oil on canvas, 76x50 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Touch.jpg"
-    },
-    "TheMan": {
-      "title": "The Last Evening Before Silence. The Man",
-      "description": "Oil on canvas, 76x60 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/TheMan.jpg"
-    },
-    "Svalbard": {
-      "title": "Take Me to Svalbard Again",
-      "description": "Acrylic on canvas, 50x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Svalbard.jpg"
-    },
-    "AncientFears": {
-      "title": "Ancient Fears",
-      "description": "Oil on canvas, 100x76 cm, 2009-2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/AncientFears.jpg"
-    },
-    "LastFlight": {
-      "title": "The Last Flight",
-      "description": "Acrylic on canvas, 70x100 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/LastFlight.jpg"
-    },
-    "City": {
-      "title": "Imagine a City that Never Happened",
-      "description": "Oil on canvas, 100x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/City.jpg"
-    },
-    "Cauchemar": {
-      "title": "Cauchemar",
-      "description": "Oil on canvas, 60x60 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Cauchemar.jpg"
-    },
-    "Shadow": {
-      "title": "Shadow Crossing",
-      "description": "Oil on canvas, 60x60 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Shadow.jpg"
-    },
-    "Waves": {
-      "title": "Dreaming Waves",
-      "description": "Acrylic on canvas, 50x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Waves.jpg"
-    },
-    "Boat": {
-      "title": "I Was On that Boat, Once",
-      "description": "Acrylic on canvas, 50x76 cm, 2020",
-      "author": "Joanna Ciechanowska",
-      "imagePath": "ipfs://bafybeig4sxkw7mtavpdbwnrvrmcczt7qig2ixvpxrbad5b6cjhqfuxg5g4/Boat.jpg"
+  "metadataExtras": {
+    "migration": {
+      "from": "lockdowns split-model config",
+      "mergedModel": "/models/exhibition_lockdowns_merged.glb",
+      "sourceModels": [
+        "public/downloaded_models/exhibition_lockdowns_ktx.glb",
+        "public/downloaded_models/interactives_lockdowns.glb"
+      ],
+      "notes": "The merged GLB keeps only name/type extras from source node metadata; v2 config declares artwork media and interactions."
     }
-  },
-  "params": {
-    "exposure": 1.0,
-    "autoExposure": true,
-    "toneMapping": "neutral",
-    "exposureTarget": 0.68,
-    "exposureMin": 0.5,
-    "exposureMax": 1.65,
-    "exposureSampleInterval": 30,
-    "colorGrade": {
-      "brightness": 1.0,
-      "contrast": 0.9,
-      "saturate": 0.68
-    },
-    "lightIntensity": 1.5,
-    "gravity": -8,
-    "visitorSpeed": 2,
-    "heightOffset": {
-      "x": 0,
-      "y": 0.6,
-      "z": 0
-    },
-    "visitorEnter": {
-      "x": 3,
-      "y": 2,
-      "z": 1
-    },
-    "rotateOrbit": 30,
-    "backgroundBlurriness": 0.1,
-    "backgroundIntensity": 0.5
   }
 }

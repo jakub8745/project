@@ -58,11 +58,6 @@ export function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitC
       ? resolveOracleUrl(config.modelPath, bucket)
       : config.modelPath
     : config.modelPath;
-  const normalisedInteractivesPath = config.interactivesPath
-    ? bucket && isIpfsUri(config.interactivesPath)
-      ? resolveOracleUrl(config.interactivesPath, bucket)
-      : config.interactivesPath
-    : config.interactivesPath;
   const normalisedBackground = config.backgroundTexture
     ? bucket && isIpfsUri(config.backgroundTexture)
       ? resolveOracleUrl(config.backgroundTexture, bucket)
@@ -80,7 +75,6 @@ export function normalizeConfig(config: ExhibitConfig & UnknownRecord): ExhibitC
     videos,
     audio,
     modelPath: normalisedModelPath,
-    interactivesPath: normalisedInteractivesPath,
     backgroundTexture: normalisedBackground,
     environmentTexture: normalisedEnvironment
   };

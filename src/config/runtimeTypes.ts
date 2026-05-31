@@ -4,7 +4,6 @@ export interface ExhibitConfig extends UnknownRecord {
   id?: string;
   metadata?: UnknownRecord;
   modelPath?: string;
-  interactivesPath?: string;
   scale?: number;
   position?: [number, number, number];
   rotation?: [number, number, number];

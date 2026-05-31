@@ -1,12 +1,236 @@
 {
+  "schemaVersion": "2.0.0",
   "id": "proposedlayout",
-  "modelPath": "/models/wystawaTom_ktx.glb",
-  "interactivesPath": "/models/interactives_empty.glb",
-  "backgroundTexture": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
-  "sidebar": {
-    "logo": {
-      "text": "a proposed layout for the Tom Konyves exhibition"
+  "kind": "exhibit",
+  "metadata": {
+    "title": "A Proposed Layout for the Tom Konyves Exhibition",
+    "description": "A virtual exhibition layout proposal for Tom Konyves, including manifesto material, video projection surfaces, an information screen, and sculpture metadata.",
+    "language": "en"
+  },
+  "nft": {
+    "mintable": true,
+    "canonicalSceneAsset": "scene_model"
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/wystawaTom_ktx.glb",
+      "mimeType": "model/gltf-binary"
     },
+    "background_texture": {
+      "kind": "texture",
+      "uri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+      "mimeType": "image/ktx2"
+    },
+    "Manifesto_image": {
+      "kind": "image",
+      "uri": "/textures/manifesto_TomKonyves.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Video_source_1": {
+      "kind": "video",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
+      "mimeType": "video/mp4"
+    },
+    "Screen_source_1": {
+      "kind": "video",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
+      "mimeType": "video/mp4"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "backgroundAsset": "background_texture"
+    },
+    "spawn": {
+      "position": [
+        1,
+        2,
+        8
+      ]
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "autoExposure": true,
+      "exposure": 1,
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30
+    }
+  },
+  "nodes": {
+    "Manifesto": {
+      "kind": "image_anchor",
+      "media": "Manifesto",
+      "metadata": {
+        "title": "Manifesto, huge printed poster",
+        "description": "Videopoetry: A Manifesto, published on Sept. 6, 2011",
+        "author": "by Tom Konyves",
+        "interactionDescription": "Click Manifesto to open the image metadata panel."
+      }
+    },
+    "Video": {
+      "kind": "video_surface",
+      "media": "Video",
+      "metadata": {
+        "title": "video projection",
+        "description": "Selection of videopoems - video projection, approximately 90 minutes.",
+        "author": "",
+        "interactionDescription": "The Video mesh is a video surface. Playback mode, loop, mute, fullscreen, and source selection are declared by the video module instance."
+      }
+    },
+    "Screen": {
+      "kind": "video_surface",
+      "media": "Screen",
+      "metadata": {
+        "title": "Screen",
+        "description": "~15 inch screen with info about currently seen videopoem.",
+        "author": "",
+        "interactionDescription": "The Screen mesh is a video surface. Playback mode, loop, mute, fullscreen, and source selection are declared by the video module instance."
+      }
+    },
+    "Bench": {
+      "kind": "sculpture",
+      "metadata": {
+        "title": "Bench",
+        "description": "something to sit on",
+        "author": "",
+        "interactionDescription": "The Bench node is treated as sculpture metadata from config."
+      }
+    }
+  },
+  "media": {
+    "Manifesto": {
+      "kind": "image",
+      "title": "Manifesto, huge printed poster",
+      "description": "Videopoetry: A Manifesto, published on Sept. 6, 2011",
+      "author": "by Tom Konyves",
+      "image": {
+        "asset": "Manifesto_image"
+      }
+    },
+    "Video": {
+      "kind": "video",
+      "title": "video projection",
+      "description": "Selection of videopoems - video projection, approximately 90 minutes.",
+      "author": "",
+      "sources": [
+        {
+          "asset": "Video_source_1",
+          "label": "video/mp4"
+        }
+      ]
+    },
+    "Screen": {
+      "kind": "video",
+      "title": "Screen",
+      "description": "~15 inch screen with info about currently seen videopoem.",
+      "author": "",
+      "sources": [
+        {
+          "asset": "Screen_source_1",
+          "label": "video/mp4"
+        }
+      ]
+    }
+  },
+  "interactions": [
+    {
+      "id": "Manifesto_open_image",
+      "targetNode": "Manifesto",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Manifesto"
+      },
+      "ui": {
+        "title": "Manifesto, huge printed poster",
+        "description": "Clicking Manifesto opens the image entry \"Manifesto, huge printed poster\" with title, description, author, and source asset from the config."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Manifesto opens the image entry \"Manifesto, huge printed poster\" with title, description, author, and source asset from the config."
+      }
+    },
+    {
+      "id": "Video_video_surface",
+      "targetNode": "Video",
+      "trigger": "click",
+      "action": {
+        "type": "open_video_modal",
+        "media": "Video"
+      },
+      "ui": {
+        "title": "video projection",
+        "description": "Clicking Video uses the configured video behavior. The surface is backed by \"video projection\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Video uses the configured video behavior. The surface is backed by \"video projection\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      }
+    },
+    {
+      "id": "Screen_video_surface",
+      "targetNode": "Screen",
+      "trigger": "click",
+      "action": {
+        "type": "open_video_modal",
+        "media": "Screen"
+      },
+      "ui": {
+        "title": "Screen",
+        "description": "Clicking Screen uses the configured video behavior. The surface is backed by \"Screen\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Screen uses the configured video behavior. The surface is backed by \"Screen\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      }
+    },
+    {
+      "id": "Bench_inspect_sculpture",
+      "targetNode": "Bench",
+      "trigger": "hover",
+      "action": {
+        "type": "show_text",
+        "media": "Bench"
+      },
+      "ui": {
+        "title": "Bench",
+        "description": "Hovering Bench exposes the configured sculpture title, description, and author metadata."
+      },
+      "metadata": {
+        "interactionDescription": "Hovering Bench exposes the configured sculpture title, description, and author metadata."
+      }
+    }
+  ],
+  "modules": {
+    "video": {
+      "instances": [
+        {
+          "id": "Video_video",
+          "targetNode": "Video",
+          "media": "Video",
+          "playbackMode": "spatial_video",
+          "loop": true,
+          "muted": true
+        },
+        {
+          "id": "Screen_video",
+          "targetNode": "Screen",
+          "media": "Screen",
+          "playbackMode": "spatial_video",
+          "loop": true,
+          "muted": true
+        }
+      ]
+    }
+  },
+  "sidebar": {
+    "logoText": "a proposed layout for the Tom Konyves exhibition",
     "items": [
       {
         "id": "info-icon",
@@ -16,81 +240,34 @@
       }
     ]
   },
-  "images": {
-    "Manifesto": {
-      "title": "Manifesto, huge printed poster",
-      "description": "Videopoetry: A Manifesto, published on Sept. 6, 2011",
-      "author": "by Tom Konyves",
-      "imagePath": "/textures/manifesto_TomKonyves.jpg"
+  "viewer": {
+    "params": {
+      "exposure": 1,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 1.5,
+      "gravity": -8,
+      "visitorSpeed": 2,
+      "heightOffset": {
+        "x": 0,
+        "y": 1.5,
+        "z": 0
+      },
+      "visitorEnter": {
+        "x": 1,
+        "y": 2,
+        "z": 8
+      },
+      "rotateOrbit": 10
     }
-  },
-  "videos": [
-    {
-      "id": "Video",
-      "playbackMode": "spatial_video",
-      "loop": true,
-      "muted": true,
-      "playsinline": true,
-      "title": "video projection",
-      "description": "Selection of videopoems - video projection, approximately 90 minutes.",
-      "author": "",
-      "sources": [
-        {
-          "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
-          "type": "video/mp4"
-        }
-      ]
-    },
-    {
-      "id": "Screen",
-      "playbackMode": "spatial_video",
-      "loop": true,
-      "muted": true,
-      "playsinline": true,
-      "title": "Screen",
-      "description": "~15 inch screen with info about currently seen videopoem.",
-      "author": "",
-      "sources": [
-        {
-          "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
-          "type": "video/mp4"
-        }
-      ]
-    }
-  ],
-  "sculptures": {
-    "Bench": {
-      "title": "Bench",
-      "description": "something to sit on",
-      "author": ""
-    }
-  },
-  "params": {
-    "exposure": 1.0,
-    "autoExposure": true,
-    "toneMapping": "neutral",
-    "exposureTarget": 0.68,
-    "exposureMin": 0.5,
-    "exposureMax": 1.65,
-    "exposureSampleInterval": 30,
-    "colorGrade": {
-      "brightness": 1.0,
-      "contrast": 0.9,
-      "saturate": 0.68
-    },
-    "lightIntensity": 1.5,
-    "gravity": -8,
-    "visitorSpeed": 2,
-    "heightOffset": {
-      "x": 0,
-      "y": 1.5,
-      "z": 0
-    },
-    "visitorEnter": {
-      "x": 1,
-      "y": 2,
-      "z": 8
-    },
-    "rotateOrbit": 10
   }
 }

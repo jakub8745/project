@@ -206,7 +206,6 @@ export default function App() {
       const fallbackGallery = GALLERIES[0];
 
       const normalizedSlug = rawHash
-        .replace(/^legacy\/?/i, '')
         .replace(/^r3f\/?/i, '')
         .replace(/^\/+|\/+$/g, '');
 

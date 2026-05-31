@@ -30,7 +30,7 @@ export interface GalleryItem {
     }[];
 }
 
-export const DEFAULT_CONFIG_URL = "./configs/videopoem_lisbon_112025_config.json";
+export const DEFAULT_CONFIG_URL = "./configs/videopoem_lisbon_112025_config_v2.json";
 import { oracleStaticUrl } from '../utils/ipfs';
 
 // Common reusable sidebar item: Help / How to move
@@ -70,7 +70,7 @@ export const GALLERIES: GalleryItem[] = [
         description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
         scale: 0.12,
         position: [0, 0, 0],
-        configUrl: "./configs/videopoem_lisbon_112025_config.json",
+        configUrl: "./configs/videopoem_lisbon_112025_config_v2.json",
         keywords: [],
         ogImage: "",
         overlayText: "",
@@ -188,31 +188,5 @@ export const GALLERIES: GalleryItem[] = [
         ogImage: "",
         overlayText: "",
         videos: []
-    },
-
-
-
-
-
-
-
-
-    // …add as many as you like
-
+    }
 ];
-/*//
-    {
-        slug: "puno85",
-        url: "/sidebar_models/preview_puno85.glb",
-        title: '85 lat PUNO',
-        description: 'Wystawa z okazji 85-lecia PUNO',
-        scale: 0.07,
-        position: [0, 0, 0],
-        configUrl: "./configs/puno85_config.json",
-        "keywords": ["PUNO", "85-lecie", "Londyn", "3D art", "webgl"],
-        "ogImage": "https://bluepointart.uk/preview.png",
-        "overlayText":
-            "Wystawa z okazji<br/>85-lecia<br/>Polskiego Uniwersytetu na Obczyźnie",
-        "videos": [],
-    },
-*/

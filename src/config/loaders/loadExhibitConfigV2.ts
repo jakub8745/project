@@ -63,6 +63,7 @@ function categoryForNode(node: SceneNodeDefinition): string | undefined {
 
 function buildObjectRegistry(manifest: ExhibitConfigV2): Record<string, UnknownRecord> {
   const nodes = manifest.nodes || {};
+  const spawnNodeId = manifest.scene.spawn?.node;
   const sculptureControls = new Map<string, SculptureControlInstance>();
   for (const instance of manifest.modules?.sculptureControls?.instances || []) {
     sculptureControls.set(instance.targetNode, instance);
@@ -70,14 +71,17 @@ function buildObjectRegistry(manifest: ExhibitConfigV2): Record<string, UnknownR
 
   return Object.fromEntries(
     Object.entries(nodes).map(([nodeId, node]) => {
-      const category = categoryForNode(node);
+      const category = nodeId === spawnNodeId ? 'enter' : categoryForNode(node);
       const sculpt = sculptureControls.get(nodeId);
+      const spawnDirection = node.spawnDirection ?? (nodeId === spawnNodeId ? manifest.scene.spawn?.direction : undefined);
       return [
         nodeId,
         {
           ...(category ? { category } : {}),
           ...(node.ref ? { ref: node.ref } : {}),
-          ...(node.spawnDirection ? { spawnDirection: node.spawnDirection } : {}),
+          ...(typeof node.visible === 'boolean' ? { visible: node.visible } : {}),
+          ...(typeof node.interactive === 'boolean' ? { interactive: node.interactive } : {}),
+          ...(spawnDirection ? { spawnDirection } : {}),
           ...(typeof node.holdRotate === 'boolean' ? { holdRotate: node.holdRotate } : {}),
           ...(sculpt
             ? {
@@ -164,6 +168,7 @@ function mapImages(manifest: ExhibitConfigV2): Record<string, UnknownRecord> | u
 function mapVideoInstance(instance: VideoModuleInstance, manifest: ExhibitConfigV2): UnknownRecord | null {
   const media = mediaById(manifest, instance.media);
   if (!media || media.kind !== 'video') return null;
+  const extra = instance as unknown as UnknownRecord;
   return {
     id: instance.targetNode,
     playbackMode: instance.playbackMode,
@@ -175,6 +180,11 @@ function mapVideoInstance(instance: VideoModuleInstance, manifest: ExhibitConfig
     disableAudio: instance.disableAudio,
     loop: instance.loop,
     muted: instance.muted,
+    volume: typeof extra.volume === 'number' ? extra.volume : undefined,
+    preload: typeof extra.preload === 'string' ? extra.preload : undefined,
+    spatialAudio: typeof extra.spatialAudio === 'boolean' ? extra.spatialAudio : undefined,
+    deferLoadUntilPlay: typeof extra.deferLoadUntilPlay === 'boolean' ? extra.deferLoadUntilPlay : undefined,
+    controlsAnchorName: typeof extra.controlsAnchorName === 'string' ? extra.controlsAnchorName : undefined,
     showLoader: instance.showLoader,
     title: mediaTitle(media),
     description: mediaDescription(media),
@@ -205,14 +215,20 @@ async function loadSubtitleTracks(assetId: string | undefined, manifest: Exhibit
   const asset = assetId ? manifest.assets[assetId] : undefined;
   const url = resolveAssetRuntimeUri(assetId, manifest);
   if (!asset || !url) return undefined;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load subtitle asset ${assetId}: ${response.status}`);
-  }
-  const text = await response.text();
-  if (!text.trim()) return undefined;
-  if (asset.mimeType?.includes('json') || url.toLowerCase().endsWith('.json')) {
-    return parseSubtitleTracks(JSON.parse(text));
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to load subtitle asset ${assetId}: ${response.status}`);
+    }
+    const text = await response.text();
+    if (!text.trim()) return undefined;
+    if (asset.mimeType?.includes('json') || url.toLowerCase().endsWith('.json')) {
+      return parseSubtitleTracks(JSON.parse(text));
+    }
+  } catch (error) {
+    if (typeof window !== 'undefined') {
+      console.warn(`Skipping subtitle asset ${assetId}:`, error);
+    }
   }
   return undefined;
 }
@@ -285,10 +301,10 @@ function mapSidebar(manifest: ExhibitConfigV2): UnknownRecord | undefined {
 
 function mapSceneTransforms(manifest: ExhibitConfigV2): Pick<ExhibitConfig, 'position' | 'rotation' | 'scale'> {
   const model = manifest.scene.model;
-  const scale = typeof model.scale === 'number' ? model.scale : undefined;
+  const scale = typeof model?.scale === 'number' ? model.scale : undefined;
   return {
-    position: model.position,
-    rotation: model.rotation,
+    position: model?.position,
+    rotation: model?.rotation,
     scale
   };
 }
@@ -297,6 +313,15 @@ function mapViewerExtensions(manifest: ExhibitConfigV2): UnknownRecord {
   const viewer = manifest.viewer && typeof manifest.viewer === 'object' ? manifest.viewer : {};
   return {
     ...(viewer as UnknownRecord)
+  };
+}
+
+function mapSceneSpawnParams(manifest: ExhibitConfigV2): UnknownRecord {
+  const spawn = manifest.scene.spawn;
+  if (!spawn) return {};
+  return {
+    ...(Array.isArray(spawn.position) ? { visitorEnter: spawn.position } : {}),
+    ...(spawn.direction ? { spawnDirection: spawn.direction } : {})
   };
 }
 
@@ -315,7 +340,7 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
   const runtime: ExhibitConfig = {
     id: manifest.id,
     metadata: mapMetadata(manifest),
-    modelPath: resolveAssetRuntimeUri(manifest.scene.model.asset, manifest),
+    modelPath: manifest.scene.model?.asset ? resolveAssetRuntimeUri(manifest.scene.model.asset, manifest) : undefined,
     backgroundTexture: manifest.scene.background?.backgroundAsset
       ? resolveAssetRuntimeUri(manifest.scene.background.backgroundAsset, manifest)
       : undefined,
@@ -329,13 +354,17 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
     videos,
     audio,
     sculptures: mapSculptures(manifest),
+    thumbnailCapture: manifest.thumbnailCapture,
     ...mapSceneTransforms(manifest),
     ...mapViewerExtensions(manifest)
   };
 
-  if (manifest.scene.renderer) {
+  const spawnParams = mapSceneSpawnParams(manifest);
+  const existingParams = runtime.params && typeof runtime.params === 'object' ? runtime.params : {};
+  if (Object.keys(spawnParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.scene.renderer) {
     runtime.params = {
-      ...(runtime.params && typeof runtime.params === 'object' ? runtime.params : {}),
+      ...spawnParams,
+      ...existingParams,
       ...manifest.scene.renderer
     };
   }

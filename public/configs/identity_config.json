@@ -1,12 +1,673 @@
 {
+  "schemaVersion": "2.0.0",
   "id": "identity",
-  "modelPath": "/models/exhibition_identity_ktx.glb",
-  "interactivesPath": "/models/interactives_identity_testowe.glb",
-  "backgroundTexture": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
-  "sidebar": {
-    "logo": {
-      "text": "Exhibition Images of Identity"
+  "kind": "exhibit",
+  "metadata": {
+    "title": "Images of Identity",
+    "description": "The project aims to combine activities in the field of visual arts with interdisciplinary considerations in the spectrum of various fields of humanities and social sciences. The theoretical approach of the scientists and artists meeting has become the question of “identity”. The most important issues which are still “in the process”, concerning all areas of human life: its artistic, cultural, social, religious or scientific activities. Curators: Krzysztof Gil, Justyna Gorzkowicz Artists: ➤ NATALIA KOPYTKO - An image of an identity built from memories - Unreal Places ➤ MAŁGORZATA WIELEK-MANDRELA - Image of Identity Through a Creative Act ➤ KRZYSZTOF GIL - Dual Identity Image ➤ KRZYSZTOF MARCHLAK - A non-heteronormative identity image ➤ ŁUKASZ MURZYN - Image of a Local-Personal Identity - Heritage",
+    "language": "en",
+    "authors": [
+      {
+        "name": "Krzysztof Gil",
+        "role": "curator"
+      },
+      {
+        "name": "Justyna Gorzkowicz",
+        "role": "curator"
+      }
+    ]
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/exhibition_identity_merged.glb",
+      "mimeType": "model/gltf-binary"
     },
+    "background_texture": {
+      "kind": "texture",
+      "uri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+      "mimeType": "image/ktx2"
+    },
+    "WielekEibejzyt_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekEibejzyt.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "WielekPalec_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekPalec.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "WilekSchizofrenia_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WilekSchizofrenia.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "DreamerStarman_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerStarman.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "DreamerPiotr_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerPiotr.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "DreamerSpaceman_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerSpaceman.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "DreamerAura_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerAura.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "DreamerFlowerman_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerFlowerman.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Hidden_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/Hidden.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "Unreal_video": {
+      "kind": "video",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
+      "mimeType": "video/mp4"
+    },
+    "Heritage_video": {
+      "kind": "video",
+      "uri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
+      "mimeType": "video/mp4"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "backgroundAsset": "background_texture"
+    },
+    "spawn": {
+      "position": [
+        0,
+        2,
+        0
+      ]
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "autoExposure": true,
+      "exposure": 1,
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "antialias": false,
+      "shadows": false,
+      "maxDpr": 1
+    }
+  },
+  "nodes": {
+    "floor_identity.006": {
+      "kind": "floor",
+      "ref": "floor_identity.006"
+    },
+    "Walls.003": {
+      "kind": "wall",
+      "ref": "Walls.003"
+    },
+    "images.002": {
+      "kind": "wall",
+      "ref": "images.002",
+      "metadata": {
+        "title": "Baked artwork wall",
+        "interactionDescription": "The visible artwork wall remains part of the scene model. Clickable artwork behavior is declared separately on the invisible image anchors from the merged GLB."
+      }
+    },
+    "szafa.004": {
+      "kind": "sculpture",
+      "ref": "szafa.004",
+      "metadata": {
+        "title": "szafa",
+        "description": "Sculpture object in the Images of Identity room.",
+        "interactionDescription": "The szafa.004 mesh is treated as sculpture metadata from config."
+      }
+    },
+    "WielekEibejzyt": {
+      "kind": "image_anchor",
+      "ref": "WielekEibejzyt",
+      "media": "WielekEibejzyt",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Eibejzyt, 190x150, 2019",
+        "description": "Image of Identity Through a Creative Act",
+        "author": "MAŁGORZATA WIELEK-MANDRELA",
+        "interactionDescription": "Click WielekEibejzyt to open the artwork panel for \"Eibejzyt, 190x150, 2019\" with its catalog metadata and full image."
+      }
+    },
+    "WielekPalec": {
+      "kind": "image_anchor",
+      "ref": "WielekPalec",
+      "media": "WielekPalec",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Palec wskazujący lewej ręki, 2019",
+        "description": "Image of Identity Through a Creative Act",
+        "author": "MAŁGORZATA WIELEK-MANDRELA",
+        "interactionDescription": "Click WielekPalec to open the artwork panel for \"Palec wskazujący lewej ręki, 2019\" with its catalog metadata and full image."
+      }
+    },
+    "WilekSchizofrenia": {
+      "kind": "image_anchor",
+      "ref": "WilekSchizofrenia",
+      "media": "WilekSchizofrenia",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Jedna schizofrenia, 50x40, 2020",
+        "description": "Image of Identity Through a Creative Act",
+        "author": "MAŁGORZATA WIELEK-MANDRELA",
+        "interactionDescription": "Click WilekSchizofrenia to open the artwork panel for \"Jedna schizofrenia, 50x40, 2020\" with its catalog metadata and full image."
+      }
+    },
+    "DreamerStarman": {
+      "kind": "image_anchor",
+      "ref": "DreamerStarman",
+      "media": "DreamerStarman",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Starman",
+        "description": "A non-heteronormative identity image",
+        "author": "KRZYSZTOF MARCHLAK",
+        "interactionDescription": "Click DreamerStarman to open the artwork panel for \"Starman\" with its catalog metadata and full image."
+      }
+    },
+    "DreamerPiotr": {
+      "kind": "image_anchor",
+      "ref": "DreamerPiotr",
+      "media": "DreamerPiotr",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Dreamer Piotr",
+        "description": "A non-heteronormative identity image",
+        "author": "KRZYSZTOF MARCHLAK",
+        "interactionDescription": "Click DreamerPiotr to open the artwork panel for \"Dreamer Piotr\" with its catalog metadata and full image."
+      }
+    },
+    "DreamerSpaceman": {
+      "kind": "image_anchor",
+      "ref": "DreamerSpaceman",
+      "media": "DreamerSpaceman",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Dreamer Spaceman",
+        "description": "A non-heteronormative identity image",
+        "author": "KRZYSZTOF MARCHLAK",
+        "interactionDescription": "Click DreamerSpaceman to open the artwork panel for \"Dreamer Spaceman\" with its catalog metadata and full image."
+      }
+    },
+    "DreamerAura": {
+      "kind": "image_anchor",
+      "ref": "DreamerAura",
+      "media": "DreamerAura",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Dreamer Aura",
+        "description": "A non-heteronormative identity image",
+        "author": "KRZYSZTOF MARCHLAK",
+        "interactionDescription": "Click DreamerAura to open the artwork panel for \"Dreamer Aura\" with its catalog metadata and full image."
+      }
+    },
+    "DreamerFlowerman": {
+      "kind": "image_anchor",
+      "ref": "DreamerFlowerman",
+      "media": "DreamerFlowerman",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Dreamer Flowerman",
+        "description": "A non-heteronormative identity image",
+        "author": "KRZYSZTOF MARCHLAK",
+        "interactionDescription": "Click DreamerFlowerman to open the artwork panel for \"Dreamer Flowerman\" with its catalog metadata and full image."
+      }
+    },
+    "Hidden": {
+      "kind": "image_anchor",
+      "ref": "Hidden",
+      "media": "Hidden",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "Hidden",
+        "description": "Dual Identity Image",
+        "author": "KRZYSZTOF GIL",
+        "interactionDescription": "Click Hidden to open the artwork panel for \"Hidden\" with its catalog metadata and full image."
+      }
+    },
+    "Unreal": {
+      "kind": "video_surface",
+      "ref": "Unreal",
+      "media": "Unreal",
+      "metadata": {
+        "title": "Unreal Places",
+        "description": "An image of an identity built from memories.",
+        "author": "Natalia Kopytko",
+        "interactionDescription": "The Unreal mesh is a synced silent projection surface. It is matched from the merged GLB by name/elementID, receives the configured video texture at runtime, autoplays with the Identity sync group, loops muted, and is intentionally not clickable."
+      }
+    },
+    "Heritage": {
+      "kind": "video_surface",
+      "ref": "Heritage",
+      "media": "Heritage",
+      "metadata": {
+        "title": "Heritage",
+        "description": "Image of a Local-Personal Identity.",
+        "author": "Łukasz Murzyn",
+        "interactionDescription": "The Heritage mesh is a synced silent projection surface. It is matched from the merged GLB by name/elementID, receives the configured video texture at runtime, autoplays with the Identity sync group, loops muted, and is intentionally not clickable."
+      }
+    }
+  },
+  "media": {
+    "WielekEibejzyt": {
+      "kind": "image",
+      "title": "Eibejzyt, 190x150, 2019",
+      "description": "Image of Identity Through a Creative Act",
+      "author": "MAŁGORZATA WIELEK-MANDRELA",
+      "image": {
+        "asset": "WielekEibejzyt_image"
+      }
+    },
+    "WielekPalec": {
+      "kind": "image",
+      "title": "Palec wskazujący lewej ręki, 2019",
+      "description": "Image of Identity Through a Creative Act",
+      "author": "MAŁGORZATA WIELEK-MANDRELA",
+      "image": {
+        "asset": "WielekPalec_image"
+      }
+    },
+    "WilekSchizofrenia": {
+      "kind": "image",
+      "title": "Jedna schizofrenia, 50x40, 2020",
+      "description": "Image of Identity Through a Creative Act",
+      "author": "MAŁGORZATA WIELEK-MANDRELA",
+      "image": {
+        "asset": "WilekSchizofrenia_image"
+      }
+    },
+    "DreamerStarman": {
+      "kind": "image",
+      "title": "Starman",
+      "description": "A non-heteronormative identity image",
+      "author": "KRZYSZTOF MARCHLAK",
+      "image": {
+        "asset": "DreamerStarman_image"
+      }
+    },
+    "DreamerPiotr": {
+      "kind": "image",
+      "title": "Dreamer Piotr",
+      "description": "A non-heteronormative identity image",
+      "author": "KRZYSZTOF MARCHLAK",
+      "image": {
+        "asset": "DreamerPiotr_image"
+      }
+    },
+    "DreamerSpaceman": {
+      "kind": "image",
+      "title": "Dreamer Spaceman",
+      "description": "A non-heteronormative identity image",
+      "author": "KRZYSZTOF MARCHLAK",
+      "image": {
+        "asset": "DreamerSpaceman_image"
+      }
+    },
+    "DreamerAura": {
+      "kind": "image",
+      "title": "Dreamer Aura",
+      "description": "A non-heteronormative identity image",
+      "author": "KRZYSZTOF MARCHLAK",
+      "image": {
+        "asset": "DreamerAura_image"
+      }
+    },
+    "DreamerFlowerman": {
+      "kind": "image",
+      "title": "Dreamer Flowerman",
+      "description": "A non-heteronormative identity image",
+      "author": "KRZYSZTOF MARCHLAK",
+      "image": {
+        "asset": "DreamerFlowerman_image"
+      }
+    },
+    "Hidden": {
+      "kind": "image",
+      "title": "Hidden",
+      "description": "Dual Identity Image",
+      "author": "KRZYSZTOF GIL",
+      "image": {
+        "asset": "Hidden_image"
+      }
+    },
+    "Unreal": {
+      "kind": "video",
+      "title": "Unreal Places",
+      "description": "An image of an identity built from memories.",
+      "author": "Natalia Kopytko",
+      "sources": [
+        {
+          "asset": "Unreal_video",
+          "label": "video/mp4"
+        }
+      ]
+    },
+    "Heritage": {
+      "kind": "video",
+      "title": "Heritage",
+      "description": "Image of a Local-Personal Identity.",
+      "author": "Łukasz Murzyn",
+      "sources": [
+        {
+          "asset": "Heritage_video",
+          "label": "video/mp4"
+        }
+      ]
+    }
+  },
+  "interactions": [
+    {
+      "id": "WielekEibejzyt_open_image",
+      "targetNode": "WielekEibejzyt",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "WielekEibejzyt"
+      },
+      "ui": {
+        "title": "Eibejzyt, 190x150, 2019",
+        "description": "Clicking WielekEibejzyt opens the artwork panel for \"Eibejzyt, 190x150, 2019\". The transparent image anchor named WielekEibejzyt is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking WielekEibejzyt opens the artwork panel for \"Eibejzyt, 190x150, 2019\". The transparent image anchor named WielekEibejzyt is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "WielekPalec_open_image",
+      "targetNode": "WielekPalec",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "WielekPalec"
+      },
+      "ui": {
+        "title": "Palec wskazujący lewej ręki, 2019",
+        "description": "Clicking WielekPalec opens the artwork panel for \"Palec wskazujący lewej ręki, 2019\". The transparent image anchor named WielekPalec is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking WielekPalec opens the artwork panel for \"Palec wskazujący lewej ręki, 2019\". The transparent image anchor named WielekPalec is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "WilekSchizofrenia_open_image",
+      "targetNode": "WilekSchizofrenia",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "WilekSchizofrenia"
+      },
+      "ui": {
+        "title": "Jedna schizofrenia, 50x40, 2020",
+        "description": "Clicking WilekSchizofrenia opens the artwork panel for \"Jedna schizofrenia, 50x40, 2020\". The transparent image anchor named WilekSchizofrenia is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking WilekSchizofrenia opens the artwork panel for \"Jedna schizofrenia, 50x40, 2020\". The transparent image anchor named WilekSchizofrenia is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "DreamerStarman_open_image",
+      "targetNode": "DreamerStarman",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "DreamerStarman"
+      },
+      "ui": {
+        "title": "Starman",
+        "description": "Clicking DreamerStarman opens the artwork panel for \"Starman\". The transparent image anchor named DreamerStarman is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking DreamerStarman opens the artwork panel for \"Starman\". The transparent image anchor named DreamerStarman is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "DreamerPiotr_open_image",
+      "targetNode": "DreamerPiotr",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "DreamerPiotr"
+      },
+      "ui": {
+        "title": "Dreamer Piotr",
+        "description": "Clicking DreamerPiotr opens the artwork panel for \"Dreamer Piotr\". The transparent image anchor named DreamerPiotr is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking DreamerPiotr opens the artwork panel for \"Dreamer Piotr\". The transparent image anchor named DreamerPiotr is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "DreamerSpaceman_open_image",
+      "targetNode": "DreamerSpaceman",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "DreamerSpaceman"
+      },
+      "ui": {
+        "title": "Dreamer Spaceman",
+        "description": "Clicking DreamerSpaceman opens the artwork panel for \"Dreamer Spaceman\". The transparent image anchor named DreamerSpaceman is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking DreamerSpaceman opens the artwork panel for \"Dreamer Spaceman\". The transparent image anchor named DreamerSpaceman is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "DreamerAura_open_image",
+      "targetNode": "DreamerAura",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "DreamerAura"
+      },
+      "ui": {
+        "title": "Dreamer Aura",
+        "description": "Clicking DreamerAura opens the artwork panel for \"Dreamer Aura\". The transparent image anchor named DreamerAura is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking DreamerAura opens the artwork panel for \"Dreamer Aura\". The transparent image anchor named DreamerAura is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "DreamerFlowerman_open_image",
+      "targetNode": "DreamerFlowerman",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "DreamerFlowerman"
+      },
+      "ui": {
+        "title": "Dreamer Flowerman",
+        "description": "Clicking DreamerFlowerman opens the artwork panel for \"Dreamer Flowerman\". The transparent image anchor named DreamerFlowerman is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking DreamerFlowerman opens the artwork panel for \"Dreamer Flowerman\". The transparent image anchor named DreamerFlowerman is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Hidden_open_image",
+      "targetNode": "Hidden",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Hidden"
+      },
+      "ui": {
+        "title": "Hidden",
+        "description": "Clicking Hidden opens the artwork panel for \"Hidden\". The transparent image anchor named Hidden is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Hidden opens the artwork panel for \"Hidden\". The transparent image anchor named Hidden is matched from the merged GLB, and the panel shows the configured title, author, catalog description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "Unreal_synced_video_surface",
+      "targetNode": "Unreal",
+      "trigger": "custom",
+      "action": {
+        "type": "emit_event",
+        "event": "synced_silent_video_surface",
+        "payload": {
+          "media": "Unreal",
+          "syncGroup": "identity_main"
+        }
+      },
+      "ui": {
+        "title": "Unreal Places",
+        "description": "The Unreal surface plays \"Unreal Places\" as a synced silent projection. Runtime behavior is declared in modules.video: playbackMode=synced_silent, autoplayOnEnter=true, loop=true, muted=true, interactive=false."
+      },
+      "metadata": {
+        "interactionDescription": "The Unreal surface plays \"Unreal Places\" as a synced silent projection. Runtime behavior is declared in modules.video: playbackMode=synced_silent, autoplayOnEnter=true, loop=true, muted=true, interactive=false."
+      }
+    },
+    {
+      "id": "Heritage_synced_video_surface",
+      "targetNode": "Heritage",
+      "trigger": "custom",
+      "action": {
+        "type": "emit_event",
+        "event": "synced_silent_video_surface",
+        "payload": {
+          "media": "Heritage",
+          "syncGroup": "identity_main"
+        }
+      },
+      "ui": {
+        "title": "Heritage",
+        "description": "The Heritage surface plays \"Heritage\" as a synced silent projection. Runtime behavior is declared in modules.video: playbackMode=synced_silent, autoplayOnEnter=true, loop=true, muted=true, interactive=false."
+      },
+      "metadata": {
+        "interactionDescription": "The Heritage surface plays \"Heritage\" as a synced silent projection. Runtime behavior is declared in modules.video: playbackMode=synced_silent, autoplayOnEnter=true, loop=true, muted=true, interactive=false."
+      }
+    }
+  ],
+  "modules": {
+    "video": {
+      "instances": [
+        {
+          "id": "Unreal_runtime",
+          "targetNode": "Unreal",
+          "media": "Unreal",
+          "playbackMode": "synced_silent",
+          "autoplayOnEnter": true,
+          "syncGroup": "identity_main",
+          "controls": false,
+          "interactive": false,
+          "allowFullscreen": false,
+          "disableAudio": true,
+          "loop": true,
+          "muted": true,
+          "showLoader": false,
+          "surface": {
+            "projection": true,
+            "roughness": 0.9,
+            "metalness": 0.02,
+            "envMapIntensity": 0.2,
+            "emissiveIntensity": 0.53,
+            "emissiveColor": "#fff6ea"
+          }
+        },
+        {
+          "id": "Heritage_runtime",
+          "targetNode": "Heritage",
+          "media": "Heritage",
+          "playbackMode": "synced_silent",
+          "autoplayOnEnter": true,
+          "syncGroup": "identity_main",
+          "controls": false,
+          "interactive": false,
+          "allowFullscreen": false,
+          "disableAudio": true,
+          "loop": true,
+          "muted": true,
+          "showLoader": false,
+          "surface": {
+            "projection": true,
+            "roughness": 0.9,
+            "metalness": 0.02,
+            "envMapIntensity": 0.2,
+            "emissiveIntensity": 0.53,
+            "emissiveColor": "#fff6ea"
+          }
+        }
+      ],
+      "syncGroups": [
+        {
+          "id": "identity_main",
+          "startPolicy": "all_ready"
+        }
+      ]
+    }
+  },
+  "viewer": {
+    "params": {
+      "exposure": 1,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 1.5,
+      "gravity": -8,
+      "visitorSpeed": 2,
+      "heightOffset": {
+        "x": 0,
+        "y": 0.6,
+        "z": 0
+      },
+      "visitorEnter": {
+        "x": 0,
+        "y": 2,
+        "z": 0
+      },
+      "rotateOrbit": -150,
+      "performanceMode": true,
+      "maxDpr": 1,
+      "antialias": false,
+      "shadows": false,
+      "logarithmicDepthBuffer": false
+    }
+  },
+  "sidebar": {
+    "logoText": "Exhibition Images of Identity",
     "items": [
       {
         "id": "info-icon",
@@ -20,157 +681,15 @@
       }
     ]
   },
-  "images": {
-    "WielekEibejzyt": {
-      "title": "Eibejzyt, 190x150, 2019",
-      "description": "Image of Identity Through a Creative Act",
-      "author": "MAŁGORZATA WIELEK-MANDRELA",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekEibejzyt.jpg"
-    },
-    "WielekPalec": {
-      "title": "Palec wskazujący lewej ręki, 2019",
-      "description": "Image of Identity Through a Creative Act",
-      "author": "MAŁGORZATA WIELEK-MANDRELA",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekPalec.jpg"
-    },
-    "WilekSchizofrenia": {
-      "title": "Jedna schizofrenia, 50x40, 2020",
-      "description": "Image of Identity Through a Creative Act",
-      "author": "MAŁGORZATA WIELEK-MANDRELA",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WilekSchizofrenia.jpg"
-    },
-    "DreamerStarman": {
-      "title": "Starman",
-      "description": "A non-heteronormative identity image",
-      "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerStarman.jpg"
-    },
-    "DreamerPiotr": {
-      "title": "Dreamer Piotr",
-      "description": "A non-heteronormative identity image",
-      "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerPiotr.jpg"
-    },
-    "DreamerSpaceman": {
-      "title": "Dreamer Spaceman",
-      "description": "A non-heteronormative identity image",
-      "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerSpaceman.jpg"
-    },
-    "DreamerAura": {
-      "title": "Dreamer Aura",
-      "description": "A non-heteronormative identity image",
-      "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerAura.jpg"
-    },
-    "DreamerFlowerman": {
-      "title": "Dreamer Flowerman",
-      "description": "A non-heteronormative identity image",
-      "author": "KRZYSZTOF MARCHLAK",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerFlowerman.jpg"
-    },
-    "Hidden": {
-      "title": "Hidden",
-      "description": "Dual Identity Image",
-      "author": "KRZYSZTOF GIL",
-      "imagePath": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/Hidden.jpg"
+  "metadataExtras": {
+    "migration": {
+      "from": "identity split-model config",
+      "mergedModel": "/models/exhibition_identity_merged.glb",
+      "sourceModels": [
+        "public/models/exhibition_identity_ktx.glb",
+        "public/models/interactives_identity_testowe.glb"
+      ],
+      "notes": "The merged GLB keeps only runtime name/type/elementID extras from source node metadata; v2 config declares image media, video surfaces, sync group, and interactions."
     }
-  },
-  "videos": [
-    {
-      "id": "Unreal",
-      "playbackMode": "synced_silent",
-      "videoSurface": {
-        "roughness": 0.9,
-        "metalness": 0.02,
-        "envMapIntensity": 0.2,
-        "projection": true,
-        "emissiveIntensity": 0.53,
-        "emissiveColor": "#fff6ea"
-      },
-      "autoplayOnEnter": true,
-      "syncStartGroup": "identity_main",
-      "controls": false,
-      "allowFullscreen": false,
-      "interactive": false,
-      "disableAudio": true,
-      "loop": true,
-      "muted": true,
-      "playsinline": true,
-      "title": "Unreal Places",
-      "description": "An image of an identity built from memories.",
-      "author": "Natalia Kopytko",
-      "sources": [
-        {
-          "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
-          "type": "video/mp4"
-        }
-      ]
-    },
-    {
-      "id": "Heritage",
-      "playbackMode": "synced_silent",
-      "videoSurface": {
-        "roughness": 0.9,
-        "metalness": 0.02,
-        "envMapIntensity": 0.2,
-        "projection": true,
-        "emissiveIntensity": 0.53,
-        "emissiveColor": "#fff6ea"
-      },
-      "autoplayOnEnter": true,
-      "syncStartGroup": "identity_main",
-      "controls": false,
-      "allowFullscreen": false,
-      "interactive": false,
-      "disableAudio": true,
-      "loop": true,
-      "muted": true,
-      "playsinline": true,
-      "title": "Heritage",
-      "description": "Image of a Local-Personal Identity.",
-      "author": "Łukasz Murzyn",
-      "sources": [
-        {
-          "src": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
-          "type": "video/mp4"
-        }
-      ]
-    }
-  ],
-  "sculptures": {
-    "szafa": {
-      "title": "Unreal Places",
-      "description": "An image of an identity built from memories.",
-      "author": "Natalia Kopytko"
-    }
-  },
-  "params": {
-    "exposure": 1.0,
-    "autoExposure": true,
-    "toneMapping": "neutral",
-    "exposureTarget": 0.68,
-    "exposureMin": 0.5,
-    "exposureMax": 1.65,
-    "exposureSampleInterval": 30,
-    "colorGrade": {
-      "brightness": 1.0,
-      "contrast": 0.9,
-      "saturate": 0.68
-    },
-    "lightIntensity": 1.5,
-    "gravity": -8,
-    "visitorSpeed": 2,
-    "heightOffset": {
-      "x": 0,
-      "y": 0.6,
-      "z": 0
-    },
-    "visitorEnter": {
-      "x": 0,
-      "y": 2,
-      "z": 0
-    },
-    "rotateOrbit": -150
   }
 }

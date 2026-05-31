@@ -133,7 +133,7 @@ export interface LightRigReference {
 }
 
 export interface SceneManifest {
-  model: SceneModelPointer;
+  model?: SceneModelPointer;
   background?: SceneBackgroundConfig;
   spawn?: SceneSpawnConfig;
   camera?: SceneCameraConfig;

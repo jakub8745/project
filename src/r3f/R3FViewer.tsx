@@ -67,7 +67,13 @@ import {
   type VideoMeshConfig
 } from '../modules/applyVideoMeshes.js';
 import { resolveVideoPlaybackMode, type VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
-import { applyObjectRuntimeData, normalizeObjectRegistry, type ObjectRegistry } from '../modules/objectRegistry.js';
+import {
+  applyObjectRuntimeData,
+  normalizeObjectRegistry,
+  resolveObjectRuntimeData,
+  type ObjectRegistry,
+  type ObjectRuntimeData
+} from '../modules/objectRegistry.js';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
 import { MaterialModalProvider } from './Modal';
 import {
@@ -834,14 +840,89 @@ function cloneTransparentMaterial(material: Material): Material {
   cloned.transparent = true;
   cloned.opacity = 0;
   cloned.depthWrite = false;
+  cloned.side = DoubleSide;
   if ('colorWrite' in cloned) {
     cloned.colorWrite = false;
   }
   return cloned;
 }
 
+function createTransparentMaterial(): Material {
+  return cloneTransparentMaterial(new MeshBasicMaterial());
+}
+
+const TRANSPARENT_INTERACTIVE_TYPES = new Set(['Audio', 'Enter', 'Image', 'Link', 'VideoControl']);
+
+function isCollisionOnlyRuntimeObject(runtimeData: ObjectRuntimeData | null | undefined): boolean {
+  const entry = runtimeData?.entry;
+  return entry?.collisionOnly === true || entry?.collision === 'only';
+}
+
+function isTransparentInteractionProxy(runtimeData: ObjectRuntimeData | null | undefined): boolean {
+  const entry = runtimeData?.entry;
+  return entry?.visible === false;
+}
+
+function applyTransparentInteractionProxy(mesh: Mesh) {
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+  mesh.userData.interactive = true;
+  if (Array.isArray(mesh.material)) {
+    mesh.material = mesh.material.length > 0 ? mesh.material.map((mat) => cloneTransparentMaterial(mat)) : [createTransparentMaterial()];
+  } else if (mesh.material) {
+    mesh.material = cloneTransparentMaterial(mesh.material);
+  } else {
+    mesh.material = createTransparentMaterial();
+  }
+}
+
+function applyCollisionOnlyProxy(mesh: Mesh) {
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+  mesh.userData.collisionOnly = true;
+  mesh.userData.interactive = false;
+  if (Array.isArray(mesh.material)) {
+    mesh.material = mesh.material.length > 0 ? mesh.material.map((mat) => cloneTransparentMaterial(mat)) : [createTransparentMaterial()];
+  } else if (mesh.material) {
+    mesh.material = cloneTransparentMaterial(mesh.material);
+  } else {
+    mesh.material = createTransparentMaterial();
+  }
+}
+
 function enableMaterialDithering(material: Material) {
   material.dithering = true;
+}
+
+const COLLIDER_EXCLUDED_TYPES = new Set(['Audio', 'Enter', 'Image', 'Link', 'Video', 'VideoControl']);
+
+function materialIsCollisionHidden(material: Material | Material[] | undefined): boolean {
+  if (!material) return false;
+  const materials = Array.isArray(material) ? material : [material];
+  return materials.length > 0 && materials.every((mat) => {
+    const opacity = typeof mat.opacity === 'number' ? mat.opacity : 1;
+    const colorWrite = 'colorWrite' in mat ? mat.colorWrite : true;
+    return opacity <= 0.001 || colorWrite === false;
+  });
+}
+
+function pruneColliderSource(root: Object3D, objectRegistry?: ObjectRegistry) {
+  const excluded: Object3D[] = [];
+  root.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    const runtimeData = resolveObjectRuntimeData(object, objectRegistry);
+    const type = runtimeData?.type || (typeof object.userData?.type === 'string' ? object.userData.type : undefined);
+    const collisionOnly = isCollisionOnlyRuntimeObject(runtimeData) || object.userData?.collisionOnly === true;
+    if (
+      !object.visible ||
+      (!collisionOnly && ((type && COLLIDER_EXCLUDED_TYPES.has(type)) || materialIsCollisionHidden(object.material)))
+    ) {
+      excluded.push(object);
+    }
+  });
+  excluded.forEach((object) => {
+    object.parent?.remove(object);
+  });
 }
 
 type ProceduralObjectShape = 'sphere' | 'box' | 'torusKnot' | 'icosahedron' | 'blob';
@@ -1329,7 +1410,6 @@ function ProceduralObjects({
 
 function ExhibitModel({
   modelPath,
-  interactivesPath,
   position,
   rotation,
   scale,
@@ -1339,7 +1419,6 @@ function ExhibitModel({
   objectRegistry
 }: {
   modelPath: string;
-  interactivesPath?: string;
   position: Vector3Tuple;
   rotation: Vector3Tuple;
   scale: number;
@@ -1348,20 +1427,10 @@ function ExhibitModel({
   videosConfig?: VideoMeshConfig[];
   objectRegistry?: ObjectRegistry;
 }) {
-  const loadTargets = useMemo(() => {
-    const targets = [modelPath];
-    if (interactivesPath) {
-      targets.push(interactivesPath);
-    }
-    return targets;
-  }, [interactivesPath, modelPath]);
-
+  const loadTargets = useMemo(() => [modelPath], [modelPath]);
   const gltfResults = useConfiguredGLTFs(loadTargets);
   const mainGltf = gltfResults[0] as GLTF | undefined;
-  const interactivesGltf = gltfResults[1] as GLTF | undefined;
   const camera = useThree((state) => state.camera);
-
-  type InteractiveMesh = Mesh & { interactive?: boolean };
 
   const { displayScene, collider } = useMemo(() => {
     if (!mainGltf?.scene) {
@@ -1375,8 +1444,17 @@ function ExhibitModel({
     const display = mainGltf.scene.clone(true) as Group;
     display.name = 'r3f-display-root';
     display.traverse((object) => {
-      applyObjectRuntimeData(object, objectRegistry);
+      const runtimeData = applyObjectRuntimeData(object, objectRegistry);
       if (object instanceof Mesh) {
+        const type = runtimeData?.type || (typeof object.userData?.type === 'string' ? object.userData.type : undefined);
+        if (isCollisionOnlyRuntimeObject(runtimeData)) {
+          applyCollisionOnlyProxy(object);
+          return;
+        }
+        if (type && TRANSPARENT_INTERACTIVE_TYPES.has(type) && isTransparentInteractionProxy(runtimeData)) {
+          applyTransparentInteractionProxy(object);
+          return;
+        }
         object.castShadow = true;
         object.receiveShadow = true;
         if (Array.isArray(object.material)) {
@@ -1387,35 +1465,8 @@ function ExhibitModel({
       }
     });
 
-    if (interactivesGltf?.scene) {
-      const interactives = interactivesGltf.scene.clone(true);
-      interactives.name = 'r3f-interactives-layer';
-      interactives.traverse((object) => {
-        applyObjectRuntimeData(object, objectRegistry);
-        if (!(object instanceof Mesh)) return;
-        const mesh = object as InteractiveMesh;
-        if (mesh.userData?.type === 'Video') {
-          // Preserve original material for video surfaces; applyVideoMeshes will swap it later.
-          mesh.interactive = true;
-          mesh.userData.interactive = true;
-          mesh.castShadow = false;
-          mesh.receiveShadow = false;
-          return;
-        }
-        mesh.castShadow = false;
-        mesh.receiveShadow = false;
-        mesh.interactive = true;
-        mesh.userData.interactive = true;
-        if (Array.isArray(mesh.material)) {
-          mesh.material = mesh.material.map((mat) => cloneTransparentMaterial(mat));
-        } else if (mesh.material) {
-          mesh.material = cloneTransparentMaterial(mesh.material);
-        }
-      });
-      display.add(interactives);
-    }
-
     const colliderSource = display.clone(true);
+    pruneColliderSource(colliderSource, objectRegistry);
     colliderSource.updateMatrixWorld(true);
     const staticGen = new StaticGeometryGenerator(colliderSource);
     staticGen.attributes = ['position', 'normal'];
@@ -1444,7 +1495,7 @@ function ExhibitModel({
     colliderMesh.updateMatrixWorld(true);
 
     return { displayScene: display, collider: colliderMesh };
-  }, [interactivesGltf, mainGltf, objectRegistry, position, rotation, scale]);
+  }, [mainGltf, objectRegistry, position, rotation, scale]);
 
   useEffect(() => {
     onColliderReady?.(collider);
@@ -3178,7 +3229,6 @@ function R3FViewerInner({
       maxZ: depth / 2
     };
   }, [proceduralRoom]);
-  const interactivesPath = config?.interactivesPath;
   const position = useMemo(() => coerceVector(config?.position), [config?.position]);
   const rotation = useMemo(() => coerceVector(config?.rotation), [config?.rotation]);
   const scale = typeof config?.scale === 'number' ? config.scale : 1;
@@ -3201,6 +3251,21 @@ function R3FViewerInner({
     }
     if (typeof rawParams.rotateOrbit === 'number' && Number.isFinite(rawParams.rotateOrbit)) {
       result.rotateOrbit = rawParams.rotateOrbit;
+    }
+    if (typeof rawParams.autoMoveSpeed === 'number' && Number.isFinite(rawParams.autoMoveSpeed)) {
+      result.autoMoveSpeed = rawParams.autoMoveSpeed;
+    }
+    if (typeof rawParams.movementAcceleration === 'number' && Number.isFinite(rawParams.movementAcceleration)) {
+      result.movementAcceleration = rawParams.movementAcceleration;
+    }
+    if (typeof rawParams.movementDeceleration === 'number' && Number.isFinite(rawParams.movementDeceleration)) {
+      result.movementDeceleration = rawParams.movementDeceleration;
+    }
+    if (rawParams.spawnDirection !== undefined) {
+      result.spawnDirection = rawParams.spawnDirection;
+    }
+    if (rawParams.visitorDirection !== undefined) {
+      result.visitorDirection = rawParams.visitorDirection;
     }
     if (rawParams.heightOffset !== undefined) {
       result.heightOffset = heightOffsetVector.clone();
@@ -4012,7 +4077,7 @@ function R3FViewerInner({
       window.clearTimeout(timeout);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [configUrl, modelPath, interactivesPath, useProceduralRoom]);
+  }, [configUrl, modelPath, useProceduralRoom]);
 
   useEffect(() => {
     if (!sceneAssetsReady || sceneAssetsLoading || sceneAssetLoadsSettled) return undefined;
@@ -4099,7 +4164,6 @@ function R3FViewerInner({
           {!sceneLoadArmed ? null : modelPath ? (
             <ExhibitModel
               modelPath={modelPath}
-              interactivesPath={interactivesPath}
               position={position}
               rotation={rotation}
               scale={scale}
@@ -4141,7 +4205,8 @@ function R3FViewerInner({
         <OrbitControls
           makeDefault
           enabled={!sceneInteractionsLocked}
-          enableDamping={false}
+          enableDamping
+          dampingFactor={0.04}
           autoRotate={false}
           autoRotateSpeed={thumbnailCapture.autoRotateSpeed}
           enablePan={thumbnailModeActive}
@@ -4444,7 +4509,12 @@ function FirstPersonController({
       gravity: typeof params?.gravity === 'number' ? params.gravity : -9,
       heightOffset: heightOffsetVec,
       rotateOrbit: typeof params?.rotateOrbit === 'number' ? params.rotateOrbit : 15,
-      visitorEnter: visitorEnterVec
+      visitorEnter: visitorEnterVec,
+      autoMoveSpeed: typeof params?.autoMoveSpeed === 'number' ? params.autoMoveSpeed : 5,
+      movementAcceleration: typeof params?.movementAcceleration === 'number' ? params.movementAcceleration : 12,
+      movementDeceleration: typeof params?.movementDeceleration === 'number' ? params.movementDeceleration : 18,
+      spawnDirection: params?.spawnDirection,
+      visitorDirection: params?.visitorDirection
     };
     return new Visitor({
       camera,

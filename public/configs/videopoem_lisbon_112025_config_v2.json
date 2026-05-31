@@ -1,0 +1,1039 @@
+{
+  "schemaVersion": "2.0.0",
+  "id": "videopoem_lisbon_112025",
+  "kind": "exhibit",
+  "metadata": {
+    "title": "LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY",
+    "description": "3 videopoems created in the framework of workshops organised within the CAPHE project",
+    "language": "en",
+    "ogImage": {
+      "asset": "enter_image_asset"
+    }
+  },
+  "nft": {
+    "mintable": true,
+    "canonicalSceneAsset": "scene_model",
+    "canonicalPreviewAsset": "enter_image_asset"
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/exhibition_videopoems_low.glb",
+      "mimeType": "model/gltf-binary"
+    },
+    "enter_image_asset": {
+      "kind": "image",
+      "uri": "/textures/lisbon_living_heritage_videopem.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "curatorial_dossier_pdf": {
+      "kind": "document",
+      "uri": "/pdfs/Living_Heritage_Curatorial_Dossier.pdf",
+      "mimeType": "application/pdf"
+    },
+    "introduction_audio_asset": {
+      "kind": "audio",
+      "uri": "/audio/introduction_to_living_heritage.mp3",
+      "mimeType": "audio/mpeg"
+    },
+    "title_jednaziemia_poster": {
+      "kind": "image",
+      "uri": "/textures/title_jednaZiemia.png",
+      "mimeType": "image/png"
+    },
+    "title_echoes_poster": {
+      "kind": "image",
+      "uri": "/textures/title_echoes.png",
+      "mimeType": "image/png"
+    },
+    "title_disappeared_poster": {
+      "kind": "image",
+      "uri": "/textures/title_disappeared.png",
+      "mimeType": "image/png"
+    },
+    "jednaziemia_video_asset": {
+      "kind": "video",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
+      "fallbackUris": [
+        "/Volumes/working/Archivum_BPA/video/Mlodozeniec_JednaZiemia.mp4"
+      ],
+      "mimeType": "video/mp4"
+    },
+    "echoes_video_asset": {
+      "kind": "video",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
+      "fallbackUris": [
+        "/Volumes/working/Archivum_BPA/video/ECHOES_OF_A_FATHER.mp4"
+      ],
+      "mimeType": "video/mp4"
+    },
+    "pessoa_video_asset": {
+      "kind": "video",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
+      "fallbackUris": [
+        "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4"
+      ],
+      "mimeType": "video/mp4"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "color": "#000000"
+    },
+    "spawn": {
+      "position": [
+        0,
+        4,
+        0
+      ]
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "exposure": 1,
+      "antialias": false,
+      "shadows": false,
+      "maxDpr": 1,
+      "autoExposure": true
+    }
+  },
+  "sidebar": {
+    "logoText": "LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY",
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "About LIVING HERITAGE",
+        "target": "info_text",
+        "content": "This virtual exhibition brings together three videopoems that transform literary texts into immersive audiovisual works, presenting videopoetry as both an artistic practice and a didactic medium for transmitting cultural heritage across languages, media and cultural contexts. Developed through workshops organised within Communities and Artistic Participation in Hybrid Environments (CAPHE, 2023-2025), the exhibition explores how poetry may be reactivated through the interplay of word, image and sound, generating new forms of interpretation and encounter. This archival space documents an exhibition presented simultaneously in two connected formats from 19 to 27 November 2025: as an on-site installation at the Gallery of the Faculty of Fine Arts of the University of Lisbon (Faculdade de Belas-Artes da Universidade de Lisboa) and as a virtual environment in Spacial. Curated by Justyna Gorzkowicz and Jarosław Solecki, the exhibition brought together three videopoems based on works by Stanisław Młodożeniec, Stanisław Vincenz, and Fernando Pessoa with his heteronyms, showing how literary texts can be reimagined through audiovisual form, translation, collaboration and workshop-based practice. The works presented were Jedna ziemia / One Earth, based on Stanisław Młodożeniec's poem W drodze (On the Road); Echoes of a Father, based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer; and Disappearing Mirrors, a collaborative videopoem based on poems by Fernando Pessoa and his heteronyms, developed with students from the Faculty of Fine Arts of the University of Lisbon and the team from the Polish University Abroad (PUNO) in London. Distinctly polyphonic in structure, Disappearing Mirrors combines multiple visual, textual and vocal contributions. It includes Ode Triunfal Redux by Tiago Mendonça, Na Floresta do Alheamento by Carlota Bonito, Estátuas Invisíveis by Margarida Leal, inspired by Cul de Lampe by Álvaro de Campos, and a video by Patrícia Dias based on Tabacaria by Álvaro de Campos. Additional textual layers include Mar Português and Autopsicografia. The work also incorporates Greek translation by Agnieszka Szajner, Italian translation by Giulia Lanciani, vocal contributions by Giuseppe Caprioti, Ellodie Cheikh and Agnieszka Szajner, and editing by Justyna Gorzkowicz and Jarosław Solecki. Although each piece adopts a different strategy, all three are grounded in the same premise: that poetry can move beyond the printed page and be experienced as rhythm, voice, image, movement and audiovisual composition. In this sense, the exhibition presents the videopoem as a medium for the remediation of literary heritage and as a space in which new readings may emerge. Living Heritage proposes that literary works continue to live not only through reading and interpretation, but also through audiovisual transformation, multilingual transmission and shared artistic practice across physical and virtual environments."
+      },
+      {
+        "id": "dossier-pdf",
+        "label": "Curatorial Dossier (PDF)",
+        "pdfPath": "/pdfs/Living_Heritage_Curatorial_Dossier.pdf"
+      },
+      {
+        "label": "Strona Główna Blue Point Art",
+        "link": "https://bluepointart.uk/lockdowns-ciechanowska/"
+      }
+    ]
+  },
+  "nodes": {
+    "floor_main": {
+      "kind": "floor",
+      "ref": "Floor"
+    },
+    "enter_image": {
+      "kind": "image_anchor",
+      "ref": "IMAGE",
+      "media": "enter_image"
+    },
+    "introduction_audio": {
+      "kind": "audio_anchor",
+      "ref": "introduction_audio"
+    },
+    "jedna_video": {
+      "kind": "video_surface",
+      "ref": "jednaziemia"
+    },
+    "echoes_video": {
+      "kind": "video_surface",
+      "ref": "echoes"
+    },
+    "pessoa_video": {
+      "kind": "video_surface",
+      "ref": "pessoa"
+    }
+  },
+  "media": {
+    "enter_image": {
+      "kind": "image",
+      "title": "Living Heritage: Remediating Through Videopoetry",
+      "description": "",
+      "author": "",
+      "image": {
+        "asset": "enter_image_asset"
+      }
+    },
+    "jednaziemia": {
+      "kind": "video",
+      "title": "JEDNA ZIEMIA / ONE EARTH",
+      "description": "based on W drodze (On the Road) by Stanisław Młodożeniec videopoem by Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna, London-Sandomierz, 2024",
+      "author": "Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna",
+      "poster": {
+        "asset": "title_jednaziemia_poster"
+      },
+      "sources": [
+        {
+          "asset": "jednaziemia_video_asset"
+        }
+      ]
+    },
+    "echoes": {
+      "kind": "video",
+      "title": "ECHOES OF A FATHER",
+      "description": "based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer videopoem by Justyna Gorzkowicz & Jarosław Solecki English translation by Anna Zaranko, London, 2025",
+      "author": "Justyna Gorzkowicz & Jarosław Solecki",
+      "poster": {
+        "asset": "title_echoes_poster"
+      },
+      "sources": [
+        {
+          "asset": "echoes_video_asset"
+        }
+      ]
+    },
+    "pessoa": {
+      "kind": "video",
+      "title": "DISAPPEARED MIRRORS",
+      "description": "based on poems by Fernando Pessoa and his heteronyms collaborative videopoem by fine arts students from Lisbon (FBAUL) and the PUNO team edited by Justyna Gorzkowicz & Jarosław Solecki, Lisbon, 2025",
+      "author": "Portuguese student & PUNO collaboration (CAPHE project)",
+      "poster": {
+        "asset": "title_disappeared_poster"
+      },
+      "sources": [
+        {
+          "asset": "pessoa_video_asset"
+        }
+      ]
+    },
+    "introduction_audio_media": {
+      "kind": "audio",
+      "title": "introduction_audio",
+      "sources": [
+        {
+          "asset": "introduction_audio_asset"
+        }
+      ]
+    },
+    "curatorial_dossier": {
+      "kind": "document",
+      "title": "Curatorial Dossier (PDF)",
+      "document": {
+        "asset": "curatorial_dossier_pdf"
+      }
+    }
+  },
+  "modules": {
+    "video": {
+      "instances": [
+        {
+          "id": "jednaziemia_video_module",
+          "targetNode": "jedna_video",
+          "media": "jednaziemia",
+          "playbackMode": "spatial_video",
+          "loop": true,
+          "muted": true,
+          "interactive": true,
+          "controls": true
+        },
+        {
+          "id": "echoes_video_module",
+          "targetNode": "echoes_video",
+          "media": "echoes",
+          "playbackMode": "spatial_video",
+          "loop": true,
+          "muted": true,
+          "interactive": true,
+          "controls": true
+        },
+        {
+          "id": "pessoa_video_module",
+          "targetNode": "pessoa_video",
+          "media": "pessoa",
+          "playbackMode": "spatial_video",
+          "loop": true,
+          "muted": true,
+          "interactive": true,
+          "controls": true
+        }
+      ]
+    },
+    "audio": {
+      "instances": [
+        {
+          "id": "introduction_audio_module",
+          "targetNode": "introduction_audio",
+          "media": "introduction_audio_media",
+          "autoplayOnEnter": false,
+          "loop": false,
+          "refDistance": 3,
+          "rolloff": 1,
+          "maxDistance": 20,
+          "distanceModel": "linear",
+          "coneTarget": [
+            0,
+            2,
+            0
+          ],
+          "volume": 1,
+          "labelPlaying": "Intro is playing",
+          "labelPaused": "Play Intro"
+        }
+      ]
+    }
+  },
+  "viewer": {
+    "params": {
+      "performanceMode": true,
+      "maxDpr": 1,
+      "antialias": false,
+      "shadows": false,
+      "logarithmicDepthBuffer": false,
+      "exposure": 1,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.7,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 1.7,
+      "gravity": -8,
+      "visitorSpeed": 2,
+      "heightOffset": {
+        "x": 0,
+        "y": 1.2,
+        "z": 0
+      },
+      "visitorEnter": {
+        "x": 0,
+        "y": 4,
+        "z": 0
+      },
+      "rotateOrbit": -30
+    },
+    "images": {
+      "enter_image": {
+        "title": "Living Heritage: Remediating Through Videopoetry",
+        "description": "",
+        "author": "",
+        "imagePath": "/textures/lisbon_living_heritage_videopem.jpg"
+      }
+    },
+    "videos": [
+      {
+        "id": "jednaziemia",
+        "playbackMode": "spatial_video",
+        "preload": "none",
+        "deferLoadUntilPlay": true,
+        "controlsAnchorName": "VideoControlsAnchor_jednaziemia",
+        "loop": true,
+        "muted": true,
+        "playsinline": true,
+        "title": "JEDNA ZIEMIA / ONE EARTH",
+        "description": "based on W drodze (On the Road) by Stanisław Młodożeniec videopoem by Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna, London-Sandomierz, 2024",
+        "author": "Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna",
+        "poster": "/textures/title_jednaZiemia.png",
+        "sources": [
+          {
+            "src_local": "/Volumes/working/Archivum_BPA/video/Mlodozeniec_JednaZiemia.mp4",
+            "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
+            "type": "video/mp4"
+          }
+        ]
+      },
+      {
+        "id": "echoes",
+        "playbackMode": "spatial_video",
+        "preload": "none",
+        "deferLoadUntilPlay": true,
+        "loop": true,
+        "muted": true,
+        "playsinline": true,
+        "title": "ECHOES OF A FATHER",
+        "description": "based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer videopoem by Justyna Gorzkowicz & Jarosław Solecki English translation by Anna Zaranko, London, 2025",
+        "author": "Justyna Gorzkowicz & Jarosław Solecki",
+        "poster": "/textures/title_echoes.png",
+        "sources": [
+          {
+            "src_local": "/Volumes/working/Archivum_BPA/video/ECHOES_OF_A_FATHER.mp4",
+            "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
+            "type": "video/mp4"
+          }
+        ]
+      },
+      {
+        "id": "pessoa",
+        "playbackMode": "spatial_video",
+        "preload": "none",
+        "deferLoadUntilPlay": true,
+        "loop": true,
+        "muted": true,
+        "playsinline": true,
+        "title": "DISAPPEARED MIRRORS",
+        "description": "based on poems by Fernando Pessoa and his heteronyms collaborative videopoem by fine arts students from Lisbon (FBAUL) and the PUNO team edited by Justyna Gorzkowicz & Jarosław Solecki, Lisbon, 2025",
+        "author": "Portuguese student & PUNO collaboration (CAPHE project)",
+        "poster": "/textures/title_disappeared.png",
+        "sources": [
+          {
+            "src_local": "/Volumes/working/Archivum_BPA/video/Pessoa_DissapearedMirrors.mp4",
+            "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
+            "type": "video/mp4"
+          }
+        ]
+      }
+    ],
+    "audio": [
+      {
+        "id": "introduction_audio",
+        "name": "introduction_audio",
+        "url": "/audio/introduction_to_living_heritage.mp3",
+        "autoplayOnEnter": false,
+        "labelPlaying": "Intro is playing",
+        "labelPaused": "Play Intro",
+        "loop": false,
+        "refDistance": 3,
+        "rolloff": 1,
+        "maxDistance": 20,
+        "distanceModel": "linear",
+        "coneTarget": [
+          0,
+          2,
+          0
+        ],
+        "volume": 1,
+        "subtitleTracks": [
+          {
+            "language": "en",
+            "label": "EN",
+            "cues": [
+              {
+                "start": 0.08,
+                "end": 5.4,
+                "text": "Welcome to the Blue Point Art archive\nand to Living Heritage"
+              },
+              {
+                "start": 6.04,
+                "end": 9.04,
+                "text": "remediating through video poetry."
+              },
+              {
+                "start": 9.64,
+                "end": 13.6,
+                "text": "You are now entering the archival version\nof an exhibition presented from"
+              },
+              {
+                "start": 13.6,
+                "end": 19.72,
+                "text": "19 to 20 7th November 2025,\nboth at the Gallery of the Faculty of Fine"
+              },
+              {
+                "start": 19.72,
+                "end": 23.24,
+                "text": "Arts of the University of Lisbon,\nand in spatial."
+              },
+              {
+                "start": 23.72,
+                "end": 27.16,
+                "text": "In this gallery\nyou will encounter three video"
+              },
+              {
+                "start": 27.16,
+                "end": 30.36,
+                "text": "poems, each lasting around five minutes."
+              },
+              {
+                "start": 31,
+                "end": 34.44,
+                "text": "The works are based on texts\nby Stanislaw Młodożeniec,"
+              },
+              {
+                "start": 35.12,
+                "end": 39.96,
+                "text": "Stanislaw Vincenz\nand Fernando Pessoa with his heteronyms."
+              },
+              {
+                "start": 40.56,
+                "end": 44.24,
+                "text": "Each video poem is accompanied by a short\ndescription."
+              },
+              {
+                "start": 44.64,
+                "end": 48.92,
+                "text": "You can also open the sidebar to find\nfurther information about the exhibition."
+              },
+              {
+                "start": 49,
+                "end": 52.2,
+                "text": "Read the curatorial text and download"
+              },
+              {
+                "start": 52.2,
+                "end": 55.6,
+                "text": "a PDF version of the exhibition materials."
+              },
+              {
+                "start": 56.12,
+                "end": 59.24,
+                "text": "A working English\ntranslation of the text used in One"
+              },
+              {
+                "start": 59.24,
+                "end": 62.4,
+                "text": "Earth is also available there, along"
+              },
+              {
+                "start": 62.4,
+                "end": 66.48,
+                "text": "with further information about the authors\nwhose works are reimagined in the video."
+              },
+              {
+                "start": 66.48,
+                "end": 67.84,
+                "text": "Poems."
+              },
+              {
+                "start": 67.84,
+                "end": 72.16,
+                "text": "This exhibition invites you into a journey\nthrough literary heritage,"
+              },
+              {
+                "start": 72.32,
+                "end": 76.8,
+                "text": "reimagined through image,\nsound, rhythm and voice."
+              },
+              {
+                "start": 77.16,
+                "end": 82.48,
+                "text": "Here, the video poem becomes a medium\nthrough which poetry can be revisited,"
+              },
+              {
+                "start": 82.56,
+                "end": 86.2,
+                "text": "reinterpreted and experienced in new ways."
+              },
+              {
+                "start": 86.68,
+                "end": 91.12,
+                "text": "You are welcome to move through the space\nat your own pace, and begin"
+              },
+              {
+                "start": 91.12,
+                "end": 93.8,
+                "text": "with any of the works around you."
+              },
+              {
+                "start": 93.8,
+                "end": 98.8,
+                "text": "Thank you for visiting and we hope you enjoy your journey through living heritage."
+              }
+            ]
+          },
+          {
+            "language": "pl",
+            "label": "PL",
+            "cues": [
+              {
+                "start": 0.08,
+                "end": 5.4,
+                "text": "Witamy w archiwum Blue Point Art\ni w Living Heritage"
+              },
+              {
+                "start": 6.04,
+                "end": 9.04,
+                "text": "remediując poprzez wideopoezję."
+              },
+              {
+                "start": 9.64,
+                "end": 13.6,
+                "text": "Wchodzisz teraz do archiwalnej wersji\nwystawy prezentowanej od"
+              },
+              {
+                "start": 13.6,
+                "end": 19.72,
+                "text": "19 do 27 listopada 2025 roku,\nzarówno w Galerii Wydziału Sztuk Pięknych"
+              },
+              {
+                "start": 19.72,
+                "end": 23.24,
+                "text": "Uniwersytetu Lizbońskiego,\njak i w Spatial."
+              },
+              {
+                "start": 23.72,
+                "end": 27.16,
+                "text": "W tej galerii\nspotkasz trzy wideo"
+              },
+              {
+                "start": 27.16,
+                "end": 30.36,
+                "text": "poematy, z których każdy trwa około pięciu minut."
+              },
+              {
+                "start": 31,
+                "end": 34.44,
+                "text": "Prace oparte są na tekstach\nStanisława Młodożeńca,"
+              },
+              {
+                "start": 35.12,
+                "end": 39.96,
+                "text": "Stanisława Vincenza\ni Fernanda Pessoi wraz z jego heteronimami."
+              },
+              {
+                "start": 40.56,
+                "end": 44.24,
+                "text": "Każdemu wideopoematowi towarzyszy krótki\nopis."
+              },
+              {
+                "start": 44.64,
+                "end": 48.92,
+                "text": "Możesz także otworzyć panel boczny, aby znaleźć\nwięcej informacji o wystawie."
+              },
+              {
+                "start": 49,
+                "end": 52.2,
+                "text": "Przeczytaj tekst kuratorski i pobierz"
+              },
+              {
+                "start": 52.2,
+                "end": 55.6,
+                "text": "wersję PDF materiałów wystawy."
+              },
+              {
+                "start": 56.12,
+                "end": 59.24,
+                "text": "Robocze angielskie\ntłumaczenie tekstu użytego w One"
+              },
+              {
+                "start": 59.24,
+                "end": 62.4,
+                "text": "Earth jest tam również dostępne, wraz"
+              },
+              {
+                "start": 62.4,
+                "end": 66.48,
+                "text": "z dodatkowymi informacjami o autorach,\nktórych utwory zostały przetworzone w wideo."
+              },
+              {
+                "start": 66.48,
+                "end": 67.84,
+                "text": "poematach."
+              },
+              {
+                "start": 67.84,
+                "end": 72.16,
+                "text": "Ta wystawa zaprasza cię w podróż\nprzez dziedzictwo literackie,"
+              },
+              {
+                "start": 72.32,
+                "end": 76.8,
+                "text": "wyobrażone na nowo poprzez obraz,\ndźwięk, rytm i głos."
+              },
+              {
+                "start": 77.16,
+                "end": 82.48,
+                "text": "Tutaj wideopoemat staje się medium,\nprzez które poezję można odwiedzić ponownie,"
+              },
+              {
+                "start": 82.56,
+                "end": 86.2,
+                "text": "zinterpretować na nowo i doświadczyć\nw nowy sposób."
+              },
+              {
+                "start": 86.68,
+                "end": 91.12,
+                "text": "Zapraszamy do poruszania się po przestrzeni\nwłasnym tempem i rozpoczęcia"
+              },
+              {
+                "start": 91.12,
+                "end": 93.8,
+                "text": "od dowolnej pracy wokół ciebie."
+              },
+              {
+                "start": 93.8,
+                "end": 98.8,
+                "text": "Dziękujemy za wizytę i życzymy udanej podróży przez Living Heritage."
+              }
+            ]
+          },
+          {
+            "language": "pt",
+            "label": "PT",
+            "cues": [
+              {
+                "start": 0.08,
+                "end": 5.4,
+                "text": "Bem-vindo ao arquivo Blue Point Art\ne ao Living Heritage"
+              },
+              {
+                "start": 6.04,
+                "end": 9.04,
+                "text": "remediando através da videopoesia."
+              },
+              {
+                "start": 9.64,
+                "end": 13.6,
+                "text": "Está agora a entrar na versão arquivística\nde uma exposição apresentada de"
+              },
+              {
+                "start": 13.6,
+                "end": 19.72,
+                "text": "19 a 27 de novembro de 2025,\ntanto na Galeria da Faculdade de Belas-Artes"
+              },
+              {
+                "start": 19.72,
+                "end": 23.24,
+                "text": "da Universidade de Lisboa,\ncomo no Spatial."
+              },
+              {
+                "start": 23.72,
+                "end": 27.16,
+                "text": "Nesta galeria\nirá encontrar três vídeo"
+              },
+              {
+                "start": 27.16,
+                "end": 30.36,
+                "text": "poemas, cada um com cerca de cinco minutos."
+              },
+              {
+                "start": 31,
+                "end": 34.44,
+                "text": "As obras baseiam-se em textos\nde Stanisław Młodożeniec,"
+              },
+              {
+                "start": 35.12,
+                "end": 39.96,
+                "text": "Stanisław Vincenz\ne Fernando Pessoa com os seus heterónimos."
+              },
+              {
+                "start": 40.56,
+                "end": 44.24,
+                "text": "Cada videopoema é acompanhado por uma breve\ndescrição."
+              },
+              {
+                "start": 44.64,
+                "end": 48.92,
+                "text": "Também pode abrir a barra lateral para encontrar\nmais informações sobre a exposição."
+              },
+              {
+                "start": 49,
+                "end": 52.2,
+                "text": "Leia o texto curatorial e descarregue"
+              },
+              {
+                "start": 52.2,
+                "end": 55.6,
+                "text": "uma versão PDF dos materiais da exposição."
+              },
+              {
+                "start": 56.12,
+                "end": 59.24,
+                "text": "Uma tradução provisória para inglês\ndo texto usado em One"
+              },
+              {
+                "start": 59.24,
+                "end": 62.4,
+                "text": "Earth também está disponível ali, juntamente"
+              },
+              {
+                "start": 62.4,
+                "end": 66.48,
+                "text": "com mais informações sobre os autores\ncujas obras são reimaginadas no vídeo."
+              },
+              {
+                "start": 66.48,
+                "end": 67.84,
+                "text": "Poemas."
+              },
+              {
+                "start": 67.84,
+                "end": 72.16,
+                "text": "Esta exposição convida-o a uma viagem\npelo património literário,"
+              },
+              {
+                "start": 72.32,
+                "end": 76.8,
+                "text": "reimaginado através da imagem,\ndo som, do ritmo e da voz."
+              },
+              {
+                "start": 77.16,
+                "end": 82.48,
+                "text": "Aqui, o videopoema torna-se um meio\natravés do qual a poesia pode ser revisitada,"
+              },
+              {
+                "start": 82.56,
+                "end": 86.2,
+                "text": "reinterpretada e experienciada\nde novas formas."
+              },
+              {
+                "start": 86.68,
+                "end": 91.12,
+                "text": "Pode percorrer o espaço\nao seu próprio ritmo e começar"
+              },
+              {
+                "start": 91.12,
+                "end": 93.8,
+                "text": "por qualquer uma das obras à sua volta."
+              },
+              {
+                "start": 93.8,
+                "end": 98.8,
+                "text": "Obrigado pela sua visita e esperamos que desfrute da sua viagem pelo Living Heritage."
+              }
+            ]
+          },
+          {
+            "language": "it",
+            "label": "IT",
+            "cues": [
+              {
+                "start": 0.08,
+                "end": 5.4,
+                "text": "Benvenuti nell'archivio Blue Point Art\ne in Living Heritage"
+              },
+              {
+                "start": 6.04,
+                "end": 9.04,
+                "text": "rimediare attraverso la videopoesia."
+              },
+              {
+                "start": 9.64,
+                "end": 13.6,
+                "text": "Stai entrando ora nella versione archivistica\ndi una mostra presentata dal"
+              },
+              {
+                "start": 13.6,
+                "end": 19.72,
+                "text": "19 al 27 novembre 2025,\nsia presso la Galleria della Facoltà di Belle Arti"
+              },
+              {
+                "start": 19.72,
+                "end": 23.24,
+                "text": "dell'Università di Lisbona,\nsia in Spatial."
+              },
+              {
+                "start": 23.72,
+                "end": 27.16,
+                "text": "In questa galleria\nincontrerai tre video"
+              },
+              {
+                "start": 27.16,
+                "end": 30.36,
+                "text": "poemi, ciascuno della durata di circa cinque minuti."
+              },
+              {
+                "start": 31,
+                "end": 34.44,
+                "text": "Le opere sono basate su testi\ndi Stanisław Młodożeniec,"
+              },
+              {
+                "start": 35.12,
+                "end": 39.96,
+                "text": "Stanisław Vincenz\ne Fernando Pessoa con i suoi eteronimi."
+              },
+              {
+                "start": 40.56,
+                "end": 44.24,
+                "text": "Ogni videopoema è accompagnato da una breve\ndescrizione."
+              },
+              {
+                "start": 44.64,
+                "end": 48.92,
+                "text": "Puoi anche aprire la barra laterale per trovare\nulteriori informazioni sulla mostra."
+              },
+              {
+                "start": 49,
+                "end": 52.2,
+                "text": "Leggi il testo curatoriale e scarica"
+              },
+              {
+                "start": 52.2,
+                "end": 55.6,
+                "text": "una versione PDF dei materiali della mostra."
+              },
+              {
+                "start": 56.12,
+                "end": 59.24,
+                "text": "Una traduzione inglese provvisoria\ndel testo usato in One"
+              },
+              {
+                "start": 59.24,
+                "end": 62.4,
+                "text": "Earth è disponibile anche lì, insieme"
+              },
+              {
+                "start": 62.4,
+                "end": 66.48,
+                "text": "a ulteriori informazioni sugli autori\nle cui opere sono reimmaginate nel video."
+              },
+              {
+                "start": 66.48,
+                "end": 67.84,
+                "text": "Poemi."
+              },
+              {
+                "start": 67.84,
+                "end": 72.16,
+                "text": "Questa mostra ti invita a un viaggio\nattraverso il patrimonio letterario,"
+              },
+              {
+                "start": 72.32,
+                "end": 76.8,
+                "text": "reimmaginato attraverso immagine,\nsuono, ritmo e voce."
+              },
+              {
+                "start": 77.16,
+                "end": 82.48,
+                "text": "Qui il videopoema diventa un mezzo\nattraverso cui la poesia può essere rivisitata,"
+              },
+              {
+                "start": 82.56,
+                "end": 86.2,
+                "text": "reinterpretata e vissuta\nin modi nuovi."
+              },
+              {
+                "start": 86.68,
+                "end": 91.12,
+                "text": "Sei invitato a muoverti nello spazio\nal tuo ritmo e a cominciare"
+              },
+              {
+                "start": 91.12,
+                "end": 93.8,
+                "text": "da una qualsiasi delle opere intorno a te."
+              },
+              {
+                "start": 93.8,
+                "end": 98.8,
+                "text": "Grazie per la visita e speriamo che tu possa goderti il viaggio attraverso Living Heritage."
+              }
+            ]
+          },
+          {
+            "language": "el",
+            "label": "EL",
+            "cues": [
+              {
+                "start": 0.08,
+                "end": 5.4,
+                "text": "Καλώς ήρθατε στο αρχείο Blue Point Art\nκαι στο Living Heritage"
+              },
+              {
+                "start": 6.04,
+                "end": 9.04,
+                "text": "αναδιαμεσολαβώντας μέσα από τη βιντεοποίηση."
+              },
+              {
+                "start": 9.64,
+                "end": 13.6,
+                "text": "Τώρα εισέρχεστε στην αρχειακή εκδοχή\nμιας έκθεσης που παρουσιάστηκε από"
+              },
+              {
+                "start": 13.6,
+                "end": 19.72,
+                "text": "19 έως 27 Νοεμβρίου 2025,\nτόσο στην Πινακοθήκη της Σχολής Καλών Τεχνών"
+              },
+              {
+                "start": 19.72,
+                "end": 23.24,
+                "text": "του Πανεπιστημίου της Λισαβόνας,\nόσο και στο Spatial."
+              },
+              {
+                "start": 23.72,
+                "end": 27.16,
+                "text": "Σε αυτή την γκαλερί\nθα συναντήσετε τρία βίντεο"
+              },
+              {
+                "start": 27.16,
+                "end": 30.36,
+                "text": "ποιήματα, το καθένα διάρκειας περίπου πέντε λεπτών."
+              },
+              {
+                "start": 31,
+                "end": 34.44,
+                "text": "Τα έργα βασίζονται σε κείμενα\nτου Stanisław Młodożeniec,"
+              },
+              {
+                "start": 35.12,
+                "end": 39.96,
+                "text": "του Stanisław Vincenz\nκαι του Fernando Pessoa με τα ετερώνυμά του."
+              },
+              {
+                "start": 40.56,
+                "end": 44.24,
+                "text": "Κάθε βιντεοποίημα συνοδεύεται από μια σύντομη\nπεριγραφή."
+              },
+              {
+                "start": 44.64,
+                "end": 48.92,
+                "text": "Μπορείτε επίσης να ανοίξετε την πλαϊνή μπάρα για να βρείτε\nπερισσότερες πληροφορίες για την έκθεση."
+              },
+              {
+                "start": 49,
+                "end": 52.2,
+                "text": "Διαβάστε το επιμελητικό κείμενο και κατεβάστε"
+              },
+              {
+                "start": 52.2,
+                "end": 55.6,
+                "text": "μια έκδοση PDF του υλικού της έκθεσης."
+              },
+              {
+                "start": 56.12,
+                "end": 59.24,
+                "text": "Μια πρόχειρη αγγλική\nμετάφραση του κειμένου που χρησιμοποιείται στο One"
+              },
+              {
+                "start": 59.24,
+                "end": 62.4,
+                "text": "Earth είναι επίσης διαθέσιμη εκεί, μαζί"
+              },
+              {
+                "start": 62.4,
+                "end": 66.48,
+                "text": "με περισσότερες πληροφορίες για τους συγγραφείς\nτων οποίων τα έργα επανερμηνεύονται στο βίντεο."
+              },
+              {
+                "start": 66.48,
+                "end": 67.84,
+                "text": "Ποιήματα."
+              },
+              {
+                "start": 67.84,
+                "end": 72.16,
+                "text": "Αυτή η έκθεση σας προσκαλεί σε ένα ταξίδι\nμέσα από τη λογοτεχνική κληρονομιά,"
+              },
+              {
+                "start": 72.32,
+                "end": 76.8,
+                "text": "ξαναφαντασμένη μέσα από την εικόνα,\nτον ήχο, τον ρυθμό και τη φωνή."
+              },
+              {
+                "start": 77.16,
+                "end": 82.48,
+                "text": "Εδώ, το βιντεοποίημα γίνεται ένα μέσο\nμέσα από το οποίο η ποίηση μπορεί να επανεξεταστεί,"
+              },
+              {
+                "start": 82.56,
+                "end": 86.2,
+                "text": "να επανερμηνευτεί και να βιωθεί\nμε νέους τρόπους."
+              },
+              {
+                "start": 86.68,
+                "end": 91.12,
+                "text": "Είστε ευπρόσδεκτοι να κινηθείτε στον χώρο\nμε τον δικό σας ρυθμό και να ξεκινήσετε"
+              },
+              {
+                "start": 91.12,
+                "end": 93.8,
+                "text": "με οποιοδήποτε από τα έργα γύρω σας."
+              },
+              {
+                "start": 93.8,
+                "end": 98.8,
+                "text": "Σας ευχαριστούμε για την επίσκεψη και ελπίζουμε να απολαύσετε το ταξίδι σας στο Living Heritage."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

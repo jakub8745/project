@@ -5,7 +5,13 @@ export interface VisitorParams {
   visitorSpeed: number;
   gravity: number;
   heightOffset: { x: number; y: number; z: number };
+  visitorEnter?: { x: number; y: number; z: number };
   rotateOrbit?: number;
+  autoMoveSpeed?: number;
+  movementAcceleration?: number;
+  movementDeceleration?: number;
+  spawnDirection?: string | [number, number, number] | { x: number; y: number; z: number };
+  visitorDirection?: string | [number, number, number] | { x: number; y: number; z: number };
 }
 
 export interface VisitorDependencies {

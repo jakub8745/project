@@ -1,75 +1,224 @@
 {
-    "id": "dystopia",
-    "modelPath": "/models/bednarczyk_exhibition.glb",
-    "interactivesPath": "/models/interactives_empty.glb",
-    "backgroundTexture": "/textures/equMap_podMostem.ktx2",
-    "sidebar": {
-        "logo": {
-            "text": "Wystawa z okazji 85-lecia PUNO"
-        },
-        "items": [
-            {
-                "id": "info-icon",
-                "label": "About Dystopia of Imitation",
-                "target": "info_text",
-                "content": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
-            },
-            {
-                "label": "Strona Główna Blue Point Art",
-                "link": "https://bluepointart.uk"
-            }
-        ]
+  "schemaVersion": "2.0.0",
+  "id": "dystopia",
+  "kind": "exhibit",
+  "metadata": {
+    "title": "Unveiling the Heritage of Krystyna Bednarczyk",
+    "description": "A 3D exhibit configuration migrated to v2 with media, audio, links, and spawn behavior declared in config instead of an empty interactives GLB.",
+    "language": "en"
+  },
+  "nft": {
+    "mintable": true,
+    "canonicalSceneAsset": "scene_model"
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/bednarczyk_exhibition.glb",
+      "mimeType": "model/gltf-binary"
     },
-    "images": {
-        "Milkmaid": {
-            "title": "Milkmaid",
-            "description": "Jaroslaw Solecki's The Dystopia of an Imitation presents a creative way of exploring the 'matter' of art. The central issue taken up in the work is the sculpting process realised in stone, clay and in the form of digital 3D graphics[...] Quote from the exhibition booklet \"The Dystopia of an Imitation\"",
-            "author": "Jaroslaw Solecki",
-            "imagePath": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg"
+    "background_texture": {
+      "kind": "texture",
+      "uri": "/textures/equMap_podMostem.ktx2",
+      "mimeType": "image/ktx2"
+    },
+    "Milkmaid_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "dzbanDystopia_audio": {
+      "kind": "audio",
+      "uri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
+      "mimeType": "audio/mpeg"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "backgroundAsset": "background_texture"
+    },
+    "spawn": {
+      "position": [
+        -1,
+        4,
+        1
+      ]
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "autoExposure": true,
+      "exposure": 1,
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30
+    }
+  },
+  "nodes": {
+    "Milkmaid": {
+      "kind": "image_anchor",
+      "media": "Milkmaid",
+      "metadata": {
+        "title": "Milkmaid",
+        "description": "Jaroslaw Solecki's The Dystopia of an Imitation presents a creative way of exploring the 'matter' of art. The central issue taken up in the work is the sculpting process realised in stone, clay and in the form of digital 3D graphics[...] Quote from the exhibition booklet \"The Dystopia of an Imitation\"",
+        "author": "Jaroslaw Solecki",
+        "interactionDescription": "Click Milkmaid to open the image metadata panel."
+      }
+    },
+    "logo_oficyny": {
+      "kind": "link_anchor",
+      "metadata": {
+        "url": "https://krystynabednarczyk.bluepointart.uk/",
+        "interactionDescription": "Click logo_oficyny to open https://krystynabednarczyk.bluepointart.uk/ in a new browser tab."
+      }
+    },
+    "dzbanDystopia": {
+      "kind": "audio_anchor",
+      "media": "dzbanDystopia",
+      "metadata": {
+        "interactionDescription": "The dzbanDystopia node anchors spatial audio. Distance, rolloff, looping, volume, and optional transform behavior are declared in the audio module."
+      }
+    }
+  },
+  "media": {
+    "Milkmaid": {
+      "kind": "image",
+      "title": "Milkmaid",
+      "description": "Jaroslaw Solecki's The Dystopia of an Imitation presents a creative way of exploring the 'matter' of art. The central issue taken up in the work is the sculpting process realised in stone, clay and in the form of digital 3D graphics[...] Quote from the exhibition booklet \"The Dystopia of an Imitation\"",
+      "author": "Jaroslaw Solecki",
+      "image": {
+        "asset": "Milkmaid_image"
+      }
+    },
+    "dzbanDystopia": {
+      "kind": "audio",
+      "sources": [
+        {
+          "asset": "dzbanDystopia_audio"
         }
+      ]
+    }
+  },
+  "interactions": [
+    {
+      "id": "Milkmaid_open_image",
+      "targetNode": "Milkmaid",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Milkmaid"
+      },
+      "ui": {
+        "title": "Milkmaid",
+        "description": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+      }
+    },
+    {
+      "id": "logo_oficyny_open_link",
+      "targetNode": "logo_oficyny",
+      "trigger": "click",
+      "action": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+      },
+      "ui": {
+        "title": "logo_oficyny",
+        "description": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+      }
+    },
+    {
+      "id": "dzbanDystopia_spatial_audio",
+      "targetNode": "dzbanDystopia",
+      "trigger": "proximity",
+      "action": {
+        "type": "play_audio",
+        "moduleInstance": "dzbanDystopia_audio"
+      },
+      "ui": {
+        "title": "dzbanDystopia",
+        "description": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+      },
+      "metadata": {
+        "interactionDescription": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+      }
+    }
+  ],
+  "modules": {
+    "audio": {
+      "instances": [
+        {
+          "id": "dzbanDystopia_audio",
+          "targetNode": "dzbanDystopia",
+          "media": "dzbanDystopia",
+          "loop": true,
+          "refDistance": 3,
+          "rolloff": 1,
+          "volume": 0.5
+        }
+      ]
+    }
+  },
+  "sidebar": {
+    "logoText": "Wystawa z okazji 85-lecia PUNO",
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "About Dystopia of Imitation",
+        "target": "info_text",
+        "content": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
+      },
+      {
+        "id": "Strona_G_wna_Blue_Point_Art",
+        "label": "Strona Główna Blue Point Art",
+        "link": "https://bluepointart.uk"
+      }
+    ]
+  },
+  "viewer": {
+    "params": {
+      "exposure": 1,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 1.1,
+      "gravity": -8,
+      "visitorSpeed": 5,
+      "heightOffset": {
+        "x": 0,
+        "y": 3.5,
+        "z": 0
+      },
+      "visitorEnter": {
+        "x": -1,
+        "y": 4,
+        "z": 1
+      },
+      "rotateOrbit": -65,
+      "backgroundBlurriness": 0.05,
+      "backgroundIntensity": 0.3
     },
     "links": {
-        "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/"
-    },
-    "audio": [
-        {
-            "id": "dzbanDystopia",
-            "name": "dzbanDystopia",
-            "url": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
-            "loop": true,
-            "refDistance": 3,
-            "rolloff": 1,
-            "volume": 0.5
-        }
-    ],
-    "params": {
-        "exposure": 1.0,
-        "autoExposure": true,
-        "toneMapping": "neutral",
-        "exposureTarget": 0.68,
-        "exposureMin": 0.5,
-        "exposureMax": 1.65,
-        "exposureSampleInterval": 30,
-        "colorGrade": {
-          "brightness": 1.0,
-          "contrast": 0.9,
-          "saturate": 0.68
-        },
-        "lightIntensity": 1.1,
-        "gravity": -8,
-        "visitorSpeed": 5,
-        "heightOffset": {
-            "x": 0,
-            "y": 3.5,
-            "z": 0
-        },
-        "visitorEnter": {
-            "x": -1,
-            "y": 4,
-            "z": 1
-        },
-        "rotateOrbit": -65,
-        "backgroundBlurriness": 0.05,
-        "backgroundIntensity": 0.3
+      "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/"
     }
+  }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import {
+  type Intersection,
   Raycaster,
   Vector2,
   Vector3,
@@ -19,6 +20,11 @@ import type { VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from '../modules/objectRegistry.js';
 
 type MetaRecord = Record<string, Record<string, unknown>>;
+const CLICKABLE_TYPES = ['Image', 'Wall', 'Walls', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
+const PRIMARY_CLICKABLE_TYPES = new Set(['Image', 'Video', 'VideoControl', 'Link']);
+const HOVERABLE_TYPES = new Set(['Link', 'Image', 'Video', 'Sculpture']);
+const TARGET_CACHE_MS = 250;
+const OCCLUSION_EPSILON = 0.04;
 
 export interface PointerPopupPayload {
   type: string;
@@ -73,6 +79,8 @@ export function PointerInteractions({
   const { camera, scene, gl } = useThree();
 
   const raycaster = useMemo(() => new Raycaster(), []);
+  const occlusionRaycaster = useMemo(() => new Raycaster(), []);
+  const pathRaycaster = useMemo(() => new Raycaster(), []);
   const pointer = useMemo(() => new Vector2(), []);
   const clickIndicator = useMemo(() => createClickIndicator(), []);
   const tooltip = useMemo(() => createTooltip(), []);
@@ -84,6 +92,12 @@ export function PointerInteractions({
   const startCoordsRef = useRef({ x: 0, y: 0 });
   const lastTapRef = useRef(0);
   const seekDragRef = useRef<{ videoKey: string | null }>({ videoKey: null });
+  const targetCacheRef = useRef<{ at: number; hover: Mesh[]; click: Mesh[]; primaryClick: Mesh[] }>({
+    at: 0,
+    hover: [],
+    click: [],
+    primaryClick: []
+  });
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -109,8 +123,6 @@ export function PointerInteractions({
     if (!visitor) return undefined;
 
     const canvas = gl.domElement;
-
-    const validTypes = ['Image', 'Wall', 'Walls', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
 
     const resolveHitRuntime = (object: Mesh) => {
       const runtimeData = resolveObjectRuntimeData(object, objectRegistry);
@@ -138,8 +150,101 @@ export function PointerInteractions({
       return { type, key, elementID, userData };
     };
 
+    const hasVideoControlProxyAncestor = (object: Mesh) => {
+      let current = object.parent;
+      while (current) {
+        if (current.userData?.__isVideoControlProxy === true) {
+          return true;
+        }
+        current = current.parent;
+      }
+      return false;
+    };
+
+    const getRaycastTargets = () => {
+      const now = performance.now();
+      const cached = targetCacheRef.current;
+      if (
+        now - cached.at < TARGET_CACHE_MS &&
+        (cached.hover.length > 0 || cached.click.length > 0 || cached.primaryClick.length > 0)
+      ) {
+        return cached;
+      }
+
+      const hover: Mesh[] = [];
+      const click: Mesh[] = [];
+      const primaryClick: Mesh[] = [];
+      scene.traverse((object) => {
+        if (!(object instanceof Mesh)) return;
+        const { type } = resolveHitRuntime(object);
+        const isVideoControlProxy = object.userData?.__isVideoControlProxy === true || hasVideoControlProxyAncestor(object);
+        if ((type && CLICKABLE_TYPES.includes(type)) || isVideoControlProxy) {
+          click.push(object);
+        }
+        if ((type && PRIMARY_CLICKABLE_TYPES.has(type)) || isVideoControlProxy) {
+          primaryClick.push(object);
+        }
+        if (type && HOVERABLE_TYPES.has(type)) {
+          hover.push(object);
+        }
+      });
+      targetCacheRef.current = { at: now, hover, click, primaryClick };
+      return targetCacheRef.current;
+    };
+
     const hideHoverTooltip = () => {
       tooltip.hide();
+    };
+
+    const stopAutoMove = () => {
+      visitor.isAutoMoving = false;
+      if (visitor.clickIndicator) {
+        visitor.clickIndicator.visible = false;
+      }
+    };
+
+    const isOccludedByCollider = (hit: Intersection) => {
+      if (!collider || hit.object === collider) return false;
+      const cameraPosition = camera.getWorldPosition(new Vector3());
+      const direction = hit.point.clone().sub(cameraPosition);
+      const distance = direction.length();
+      if (distance <= OCCLUSION_EPSILON) return false;
+      direction.normalize();
+      occlusionRaycaster.firstHitOnly = true;
+      occlusionRaycaster.near = 0;
+      occlusionRaycaster.far = Math.max(0, distance - OCCLUSION_EPSILON);
+      occlusionRaycaster.set(cameraPosition, direction);
+      const blocker = occlusionRaycaster.intersectObject(collider, false)[0];
+      return Boolean(blocker && blocker.distance < distance - OCCLUSION_EPSILON);
+    };
+
+    const hasReachableWalkingPath = (point: Vector3) => {
+      if (!collider) return true;
+
+      const startBase = visitor.position;
+      const distance = Math.hypot(point.x - startBase.x, point.z - startBase.z);
+      if (distance < 0.35) return true;
+
+      const probeY = Math.max(startBase.y, point.y) + 0.75;
+      const start = new Vector3(startBase.x, probeY, startBase.z);
+      const end = new Vector3(point.x, probeY, point.z);
+      const direction = end.sub(start);
+      const rayDistance = direction.length();
+      if (rayDistance < 0.35) return true;
+
+      direction.normalize();
+      pathRaycaster.firstHitOnly = false;
+      pathRaycaster.near = 0.15;
+      pathRaycaster.far = Math.max(0, rayDistance - 0.35);
+      pathRaycaster.set(start, direction);
+
+      const normalMatrix = new Matrix3().getNormalMatrix(collider.matrixWorld);
+      const hits = pathRaycaster.intersectObject(collider, false);
+      return !hits.some((hit) => {
+        if (!hit.face || hit.distance >= pathRaycaster.far) return false;
+        const normal = hit.face.normal.clone().applyMatrix3(normalMatrix).normalize();
+        return Math.abs(normal.y) < 0.55;
+      });
     };
 
     const placeClickIndicator = (point: Vector3, worldNormal: Vector3) => {
@@ -224,11 +329,13 @@ export function PointerInteractions({
     const moveVisitor = (point: Vector3, worldNormal: Vector3, hitType?: string) => {
       const destination = findSupportedDestination(point, worldNormal, hitType);
       if (!destination) {
-        visitor.isAutoMoving = false;
-        if (visitor.clickIndicator) {
-          visitor.clickIndicator.visible = false;
-        }
+        stopAutoMove();
         console.warn('PointerInteractions: ignored movement click without supported floor below target.');
+        return;
+      }
+      if (!hasReachableWalkingPath(destination.point)) {
+        stopAutoMove();
+        console.warn('PointerInteractions: ignored movement click because the destination is blocked by collision geometry.');
         return;
       }
       placeClickIndicator(destination.point, destination.normal);
@@ -331,10 +438,10 @@ export function PointerInteractions({
 
       raycaster.setFromCamera(pointer, camera);
       raycaster.firstHitOnly = true;
-      const intersects = raycaster.intersectObjects(scene.children, true);
+      const intersects = raycaster.intersectObjects(getRaycastTargets().hover, false);
       const hit = intersects.find((i) => {
         const t = resolveHitRuntime(i.object as Mesh).type;
-        return t === 'Link' || t === 'Image' || t === 'Video' || t === 'Sculpture';
+        return typeof t === 'string' && HOVERABLE_TYPES.has(t) && !isOccludedByCollider(i);
       });
 
       if (!hit) {
@@ -415,10 +522,16 @@ export function PointerInteractions({
 
       raycaster.setFromCamera(pointer, camera);
       raycaster.firstHitOnly = true;
-      const intersects = raycaster.intersectObjects(scene.children, true);
-      const hit = intersects.find((i) => {
+      const targets = getRaycastTargets();
+      const primaryIntersects = raycaster.intersectObjects(targets.primaryClick, false);
+      const hitPrimary = primaryIntersects.find((i) => {
         const { type } = resolveHitRuntime(i.object as Mesh);
-        return Boolean(type && validTypes.includes(type));
+        return Boolean(type && PRIMARY_CLICKABLE_TYPES.has(type) && !isOccludedByCollider(i));
+      });
+      const hit = hitPrimary || raycaster.intersectObjects(targets.click, false).find((i) => {
+        const { type } = resolveHitRuntime(i.object as Mesh);
+        const isNavigationTarget = type === 'Floor' || type === 'Room' || type === 'Wall' || type === 'Walls';
+        return Boolean(type && CLICKABLE_TYPES.includes(type) && (isNavigationTarget || !isOccludedByCollider(i)));
       });
 
       if (!hit) return;
@@ -505,13 +618,14 @@ export function PointerInteractions({
       raycaster.setFromCamera(pointer, camera);
       const prevFirstHitOnly = raycaster.firstHitOnly;
       raycaster.firstHitOnly = false;
-      const intersects = raycaster.intersectObjects(scene.children, true);
+      const intersects = raycaster.intersectObjects(getRaycastTargets().click, false);
       raycaster.firstHitOnly = prevFirstHitOnly;
       if (!intersects.length) return { consumed: false as const };
 
       let touchedControlRig = false;
 
       for (const hit of intersects) {
+        if (isOccludedByCollider(hit)) continue;
         let node: typeof hit.object | null = hit.object;
 
         while (node) {
@@ -640,7 +754,7 @@ export function PointerInteractions({
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
     };
-  }, [camera, clickIndicator, collider, disabled, gl, imagesMeta, links, objectRegistry, onCloseSidebar, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
+  }, [camera, clickIndicator, collider, disabled, gl, imagesMeta, links, objectRegistry, occlusionRaycaster, onCloseSidebar, pathRaycaster, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
 
   return null;
 }

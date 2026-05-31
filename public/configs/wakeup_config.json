@@ -1,12 +1,688 @@
 {
+  "schemaVersion": "2.0.0",
   "id": "wakeupcall",
-  "modelPath": "ipfs://bafybeici4uefp7hpt7wkbdcu6nklzvfa6qknkhwjrcgufwv6uu2t36nh44/exhibition_wakeupcall_ktx.glb",
-  "interactivesPath": "ipfs://bafybeihe4i6i7c4heeqaooabfrzkeiy5ga26yw4vvetb7lojjzje2hqc4u/interactives_wakeupcall.glb",
-  "backgroundTexture": "ipfs://bafybeieo4nytbfj4fgzxqcn2ihhvoetkoy74hjqltqasvpu5n5dndd4rmi/bg_white.ktx2",
-  "sidebar": {
-    "logo": {
-      "text": "Exhibition Wakeup Call"
+  "kind": "exhibit",
+  "metadata": {
+    "title": "Wake-Up Call",
+    "description": "<strong>VIRTUAL BIENNALE PRAGUE:</strong><br /><br />The Virtual Biennale Prague, held in the Czech Republic since 2007, is an international event focused on a unique theme each edition. The 11th Biennale, titled <strong>Wake-Up Call</strong>, is accompanied by an exhibition at the 3D Blue Point Art Gallery (Polish University Abroad, London). This show is part of a series promoting the 2020 poster competition.<br /><br /><strong>COMPETITION FOCUS:</strong><br /><br />Artists address social issues such as discrimination and fake news, considering both global and local contexts. Black-and-white posters, a hallmark of the Biennale, offer a critical lens on contemporary life.<br /><br /><strong>THEME AND IMPACT:</strong><br /><br />This year’s Biennale is shaped by the Covid-19 pandemic and events like Black Lives Matter. The posters explore these themes and universal concerns about society, media, and the quest for harmony. Artists highlight openness, resistance to injustice, freedom, and optimism. The <strong>Wake-Up Call</strong> theme brings these ideas together, showing how art can inspire positive change.<br /><br />",
+    "language": "en"
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/exhibition_wakeupcall_merged.glb",
+      "mimeType": "model/gltf-binary"
     },
+    "background_texture": {
+      "kind": "texture",
+      "uri": "ipfs://bafybeieo4nytbfj4fgzxqcn2ihhvoetkoy74hjqltqasvpu5n5dndd4rmi/bg_white.ktx2",
+      "mimeType": "image/ktx2"
+    },
+    "NADIA_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/NADIA.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "QUENTIN_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/QUENTIN.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "SZYMON_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SZYMON.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "TEIJA_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/TEIJA.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "LEX_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/LEX.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "BARTOSZ_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARTOSZ.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "VICTOR_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/VICTOR.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "XU_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/XU.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "SIQING_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SIQING.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "BARBORA_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARBORA.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "HAN_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/HAN.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "SALOMON_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SALOMON.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "JULIANA_image": {
+      "kind": "image",
+      "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/JULIANA.jpg",
+      "mimeType": "image/jpeg"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "backgroundAsset": "background_texture"
+    },
+    "spawn": {
+      "position": [
+        -7,
+        12,
+        0
+      ]
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "autoExposure": true,
+      "exposure": 1,
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "antialias": false,
+      "shadows": false,
+      "maxDpr": 1
+    }
+  },
+  "nodes": {
+    "images_wakeup.001": {
+      "kind": "wall",
+      "ref": "images_wakeup.001",
+      "metadata": {
+        "title": "Wake Up Call poster wall",
+        "interactionDescription": "The visible poster wall remains part of the merged scene model. Clickable poster behavior is declared separately on the transparent image anchors from the same GLB."
+      }
+    },
+    "Professional Prix.002": {
+      "kind": "generic",
+      "ref": "Professional Prix.002",
+      "metadata": {
+        "title": "Professional Prix label",
+        "interactionDescription": "Static exhibition label geometry remains visible in the scene model and is not interactive."
+      }
+    },
+    "Wall.002": {
+      "kind": "wall",
+      "ref": "Wall.002",
+      "metadata": {
+        "title": "Wake Up Call wall",
+        "interactionDescription": "Static wall geometry remains part of the scene model and contributes to collision."
+      }
+    },
+    "FloorWakeUp.001": {
+      "kind": "room",
+      "ref": "FloorWakeUp.001",
+      "metadata": {
+        "title": "Wake Up Call room",
+        "interactionDescription": "The FloorWakeUp.001 mesh supplies the walkable exhibition shell while poster interactions are declared in config."
+      }
+    },
+    "NADIA": {
+      "kind": "image_anchor",
+      "ref": "NADIA",
+      "media": "NADIA",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "GRAND PRIX",
+        "description": "Human beings are at the center of contemporary society, which is entirely influenced by their lifestyle and behavior. Humans are the key to their salvation. Only through their strengths and knowledge will they be able to find new solutions to earning and securing a future on this planet. GRAND PRIX",
+        "author": "NADIA CERUTI, ITALY",
+        "interactionDescription": "Click NADIA to open the poster panel for \"GRAND PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "QUENTIN": {
+      "kind": "image_anchor",
+      "ref": "QUENTIN",
+      "media": "QUENTIN",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "PROFESSIONALS - GOLDEN PRIX",
+        "description": "The American flag is a strong and sacred symbol of patriotism in the USA. Names of black American citizens are written between the stripes, their age of death between the brackets. The list seems endless. They were all killed by white people, mostly police officers who represent the law, often seen as heroes. They were killed because they were black. We shall not forget their names. The Black Lives Matter movement rose again this year, and people have been protesting despite the sanitary restrictions. Like many others, I educated myself on anti-racism through social media and learned all the things that school never tells us. This tragedy was a wake-up call for many of us.",
+        "author": "QUENTIN ROUSSEL, FRANCE",
+        "interactionDescription": "Click QUENTIN to open the poster panel for \"PROFESSIONALS - GOLDEN PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "SZYMON": {
+      "kind": "image_anchor",
+      "ref": "SZYMON",
+      "media": "SZYMON",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "PROFESSIONALS - SILVER PRIX",
+        "description": "The poster entitled “Rat” (“Szczur”) was created during the recent lockdown introduced in Poland because of the COVID-19 pandemic. Being trapped at home and having to work remotely, the empty streets, the cancelled academic courses and cultural events – all this helped me to rethink the meanings we attach to our everyday lives. I was directly inspired by the song “Time” (“Czas”) performed by a new Polish band called UDW (Ukrytedowiadomości).",
+        "author": "SZYMON SZYMANKIEWICZ, POLAND",
+        "interactionDescription": "Click SZYMON to open the poster panel for \"PROFESSIONALS - SILVER PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "TEIJA": {
+      "kind": "image_anchor",
+      "ref": "TEIJA",
+      "media": "TEIJA",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "PROFESSIONALS - BRONZE PRIX",
+        "description": "If you want to cause a wake-up call, the other party needs to be open to communication. If they do not have an open ear for your concern, the message will not reach them.",
+        "author": "TEIJA TUULIKKI HOHL, AUSTRIA",
+        "interactionDescription": "Click TEIJA to open the poster panel for \"PROFESSIONALS - BRONZE PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "LEX": {
+      "kind": "image_anchor",
+      "ref": "LEX",
+      "media": "LEX",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "PROFESSIONALS - HONOURABLE MENTION",
+        "description": "The poster depicts a human who is trying to align one half of the globe with the other half by pushing it. In the context of current problems like climate change, pandemics, social injustice, racial conflicts, division, and the seeming misalignment between groups of people, humanity should try to get the world back on track for a united future.",
+        "author": "LEX DREWINSKI, GERMANY",
+        "interactionDescription": "Click LEX to open the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\" with its catalog metadata and full image."
+      }
+    },
+    "BARTOSZ": {
+      "kind": "image_anchor",
+      "ref": "BARTOSZ",
+      "media": "BARTOSZ",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "PROFESSIONALS - HONOURABLE MENTION",
+        "description": "Wake up! Be positive! The poster was created in response to the current global situation, which is the pandemic caused by the Covid-19. The virus has dominated our lives and caused us fear and many negative emotions. Through this poster, I wanted to show that despite the fact that the virus has created huge confusion in our daily lives, we should smile. Let us try to look into the future with the hope that it will be normal, and it will be beautiful. It is important to accept the current situation and to live as fully as possible despite the existing restrictions. In such difficult times, we need as many smiles as possible. The form of the poster is minimalistic and positive, and therefore reaches a broader audience to stir their emotions.",
+        "author": "BARTOSZ MAMAK, POLAND",
+        "interactionDescription": "Click BARTOSZ to open the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\" with its catalog metadata and full image."
+      }
+    },
+    "VICTOR": {
+      "kind": "image_anchor",
+      "ref": "VICTOR",
+      "media": "VICTOR",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "PROFESSIONALS - HONOURABLE MENTION",
+        "description": "Resistance In today's tumultuous and chaotically moving world, people are trying to express themselves, their desires, ideas and thoughts towards certain events, whether it's an ecological, political or social situation. Of course, the ruling powers are always trying to stir things up, mix them up and change the news. As a result, we have constant turbulence and rotation of news from all platforms of mass media. There is only one thing that can stop all this chaos and finally make people's voices heard, and that is RESISTANCE. When we look at this poster from a close distance, a close perspective, we can't see the letters, only the chaos of turbulent lines, just like fragments of thin paper strips or wires of the media twisted like a spiral. But when we look at it from a distance, amidst these twisted lines we start noticing the word RESISTANCE, it starts gradually appearing like the free voice of people coming through the constant spiral of the modern mass media. This keyword speaks for itself — from the right people, through the right people and for the good people around the world.",
+        "author": "VICTOR KOVALENKO, RUSSIA",
+        "interactionDescription": "Click VICTOR to open the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\" with its catalog metadata and full image."
+      }
+    },
+    "XU": {
+      "kind": "image_anchor",
+      "ref": "XU",
+      "media": "XU",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "STUDENTS - GOLDEN PRIX",
+        "description": "The poster uses a gradual graphic design technique. The barbed wire represents confinement and singleness. The poster gradually transforms the barbed wire composed of a single figure into a freeflying bird, so as to convey freedom.",
+        "author": "XU MENG, CHINA",
+        "interactionDescription": "Click XU to open the poster panel for \"STUDENTS - GOLDEN PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "SIQING": {
+      "kind": "image_anchor",
+      "ref": "SIQING",
+      "media": "SIQING",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "STUDENTS - SILVER PRIX",
+        "description": "This poster stems from my thinking about life around me. Nowadays, people spend a lot of energy and time in the virtual world, especially on social media software. These apps are not only a convenient medium for people to communicate but also an important place for people to get information every day. The development of the Internet has caused a flood of information, and people are besieged with endless information. In many cases, what we see may not be true. There may be pitfalls hidden behind various topics. Our thoughts are easily manipulated and guided by various media. When the truth is revealed, it becomes difficult for people to trust the media.",
+        "author": "SIQING YANG, CHINA",
+        "interactionDescription": "Click SIQING to open the poster panel for \"STUDENTS - SILVER PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "BARBORA": {
+      "kind": "image_anchor",
+      "ref": "BARBORA",
+      "media": "BARBORA",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "STUDENTS - BRONZE PRIX",
+        "description": "Each person plays a role in society and that is why each of us matters. A lot is happening right now all around the world and sometimes it is hard to find your way around and act right. Anyway, we should not hide from problems to stay in our comfort zone. The best way to start is with yourself. Wake up and do not close your eyes to the world around and its issues. The poster uses the metaphor of sticking one’s head in the sand before social problems that expresses a person who is not truly thinking. Also, the figure seems to be asleep and waking herself up while the storm is coming.",
+        "author": "BARBORA NĚMCOVÁ, CZECH REPUBLIC",
+        "interactionDescription": "Click BARBORA to open the poster panel for \"STUDENTS - BRONZE PRIX\" with its catalog metadata and full image."
+      }
+    },
+    "HAN": {
+      "kind": "image_anchor",
+      "ref": "HAN",
+      "media": "HAN",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "STUDENTS - HONOURABLE MENTION",
+        "description": "The poster uses cranes and humans as positive and negative graphics. The head of the crane is bleeding, conveying the concept of protecting endangered species and that the protection of wild animals starts with us, and calling for the harmonious coexistence of humans, animals and nature.",
+        "author": "HAN RONGXUN, CHINA",
+        "interactionDescription": "Click HAN to open the poster panel for \"STUDENTS - HONOURABLE MENTION\" with its catalog metadata and full image."
+      }
+    },
+    "SALOMON": {
+      "kind": "image_anchor",
+      "ref": "SALOMON",
+      "media": "SALOMON",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "STUDENTS - HONOURABLE MENTION",
+        "description": "It was sunny. We don't care about air while breathing; we don't care about food while eating; we don't care about our freedom when we're free. It was sunny - represents the way I looked at FREEDOM when my personal freedom was temporarily lost during the quarantine.",
+        "author": "SALOMON FABIO, ITALY",
+        "interactionDescription": "Click SALOMON to open the poster panel for \"STUDENTS - HONOURABLE MENTION\" with its catalog metadata and full image."
+      }
+    },
+    "JULIANA": {
+      "kind": "image_anchor",
+      "ref": "JULIANA",
+      "media": "JULIANA",
+      "interactive": true,
+      "visible": false,
+      "metadata": {
+        "title": "STUDENTS - HONOURABLE MENTION",
+        "description": "If we take a look at the events of this year, we can observe a massive lethargy in society, too much confidence in the mass media and slow thinking about real problems. This poster presents a visual metaphor for the need to wake up to the real world. The main motif of the poster is a pacifier, the soft part of it is replaced by a cactus plant. The primary purpose of the pacifier is to calm down a baby. A cactus is a plant that has no leaves, only thorns. If we change the familiar softness of the pacifier and replace it with the sharpness of a cactus, the pacifier will lose its original function. The connection between these two objects creates a visual situation that is striking and unpleasant to watch. The poster is made by expressive hand-drawing.",
+        "author": "JULIÁNA SEDLÁKOVÁ, CZECH REPUBLIC",
+        "interactionDescription": "Click JULIANA to open the poster panel for \"STUDENTS - HONOURABLE MENTION\" with its catalog metadata and full image."
+      }
+    }
+  },
+  "media": {
+    "NADIA": {
+      "kind": "image",
+      "title": "GRAND PRIX",
+      "description": "Human beings are at the center of contemporary society, which is entirely influenced by their lifestyle and behavior. Humans are the key to their salvation. Only through their strengths and knowledge will they be able to find new solutions to earning and securing a future on this planet. GRAND PRIX",
+      "author": "NADIA CERUTI, ITALY",
+      "image": {
+        "asset": "NADIA_image"
+      }
+    },
+    "QUENTIN": {
+      "kind": "image",
+      "title": "PROFESSIONALS - GOLDEN PRIX",
+      "description": "The American flag is a strong and sacred symbol of patriotism in the USA. Names of black American citizens are written between the stripes, their age of death between the brackets. The list seems endless. They were all killed by white people, mostly police officers who represent the law, often seen as heroes. They were killed because they were black. We shall not forget their names. The Black Lives Matter movement rose again this year, and people have been protesting despite the sanitary restrictions. Like many others, I educated myself on anti-racism through social media and learned all the things that school never tells us. This tragedy was a wake-up call for many of us.",
+      "author": "QUENTIN ROUSSEL, FRANCE",
+      "image": {
+        "asset": "QUENTIN_image"
+      }
+    },
+    "SZYMON": {
+      "kind": "image",
+      "title": "PROFESSIONALS - SILVER PRIX",
+      "description": "The poster entitled “Rat” (“Szczur”) was created during the recent lockdown introduced in Poland because of the COVID-19 pandemic. Being trapped at home and having to work remotely, the empty streets, the cancelled academic courses and cultural events – all this helped me to rethink the meanings we attach to our everyday lives. I was directly inspired by the song “Time” (“Czas”) performed by a new Polish band called UDW (Ukrytedowiadomości).",
+      "author": "SZYMON SZYMANKIEWICZ, POLAND",
+      "image": {
+        "asset": "SZYMON_image"
+      }
+    },
+    "TEIJA": {
+      "kind": "image",
+      "title": "PROFESSIONALS - BRONZE PRIX",
+      "description": "If you want to cause a wake-up call, the other party needs to be open to communication. If they do not have an open ear for your concern, the message will not reach them.",
+      "author": "TEIJA TUULIKKI HOHL, AUSTRIA",
+      "image": {
+        "asset": "TEIJA_image"
+      }
+    },
+    "LEX": {
+      "kind": "image",
+      "title": "PROFESSIONALS - HONOURABLE MENTION",
+      "description": "The poster depicts a human who is trying to align one half of the globe with the other half by pushing it. In the context of current problems like climate change, pandemics, social injustice, racial conflicts, division, and the seeming misalignment between groups of people, humanity should try to get the world back on track for a united future.",
+      "author": "LEX DREWINSKI, GERMANY",
+      "image": {
+        "asset": "LEX_image"
+      }
+    },
+    "BARTOSZ": {
+      "kind": "image",
+      "title": "PROFESSIONALS - HONOURABLE MENTION",
+      "description": "Wake up! Be positive! The poster was created in response to the current global situation, which is the pandemic caused by the Covid-19. The virus has dominated our lives and caused us fear and many negative emotions. Through this poster, I wanted to show that despite the fact that the virus has created huge confusion in our daily lives, we should smile. Let us try to look into the future with the hope that it will be normal, and it will be beautiful. It is important to accept the current situation and to live as fully as possible despite the existing restrictions. In such difficult times, we need as many smiles as possible. The form of the poster is minimalistic and positive, and therefore reaches a broader audience to stir their emotions.",
+      "author": "BARTOSZ MAMAK, POLAND",
+      "image": {
+        "asset": "BARTOSZ_image"
+      }
+    },
+    "VICTOR": {
+      "kind": "image",
+      "title": "PROFESSIONALS - HONOURABLE MENTION",
+      "description": "Resistance In today's tumultuous and chaotically moving world, people are trying to express themselves, their desires, ideas and thoughts towards certain events, whether it's an ecological, political or social situation. Of course, the ruling powers are always trying to stir things up, mix them up and change the news. As a result, we have constant turbulence and rotation of news from all platforms of mass media. There is only one thing that can stop all this chaos and finally make people's voices heard, and that is RESISTANCE. When we look at this poster from a close distance, a close perspective, we can't see the letters, only the chaos of turbulent lines, just like fragments of thin paper strips or wires of the media twisted like a spiral. But when we look at it from a distance, amidst these twisted lines we start noticing the word RESISTANCE, it starts gradually appearing like the free voice of people coming through the constant spiral of the modern mass media. This keyword speaks for itself — from the right people, through the right people and for the good people around the world.",
+      "author": "VICTOR KOVALENKO, RUSSIA",
+      "image": {
+        "asset": "VICTOR_image"
+      }
+    },
+    "XU": {
+      "kind": "image",
+      "title": "STUDENTS - GOLDEN PRIX",
+      "description": "The poster uses a gradual graphic design technique. The barbed wire represents confinement and singleness. The poster gradually transforms the barbed wire composed of a single figure into a freeflying bird, so as to convey freedom.",
+      "author": "XU MENG, CHINA",
+      "image": {
+        "asset": "XU_image"
+      }
+    },
+    "SIQING": {
+      "kind": "image",
+      "title": "STUDENTS - SILVER PRIX",
+      "description": "This poster stems from my thinking about life around me. Nowadays, people spend a lot of energy and time in the virtual world, especially on social media software. These apps are not only a convenient medium for people to communicate but also an important place for people to get information every day. The development of the Internet has caused a flood of information, and people are besieged with endless information. In many cases, what we see may not be true. There may be pitfalls hidden behind various topics. Our thoughts are easily manipulated and guided by various media. When the truth is revealed, it becomes difficult for people to trust the media.",
+      "author": "SIQING YANG, CHINA",
+      "image": {
+        "asset": "SIQING_image"
+      }
+    },
+    "BARBORA": {
+      "kind": "image",
+      "title": "STUDENTS - BRONZE PRIX",
+      "description": "Each person plays a role in society and that is why each of us matters. A lot is happening right now all around the world and sometimes it is hard to find your way around and act right. Anyway, we should not hide from problems to stay in our comfort zone. The best way to start is with yourself. Wake up and do not close your eyes to the world around and its issues. The poster uses the metaphor of sticking one’s head in the sand before social problems that expresses a person who is not truly thinking. Also, the figure seems to be asleep and waking herself up while the storm is coming.",
+      "author": "BARBORA NĚMCOVÁ, CZECH REPUBLIC",
+      "image": {
+        "asset": "BARBORA_image"
+      }
+    },
+    "HAN": {
+      "kind": "image",
+      "title": "STUDENTS - HONOURABLE MENTION",
+      "description": "The poster uses cranes and humans as positive and negative graphics. The head of the crane is bleeding, conveying the concept of protecting endangered species and that the protection of wild animals starts with us, and calling for the harmonious coexistence of humans, animals and nature.",
+      "author": "HAN RONGXUN, CHINA",
+      "image": {
+        "asset": "HAN_image"
+      }
+    },
+    "SALOMON": {
+      "kind": "image",
+      "title": "STUDENTS - HONOURABLE MENTION",
+      "description": "It was sunny. We don't care about air while breathing; we don't care about food while eating; we don't care about our freedom when we're free. It was sunny - represents the way I looked at FREEDOM when my personal freedom was temporarily lost during the quarantine.",
+      "author": "SALOMON FABIO, ITALY",
+      "image": {
+        "asset": "SALOMON_image"
+      }
+    },
+    "JULIANA": {
+      "kind": "image",
+      "title": "STUDENTS - HONOURABLE MENTION",
+      "description": "If we take a look at the events of this year, we can observe a massive lethargy in society, too much confidence in the mass media and slow thinking about real problems. This poster presents a visual metaphor for the need to wake up to the real world. The main motif of the poster is a pacifier, the soft part of it is replaced by a cactus plant. The primary purpose of the pacifier is to calm down a baby. A cactus is a plant that has no leaves, only thorns. If we change the familiar softness of the pacifier and replace it with the sharpness of a cactus, the pacifier will lose its original function. The connection between these two objects creates a visual situation that is striking and unpleasant to watch. The poster is made by expressive hand-drawing.",
+      "author": "JULIÁNA SEDLÁKOVÁ, CZECH REPUBLIC",
+      "image": {
+        "asset": "JULIANA_image"
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "NADIA_open_image",
+      "targetNode": "NADIA",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "NADIA"
+      },
+      "ui": {
+        "title": "GRAND PRIX",
+        "description": "Clicking NADIA opens the poster panel for \"GRAND PRIX\". The transparent image anchor named NADIA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking NADIA opens the poster panel for \"GRAND PRIX\". The transparent image anchor named NADIA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "QUENTIN_open_image",
+      "targetNode": "QUENTIN",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "QUENTIN"
+      },
+      "ui": {
+        "title": "PROFESSIONALS - GOLDEN PRIX",
+        "description": "Clicking QUENTIN opens the poster panel for \"PROFESSIONALS - GOLDEN PRIX\". The transparent image anchor named QUENTIN is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking QUENTIN opens the poster panel for \"PROFESSIONALS - GOLDEN PRIX\". The transparent image anchor named QUENTIN is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "SZYMON_open_image",
+      "targetNode": "SZYMON",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "SZYMON"
+      },
+      "ui": {
+        "title": "PROFESSIONALS - SILVER PRIX",
+        "description": "Clicking SZYMON opens the poster panel for \"PROFESSIONALS - SILVER PRIX\". The transparent image anchor named SZYMON is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking SZYMON opens the poster panel for \"PROFESSIONALS - SILVER PRIX\". The transparent image anchor named SZYMON is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "TEIJA_open_image",
+      "targetNode": "TEIJA",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "TEIJA"
+      },
+      "ui": {
+        "title": "PROFESSIONALS - BRONZE PRIX",
+        "description": "Clicking TEIJA opens the poster panel for \"PROFESSIONALS - BRONZE PRIX\". The transparent image anchor named TEIJA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking TEIJA opens the poster panel for \"PROFESSIONALS - BRONZE PRIX\". The transparent image anchor named TEIJA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "LEX_open_image",
+      "targetNode": "LEX",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "LEX"
+      },
+      "ui": {
+        "title": "PROFESSIONALS - HONOURABLE MENTION",
+        "description": "Clicking LEX opens the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\". The transparent image anchor named LEX is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking LEX opens the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\". The transparent image anchor named LEX is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "BARTOSZ_open_image",
+      "targetNode": "BARTOSZ",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "BARTOSZ"
+      },
+      "ui": {
+        "title": "PROFESSIONALS - HONOURABLE MENTION",
+        "description": "Clicking BARTOSZ opens the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\". The transparent image anchor named BARTOSZ is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking BARTOSZ opens the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\". The transparent image anchor named BARTOSZ is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "VICTOR_open_image",
+      "targetNode": "VICTOR",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "VICTOR"
+      },
+      "ui": {
+        "title": "PROFESSIONALS - HONOURABLE MENTION",
+        "description": "Clicking VICTOR opens the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\". The transparent image anchor named VICTOR is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking VICTOR opens the poster panel for \"PROFESSIONALS - HONOURABLE MENTION\". The transparent image anchor named VICTOR is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "XU_open_image",
+      "targetNode": "XU",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "XU"
+      },
+      "ui": {
+        "title": "STUDENTS - GOLDEN PRIX",
+        "description": "Clicking XU opens the poster panel for \"STUDENTS - GOLDEN PRIX\". The transparent image anchor named XU is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking XU opens the poster panel for \"STUDENTS - GOLDEN PRIX\". The transparent image anchor named XU is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "SIQING_open_image",
+      "targetNode": "SIQING",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "SIQING"
+      },
+      "ui": {
+        "title": "STUDENTS - SILVER PRIX",
+        "description": "Clicking SIQING opens the poster panel for \"STUDENTS - SILVER PRIX\". The transparent image anchor named SIQING is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking SIQING opens the poster panel for \"STUDENTS - SILVER PRIX\". The transparent image anchor named SIQING is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "BARBORA_open_image",
+      "targetNode": "BARBORA",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "BARBORA"
+      },
+      "ui": {
+        "title": "STUDENTS - BRONZE PRIX",
+        "description": "Clicking BARBORA opens the poster panel for \"STUDENTS - BRONZE PRIX\". The transparent image anchor named BARBORA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking BARBORA opens the poster panel for \"STUDENTS - BRONZE PRIX\". The transparent image anchor named BARBORA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "HAN_open_image",
+      "targetNode": "HAN",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "HAN"
+      },
+      "ui": {
+        "title": "STUDENTS - HONOURABLE MENTION",
+        "description": "Clicking HAN opens the poster panel for \"STUDENTS - HONOURABLE MENTION\". The transparent image anchor named HAN is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking HAN opens the poster panel for \"STUDENTS - HONOURABLE MENTION\". The transparent image anchor named HAN is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "SALOMON_open_image",
+      "targetNode": "SALOMON",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "SALOMON"
+      },
+      "ui": {
+        "title": "STUDENTS - HONOURABLE MENTION",
+        "description": "Clicking SALOMON opens the poster panel for \"STUDENTS - HONOURABLE MENTION\". The transparent image anchor named SALOMON is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking SALOMON opens the poster panel for \"STUDENTS - HONOURABLE MENTION\". The transparent image anchor named SALOMON is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    },
+    {
+      "id": "JULIANA_open_image",
+      "targetNode": "JULIANA",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "JULIANA"
+      },
+      "ui": {
+        "title": "STUDENTS - HONOURABLE MENTION",
+        "description": "Clicking JULIANA opens the poster panel for \"STUDENTS - HONOURABLE MENTION\". The transparent image anchor named JULIANA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking JULIANA opens the poster panel for \"STUDENTS - HONOURABLE MENTION\". The transparent image anchor named JULIANA is matched from the merged GLB, and the panel shows the configured title, author, full description, and image asset without loading a separate interactives GLB."
+      }
+    }
+  ],
+  "viewer": {
+    "params": {
+      "exposure": 1,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 2.5,
+      "gravity": -8,
+      "visitorSpeed": 3,
+      "heightOffset": {
+        "x": 0,
+        "y": 3.1,
+        "z": 0
+      },
+      "visitorEnter": {
+        "x": -7,
+        "y": 12,
+        "z": 0
+      },
+      "rotateOrbit": -150,
+      "performanceMode": true,
+      "maxDpr": 1,
+      "antialias": false,
+      "shadows": false,
+      "logarithmicDepthBuffer": false
+    }
+  },
+  "sidebar": {
+    "logoText": "Exhibition Wakeup Call",
     "items": [
       {
         "id": "info-icon",
@@ -20,112 +696,15 @@
       }
     ]
   },
-  "images": {
-    "NADIA": {
-      "title": "GRAND PRIX",
-      "description": "Human beings are at the center of contemporary society, which is entirely influenced by their lifestyle and behavior. Humans are the key to their salvation. Only through their strengths and knowledge will they be able to find new solutions to earning and securing a future on this planet. GRAND PRIX",
-      "author": "NADIA CERUTI, ITALY",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/NADIA.jpg"
-    },
-    "QUENTIN": {
-      "title": "PROFESSIONALS - GOLDEN PRIX",
-      "description": "The American flag is a strong and sacred symbol of patriotism in the USA. Names of black American citizens are written between the stripes, their age of death between the brackets. The list seems endless. They were all killed by white people, mostly police officers who represent the law, often seen as heroes. They were killed because they were black. We shall not forget their names. The Black Lives Matter movement rose again this year, and people have been protesting despite the sanitary restrictions. Like many others, I educated myself on anti-racism through social media and learned all the things that school never tells us. This tragedy was a wake-up call for many of us.",
-      "author": "QUENTIN ROUSSEL, FRANCE",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/QUENTIN.jpg"
-    },
-    "SZYMON": {
-      "title": "PROFESSIONALS - SILVER PRIX",
-      "description": "The poster entitled “Rat” (“Szczur”) was created during the recent lockdown introduced in Poland because of the COVID-19 pandemic. Being trapped at home and having to work remotely, the empty streets, the cancelled academic courses and cultural events – all this helped me to rethink the meanings we attach to our everyday lives. I was directly inspired by the song “Time” (“Czas”) performed by a new Polish band called UDW (Ukrytedowiadomości).",
-      "author": "SZYMON SZYMANKIEWICZ, POLAND",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SZYMON.jpg"
-    },
-    "TEIJA": {
-      "title": "PROFESSIONALS - BRONZE PRIX",
-      "description": "If you want to cause a wake-up call, the other party needs to be open to communication. If they do not have an open ear for your concern, the message will not reach them.",
-      "author": "TEIJA TUULIKKI HOHL, AUSTRIA",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/TEIJA.jpg"
-    },
-    "LEX": {
-      "title": "PROFESSIONALS - HONOURABLE MENTION",
-      "description": "The poster depicts a human who is trying to align one half of the globe with the other half by pushing it. In the context of current problems like climate change, pandemics, social injustice, racial conflicts, division, and the seeming misalignment between groups of people, humanity should try to get the world back on track for a united future.",
-      "author": "LEX DREWINSKI, GERMANY",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/LEX.jpg"
-    },
-    "BARTOSZ": {
-      "title": "PROFESSIONALS - HONOURABLE MENTION",
-      "description": "Wake up! Be positive! The poster was created in response to the current global situation, which is the pandemic caused by the Covid-19. The virus has dominated our lives and caused us fear and many negative emotions. Through this poster, I wanted to show that despite the fact that the virus has created huge confusion in our daily lives, we should smile. Let us try to look into the future with the hope that it will be normal, and it will be beautiful. It is important to accept the current situation and to live as fully as possible despite the existing restrictions. In such difficult times, we need as many smiles as possible. The form of the poster is minimalistic and positive, and therefore reaches a broader audience to stir their emotions.",
-      "author": "BARTOSZ MAMAK, POLAND",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARTOSZ.jpg"
-    },
-    "VICTOR": {
-      "title": "PROFESSIONALS - HONOURABLE MENTION",
-      "description": "Resistance In today's tumultuous and chaotically moving world, people are trying to express themselves, their desires, ideas and thoughts towards certain events, whether it's an ecological, political or social situation. Of course, the ruling powers are always trying to stir things up, mix them up and change the news. As a result, we have constant turbulence and rotation of news from all platforms of mass media. There is only one thing that can stop all this chaos and finally make people's voices heard, and that is RESISTANCE. When we look at this poster from a close distance, a close perspective, we can't see the letters, only the chaos of turbulent lines, just like fragments of thin paper strips or wires of the media twisted like a spiral. But when we look at it from a distance, amidst these twisted lines we start noticing the word RESISTANCE, it starts gradually appearing like the free voice of people coming through the constant spiral of the modern mass media. This keyword speaks for itself — from the right people, through the right people and for the good people around the world.",
-      "author": "VICTOR KOVALENKO, RUSSIA",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/VICTOR.jpg"
-    },
-    "XU": {
-      "title": "STUDENTS - GOLDEN PRIX",
-      "description": "The poster uses a gradual graphic design technique. The barbed wire represents confinement and singleness. The poster gradually transforms the barbed wire composed of a single figure into a freeflying bird, so as to convey freedom.",
-      "author": "XU MENG, CHINA",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/XU.jpg"
-    },
-    "SIQING": {
-      "title": "STUDENTS - SILVER PRIX",
-      "description": "This poster stems from my thinking about life around me. Nowadays, people spend a lot of energy and time in the virtual world, especially on social media software. These apps are not only a convenient medium for people to communicate but also an important place for people to get information every day. The development of the Internet has caused a flood of information, and people are besieged with endless information. In many cases, what we see may not be true. There may be pitfalls hidden behind various topics. Our thoughts are easily manipulated and guided by various media. When the truth is revealed, it becomes difficult for people to trust the media.",
-      "author": "SIQING YANG, CHINA",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SIQING.jpg"
-    },
-    "BARBORA": {
-      "title": "STUDENTS - BRONZE PRIX",
-      "description": "Each person plays a role in society and that is why each of us matters. A lot is happening right now all around the world and sometimes it is hard to find your way around and act right. Anyway, we should not hide from problems to stay in our comfort zone. The best way to start is with yourself. Wake up and do not close your eyes to the world around and its issues. The poster uses the metaphor of sticking one’s head in the sand before social problems that expresses a person who is not truly thinking. Also, the figure seems to be asleep and waking herself up while the storm is coming.",
-      "author": "BARBORA NĚMCOVÁ, CZECH REPUBLIC",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARBORA.jpg"
-    },
-    "HAN": {
-      "title": "STUDENTS - HONOURABLE MENTION",
-      "description": "The poster uses cranes and humans as positive and negative graphics. The head of the crane is bleeding, conveying the concept of protecting endangered species and that the protection of wild animals starts with us, and calling for the harmonious coexistence of humans, animals and nature.",
-      "author": "HAN RONGXUN, CHINA",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/HAN.jpg"
-    },
-    "SALOMON": {
-      "title": "STUDENTS - HONOURABLE MENTION",
-      "description": "It was sunny. We don't care about air while breathing; we don't care about food while eating; we don't care about our freedom when we're free. It was sunny - represents the way I looked at FREEDOM when my personal freedom was temporarily lost during the quarantine.",
-      "author": "SALOMON FABIO, ITALY",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SALOMON.jpg"
-    },
-    "JULIANA": {
-      "title": "STUDENTS - HONOURABLE MENTION",
-      "description": "If we take a look at the events of this year, we can observe a massive lethargy in society, too much confidence in the mass media and slow thinking about real problems. This poster presents a visual metaphor for the need to wake up to the real world. The main motif of the poster is a pacifier, the soft part of it is replaced by a cactus plant. The primary purpose of the pacifier is to calm down a baby. A cactus is a plant that has no leaves, only thorns. If we change the familiar softness of the pacifier and replace it with the sharpness of a cactus, the pacifier will lose its original function. The connection between these two objects creates a visual situation that is striking and unpleasant to watch. The poster is made by expressive hand-drawing.",
-      "author": "JULIÁNA SEDLÁKOVÁ, CZECH REPUBLIC",
-      "imagePath": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/JULIANA.jpg"
+  "metadataExtras": {
+    "migration": {
+      "from": "wakeupcall split-model config",
+      "mergedModel": "/models/exhibition_wakeupcall_merged.glb",
+      "sourceModels": [
+        "public/downloaded_models/exhibition_wakeupcall_ktx.glb",
+        "public/downloaded_models/interactives_wakeupcall.glb"
+      ],
+      "notes": "The merged GLB keeps only runtime name/type extras from source node metadata; v2 config declares poster media and image interactions."
     }
-  },
-  "params": {
-    "exposure": 1.0,
-    "autoExposure": true,
-    "toneMapping": "neutral",
-    "exposureTarget": 0.68,
-    "exposureMin": 0.5,
-    "exposureMax": 1.65,
-    "exposureSampleInterval": 30,
-    "colorGrade": {
-      "brightness": 1.0,
-      "contrast": 0.9,
-      "saturate": 0.68
-    },
-    "lightIntensity": 2.5,
-    "gravity": -8,
-    "visitorSpeed": 3,
-    "heightOffset": {
-      "x": 0,
-      "y": 3.1,
-      "z": 0
-    },
-    "visitorEnter": {
-      "x": -7,
-      "y": 12,
-      "z": 0
-    },
-    "rotateOrbit": -150
   }
 }
