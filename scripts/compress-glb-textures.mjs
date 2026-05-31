@@ -24,6 +24,17 @@ function sanitizeFileName(value, fallback) {
   return cleaned || fallback;
 }
 
+function extensionForImage(image, fallback = '.bin') {
+  const mimeType = typeof image?.mimeType === 'string' ? image.mimeType.toLowerCase() : '';
+  if (mimeType === 'image/png') return '.png';
+  if (mimeType === 'image/jpeg') return '.jpg';
+  if (mimeType === 'image/webp') return '.webp';
+  if (mimeType === 'image/ktx2') return '.ktx2';
+  const uri = typeof image?.uri === 'string' ? image.uri : '';
+  const ext = path.extname(uri).toLowerCase();
+  return ext || fallback;
+}
+
 function readGlb(buffer) {
   const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
   const magic = view.getUint32(0, true);
@@ -99,6 +110,30 @@ function runToktx(outputFile, inputFile) {
   }
 }
 
+function runFfmpeg(inputFile, outputFile) {
+  const result = spawnSync(
+    'ffmpeg',
+    ['-y', '-i', inputFile, outputFile],
+    { encoding: 'utf8' }
+  );
+
+  if (result.status !== 0) {
+    throw new Error(
+      `ffmpeg failed for ${inputFile}\n${result.stdout || ''}${result.stderr || ''}`.trim()
+    );
+  }
+}
+
+function prepareInputForToktx(sourcePath, image, tempDir, index, sourceName) {
+  const mimeType = typeof image?.mimeType === 'string' ? image.mimeType.toLowerCase() : '';
+  if (mimeType !== 'image/webp') {
+    return sourcePath;
+  }
+  const normalizedPath = path.join(tempDir, `${String(index).padStart(2, '0')}_${sourceName}_normalized.png`);
+  runFfmpeg(sourcePath, normalizedPath);
+  return normalizedPath;
+}
+
 function buildGlb(json, bin) {
   const jsonText = JSON.stringify(json);
   const jsonBytes = Buffer.from(jsonText, 'utf8');
@@ -156,10 +191,16 @@ async function main() {
 
       const sourceBytes = bin.subarray(view.byteOffset, view.byteOffset + view.byteLength);
       const sourceName = sanitizeFileName(image.name, `image_${i}`);
+      const sourceExtension = extensionForImage(image);
       console.log(`Compressing image ${i + 1}/${json.images.length}: ${sourceName}`);
-      const pngPath = await writeTempFile(tempDir, `${String(i).padStart(2, '0')}_${sourceName}.png`, sourceBytes);
+      const sourcePath = await writeTempFile(
+        tempDir,
+        `${String(i).padStart(2, '0')}_${sourceName}${sourceExtension}`,
+        sourceBytes
+      );
+      const encoderInputPath = prepareInputForToktx(sourcePath, image, tempDir, i, sourceName);
       const ktx2Path = path.join(tempDir, `${String(i).padStart(2, '0')}_${sourceName}.ktx2`);
-      runToktx(ktx2Path, pngPath);
+      runToktx(ktx2Path, encoderInputPath);
       imageKtx2ByIndex.set(i, await fs.readFile(ktx2Path));
     }
 

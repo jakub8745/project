@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "2.0.0",
+  "id": "example_exhibit",
+  "kind": "exhibit",
+  "metadata": {
+    "title": "Example Exhibit",
+    "description": "A normalized v2 manifest example.",
+    "language": "en",
+    "authors": [
+      {
+        "name": "Blue Point Art",
+        "role": "publisher"
+      }
+    ],
+    "tags": ["example", "archive"],
+    "ogImage": {
+      "asset": "og_image"
+    }
+  },
+  "nft": {
+    "mintable": true,
+    "tokenStandard": "ERC-721",
+    "canonicalConfigUri": "ipfs://bafy.../example_config.json",
+    "canonicalPreviewAsset": "og_image",
+    "canonicalSceneAsset": "scene_model",
+    "assetBundleCid": "bafy..."
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "ipfs://bafy.../scene.glb",
+      "fallbackUris": [
+        "/models/scene.glb"
+      ],
+      "mimeType": "model/gltf-binary"
+    },
+    "og_image": {
+      "kind": "image",
+      "uri": "ipfs://bafy.../og.jpg",
+      "fallbackUris": [
+        "/textures/og.jpg"
+      ],
+      "mimeType": "image/jpeg"
+    },
+    "manual_thumb": {
+      "kind": "image",
+      "uri": "ipfs://bafy.../manual_thumb.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "manual_pdf": {
+      "kind": "document",
+      "uri": "ipfs://bafy.../manual.pdf",
+      "mimeType": "application/pdf"
+    },
+    "screen_poster": {
+      "kind": "image",
+      "uri": "ipfs://bafy.../screen.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "screen_video_mp4": {
+      "kind": "video",
+      "uri": "ipfs://bafy.../screen.mp4",
+      "mimeType": "video/mp4"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "color": "#000000"
+    },
+    "spawn": {
+      "node": "Visitor_enter",
+      "direction": "west"
+    },
+    "camera": {
+      "mode": "first_person"
+    },
+    "renderer": {
+      "toneMapping": "neutral",
+      "autoExposure": false
+    }
+  },
+  "nodes": {
+    "Visitor_enter": {
+      "kind": "spawn_anchor",
+      "spawnDirection": "west"
+    },
+    "main_floor": {
+      "kind": "floor"
+    },
+    "left_screen": {
+      "kind": "video_surface"
+    },
+    "manual_panel": {
+      "kind": "document_anchor"
+    }
+  },
+  "media": {
+    "manual_en": {
+      "kind": "document",
+      "title": "Exhibit Manual",
+      "description": "Companion PDF.",
+      "previewImage": {
+        "asset": "manual_thumb"
+      },
+      "document": {
+        "asset": "manual_pdf"
+      }
+    },
+    "screen_video": {
+      "kind": "video",
+      "title": "Main Screen",
+      "poster": {
+        "asset": "screen_poster"
+      },
+      "sources": [
+        {
+          "asset": "screen_video_mp4"
+        }
+      ]
+    }
+  },
+  "interactions": [
+    {
+      "id": "open_manual_panel",
+      "targetNode": "manual_panel",
+      "trigger": "click",
+      "action": {
+        "type": "open_document",
+        "media": "manual_en"
+      },
+      "ui": {
+        "title": "Open manual",
+        "description": "Open the exhibit companion PDF."
+      }
+    }
+  ],
+  "modules": {
+    "video": {
+      "instances": [
+        {
+          "id": "main_screen_runtime",
+          "targetNode": "left_screen",
+          "media": "screen_video",
+          "playbackMode": "synced_silent",
+          "autoplayOnEnter": true,
+          "syncGroup": "main_screen_group",
+          "interactive": false,
+          "controls": false
+        }
+      ],
+      "syncGroups": [
+        {
+          "id": "main_screen_group",
+          "startPolicy": "all_ready"
+        }
+      ]
+    }
+  },
+  "sidebar": {
+    "logoText": "Example Exhibit",
+    "items": [
+      {
+        "id": "about-item",
+        "label": "About",
+        "content": "This is a compact example of the exhibit config v2 structure."
+      }
+    ]
+  }
+}

@@ -27,6 +27,6 @@ export default class Visitor extends Mesh {
   target: Vector3;
   isAutoMoving: boolean;
   reset(): void;
-  update(delta: number, collider: Mesh): { changed: boolean; newFloor: Object3D | null };
+  update(delta: number, collider: Mesh): void;
   setJoystickInput(x?: number, y?: number): void;
 }

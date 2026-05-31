@@ -19,7 +19,15 @@ interface BlobChatBridgeSendPayload {
   metadata?: Record<string, unknown>;
 }
 
-export function useBlobChatBridge() {
+interface UseBlobChatBridgeOptions {
+  enabled?: boolean;
+  pollIntervalMs?: number;
+}
+
+export function useBlobChatBridge({
+  enabled = true,
+  pollIntervalMs = 12_000
+}: UseBlobChatBridgeOptions = {}) {
   const [available, setAvailable] = useState(false);
   const [requiresUnlock, setRequiresUnlock] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,14 +67,32 @@ export function useBlobChatBridge() {
   }, [readJsonSafe]);
 
   useEffect(() => {
-    void checkHealth();
-    const timer = window.setInterval(() => {
+    if (!enabled) {
+      setAvailable(false);
+      setRequiresUnlock(false);
+      setError(null);
+      return undefined;
+    }
+
+    const isPageVisible = () => typeof document === 'undefined' || document.visibilityState === 'visible';
+    const checkHealthIfVisible = () => {
+      if (!isPageVisible()) return;
       void checkHealth();
-    }, 12000);
+    };
+
+    void checkHealth();
+    const timer = window.setInterval(checkHealthIfVisible, pollIntervalMs);
+    const handleVisibilityChange = () => {
+      if (isPageVisible()) {
+        void checkHealth();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [checkHealth]);
+  }, [checkHealth, enabled, pollIntervalMs]);
 
   const sendMessage = useCallback(async (payload: BlobChatBridgeSendPayload): Promise<{ text: string }> => {
     setLoading(true);

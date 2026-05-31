@@ -26,6 +26,12 @@ pnpm build
 
 Drop exhibition configs into `public/configs/` (or host them remotely) and update `src/data/galleryConfig.ts` to register new entries.
 
+Target schema artifacts for the normalized manifest live at:
+
+- `src/types/exhibitSchemaV2.ts`
+- `docs/exhibit-config-v2.md`
+- `example_of_gallery_config_v2.json`
+
 ---
 
 ## Procedural Agents Room

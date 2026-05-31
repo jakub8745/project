@@ -124,6 +124,8 @@ export function PointerInteractions({
       }
       const type = typeof userData.type === 'string' ? userData.type : runtimeData?.type;
       const key =
+        (runtimeData?.entry && typeof runtimeData.entry.objectName === 'string' ? runtimeData.entry.objectName : undefined) ||
+        (typeof userData.__objectRegistryKey === 'string' ? userData.__objectRegistryKey : undefined) ||
         runtimeData?.ref ||
         (typeof userData.name === 'string' ? userData.name : undefined) ||
         object.name;

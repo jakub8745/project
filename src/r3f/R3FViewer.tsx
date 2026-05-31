@@ -25,7 +25,6 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
-  WebGLRenderTarget,
   WebGLCubeRenderTarget,
   CubeCamera,
   Object3D,
@@ -55,7 +54,7 @@ import { StaticGeometryGenerator, MeshBVH, acceleratedRaycast, computeBoundsTree
 import Visitor from '../modules/Visitor.js';
 import Robot from '../modules/Robot.js';
 import { PhysicsSystem, type PhysicsCollisionEvent, type PhysicsConfig, type PhysicsRuntimeActor } from '../modules/physicsSystem';
-import { useExhibitConfig } from './useExhibitConfig';
+import type { ExhibitConfig } from './useExhibitConfig';
 import type { OrbitControls as OrbitControlsImpl } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import type { TransformControlsEventMap } from 'three/examples/jsm/controls/TransformControls.js';
@@ -168,6 +167,9 @@ function releaseSharedLoaders() {
 
 interface R3FViewerProps {
   configUrl: string | null;
+  config: ExhibitConfig | null;
+  loading?: boolean;
+  error?: Error | null;
   onRequestSidebarClose?: () => void;
   onVisitorActivity?: () => void;
   onVisitorEntered?: () => void;
@@ -274,6 +276,23 @@ type LightZoneRoute = {
   transitionSeconds?: number;
 };
 
+type SpatialCandidateBase = {
+  box: Box3;
+  area: number;
+  xPadding: number;
+  zPadding: number;
+};
+
+type FloorSpatialCandidate = SpatialCandidateBase & {
+  floor: Object3D;
+  floorKey: string;
+};
+
+type RouteSpatialCandidate<Route> = SpatialCandidateBase & {
+  route: Route;
+  routeKey: string;
+};
+
 type SceneLightSettings = {
   ambientColor: string;
   ambientIntensity: number;
@@ -324,6 +343,66 @@ function getSurfaceRouteNames(surface: Object3D | null): string[] {
     userData.id,
     userData.elementID
   ].filter((value): value is string => typeof value === 'string' && value.trim());
+}
+
+function getSurfaceType(surface: Object3D | null): string | undefined {
+  const type = surface?.userData?.type;
+  return typeof type === 'string' && type.trim() ? type.trim() : undefined;
+}
+
+function isVisitorLocationSurface(surface: Object3D | null): boolean {
+  const type = getSurfaceType(surface);
+  return type === 'visitorLocation' || type === 'Room';
+}
+
+function createSpatialCandidateBase(box: Box3): SpatialCandidateBase {
+  return {
+    box,
+    area: Math.max(0.0001, (box.max.x - box.min.x) * (box.max.z - box.min.z)),
+    xPadding: Math.max(0.2, (box.max.x - box.min.x) * 0.02),
+    zPadding: Math.max(0.2, (box.max.z - box.min.z) * 0.02)
+  };
+}
+
+function findMappedRoute<Route>(names: string[], routeBySurface: Map<string, Route>): Route | undefined {
+  for (const name of names) {
+    const route = routeBySurface.get(name);
+    if (route) {
+      return route;
+    }
+  }
+  return undefined;
+}
+
+function pickBestSpatialCandidate<T extends SpatialCandidateBase>(candidates: T[], position: Vector3): T | null {
+  let best: T | null = null;
+  let bestYDistance = Number.POSITIVE_INFINITY;
+  let bestArea = Number.POSITIVE_INFINITY;
+
+  for (const candidate of candidates) {
+    const { box, xPadding, zPadding, area } = candidate;
+    if (
+      position.x < box.min.x - xPadding ||
+      position.x > box.max.x + xPadding ||
+      position.z < box.min.z - zPadding ||
+      position.z > box.max.z + zPadding
+    ) {
+      continue;
+    }
+
+    const yDistance = position.y < box.min.y
+      ? box.min.y - position.y
+      : position.y > box.max.y
+        ? position.y - box.max.y
+        : 0;
+    if (yDistance < bestYDistance || (yDistance === bestYDistance && area < bestArea)) {
+      best = candidate;
+      bestYDistance = yDistance;
+      bestArea = area;
+    }
+  }
+
+  return best;
 }
 
 function audioFloorRouteKey(route: AudioFloorRoute): string {
@@ -441,11 +520,6 @@ function detectIPadLikeDevice(): boolean {
   const platform = navigator.platform || '';
   const maxTouch = navigator.maxTouchPoints || 0;
   return /iPad/i.test(ua) || (platform === 'MacIntel' && maxTouch > 1);
-}
-
-function detectFirefoxBrowser(): boolean {
-  if (typeof navigator === 'undefined') return false;
-  return /firefox/i.test(navigator.userAgent || '');
 }
 
 type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes' | 'concrete' | 'plaster';
@@ -650,6 +724,84 @@ async function loadEquirectTexture(textureUrl: string, gl: WebGLRenderer): Promi
   }
   texture.needsUpdate = true;
   return texture;
+}
+
+type SharedEquirectTextureEntry = {
+  refs: number;
+  texture: Texture | null;
+  promise: Promise<Texture> | null;
+};
+
+const sharedEquirectTextureCache = new WeakMap<WebGLRenderer, Map<string, SharedEquirectTextureEntry>>();
+
+function getSharedEquirectTextureMap(gl: WebGLRenderer): Map<string, SharedEquirectTextureEntry> {
+  let cache = sharedEquirectTextureCache.get(gl);
+  if (!cache) {
+    cache = new Map<string, SharedEquirectTextureEntry>();
+    sharedEquirectTextureCache.set(gl, cache);
+  }
+  return cache;
+}
+
+async function acquireSharedEquirectTexture(textureUrl: string, gl: WebGLRenderer): Promise<Texture> {
+  const cache = getSharedEquirectTextureMap(gl);
+  let entry = cache.get(textureUrl);
+  if (!entry) {
+    entry = {
+      refs: 0,
+      texture: null,
+      promise: null
+    };
+    cache.set(textureUrl, entry);
+  }
+
+  entry.refs += 1;
+  if (entry.texture) {
+    return entry.texture;
+  }
+
+  if (!entry.promise) {
+    entry.promise = loadEquirectTexture(textureUrl, gl)
+      .then((texture) => {
+        entry!.texture = texture;
+        entry!.promise = null;
+        if (entry!.refs <= 0) {
+          cache.delete(textureUrl);
+          texture.dispose();
+        }
+        return texture;
+      })
+      .catch((error) => {
+        if (cache.get(textureUrl) === entry) {
+          cache.delete(textureUrl);
+        }
+        entry!.promise = null;
+        throw error;
+      });
+  }
+
+  return entry.promise;
+}
+
+function releaseSharedEquirectTexture(textureUrl: string, gl: WebGLRenderer) {
+  const cache = sharedEquirectTextureCache.get(gl);
+  if (!cache) return;
+  const entry = cache.get(textureUrl);
+  if (!entry) return;
+
+  entry.refs = Math.max(0, entry.refs - 1);
+  if (entry.refs > 0) {
+    return;
+  }
+  if (entry.texture) {
+    cache.delete(textureUrl);
+    entry.texture.dispose();
+    entry.texture = null;
+    return;
+  }
+  if (!entry.promise) {
+    cache.delete(textureUrl);
+  }
 }
 
 function useConfiguredGLTFs(paths: string[]): GLTF[] {
@@ -1728,6 +1880,9 @@ function ProceduralRoomModel({
       setSurfacePrints([]);
       return;
     }
+    if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
+      return;
+    }
     try {
       const response = await fetch(chatApiUrl(`/api/prints?limit=${chatPrintsFetchLimit}`));
       if (!response.ok) return;
@@ -1762,12 +1917,25 @@ function ProceduralRoomModel({
   }, [chatPrintsEnabled, chatPrintsFetchLimit, chatPrintsMaxVisible]);
 
   useEffect(() => {
-    void fetchSurfacePrints();
-    if (!chatPrintsEnabled) return undefined;
-    const timer = window.setInterval(() => {
+    if (typeof document === 'undefined' || document.visibilityState === 'visible') {
       void fetchSurfacePrints();
+    }
+    if (!chatPrintsEnabled) return undefined;
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        void fetchSurfacePrints();
+      }
+    };
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        void fetchSurfacePrints();
+      }
     }, chatPrintsPollMs);
-    return () => window.clearInterval(timer);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [chatPrintsEnabled, chatPrintsPollMs, fetchSurfacePrints]);
 
   const renderedSurfacePrints = useMemo(() => {
@@ -2276,6 +2444,7 @@ function SceneBackground({
   useEffect(() => {
     let disposed = false;
     let loadedTexture: Texture | null = null;
+    let acquiredTextureUrl: string | null = null;
     const previousBlurriness = scene.backgroundBlurriness ?? 0;
     const previousIntensity = scene.backgroundIntensity ?? 1;
     const targetBlurriness = typeof blurriness === 'number' ? blurriness : 0;
@@ -2301,12 +2470,13 @@ function SceneBackground({
 
     const loadBackground = async () => {
       try {
-        const texture = await loadEquirectTexture(textureUrl, gl as WebGLRenderer);
+        const texture = await acquireSharedEquirectTexture(textureUrl, gl as WebGLRenderer);
         if (disposed) {
-          texture.dispose();
+          releaseSharedEquirectTexture(textureUrl, gl as WebGLRenderer);
           return;
         }
         loadedTexture = texture;
+        acquiredTextureUrl = textureUrl;
         scene.background = texture;
         scene.backgroundBlurriness = targetBlurriness;
         scene.backgroundIntensity = targetIntensity;
@@ -2326,7 +2496,9 @@ function SceneBackground({
         if (scene.background === loadedTexture) {
           scene.background = null;
         }
-        loadedTexture.dispose();
+        if (acquiredTextureUrl) {
+          releaseSharedEquirectTexture(acquiredTextureUrl, gl as WebGLRenderer);
+        }
       } else if (scene.background === fallbackColor) {
         scene.background = null;
       }
@@ -2352,18 +2524,20 @@ function SceneEnvironment({
 
     let disposed = false;
     let loadedTexture: Texture | null = null;
+    let acquiredTextureUrl: string | null = null;
     const previousEnvironment = scene.environment;
     const previousIntensity = scene.environmentIntensity ?? 1;
     const targetIntensity = typeof intensity === 'number' ? intensity : 1;
 
     const loadEnvironment = async () => {
       try {
-        const texture = await loadEquirectTexture(textureUrl, gl as WebGLRenderer);
+        const texture = await acquireSharedEquirectTexture(textureUrl, gl as WebGLRenderer);
         if (disposed) {
-          texture.dispose();
+          releaseSharedEquirectTexture(textureUrl, gl as WebGLRenderer);
           return;
         }
         loadedTexture = texture;
+        acquiredTextureUrl = textureUrl;
         scene.environment = texture;
         scene.environmentIntensity = targetIntensity;
       } catch (err) {
@@ -2381,7 +2555,9 @@ function SceneEnvironment({
         if (scene.environment === loadedTexture) {
           scene.environment = previousEnvironment;
         }
-        loadedTexture.dispose();
+        if (acquiredTextureUrl) {
+          releaseSharedEquirectTexture(acquiredTextureUrl, gl as WebGLRenderer);
+        }
       } else if (scene.environment !== previousEnvironment) {
         scene.environment = previousEnvironment;
       }
@@ -2694,13 +2870,14 @@ function SceneLoadingOverlay({
 
 function R3FViewerInner({
   configUrl,
+  config,
+  loading = false,
+  error = null,
   onRequestSidebarClose,
   onVisitorActivity,
   onVisitorEntered,
   onPhysicsCollision
 }: R3FViewerProps) {
-  const { config, loading, error } = useExhibitConfig(configUrl);
-
   const modelPath = config?.modelPath;
   const proceduralRoom = config?.proceduralRoom as Record<string, unknown> | undefined;
   const useProceduralRoom = !modelPath && Boolean(proceduralRoom);
@@ -3964,9 +4141,8 @@ function R3FViewerInner({
         <OrbitControls
           makeDefault
           enabled={!sceneInteractionsLocked}
-          enableDamping
-          dampingFactor={0.05}
-          autoRotate={thumbnailModeActive && thumbnailCapture.autoRotate}
+          enableDamping={false}
+          autoRotate={false}
           autoRotateSpeed={thumbnailCapture.autoRotateSpeed}
           enablePan={thumbnailModeActive}
           enableZoom={thumbnailModeActive}
@@ -3981,7 +4157,10 @@ function R3FViewerInner({
           onCloseSidebar={onRequestSidebarClose}
           popupCallback={(payload) => {
             if (payload.type === 'Image') {
-              showLegacyModal(payload.userData);
+              showLegacyModal({
+                ...payload.userData,
+                name: payload.key
+              });
             }
           }}
           links={linkMap}
@@ -4003,19 +4182,13 @@ function R3FViewerInner({
           onVisitorReady={setVisitorInstance}
           onVisitorActivity={onVisitorActivity}
         />
-        <SurfaceZoneSensor
+        <VisitorSpatialSensor
           visitor={sceneReadyForVisitor ? visitorInstance : null}
-          routes={audioFloorRoutes}
+          audioRoutes={audioFloorRoutes}
+          lightRoutes={lightZoneRoutes}
           sceneVersion={sceneVersion}
-          getRouteKey={audioFloorRouteKey}
-          onRouteChange={applyAudioFloorRoute}
-        />
-        <SurfaceZoneSensor
-          visitor={sceneReadyForVisitor ? visitorInstance : null}
-          routes={lightZoneRoutes}
-          sceneVersion={sceneVersion}
-          getRouteKey={surfaceZoneRouteKey}
-          onRouteChange={setActiveLightZone}
+          onAudioRouteChange={applyAudioFloorRoute}
+          onLightRouteChange={setActiveLightZone}
         />
         <ScenePhysics
           config={physicsConfig}
@@ -4121,84 +4294,121 @@ function ToneMappingMenu({
   );
 }
 
-function SurfaceZoneSensor<Route extends { surfaces: string[] }>({
+function VisitorSpatialSensor({
   visitor,
-  routes,
+  audioRoutes,
+  lightRoutes,
   sceneVersion,
-  getRouteKey,
-  onRouteChange
+  onAudioRouteChange,
+  onLightRouteChange,
+  onFloorChange
 }: {
   visitor: Visitor | null;
-  routes: Route[];
+  audioRoutes: AudioFloorRoute[];
+  lightRoutes: LightZoneRoute[];
   sceneVersion: number;
-  getRouteKey: (route: Route) => string;
-  onRouteChange: (route: Route) => void;
+  onAudioRouteChange: (route: AudioFloorRoute) => void;
+  onLightRouteChange: (route: LightZoneRoute) => void;
+  onFloorChange?: (floor: Object3D | null) => void;
 }) {
   const { scene } = useThree();
-  const activeRouteKeyRef = useRef<string | null>(null);
+  const activeAudioRouteKeyRef = useRef<string | null>(null);
+  const activeLightRouteKeyRef = useRef<string | null>(null);
+  const activeFloorKeyRef = useRef<string | null>(null);
+  const lastSamplePositionRef = useRef<Vector3 | null>(null);
 
-  const zones = useMemo(() => {
+  const spatialCache = useMemo(() => {
     void sceneVersion;
-    if (routes.length === 0) {
-      return [];
-    }
-    const routeBySurface = new Map<string, Route>();
-    routes.forEach((route) => {
-      route.surfaces.forEach((surfaceName) => routeBySurface.set(surfaceName, route));
+    const audioRouteBySurface = new Map<string, AudioFloorRoute>();
+    const lightRouteBySurface = new Map<string, LightZoneRoute>();
+
+    audioRoutes.forEach((route) => {
+      route.surfaces.forEach((surfaceName) => audioRouteBySurface.set(surfaceName, route));
     });
-    const collected: Array<{
-      box: Box3;
-      route: Route;
-      routeKey: string;
-    }> = [];
+    lightRoutes.forEach((route) => {
+      route.surfaces.forEach((surfaceName) => lightRouteBySurface.set(surfaceName, route));
+    });
+
+    const floors: FloorSpatialCandidate[] = [];
+    const audioZones: RouteSpatialCandidate<AudioFloorRoute>[] = [];
+    const lightZones: RouteSpatialCandidate<LightZoneRoute>[] = [];
+
     scene.updateMatrixWorld(true);
     scene.traverse((object) => {
       const names = getSurfaceRouteNames(object);
-      const routeName = names.find((name) => routeBySurface.has(name));
-      if (!routeName) return;
+      const floorSurface = isVisitorLocationSurface(object);
+      const audioRoute = names.length > 0 ? findMappedRoute(names, audioRouteBySurface) : undefined;
+      const lightRoute = names.length > 0 ? findMappedRoute(names, lightRouteBySurface) : undefined;
+      if (!floorSurface && !audioRoute && !lightRoute) return;
+
       const box = new Box3().setFromObject(object);
       if (box.isEmpty()) return;
-      const route = routeBySurface.get(routeName);
-      if (!route) return;
-      collected.push({
-        box,
-        route,
-        routeKey: getRouteKey(route)
-      });
+      const base = createSpatialCandidateBase(box);
+
+      if (floorSurface) {
+        floors.push({
+          ...base,
+          floor: object,
+          floorKey: object.uuid
+        });
+      }
+      if (audioRoute) {
+        audioZones.push({
+          ...base,
+          route: audioRoute,
+          routeKey: audioFloorRouteKey(audioRoute)
+        });
+      }
+      if (lightRoute) {
+        lightZones.push({
+          ...base,
+          route: lightRoute,
+          routeKey: surfaceZoneRouteKey(lightRoute)
+        });
+      }
     });
-    return collected;
-  }, [getRouteKey, routes, scene, sceneVersion]);
+
+    return { floors, audioZones, lightZones };
+  }, [audioRoutes, lightRoutes, scene, sceneVersion]);
+
+  useEffect(() => {
+    activeAudioRouteKeyRef.current = null;
+    activeLightRouteKeyRef.current = null;
+    activeFloorKeyRef.current = null;
+    lastSamplePositionRef.current = null;
+  }, [sceneVersion, spatialCache]);
 
   useFrame(() => {
-    if (!visitor || zones.length === 0) return;
+    if (!visitor) return;
     const position = visitor.position;
-    const matchingZones = zones
-      .filter(({ box }) => {
-        const xPadding = Math.max(0.2, (box.max.x - box.min.x) * 0.02);
-        const zPadding = Math.max(0.2, (box.max.z - box.min.z) * 0.02);
-        return (
-          position.x >= box.min.x - xPadding &&
-          position.x <= box.max.x + xPadding &&
-          position.z >= box.min.z - zPadding &&
-          position.z <= box.max.z + zPadding
-        );
-      })
-      .map((zone) => {
-        const { box } = zone;
-        const yDistance = position.y < box.min.y
-          ? box.min.y - position.y
-          : position.y > box.max.y
-            ? position.y - box.max.y
-            : 0;
-        const area = Math.max(0.0001, (box.max.x - box.min.x) * (box.max.z - box.min.z));
-        return { ...zone, area, yDistance };
-      })
-      .sort((a, b) => a.yDistance - b.yDistance || a.area - b.area);
+    const lastPosition = lastSamplePositionRef.current;
+    if (lastPosition && lastPosition.distanceToSquared(position) < 0.0025) {
+      return;
+    }
+    if (!lastPosition) {
+      lastSamplePositionRef.current = position.clone();
+    } else {
+      lastPosition.copy(position);
+    }
 
-    const activeZone = matchingZones[0];
-    if (!activeZone || activeZone.routeKey === activeRouteKeyRef.current) return;
-    activeRouteKeyRef.current = activeZone.routeKey;
-    onRouteChange(activeZone.route);
+    const activeFloor = pickBestSpatialCandidate(spatialCache.floors, position);
+    const nextFloorKey = activeFloor?.floorKey ?? null;
+    if (nextFloorKey !== activeFloorKeyRef.current) {
+      activeFloorKeyRef.current = nextFloorKey;
+      onFloorChange?.(activeFloor?.floor ?? null);
+    }
+
+    const activeAudioRoute = pickBestSpatialCandidate(spatialCache.audioZones, position);
+    if (activeAudioRoute && activeAudioRoute.routeKey !== activeAudioRouteKeyRef.current) {
+      activeAudioRouteKeyRef.current = activeAudioRoute.routeKey;
+      onAudioRouteChange(activeAudioRoute.route);
+    }
+
+    const activeLightRoute = pickBestSpatialCandidate(spatialCache.lightZones, position);
+    if (activeLightRoute && activeLightRoute.routeKey !== activeLightRouteKeyRef.current) {
+      activeLightRouteKeyRef.current = activeLightRoute.routeKey;
+      onLightRouteChange(activeLightRoute.route);
+    }
   });
 
   return null;
@@ -4212,8 +4422,7 @@ function FirstPersonController({
   enabled,
   interactionLocked = false,
   onVisitorReady,
-  onVisitorActivity,
-  onFloorChange
+  onVisitorActivity
 }: {
   collider: Mesh | null;
   params?: ControllerParams;
@@ -4221,7 +4430,6 @@ function FirstPersonController({
   interactionLocked?: boolean;
   onVisitorReady?: (visitor: Visitor | null) => void;
   onVisitorActivity?: () => void;
-  onFloorChange?: (floor: Object3D | null) => void;
 }) {
   const { camera, gl, scene } = useThree();
   const controls = useThree((state) => state.controls) as OrbitControlsImpl | undefined;
@@ -4329,10 +4537,7 @@ function FirstPersonController({
       controls.enabled = !interactionLocked;
     }
     if (interactionLocked) return;
-    const floorUpdate = visitor.update(delta, collider);
-    if (floorUpdate.changed) {
-      onFloorChange?.(floorUpdate.newFloor);
-    }
+    visitor.update(delta, collider);
 
     const now = performance.now();
     if (!lastPosition.current) {
@@ -4569,9 +4774,7 @@ function RendererTuning({
 }
 
 function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
-  const { gl, scene, camera } = useThree();
-  const firefoxAutoExposure = params?.autoExposureFirefox === true;
-  const autoExposure = params?.autoExposure !== false && (!detectFirefoxBrowser() || firefoxAutoExposure);
+  const { gl } = useThree();
   const targetExposure = typeof params?.exposure === 'number' && Number.isFinite(params.exposure)
     ? params.exposure
     : 1.1;
@@ -4579,15 +4782,6 @@ function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
     typeof params?.exposureTransitionSeconds === 'number' && Number.isFinite(params.exposureTransitionSeconds)
       ? Math.max(0, params.exposureTransitionSeconds)
       : 0;
-  const targetGray = typeof params?.exposureTarget === 'number' ? params.exposureTarget : 0.6;
-  const exposureMin = typeof params?.exposureMin === 'number' ? params.exposureMin : 0.75;
-  const exposureMax = typeof params?.exposureMax === 'number' ? params.exposureMax : 1.6;
-  const sampleInterval = typeof params?.exposureSampleInterval === 'number' ? Math.max(1, params.exposureSampleInterval) : 20;
-  const sampleSize = 64;
-
-  const targetRef = useMemo(() => ({ current: null as WebGLRenderTarget | null }), []);
-  const bufferRef = useMemo(() => ({ current: null as Uint8Array | null }), []);
-  const frameRef = useMemo(() => ({ current: 0 }), []);
   const initializedExposureRef = useRef(false);
 
   useEffect(() => {
@@ -4597,65 +4791,17 @@ function AutoExposureControl({ params }: { params?: Record<string, unknown> }) {
     }
   }, [exposureTransitionSeconds, gl, targetExposure]);
 
-  useEffect(() => {
-    if (!autoExposure) {
-      targetRef.current?.dispose();
-      targetRef.current = null;
-      bufferRef.current = null;
-      return;
-    }
-    const rt = new WebGLRenderTarget(sampleSize, sampleSize, { depthBuffer: false, stencilBuffer: false });
-    targetRef.current = rt;
-    bufferRef.current = new Uint8Array(sampleSize * sampleSize * 4);
-    return () => {
-      rt.dispose();
-      targetRef.current = null;
-      bufferRef.current = null;
-    };
-  }, [autoExposure, sampleSize, targetRef, bufferRef]);
-
   useFrame((_, delta) => {
-    if (!autoExposure) {
-      if (exposureTransitionSeconds > 0) {
-        const factor = 1 - Math.exp(-delta / exposureTransitionSeconds);
-        const currentExposure = gl.toneMappingExposure ?? targetExposure;
-        gl.toneMappingExposure = currentExposure + (targetExposure - currentExposure) * factor;
+    if (exposureTransitionSeconds <= 0) {
+      if (gl.toneMappingExposure !== targetExposure) {
+        gl.toneMappingExposure = targetExposure;
       }
       return;
     }
-    const target = targetRef.current;
-    const pixels = bufferRef.current;
-    if (!target || !pixels) return;
-
-    frameRef.current += 1;
-    if (frameRef.current % sampleInterval !== 0) return;
-
-    const prevRenderTarget = gl.getRenderTarget();
-    try {
-      gl.setRenderTarget(target);
-      gl.render(scene, camera);
-      gl.readRenderTargetPixels(target, 0, 0, sampleSize, sampleSize, pixels);
-    } catch {
-      // ignore sampling errors
-    } finally {
-      gl.setRenderTarget(prevRenderTarget);
-    }
-
-    let sum = 0;
-    const inv255 = 1 / 255;
-    for (let i = 0; i < pixels.length; i += 4) {
-      const r = pixels[i] * inv255;
-      const g = pixels[i + 1] * inv255;
-      const b = pixels[i + 2] * inv255;
-      sum += 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    }
-    const avg = sum / (sampleSize * sampleSize);
-    if (!Number.isFinite(avg) || avg <= 0) return;
-
-    const currentExposure = gl.toneMappingExposure ?? 1;
-    const desired = currentExposure * Math.sqrt(Math.max(0.001, targetGray) / Math.max(0.001, Math.min(1, avg)));
-    const clamped = Math.min(exposureMax, Math.max(exposureMin, desired));
-    gl.toneMappingExposure = currentExposure + (clamped - currentExposure) * 0.15;
+    const factor = 1 - Math.exp(-delta / exposureTransitionSeconds);
+    const currentExposure = gl.toneMappingExposure ?? targetExposure;
+    const nextExposure = currentExposure + (targetExposure - currentExposure) * factor;
+    gl.toneMappingExposure = Math.abs(nextExposure - targetExposure) < 1e-4 ? targetExposure : nextExposure;
   });
 
   return null;

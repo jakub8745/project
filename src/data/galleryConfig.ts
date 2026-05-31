@@ -56,7 +56,7 @@ export const GALLERIES: GalleryItem[] = [
         description: "Critical work with AI in art education",
         scale: 1,
         position: [0, 0, 0],
-        configUrl: "./configs/vectai_krakow_032026_config.json",
+        configUrl: "./configs/vectai_krakow_032026_config_v2.json",
         keywords: [],
         ogImage: "/textures/vectai/og_image_vectai.jpg",
         overlayText: "",

@@ -4,45 +4,39 @@ import './styles/materialModal.css';
 import Sidebar from './components/Sidebar';
 import GalleryGrid from './components/GalleryGrid';
 import { InfoButtons } from './components/InfoButtons';
-import BlobChatWindow, { type BlobChatMessage } from './components/BlobChatWindow';
+import type { BlobChatMessage } from './components/BlobChatWindow';
+import {
+  DEFAULT_BLOB_CHAT_SETTINGS,
+  type BlobChatSettings,
+  type BlobPersona,
+  type PhysicsCollisionEvent
+} from './chat/types';
+import {
+  extractLastQuestion,
+  getLastChatLine,
+  parseBlobPersonas,
+  resolveBlobFromVisitorText,
+  resolveBlobPromptsFromPaths
+} from './chat/config';
 import { GALLERIES, type GalleryItem } from './data/galleryConfig';
 import { useBlobChatBridge } from './hooks/useBlobChatBridge';
 import { unlockAudioPlayback } from './modules/audioMeshManager';
+import { useExhibitConfig } from './r3f/useExhibitConfig';
 
 const R3FViewer = lazy(async () => {
   const module = await import('./r3f/R3FViewer');
   return { default: module.R3FViewer ?? module.default }; // retain support for both exports
 });
 
+const BlobChatWindow = lazy(async () => {
+  const module = await import('./components/BlobChatWindow');
+  return { default: module.default };
+});
+
 interface Gallery {
   slug: string;
   configUrl: string;
   title: string;
-}
-
-interface PhysicsCollisionEvent {
-  a: string;
-  b: string;
-  point: [number, number, number];
-  penetration: number;
-  timestamp: number;
-}
-
-interface BlobPersona {
-  id: string;
-  label: string;
-  systemPrompt: string;
-  systemPromptPath?: string;
-  collisionPrompt: string;
-  chatOnCollision: boolean;
-}
-
-interface BlobChatSettings {
-  enabled: boolean;
-  title: string;
-  visitorActorId: string;
-  collisionCooldownMs: number;
-  blobs: BlobPersona[];
 }
 
 interface PageMetadata {
@@ -60,24 +54,6 @@ const DEFAULT_PAGE_METADATA: PageMetadata = {
   ogImage: '/og_image_archivum.jpg',
   ogImageWidth: 1200,
   ogImageHeight: 630
-};
-
-const DEFAULT_BLOB_CHAT_SETTINGS: BlobChatSettings = {
-  enabled: false,
-  title: 'Blob Chat',
-  visitorActorId: 'visitor',
-  collisionCooldownMs: 4500,
-  blobs: [
-    {
-      id: 'blob_alpha',
-      label: 'Blob Alpha',
-      systemPrompt:
-        'You are Blob Alpha, an art-focused guide in a virtual gallery. Discuss only art, artworks, curation, media, aesthetics, interpretation, and art history.',
-      collisionPrompt:
-        'A collision happened between Blob Alpha and the visitor in the room. Reply with one short, art-focused message.',
-      chatOnCollision: true
-    }
-  ]
 };
 
 function createMessageId(prefix: string) {
@@ -177,106 +153,6 @@ function detectIPadLikeDevice(): boolean {
   return /iPad/i.test(ua) || (platform === 'MacIntel' && maxTouch > 1);
 }
 
-function parseBlobPersonas(chat: Record<string, unknown>): BlobPersona[] {
-  const blobsRaw = Array.isArray(chat.blobs) ? chat.blobs : null;
-  if (blobsRaw && blobsRaw.length > 0) {
-    const parsed = blobsRaw
-      .map((entry) => {
-        if (!entry || typeof entry !== 'object') return null;
-        const record = entry as Record<string, unknown>;
-        const id = typeof record.id === 'string' ? record.id : '';
-        if (!id) return null;
-        return {
-          id,
-          label: typeof record.label === 'string' ? record.label : id,
-          systemPrompt:
-            typeof record.systemPrompt === 'string'
-              ? record.systemPrompt
-              : `You are ${typeof record.label === 'string' ? record.label : id}, an art-focused guide in a virtual gallery. Discuss only art.`,
-          systemPromptPath:
-            typeof record.systemPromptPath === 'string' && record.systemPromptPath.trim()
-              ? record.systemPromptPath.trim()
-              : undefined,
-          collisionPrompt:
-            typeof record.collisionPrompt === 'string'
-              ? record.collisionPrompt
-              : `A collision happened between ${typeof record.label === 'string' ? record.label : id} and the visitor. Reply with one short, art-focused message.`,
-          chatOnCollision: record.chatOnCollision !== false
-        } as BlobPersona;
-      })
-      .filter((entry): entry is BlobPersona => entry !== null);
-    if (parsed.length > 0) return parsed;
-  }
-
-  // Backward compatibility with old single-blob keys.
-  const legacyId = typeof chat.blobActorId === 'string' ? chat.blobActorId : DEFAULT_BLOB_CHAT_SETTINGS.blobs[0].id;
-  const legacyPrompt =
-    typeof chat.systemPrompt === 'string' ? chat.systemPrompt : DEFAULT_BLOB_CHAT_SETTINGS.blobs[0].systemPrompt;
-  const legacyCollisionPrompt =
-    typeof chat.collisionPrompt === 'string' ? chat.collisionPrompt : DEFAULT_BLOB_CHAT_SETTINGS.blobs[0].collisionPrompt;
-  const legacyCollisionEnabled =
-    typeof chat.blobChatOnCollision === 'boolean' ? chat.blobChatOnCollision : DEFAULT_BLOB_CHAT_SETTINGS.blobs[0].chatOnCollision;
-
-  return [
-    {
-      id: legacyId,
-      label: 'Blob Alpha',
-      systemPrompt: legacyPrompt,
-      collisionPrompt: legacyCollisionPrompt,
-      chatOnCollision: legacyCollisionEnabled
-    }
-  ];
-}
-
-async function resolveBlobPromptsFromPaths(blobs: BlobPersona[], signal: AbortSignal): Promise<BlobPersona[]> {
-  const resolved = await Promise.all(
-    blobs.map(async (blob) => {
-      if (!blob.systemPromptPath) return blob;
-      try {
-        const response = await fetch(blob.systemPromptPath, { signal });
-        if (!response.ok) return blob;
-        const text = (await response.text()).trim();
-        if (!text) return blob;
-        return { ...blob, systemPrompt: text };
-      } catch {
-        return blob;
-      }
-    })
-  );
-  return resolved;
-}
-
-function resolveBlobFromVisitorText(text: string, blobs: BlobPersona[], fallbackBlobId: string | null) {
-  const trimmed = text.trim();
-  if (!trimmed) return { blob: null as BlobPersona | null, messageText: '' };
-  const byId = blobs.find((blob) => trimmed.toLowerCase().startsWith(`@${blob.id.toLowerCase()} `));
-  if (byId) {
-    return { blob: byId, messageText: trimmed.slice(byId.id.length + 2).trim() };
-  }
-  const byLabel = blobs.find((blob) => trimmed.toLowerCase().startsWith(`@${blob.label.toLowerCase()} `));
-  if (byLabel) {
-    return { blob: byLabel, messageText: trimmed.slice(byLabel.label.length + 2).trim() };
-  }
-  const fallback = blobs.find((blob) => blob.id === fallbackBlobId) || blobs[0] || null;
-  return { blob: fallback, messageText: trimmed };
-}
-
-function extractLastQuestion(text: string): string | null {
-  const normalized = text.replace(/\s+/g, ' ').trim();
-  if (!normalized) return null;
-  const matches = normalized.match(/[^?]*\?/g);
-  if (!matches || matches.length === 0) return null;
-  const candidate = matches[matches.length - 1]?.trim() || '';
-  return candidate.length > 1 ? candidate : null;
-}
-
-function getLastChatLine(messages: BlobChatMessage[]): { speaker: string; text: string } | null {
-  const last = [...messages].reverse().find((entry) => entry.role === 'visitor' || entry.role === 'blob');
-  if (!last || !last.text.trim()) return null;
-  const speaker = last.role === 'visitor' ? 'Visitor' : (last.senderLabel || 'Blob');
-  return { speaker, text: last.text.trim() };
-}
-
 export default function App() {
   const isThumbnailMode = getBooleanFromQuery('thumbnailMode') || getBooleanFromQuery('recordThumb');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -296,6 +172,7 @@ export default function App() {
   const autoHideTimerRef = useRef<number | null>(null);
   const audioUnlockAttemptedRef = useRef(false);
   const chatSessionIdRef = useRef<string>('default-session');
+  const chatMessagesRef = useRef<BlobChatMessage[]>([]);
   const lastCollisionAtRef = useRef<Map<string, number>>(new Map());
   const requestInFlightRef = useRef(false);
   const {
@@ -305,7 +182,12 @@ export default function App() {
     available: bridgeAvailable,
     requiresUnlock,
     unlockChat
-  } = useBlobChatBridge();
+  } = useBlobChatBridge({ enabled: blobChatSettings.enabled });
+  const {
+    config: exhibitConfig,
+    loading: exhibitConfigLoading,
+    error: exhibitConfigError
+  } = useExhibitConfig(selectedConfigUrl);
   const AUTO_HIDE_DELAY_MS = 5000;
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -367,30 +249,8 @@ export default function App() {
       (selectedSlug ? GALLERIES.find((gallery) => gallery.slug === selectedSlug) : null) ??
       GALLERIES.find((gallery) => gallery.configUrl === selectedConfigUrl);
     const fallbackMetadata = metadataFromGallery(selectedGallery);
-    applyPageMetadata(fallbackMetadata);
-
-    if (!selectedConfigUrl) return undefined;
-
-    const controller = new AbortController();
-    const configUrl = selectedConfigUrl.startsWith('/')
-      ? selectedConfigUrl
-      : selectedConfigUrl.replace(/^\.\//, '/');
-
-    fetch(configUrl, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error(`Metadata config request failed: ${response.status}`);
-        return response.json();
-      })
-      .then((config) => {
-        applyPageMetadata(metadataFromConfig(config, fallbackMetadata));
-      })
-      .catch((error) => {
-        if (error instanceof DOMException && error.name === 'AbortError') return;
-        console.warn('Gallery metadata update failed:', error);
-      });
-
-    return () => controller.abort();
-  }, [selectedConfigUrl, selectedSlug]);
+    applyPageMetadata(metadataFromConfig(exhibitConfig, fallbackMetadata));
+  }, [exhibitConfig, selectedConfigUrl, selectedSlug]);
 
   const scheduleSidebarAutoHide = useCallback(() => {
     if (!sidebarOpen) {
@@ -532,39 +392,40 @@ export default function App() {
   }, [selectedSlug]);
 
   useEffect(() => {
-    if (!selectedConfigUrl) {
+    if (!selectedConfigUrl || !exhibitConfig) {
       setBlobChatSettings(DEFAULT_BLOB_CHAT_SETTINGS);
+      setActiveBlobId(DEFAULT_BLOB_CHAT_SETTINGS.blobs[0]?.id || null);
       return;
     }
+
     const controller = new AbortController();
-    fetch(selectedConfigUrl, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) return;
-        const raw = (await response.json()) as Record<string, unknown>;
-        const chat = raw.chat && typeof raw.chat === 'object' ? (raw.chat as Record<string, unknown>) : {};
-        const parsedBlobs = parseBlobPersonas(chat);
-        const blobs = await resolveBlobPromptsFromPaths(parsedBlobs, controller.signal);
-        const next: BlobChatSettings = {
-          enabled: chat.enabled === true,
-          title: typeof chat.title === 'string' ? chat.title : DEFAULT_BLOB_CHAT_SETTINGS.title,
-          visitorActorId:
-            typeof chat.visitorActorId === 'string' ? chat.visitorActorId : DEFAULT_BLOB_CHAT_SETTINGS.visitorActorId,
-          collisionCooldownMs:
-            typeof chat.collisionCooldownMs === 'number' && Number.isFinite(chat.collisionCooldownMs)
-              ? Math.max(250, chat.collisionCooldownMs)
-              : DEFAULT_BLOB_CHAT_SETTINGS.collisionCooldownMs,
-          blobs
-        };
-        if (!controller.signal.aborted) {
-          setBlobChatSettings(next);
-          setActiveBlobId(blobs[0]?.id || null);
-        }
-      })
-      .catch(() => undefined);
+    const configRecord = exhibitConfig as Record<string, unknown>;
+    const chat = configRecord.chat && typeof configRecord.chat === 'object' ? (configRecord.chat as Record<string, unknown>) : {};
+
+    void (async () => {
+      const parsedBlobs = parseBlobPersonas(chat);
+      const blobs = await resolveBlobPromptsFromPaths(parsedBlobs, controller.signal);
+      const next: BlobChatSettings = {
+        enabled: chat.enabled === true,
+        title: typeof chat.title === 'string' ? chat.title : DEFAULT_BLOB_CHAT_SETTINGS.title,
+        visitorActorId:
+          typeof chat.visitorActorId === 'string' ? chat.visitorActorId : DEFAULT_BLOB_CHAT_SETTINGS.visitorActorId,
+        collisionCooldownMs:
+          typeof chat.collisionCooldownMs === 'number' && Number.isFinite(chat.collisionCooldownMs)
+            ? Math.max(250, chat.collisionCooldownMs)
+            : DEFAULT_BLOB_CHAT_SETTINGS.collisionCooldownMs,
+        blobs
+      };
+      if (!controller.signal.aborted) {
+        setBlobChatSettings(next);
+        setActiveBlobId(blobs[0]?.id || null);
+      }
+    })().catch(() => undefined);
+
     return () => {
       controller.abort();
     };
-  }, [selectedConfigUrl]);
+  }, [exhibitConfig, selectedConfigUrl]);
 
   useEffect(() => {
     if (!blobChatSettings.enabled) return;
@@ -585,17 +446,23 @@ export default function App() {
     });
   }, [blobChatSettings.blobs, blobChatSettings.enabled, requiresUnlock, chatUnlocked]);
 
+  useEffect(() => {
+    chatMessagesRef.current = chatMessages;
+  }, [chatMessages]);
+
   const requestBlobReply = useCallback(
     async ({
       blob,
       trigger,
       messageText,
-      collisionEvent
+      collisionEvent,
+      historyMessages
     }: {
       blob: BlobPersona;
       trigger: 'visitor' | 'collision';
       messageText: string;
       collisionEvent?: PhysicsCollisionEvent;
+      historyMessages?: BlobChatMessage[];
     }): Promise<string | null> => {
       if (!blobChatSettings.enabled || !bridgeAvailable) {
         return null;
@@ -614,7 +481,7 @@ export default function App() {
         cleanMessage || 'Continue the current art discussion with a concise response.'
       ].join('\n');
       try {
-        const history = chatMessages
+        const history = (historyMessages ?? chatMessagesRef.current)
           .filter((entry) => entry.role === 'visitor' || entry.role === 'blob')
           .slice(-10)
           .map((entry) => ({
@@ -671,7 +538,7 @@ export default function App() {
         requestInFlightRef.current = false;
       }
     },
-    [blobChatSettings.enabled, bridgeAvailable, chatMessages, selectedSlug, sendToBridge, requiresUnlock, chatUnlocked]
+    [blobChatSettings.enabled, bridgeAvailable, selectedSlug, sendToBridge, requiresUnlock, chatUnlocked]
   );
 
   const handleChatSend = useCallback(
@@ -715,8 +582,10 @@ export default function App() {
         createdAt: Date.now(),
         blobId: blob.id
       };
-      setChatMessages((prev) => [...prev, visitorMessage]);
-      await requestBlobReply({ blob, trigger: 'visitor', messageText });
+      const nextMessages = [...chatMessagesRef.current, visitorMessage];
+      chatMessagesRef.current = nextMessages;
+      setChatMessages(nextMessages);
+      await requestBlobReply({ blob, trigger: 'visitor', messageText, historyMessages: nextMessages });
     },
     [activeBlobId, blobChatSettings.blobs, blobChatSettings.enabled, requestBlobReply, requiresUnlock, chatUnlocked, unlockChat]
   );
@@ -730,6 +599,7 @@ export default function App() {
       const hasVisitor = event.a === blobChatSettings.visitorActorId || event.b === blobChatSettings.visitorActorId;
 
       void (async () => {
+        const latestMessages = chatMessagesRef.current;
         if (blobA && blobB && blobA.id !== blobB.id) {
           if (!blobA.chatOnCollision && !blobB.chatOnCollision) return;
           const pairKey = blobA.id < blobB.id ? `${blobA.id}__${blobB.id}` : `${blobB.id}__${blobA.id}`;
@@ -738,7 +608,7 @@ export default function App() {
           if (now - lastAt < blobChatSettings.collisionCooldownMs) return;
           lastCollisionAtRef.current.set(pairKey, now);
 
-          const lastLine = getLastChatLine(chatMessages);
+          const lastLine = getLastChatLine(latestMessages);
           const themedSeed = lastLine
             ? `${lastLine.speaker}: ${lastLine.text}\nReply to this message and continue the same art discussion theme.`
             : 'Continue the current art discussion theme with one concise response.';
@@ -775,8 +645,8 @@ export default function App() {
         lastCollisionAtRef.current.set(blob.id, now);
         setActiveBlobId(blob.id);
 
-        const lastLine = getLastChatLine(chatMessages);
-        const lastBlobMessageForBlob = [...chatMessages].reverse().find((entry) => entry.role === 'blob' && entry.blobId === blob.id);
+        const lastLine = getLastChatLine(latestMessages);
+        const lastBlobMessageForBlob = [...latestMessages].reverse().find((entry) => entry.role === 'blob' && entry.blobId === blob.id);
         const lastBlobQuestion = lastBlobMessageForBlob ? extractLastQuestion(lastBlobMessageForBlob.text) : null;
         const seed = lastLine
           ? `${lastLine.speaker}: ${lastLine.text}\nReply to this message and continue the same art discussion theme.`
@@ -789,7 +659,7 @@ export default function App() {
         });
       })();
     },
-    [blobChatSettings, chatMessages, requestBlobReply, requiresUnlock, chatUnlocked]
+    [blobChatSettings, requestBlobReply, requiresUnlock, chatUnlocked]
   );
 
   const activeBlob = blobChatSettings.blobs.find((blob) => blob.id === activeBlobId) || blobChatSettings.blobs[0] || null;
@@ -833,6 +703,9 @@ export default function App() {
             >
               <R3FViewer
                 configUrl={selectedConfigUrl}
+                config={exhibitConfig}
+                loading={exhibitConfigLoading}
+                error={exhibitConfigError}
                 onVisitorEntered={handleVisitorEntered}
                 onPhysicsCollision={handlePhysicsCollision}
               />
@@ -840,15 +713,18 @@ export default function App() {
           ) : null}
         </div>
         {!isThumbnailMode && blobChatSettings.enabled ? (
-          <BlobChatWindow
-            title={activeBlob ? `${blobChatSettings.title} - ${activeBlob.label}` : blobChatSettings.title}
-            messages={chatMessages}
-            loading={bridgeLoading}
-            error={bridgeError}
-            bridgeOnline={bridgeAvailable}
-            locked={requiresUnlock && !chatUnlocked}
-            onSend={handleChatSend}
-          />
+          <Suspense fallback={null}>
+            <BlobChatWindow
+              title={activeBlob ? `${blobChatSettings.title} - ${activeBlob.label}` : blobChatSettings.title}
+              messages={chatMessages}
+              loading={bridgeLoading}
+              error={bridgeError}
+              bridgeOnline={bridgeAvailable}
+              locked={requiresUnlock && !chatUnlocked}
+              placeholder={activeBlob ? `Send a message to ${activeBlob.label}...` : 'Send a message...'}
+              onSend={handleChatSend}
+            />
+          </Suspense>
         ) : null}
       </main>
 

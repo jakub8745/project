@@ -93,7 +93,7 @@ const ThreeThumbnail: React.FC<ThreeThumbnailProps> = ({ gallery }) => {
           enableZoom={false}
           enablePan={false}
           enableRotate={false}
-          autoRotate
+          autoRotate={false}
           autoRotateSpeed={1}
         />
         

@@ -1,0 +1,617 @@
+{
+  "schemaVersion": "2.0.0",
+  "id": "vectai_krakow_032026",
+  "kind": "exhibit",
+  "metadata": {
+    "title": "Cracks of Meaning: Videopoetry in the age of AI",
+    "description": "Critical work with AI in art education",
+    "language": "en",
+    "ogImage": { "asset": "og_image" }
+  },
+  "nft": {
+    "mintable": true,
+    "canonicalSceneAsset": "scene_model",
+    "canonicalPreviewAsset": "og_image"
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "uri": "/models/vectai_room.glb",
+      "mimeType": "model/gltf-binary"
+    },
+    "og_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/og_image_vectai.jpg",
+      "mimeType": "image/jpeg",
+      "width": 1200,
+      "height": 630
+    },
+    "manual_thumb": {
+      "kind": "image",
+      "uri": "/textures/thubm_PeknieciaSensu.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "manual_pl_pdf": {
+      "kind": "document",
+      "uri": "/pdfs/pekniecia_sensu.pdf",
+      "mimeType": "application/pdf"
+    },
+    "manual_en_pdf": {
+      "kind": "document",
+      "uri": "/pdfs/CRACKS OF MEANING_ENG.pdf",
+      "mimeType": "application/pdf"
+    },
+    "poster_obowiazki": {
+      "kind": "image",
+      "uri": "/textures/vectai/tablica.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "scanning01_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/skanowanie01.jpeg",
+      "mimeType": "image/jpeg"
+    },
+    "second_day_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/2dzien.jpeg",
+      "mimeType": "image/jpeg"
+    },
+    "zajac_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/zajac_g4.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "parasol_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/parasol.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "snake_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/waz.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "baletnica_image": {
+      "kind": "image",
+      "uri": "/textures/vectai/baletnica.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "text_layer_01": {
+      "kind": "image",
+      "uri": "/textures/vectai/kartka01.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "text_layer_02": {
+      "kind": "image",
+      "uri": "/textures/vectai/kartka02.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "text_layer_03": {
+      "kind": "image",
+      "uri": "/textures/vectai/kartka03.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "left_screen_poster": {
+      "kind": "image",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "middle_screen_poster": {
+      "kind": "image",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "right_screen_poster": {
+      "kind": "image",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg",
+      "mimeType": "image/jpeg"
+    },
+    "left_screen_video": {
+      "kind": "video",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4",
+      "mimeType": "video/mp4"
+    },
+    "middle_screen_video": {
+      "kind": "video",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4",
+      "mimeType": "video/mp4"
+    },
+    "right_screen_video": {
+      "kind": "video",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4",
+      "mimeType": "video/mp4"
+    },
+    "audio_left_mp3": {
+      "kind": "audio",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/left_audio.mp3",
+      "mimeType": "audio/mpeg"
+    },
+    "audio_right_mp3": {
+      "kind": "audio",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3",
+      "mimeType": "audio/mpeg"
+    },
+    "audio_intro_mp3": {
+      "kind": "audio",
+      "uri": "/audio/introduction_Cracks of Meaning.mp3",
+      "mimeType": "audio/mpeg"
+    },
+    "audio_intro_subtitles": {
+      "kind": "subtitle",
+      "uri": "/audio/vectai_intro_subtitles.json",
+      "mimeType": "application/json"
+    }
+  },
+  "scene": {
+    "model": {
+      "asset": "scene_model"
+    },
+    "background": {
+      "color": "#000000"
+    },
+    "spawn": {
+      "node": "Visitor_enter",
+      "direction": "west"
+    },
+    "camera": {
+      "mode": "first_person"
+    }
+  },
+  "sidebar": {
+    "logoText": "VECT-AI workshops and exhibit documentation ",
+    "items": [
+      {
+        "id": "info-icon",
+        "label": "About Project",
+        "content": "Pęknięcia sensu to dokumentacja 3D pilotażowego warsztatu VECT-AI zrealizowanego w Krakowie w ramach projektu CAPHE. Projekt bada, jak sztuka może wspierać krytyczne myślenie o AI poprzez pracę z błędem, deformacją i niejednoznacznością. Jego publicznym rezultatem był wideopoemat „OBOWIĄZKI WŁASNEJ RĘKI WCIĄGNIĘTEJ ( ) DO ŚRODKA” — forma łącząca tekst, obraz i dźwięk w nielinearną, wielowarstwową kompozycję. Prezentowana przestrzeń nie tylko archiwizuje rezultat, ale pozwala wrócić do procesu i relacji między obrazem, tekstem, dźwiękiem oraz algorytmicznym domykaniem sensu. Szczegółowe omówienie metody, struktury warsztatu, komponentu refleksyjnego oraz założeń dydaktycznych i badawczych projektu znajduje się w towarzyszącej mu dokumentacji."
+      }
+    ]
+  },
+  "nodes": {
+    "audio_left": { "kind": "audio_anchor", "ref": "audio_left" },
+    "audio_right": { "kind": "audio_anchor", "ref": "audio_right" },
+    "audio_intro": { "kind": "audio_anchor", "ref": "audio_intro" },
+    "Visitor_enter": { "kind": "spawn_anchor", "spawnDirection": "west" },
+    "floor_ucieta": { "kind": "floor", "ref": "videopoemat_floor_ucieta" },
+    "dokumentacja_floor": { "kind": "floor", "ref": "dokumentacja_floor" },
+    "walls_main": { "kind": "wall", "ref": "videopoemat_walls" },
+    "walls_frames": { "kind": "wall", "ref": "dokumentacja_walls" },
+    "sufit_swiatla_uciete": { "kind": "wall", "ref": "videopoemat_sufit_swiatla_uciente" },
+    "left_screen": { "kind": "video_surface", "ref": "left_screen" },
+    "middle_screen": { "kind": "video_surface", "ref": "middle_screen" },
+    "right_screen": { "kind": "video_surface", "ref": "right_screen" },
+    "pdf_manual_pl": { "kind": "document_anchor", "ref": "pdf_manual_pl", "media": "pdf_manual_pl" },
+    "pdf_manual_en": { "kind": "document_anchor", "ref": "pdf_manual_en", "media": "pdf_manual_en" },
+    "image_tablica": { "kind": "image_anchor", "ref": "frame_title", "media": "image_tablica" },
+    "image_text_layer01": { "kind": "image_anchor", "ref": "image_text_layer01", "media": "image_text_layer01" },
+    "image_text_layer02": { "kind": "image_anchor", "ref": "image_text_layer02", "media": "image_text_layer02" },
+    "image_text_layer03": { "kind": "image_anchor", "ref": "image_text_layer03", "media": "image_text_layer03" },
+    "image_screenshot_parasol": { "kind": "image_anchor", "ref": "image_screenshot_parasol", "media": "image_screenshot_parasol" },
+    "image_screenshot_snake": { "kind": "image_anchor", "ref": "image_screenshot_snake", "media": "image_screenshot_snake" },
+    "image_screenshot_zajac": { "kind": "image_anchor", "ref": "image_screenshot_zajac", "media": "image_screenshot_zajac" },
+    "image_screenshot_baletnica": { "kind": "image_anchor", "ref": "image_screenshot_baletnica", "media": "image_screenshot_baletnica" },
+    "image_scanning01": { "kind": "image_anchor", "ref": "frame_scanning01", "media": "image_scanning01" },
+    "image_2nd_day": { "kind": "image_anchor", "ref": "frame_2nd_day", "media": "image_2nd_day" },
+    "scan_baletnica": {
+      "kind": "sculpture",
+      "ref": "scan_baletnica",
+      "holdRotate": false,
+      "metadata": {
+        "title": "Scan 3D",
+        "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
+        "author": "Grupa 4"
+      }
+    },
+    "scan_parasol": {
+      "kind": "sculpture",
+      "ref": "scan_parasol",
+      "holdRotate": false,
+      "metadata": {
+        "title": "Scan 3D",
+        "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
+        "author": "Grupa 4"
+      }
+    },
+    "scan_snake": {
+      "kind": "sculpture",
+      "ref": "scan_snake",
+      "holdRotate": false,
+      "metadata": {
+        "title": "Scan 3D",
+        "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
+        "author": "Grupa 4"
+      }
+    },
+    "scan_zajac": {
+      "kind": "sculpture",
+      "ref": "scan_zajac",
+      "holdRotate": false,
+      "metadata": {
+        "title": "Scan 3D",
+        "description": "Hover over the sculpture to show the rotation gizmo. Drag the gizmo ring to rotate the scan manually. The gizmo stays visible briefly while the pointer leaves the sculpture and disappears after about 2 seconds if no rotation starts. Click-and-hold auto-rotation is disabled for this object.",
+        "author": "Grupa 4"
+      }
+    }
+  },
+  "media": {
+    "pdf_manual_pl": {
+      "kind": "document",
+      "title": "VECT-AI documentation",
+      "description": "Workshop documentation PDF",
+      "previewImage": { "asset": "manual_thumb" },
+      "document": { "asset": "manual_pl_pdf" },
+      "openUri": "https://zenodo.org/records/19220100"
+    },
+    "pdf_manual_en": {
+      "kind": "document",
+      "title": "VECT-AI documentation",
+      "description": "Workshop documentation PDF",
+      "previewImage": { "asset": "manual_thumb" },
+      "document": { "asset": "manual_en_pdf" }
+    },
+    "image_tablica": {
+      "kind": "image",
+      "title": "Workshop poster",
+      "description": "Workshop poster - Obowiązki własnej ręki wciągniętej do środka",
+      "image": { "asset": "poster_obowiazki" }
+    },
+    "image_scanning01": {
+      "kind": "image",
+      "title": "VECT-AI scan",
+      "description": "Workshop process - scanning",
+      "image": { "asset": "scanning01_image" }
+    },
+    "image_2nd_day": {
+      "kind": "image",
+      "title": "VECT-AI 2nd day",
+      "description": "Workshop, image thaken on the 2nd day",
+      "image": { "asset": "second_day_image" }
+    },
+    "image_screenshot_zajac": {
+      "kind": "image",
+      "title": "Screenshot Grupy 4",
+      "description": "Workshop: an screenshot choosen for further AI analyse",
+      "image": { "asset": "zajac_image" }
+    },
+    "image_screenshot_parasol": {
+      "kind": "image",
+      "title": "Screenshot Grupy",
+      "description": "Workshop: an screenshot choosen for further AI analyse",
+      "image": { "asset": "parasol_image" }
+    },
+    "image_screenshot_snake": {
+      "kind": "image",
+      "title": "Screenshot Grupy",
+      "description": "Workshop: an screenshot choosen for further AI analyse",
+      "image": { "asset": "snake_image" }
+    },
+    "image_screenshot_baletnica": {
+      "kind": "image",
+      "title": "Screenshot Grupy",
+      "description": "Workshop: an screenshot choosen for further AI analyse",
+      "image": { "asset": "baletnica_image" }
+    },
+    "image_text_layer01": {
+      "kind": "image",
+      "title": "Textual layer",
+      "description": "",
+      "image": { "asset": "text_layer_01" }
+    },
+    "image_text_layer02": {
+      "kind": "image",
+      "title": "Textual layer",
+      "description": "",
+      "image": { "asset": "text_layer_02" }
+    },
+    "image_text_layer03": {
+      "kind": "image",
+      "title": "Textual layer",
+      "description": "",
+      "image": { "asset": "text_layer_03" }
+    },
+    "left_screen": {
+      "kind": "video",
+      "title": "left_screen of the Videopoem",
+      "description": "",
+      "author": "",
+      "poster": { "asset": "left_screen_poster" },
+      "sources": [{ "asset": "left_screen_video" }]
+    },
+    "middle_screen": {
+      "kind": "video",
+      "title": "middle_screen of the Videopoem",
+      "description": "",
+      "author": "",
+      "poster": { "asset": "middle_screen_poster" },
+      "sources": [{ "asset": "middle_screen_video" }]
+    },
+    "right_screen": {
+      "kind": "video",
+      "title": "right_screen of the Videopoem",
+      "description": "",
+      "author": "",
+      "poster": { "asset": "right_screen_poster" },
+      "sources": [{ "asset": "right_screen_video" }]
+    },
+    "audio_left": {
+      "kind": "audio",
+      "title": "audio_left",
+      "sources": [{ "asset": "audio_left_mp3" }]
+    },
+    "audio_right": {
+      "kind": "audio",
+      "title": "audio_right",
+      "sources": [{ "asset": "audio_right_mp3" }]
+    },
+    "audio_intro": {
+      "kind": "audio",
+      "title": "audio_intro",
+      "sources": [{ "asset": "audio_intro_mp3" }],
+      "subtitles": ["audio_intro_subtitles"]
+    }
+  },
+  "modules": {
+    "video": {
+      "instances": [
+        {
+          "id": "left_screen_runtime",
+          "targetNode": "left_screen",
+          "media": "left_screen",
+          "playbackMode": "synced_silent",
+          "autoplayOnEnter": true,
+          "syncGroup": "vectai_krakow_032026_main",
+          "controls": false,
+          "interactive": false,
+          "allowFullscreen": false,
+          "disableAudio": true,
+          "loop": true,
+          "muted": true,
+          "showLoader": false,
+          "surface": {
+            "projection": true,
+            "roughness": 0.9,
+            "metalness": 0.02,
+            "envMapIntensity": 0.2,
+            "emissiveIntensity": 0.53,
+            "emissiveColor": "#fff6ea"
+          }
+        },
+        {
+          "id": "middle_screen_runtime",
+          "targetNode": "middle_screen",
+          "media": "middle_screen",
+          "playbackMode": "synced_silent",
+          "autoplayOnEnter": true,
+          "syncGroup": "vectai_krakow_032026_main",
+          "controls": false,
+          "interactive": false,
+          "allowFullscreen": false,
+          "disableAudio": true,
+          "loop": true,
+          "muted": true,
+          "showLoader": false,
+          "surface": {
+            "projection": true,
+            "roughness": 0.9,
+            "metalness": 0.02,
+            "envMapIntensity": 0.2,
+            "emissiveIntensity": 0.53,
+            "emissiveColor": "#fff6ea"
+          }
+        },
+        {
+          "id": "right_screen_runtime",
+          "targetNode": "right_screen",
+          "media": "right_screen",
+          "playbackMode": "synced_silent",
+          "autoplayOnEnter": true,
+          "syncGroup": "vectai_krakow_032026_main",
+          "controls": false,
+          "interactive": false,
+          "allowFullscreen": false,
+          "disableAudio": true,
+          "loop": true,
+          "muted": true,
+          "showLoader": false,
+          "surface": {
+            "projection": true,
+            "roughness": 0.9,
+            "metalness": 0.02,
+            "envMapIntensity": 0.2,
+            "emissiveIntensity": 0.53,
+            "emissiveColor": "#fff6ea"
+          }
+        }
+      ],
+      "syncGroups": [
+        {
+          "id": "vectai_krakow_032026_main",
+          "startPolicy": "all_ready"
+        }
+      ]
+    },
+    "audio": {
+      "instances": [
+        {
+          "id": "audio_left_runtime",
+          "targetNode": "audio_left",
+          "media": "audio_left",
+          "autoplayOnEnter": false,
+          "loop": true,
+          "refDistance": 2,
+          "rolloff": 0.8,
+          "maxDistance": 50,
+          "distanceModel": "linear",
+          "directionalCone": [45, 90, 0.3],
+          "coneTarget": [0, 2, 0],
+          "volume": 1
+        },
+        {
+          "id": "audio_right_runtime",
+          "targetNode": "audio_right",
+          "media": "audio_right",
+          "autoplayOnEnter": false,
+          "loop": true,
+          "refDistance": 1,
+          "rolloff": 0.8,
+          "maxDistance": 10,
+          "distanceModel": "linear",
+          "directionalCone": [45, 90, 0.3],
+          "coneTarget": [0, 2, 0],
+          "reverse": false,
+          "volume": 5
+        },
+        {
+          "id": "audio_intro_runtime",
+          "targetNode": "audio_intro",
+          "media": "audio_intro",
+          "autoplayOnEnter": true,
+          "autoplayDelayMs": 6000,
+          "labelPlaying": "Intro is playing",
+          "labelPaused": "Play Intro",
+          "loop": false,
+          "refDistance": 3,
+          "rolloff": 1,
+          "maxDistance": 20,
+          "distanceModel": "linear",
+          "coneTarget": [0, 2, 0],
+          "volume": 1
+        }
+      ]
+    },
+    "sculptureControls": {
+      "instances": [
+        { "id": "scan_baletnica_rotate", "targetNode": "scan_baletnica", "mode": "rotate", "size": 0.5, "hover": true, "holdRotate": false, "light": { "enabled": false } },
+        { "id": "scan_parasol_rotate", "targetNode": "scan_parasol", "mode": "rotate", "size": 0.5, "hover": true, "holdRotate": false, "light": { "enabled": false } },
+        { "id": "scan_snake_rotate", "targetNode": "scan_snake", "mode": "rotate", "size": 0.5, "hover": true, "holdRotate": false, "light": { "enabled": false } },
+        { "id": "scan_zajac_rotate", "targetNode": "scan_zajac", "mode": "rotate", "size": 0.5, "hover": true, "holdRotate": false, "light": { "enabled": false } }
+      ]
+    },
+    "chat": {
+      "enabled": false
+    }
+  },
+  "viewer": {
+    "audioZones": [
+      {
+        "floors": ["dokumentacja_floor"],
+        "stopAudioIds": ["audio_left", "audio_right"],
+        "controlAudioIds": ["audio_intro"]
+      },
+      {
+        "floors": ["floor_ucieta", "walls_main"],
+        "stopAudioIds": ["audio_intro"],
+        "playAudioIds": ["audio_left", "audio_right"],
+        "controlAudioIds": []
+      }
+    ],
+    "lightZones": [
+      {
+        "id": "documentation_light",
+        "description": "Lighting profile for the documentation room. Uses Natural tone mapping with lower fixed exposure so documents and wall materials stay readable without the brighter filmic contrast of the main installation space.",
+        "surfaces": ["dokumentacja_floor"],
+        "transitionSeconds": 0.8,
+        "params": { "toneMapping": "natural" },
+        "lights": {
+          "ambientIntensity": 3.0,
+          "hemisphereIntensity": 1.0,
+          "directionalIntensity": 0,
+          "spotIntensity": 0
+        },
+        "exposure": {
+          "autoExposure": false,
+          "value": 0.92,
+          "target": 0.58,
+          "min": 0.45,
+          "max": 1.35
+        }
+      },
+      {
+        "id": "main_room_light",
+        "description": "Lighting profile for the main installation room. Uses ACES Filmic tone mapping with slightly higher fixed exposure for stronger contrast on the video screens, scans, and darker baked surfaces. Also applies when moving onto walls_main.",
+        "surfaces": ["floor_ucieta", "walls_main"],
+        "transitionSeconds": 0.8,
+        "params": { "toneMapping": "aces" },
+        "lights": {
+          "ambientIntensity": 0.65,
+          "hemisphereIntensity": 0,
+          "directionalIntensity": 0,
+          "spotIntensity": 0
+        },
+        "exposure": {
+          "autoExposure": false,
+          "value": 1.08,
+          "target": 0.72,
+          "min": 0.5,
+          "max": 1.65
+        }
+      }
+    ],
+    "params": {
+      "exposure": 1.0,
+      "autoExposure": true,
+      "toneMapping": "neutral",
+      "exposureTarget": 0.68,
+      "exposureMin": 0.5,
+      "exposureMax": 1.65,
+      "exposureSampleInterval": 30,
+      "colorGrade": {
+        "brightness": 1.0,
+        "contrast": 0.9,
+        "saturate": 0.68
+      },
+      "lightIntensity": 2.0,
+      "gravity": -8,
+      "visitorSpeed": 2,
+      "heightOffset": {
+        "x": 0,
+        "y": 1.1,
+        "z": 0
+      }
+    },
+    "lights": {
+      "hemisphereIntensity": 0,
+      "directionalIntensity": 0
+    },
+    "interactions": {
+      "description": "Visitor interactions available in the VECT-AI Krakow scene.",
+      "items": [
+        {
+          "category": "visitor",
+          "description": "The visitor is the first-person presence in the gallery. Move through the scene with W, A, S, D or the arrow keys, drag to look around, and use double-click or double-tap on reachable surfaces to set an automatic walking destination. Touch visitors can drag to look and use the on-screen joystick for movement.",
+          "objects": ["Visitor_enter"]
+        },
+        {
+          "category": "floor_and_walls",
+          "description": "Double-click or double-tap a reachable floor or wall surface to move there. A blue marker shows the selected destination.",
+          "objects": ["floor_ucieta", "dokumentacja_floor", "walls_main", "walls_frames", "sufit_swiatla_uciete"]
+        },
+        {
+          "category": "images_and_documentation",
+          "description": "Hover over images or documentation pages to see their title. Double-click or double-tap them to open the detail view. Documentation entries can open their PDF or external record from the detail view.",
+          "objects": ["pdf_manual_pl", "pdf_manual_en", "image_tablica", "image_text_layer01", "image_text_layer02", "image_text_layer03", "image_screenshot_parasol", "image_screenshot_snake", "image_screenshot_zajac", "image_screenshot_baletnica", "image_scanning01", "image_2nd_day"]
+        },
+        {
+          "category": "sculptures",
+          "description": "The scan objects use transformControls instead of holdRotate. Hovering a scan shows its label and rotation gizmo. Dragging the gizmo ring rotates the selected scan manually; moving to another scan reattaches the same shared gizmo to that scan. When the pointer leaves the scan and no gizmo drag is active, the gizmo remains available for about 2 seconds and then hides automatically. Click-and-hold auto-rotation is disabled for these scans.",
+          "objects": ["scan_baletnica", "scan_parasol", "scan_snake", "scan_zajac"]
+        },
+        {
+          "category": "videopoem_screens",
+          "description": "The three screen objects play as synchronized silent video surfaces. They are part of the installation and do not open a separate player in this scene.",
+          "objects": ["left_screen", "middle_screen", "right_screen"]
+        },
+        {
+          "category": "audio_zones",
+          "description": "Audio changes by location. In the documentation floor area the intro audio control is available. On the main floor the left and right spatial audio tracks play and the intro is stopped.",
+          "objects": ["audio_intro", "audio_left", "audio_right", "dokumentacja_floor", "floor_ucieta", "walls_main"]
+        },
+        {
+          "category": "hover_labels",
+          "description": "Interactive images, video surfaces, links, and sculptures show a short label when hovered.",
+          "objects": []
+        }
+      ]
+    }
+  }
+}

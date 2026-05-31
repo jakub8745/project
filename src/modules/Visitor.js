@@ -5,7 +5,6 @@ import {
   Vector3,
   Vector2,
   Quaternion,
-  Raycaster,
   Box3,
   Matrix4,
   Scene,
@@ -57,17 +56,12 @@ export default class Visitor extends Mesh {
     this.lftPressed = false;
     this.rgtPressed = false;
 
-    this.raycaster = new Raycaster();
-    this.downVector = new Vector3(0, -1, 0);
-
     this.tempVector = new Vector3();
     this.tempVector2 = new Vector3();
     this.tempBox = new Box3();
     this.tempMat = new Matrix4();
     this.tempSegment = new Line3();
     this.upVector = new Vector3(0, 1, 0);
-
-    this.lastFloorName = null;
 
     this._keyDownHandler = null;
     this._keyUpHandler = null;
@@ -337,12 +331,6 @@ export default class Visitor extends Mesh {
     }
 
 
-    const currentFloor = this.checkLocation();
-    if (currentFloor && currentFloor.name !== this.lastFloorName) {
-      this.lastFloorName = currentFloor.name;
-      return { changed: true, newFloor: currentFloor };
-    }
-    return { changed: false, newFloor: null };
   }
 
   setJoystickInput(x = 0, y = 0) {
@@ -365,16 +353,6 @@ export default class Visitor extends Mesh {
 
     this.tempVector.set(x, y, z).applyAxisAngle(this.upVector, angle);
     this.position.addScaledVector(this.tempVector, this.params.visitorSpeed * delta);
-  }
-
-  checkLocation() {
-    if (!this.parent || !this.parent.children || this.parent.children.length === 0) {
-      return null;
-    }
-    this.raycaster.firstHitOnly = true;
-    this.raycaster.set(this.position, this.downVector);
-    const intersected = this.raycaster.intersectObjects(this.parent.children, true);
-    return intersected.find(({ object }) => ["visitorLocation", "Room"].includes(object.userData.type))?.object;
   }
 
   handleCollisions(delta, collider) {
@@ -459,8 +437,6 @@ export default class Visitor extends Mesh {
     if (this.clickIndicator) {
       this.clickIndicator.visible = false;
     }
-    this.lastFloorName = null;
-
     this.position.copy(spawnPosition);
     if (spawnDirection) {
       const spawnYaw = Math.atan2(spawnDirection.x, spawnDirection.z);

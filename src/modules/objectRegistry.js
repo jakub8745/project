@@ -63,6 +63,29 @@ function normalizeEntry(value, key) {
   };
 }
 
+function entryAliases(entry) {
+  return [
+    asString(entry?.ref),
+    asString(entry?.target),
+    asString(entry?.node),
+    asString(entry?.object),
+    asString(entry?.elementID),
+    asString(entry?.id)
+  ].filter(Boolean);
+}
+
+function registerEntry(entries, key, entry) {
+  if (!entry) return;
+  if (!entries.has(key)) {
+    entries.set(key, entry);
+  }
+  entryAliases(entry).forEach((alias) => {
+    if (alias !== key && !entries.has(alias)) {
+      entries.set(alias, entry);
+    }
+  });
+}
+
 export function normalizeObjectRegistry(rawRegistry) {
   if (!rawRegistry) return undefined;
   const root = asRecord(rawRegistry);
@@ -80,12 +103,12 @@ export function normalizeObjectRegistry(rawRegistry) {
         asString(record?.id);
       if (!key) return;
       const entry = normalizeEntry(value, key);
-      if (entry) entries.set(key, entry);
+      registerEntry(entries, key, entry);
     });
   } else if (asRecord(source)) {
     Object.entries(source).forEach(([key, value]) => {
       const entry = normalizeEntry(value, key);
-      if (entry) entries.set(key, entry);
+      registerEntry(entries, key, entry);
     });
   }
 
