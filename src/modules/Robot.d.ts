@@ -1,4 +1,4 @@
-import { Group, Mesh, Vector3 } from 'three';
+import { Mesh, Object3D, Vector3 } from 'three';
 import type Visitor from './Visitor';
 
 export interface RobotObstacle {
@@ -39,6 +39,6 @@ export interface RobotParams {
 export default class Robot {
   name: string;
   constructor(params?: RobotParams);
-  attach(target: Group | null): void;
+  attach(target: Object3D | null): void;
   update(delta: number, context?: RobotUpdateContext): void;
 }

@@ -831,10 +831,6 @@
     "migration": {
       "from": "lockdowns split-model config",
       "mergedModel": "/models/exhibition_lockdowns_merged.glb",
-      "sourceModels": [
-        "public/downloaded_models/exhibition_lockdowns_ktx.glb",
-        "public/downloaded_models/interactives_lockdowns.glb"
-      ],
       "notes": "The merged GLB keeps only name/type extras from source node metadata; v2 config declares artwork media and interactions."
     }
   }

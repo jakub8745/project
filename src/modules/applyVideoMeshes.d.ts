@@ -43,5 +43,8 @@ export interface GalleryVideoConfig {
 }
 
 export function setVideoScenePlaybackEnabled(enabled: boolean): void;
+export function openVideoPlayerById(videoId: string): boolean;
+export function resumeVideoAudioById(videoId: string): boolean;
+export function invokeVideoControlById(videoId: string, action: string, value?: unknown): boolean;
 export function applyVideoMeshes(scene: Scene | Group, camera: Camera, galleryConfig: GalleryVideoConfig): void;
 export function disposeAllVideoMeshes(): void;

@@ -334,7 +334,7 @@
       "metadata": {
         "title": "Invisible upper-level safety wall",
         "collisionOnly": true,
-        "interactionDescription": "Legacy transparent collider restored from cipriani_objects.glb. It blocks the visitor around the open two-level stair area while remaining invisible and non-interactive at runtime."
+        "interactionDescription": "Legacy transparent collider restored inside the merged Cipriani model. It blocks the visitor around the open two-level stair area while remaining invisible and non-interactive at runtime."
       }
     },
     "cipriani_opis": {
@@ -2022,8 +2022,6 @@
       "fromSchema": "legacy-v1",
       "migratedAt": "2026-05-31",
       "modelMerge": {
-        "scene": "public/downloaded_models/cipriani_interior.glb",
-        "interactives": "public/downloaded_models/cipriani_objects.glb",
         "output": "public/models/exhibition_cipriani_merged.glb",
         "notes": "Merged to one default GLB scene. Retained only runtime name/type extras and removed the unused przezroczysty helper node from the scene graph."
       }

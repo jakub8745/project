@@ -5,9 +5,6 @@ function manualChunks(id: string): string | undefined {
   if (!id.includes('node_modules')) {
     return undefined;
   }
-  if (id.includes('/react-router-dom/')) {
-    return 'router-vendor';
-  }
   if (id.includes('/react-dom/') || id.includes('/react/')) {
     return 'react-vendor';
   }
@@ -26,8 +23,7 @@ function manualChunks(id: string): string | undefined {
     id.includes('/@react-three/') ||
     id.includes('/troika-') ||
     id.includes('/three-stdlib/') ||
-    id.includes('/suspend-react/') ||
-    id.includes('/zustand/')
+    id.includes('/suspend-react/')
   ) {
     return 'r3f-vendor';
   }
@@ -62,6 +58,7 @@ export default defineConfig(({ mode }) => {
         : undefined
     },
     build: {
+      emptyOutDir: true,
       rollupOptions: {
         input: 'index.html',
         output: {

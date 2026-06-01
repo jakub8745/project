@@ -76,7 +76,7 @@ export class PhysicsSystem {
     };
   }
 
-  private pairEnabled(config: PhysicsConfig | undefined, a: string, b: string) {
+  private pairEnabled(_config: PhysicsConfig | undefined, a: string, b: string) {
     const key = getPairKey(a, b);
     const explicit = this.pairRules.get(key);
     if (typeof explicit === 'boolean') return explicit;

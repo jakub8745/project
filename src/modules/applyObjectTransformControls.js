@@ -22,12 +22,22 @@ function coerceMode(value, fallback = 'rotate') {
   return value === 'translate' || value === 'rotate' || value === 'scale' ? value : fallback;
 }
 
+function coerceSizeMode(value, fallback = 'world') {
+  return value === 'screen' || value === 'world' ? value : fallback;
+}
+
+function coerceRotateMode(value, fallback = 'free') {
+  return value === 'axis' || value === 'free' ? value : fallback;
+}
+
 function normalizeTransformControlOptions(options = {}) {
   const record = asRecord(options) || {};
   const light = asRecord(record.light) || asRecord(record.spotLight) || {};
   return {
     mode: coerceMode(record.mode, 'rotate'),
+    rotateMode: coerceRotateMode(record.rotateMode, 'free'),
     size: coerceNumber(record.size, 0.3),
+    sizeMode: coerceSizeMode(record.sizeMode, 'world'),
     hover: coerceBoolean(record.hover, true),
     light: {
       enabled: coerceBoolean(light.enabled, true),
@@ -135,7 +145,20 @@ function getControlState(transform, renderer, camera) {
     onPointerUp: null,
     onBlur: null,
     onDraggingChanged: null,
-    onTransformChange: null
+    onTransformChange: null,
+    originalPointerHover: transform.pointerHover.bind(transform),
+    originalPointerDown: transform.pointerDown.bind(transform),
+    sizeRaf: 0
+  };
+
+  transform.pointerHover = (pointer) => {
+    state.originalPointerHover(pointer);
+    forceFreeRotateAxis(state);
+  };
+
+  transform.pointerDown = (pointer) => {
+    forceFreeRotateAxis(state);
+    state.originalPointerDown(pointer);
   };
 
   transform.enabled = false;
@@ -223,7 +246,10 @@ function disposeControlState(transform) {
   window.removeEventListener('blur', state.onBlur);
   transform.removeEventListener('dragging-changed', state.onDraggingChanged);
   transform.removeEventListener('change', state.onTransformChange);
+  transform.pointerHover = state.originalPointerHover;
+  transform.pointerDown = state.originalPointerDown;
   cancelHideTimer(state);
+  stopSizeSync(state);
   hideControl(state);
   if (state.helper?.parent) {
     state.helper.parent.remove(state.helper);
@@ -265,7 +291,8 @@ function showControlForEntry(state, entry) {
   const { transform, helper } = state;
   transform.attach(entry.obj);
   transform.setMode(entry.config.mode);
-  transform.setSize(entry.config.size);
+  forceFreeRotateAxis(state);
+  syncTransformSize(state);
   transform.enabled = true;
   if (helper) {
     helper.visible = true;
@@ -275,14 +302,77 @@ function showControlForEntry(state, entry) {
     }
   }
   entry.syncLightPosition();
+  startSizeSync(state);
+}
+
+function forceFreeRotateAxis(state) {
+  const entry = state.currentEntry;
+  if (
+    entry?.config.mode === 'rotate' &&
+    entry.config.rotateMode === 'free' &&
+    state.transform.axis
+  ) {
+    state.transform.axis = 'XYZE';
+  }
 }
 
 function hideControl(state) {
   cancelHideTimer(state);
+  stopSizeSync(state);
   state.currentEntry = null;
   state.transform.enabled = false;
   state.transform.detach?.();
   if (state.helper) state.helper.visible = false;
+}
+
+function getTransformScaleFactor(state, entry) {
+  const { camera } = state;
+  const objectPosition = new Vector3();
+  const cameraPosition = new Vector3();
+  entry.obj.updateMatrixWorld(true);
+  camera.updateMatrixWorld(true);
+  entry.obj.getWorldPosition(objectPosition);
+  camera.getWorldPosition(cameraPosition);
+
+  if (camera.isOrthographicCamera) {
+    return Math.max(1e-6, (camera.top - camera.bottom) / Math.max(1e-6, camera.zoom || 1));
+  }
+
+  if (camera.isPerspectiveCamera) {
+    const zoom = Math.max(1e-6, camera.zoom || 1);
+    const fovFactor = Math.min(1.9 * Math.tan(Math.PI * camera.fov / 360) / zoom, 7);
+    return Math.max(1e-6, objectPosition.distanceTo(cameraPosition) * fovFactor);
+  }
+
+  return 1;
+}
+
+function syncTransformSize(state) {
+  const entry = state.currentEntry;
+  if (!entry) return;
+  if (entry.config.sizeMode === 'screen') {
+    state.transform.setSize(entry.config.size);
+    return;
+  }
+  const factor = getTransformScaleFactor(state, entry);
+  state.transform.setSize(Math.max(0.001, entry.config.size * 4 / factor));
+}
+
+function startSizeSync(state) {
+  if (state.sizeRaf) return;
+  const tick = () => {
+    state.sizeRaf = 0;
+    if (!state.currentEntry) return;
+    syncTransformSize(state);
+    state.sizeRaf = window.requestAnimationFrame(tick);
+  };
+  state.sizeRaf = window.requestAnimationFrame(tick);
+}
+
+function stopSizeSync(state) {
+  if (!state.sizeRaf) return;
+  window.cancelAnimationFrame(state.sizeRaf);
+  state.sizeRaf = 0;
 }
 
 function scheduleHideControl(state) {

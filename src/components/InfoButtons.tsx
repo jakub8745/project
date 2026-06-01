@@ -112,7 +112,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             label: item.label,
             icon: resolvedIcon || COMMON_ICONS.info,
             content,
-            link: toSafeExternalUrl(link),
+            link: toSafeExternalUrl(link) ?? undefined,
             pdfPath,
           };
         });

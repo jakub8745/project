@@ -685,10 +685,6 @@
     "migration": {
       "from": "identity split-model config",
       "mergedModel": "/models/exhibition_identity_merged.glb",
-      "sourceModels": [
-        "public/models/exhibition_identity_ktx.glb",
-        "public/models/interactives_identity_testowe.glb"
-      ],
       "notes": "The merged GLB keeps only runtime name/type/elementID extras from source node metadata; v2 config declares image media, video surfaces, sync group, and interactions."
     }
   }

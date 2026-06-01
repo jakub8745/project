@@ -354,7 +354,7 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
     videos,
     audio,
     sculptures: mapSculptures(manifest),
-    thumbnailCapture: manifest.thumbnailCapture,
+    thumbnailCapture: manifest.thumbnailCapture as UnknownRecord | undefined,
     ...mapSceneTransforms(manifest),
     ...mapViewerExtensions(manifest)
   };

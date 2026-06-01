@@ -551,6 +551,7 @@ export function PointerInteractions({
 
       if (type === 'Video') {
         const videoKey = typeof elementID === 'string' && elementID ? elementID : key;
+        if (!videoKey) return;
         const interactionCfg = videoKey ? videosInteraction?.[videoKey] : undefined;
         if (interactionCfg?.interactive === false) {
           return;
@@ -559,7 +560,7 @@ export function PointerInteractions({
         if (playbackMode === 'synced_silent') {
           return;
         }
-        const opened = playbackMode !== 'synced_silent' ? openVideoPlayerById(videoKey) : false;
+        const opened = openVideoPlayerById(videoKey);
         if (opened) return;
 
         const videoElement = videoKey ? document.getElementById(videoKey) : null;
@@ -573,6 +574,7 @@ export function PointerInteractions({
 
       if (type === 'VideoControl') {
         const videoKey = typeof elementID === 'string' && elementID ? elementID : key;
+        if (!videoKey) return;
         const action =
           typeof userData.action === 'string' ? userData.action : 'play_pause';
         invokeVideoControlById(videoKey, action);
@@ -600,7 +602,7 @@ export function PointerInteractions({
         return;
       }
 
-      if (['Floor', 'Room', 'Wall', 'Walls'].includes(type)) {
+      if (type && ['Floor', 'Room', 'Wall', 'Walls'].includes(type)) {
         const point = hit.point.clone();
         const localNormal = hit.face?.normal?.clone();
         if (!localNormal) return;

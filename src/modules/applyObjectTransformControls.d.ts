@@ -3,7 +3,9 @@ import type { TransformControls } from 'three/examples/jsm/controls/TransformCon
 
 export interface ObjectTransformControlOptions {
   mode?: 'translate' | 'rotate' | 'scale';
+  rotateMode?: 'free' | 'axis';
   size?: number;
+  sizeMode?: 'world' | 'screen';
   hover?: boolean;
   light?: {
     enabled?: boolean;

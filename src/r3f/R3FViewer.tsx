@@ -35,6 +35,7 @@ import {
   ACESFilmicToneMapping,
   NeutralToneMapping,
   PCFSoftShadowMap,
+  PerspectiveCamera,
   SRGBColorSpace,
   Texture,
   TextureLoader,
@@ -44,7 +45,7 @@ import {
   RepeatWrapping,
   SpotLight
 } from 'three';
-import type { WebGLRenderer } from 'three';
+import type { SphereGeometry, WebGLRenderer } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -100,7 +101,6 @@ const DEBUG_COLLIDER = false;
 const DEFAULT_BACKGROUND = '#111827';
 
 let sharedDracoLoader: DRACOLoader | null = null;
-let sharedLoaderUsers = 0;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
 
 type XRSessionConstructor = { new (...args: unknown[]): XRSession };
@@ -151,8 +151,7 @@ function ensureKtx2Support(renderer: WebGLRenderer) {
   }
 }
 
-function acquireSharedLoaders(renderer: WebGLRenderer) {
-  sharedLoaderUsers += 1;
+function getSharedLoaders(renderer: WebGLRenderer) {
   if (!sharedDracoLoader) {
     sharedDracoLoader = new DRACOLoader().setDecoderPath('/libs/draco/');
   }
@@ -161,14 +160,6 @@ function acquireSharedLoaders(renderer: WebGLRenderer) {
     draco: sharedDracoLoader,
     ktx2: getKtx2Loader(renderer) as KTX2Loader
   };
-}
-
-function releaseSharedLoaders() {
-  sharedLoaderUsers = Math.max(0, sharedLoaderUsers - 1);
-  if (sharedLoaderUsers === 0) {
-    sharedDracoLoader?.dispose?.();
-    sharedDracoLoader = null;
-  }
 }
 
 interface R3FViewerProps {
@@ -211,9 +202,9 @@ function normalizeToneMappingName(source: unknown): ToneMappingName {
   return 'neutral';
 }
 
-function toneMappingValueForName(name: unknown): number {
+function toneMappingValueForName(name: unknown): WebGLRenderer['toneMapping'] {
   const normalized = normalizeToneMappingName(name);
-  return TONE_MAPPING_OPTIONS.find((option) => option.value === normalized)?.toneMapping ?? NeutralToneMapping;
+  return (TONE_MAPPING_OPTIONS.find((option) => option.value === normalized)?.toneMapping ?? NeutralToneMapping) as WebGLRenderer['toneMapping'];
 }
 
 function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3Tuple {
@@ -274,6 +265,10 @@ type AudioFloorRoute = {
   controlAudioIds?: string[];
 };
 
+function coerceAudioDistanceModel(source: unknown): AudioMeshConfig['distanceModel'] {
+  return source === 'linear' || source === 'inverse' || source === 'exponential' ? source : undefined;
+}
+
 type LightZoneRoute = {
   id?: string;
   surfaces: string[];
@@ -330,7 +325,9 @@ type SceneLightSettings = {
 
 function coerceStringList(source: unknown): string[] {
   if (Array.isArray(source)) {
-    return source.filter((value): value is string => typeof value === 'string' && value.trim()).map((value) => value.trim());
+    return source
+      .filter((value): value is string => typeof value === 'string' && Boolean(value.trim()))
+      .map((value) => value.trim());
   }
   return typeof source === 'string' && source.trim() ? [source.trim()] : [];
 }
@@ -348,7 +345,7 @@ function getSurfaceRouteNames(surface: Object3D | null): string[] {
     userData.name,
     userData.id,
     userData.elementID
-  ].filter((value): value is string => typeof value === 'string' && value.trim());
+  ].filter((value): value is string => typeof value === 'string' && Boolean(value.trim()));
 }
 
 function getSurfaceType(surface: Object3D | null): string | undefined {
@@ -473,7 +470,7 @@ function sanitizeSubtitleLanguage(source: unknown): string | undefined {
 function sanitizeAudioSubtitleTracks(record: Record<string, unknown>): AudioSubtitleTrack[] | undefined {
   const parsedTracks = Array.isArray(record.subtitleTracks)
     ? record.subtitleTracks
-        .map((entry) => {
+        .map((entry): AudioSubtitleTrack | null => {
           if (!entry || typeof entry !== 'object') return null;
           const track = entry as Record<string, unknown>;
           const language = sanitizeSubtitleLanguage(track.language);
@@ -813,13 +810,7 @@ function releaseSharedEquirectTexture(textureUrl: string, gl: WebGLRenderer) {
 function useConfiguredGLTFs(paths: string[]): GLTF[] {
   const gl = useThree((state) => state.gl);
 
-  const loaders = useMemo(() => acquireSharedLoaders(gl), [gl]);
-
-  useEffect(() => {
-    return () => {
-      releaseSharedLoaders();
-    };
-  }, [loaders]);
+  const loaders = useMemo(() => getSharedLoaders(gl), [gl]);
 
   const gltfResults = useLoader(
     GLTFLoader,
@@ -1016,7 +1007,7 @@ function AnimatedProceduralObject({
   const moveDir = useRef<Vector3>(new Vector3(1, 0, 0));
   const seeded = useRef(false);
   const frameCounter = useRef(0);
-  const geometryRef = useRef<BufferGeometry | null>(null);
+  const geometryRef = useRef<SphereGeometry | null>(null);
   const blobBasePositionsRef = useRef<Float32Array | null>(null);
   const blobPhaseRef = useRef<Float32Array | null>(null);
   const blobNormalFrameCounter = useRef(0);
@@ -1556,6 +1547,28 @@ type ProceduralModelAnimationSpec = {
   turnJitter: number;
   direction: [number, number];
 };
+
+function coerceProceduralAnimation(source: unknown, fallbackBobDistance = 0): ProceduralModelAnimationSpec | undefined {
+  if (!source || typeof source !== 'object') return undefined;
+  const animation = source as Record<string, unknown>;
+  const direction = animation.direction;
+  return {
+    swayAngle: typeof animation.swayAngle === 'number' ? animation.swayAngle : 0,
+    swaySpeed: typeof animation.swaySpeed === 'number' ? animation.swaySpeed : 0.8,
+    driftDistance: typeof animation.driftDistance === 'number' ? animation.driftDistance : 0,
+    driftSpeed: typeof animation.driftSpeed === 'number' ? animation.driftSpeed : 0.35,
+    bobDistance: typeof animation.bobDistance === 'number' ? animation.bobDistance : fallbackBobDistance,
+    bobSpeed: typeof animation.bobSpeed === 'number' ? animation.bobSpeed : 0.5,
+    collisionAware: typeof animation.collisionAware === 'boolean' ? animation.collisionAware : false,
+    speed: typeof animation.speed === 'number' ? animation.speed : 0.45,
+    boundaryPadding: typeof animation.boundaryPadding === 'number' ? animation.boundaryPadding : 0.8,
+    turnJitter: typeof animation.turnJitter === 'number' ? animation.turnJitter : 0.35,
+    direction: Array.isArray(direction) && direction.length >= 2
+      ? [Number(direction[0]) || 1, Number(direction[1]) || 0]
+      : [1, 0]
+  };
+}
+
 type ProceduralModelSpec = {
   id?: string;
   path: string;
@@ -2762,7 +2775,8 @@ function ThumbnailRecorderMode({
   config: ThumbnailCaptureConfig;
   active: boolean;
 }) {
-  const { camera, gl } = useThree();
+  const { gl } = useThree();
+  const camera = useThree((state) => state.camera) as PerspectiveCamera;
   const controls = useThree((state) => state.controls) as OrbitControlsImpl | undefined;
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
@@ -2954,59 +2968,7 @@ function R3FViewerInner({
             typeof record.collisionRadius === 'number' && Number.isFinite(record.collisionRadius)
               ? record.collisionRadius
               : 0.85,
-          animation:
-            record.animation && typeof record.animation === 'object'
-              ? {
-                  swayAngle:
-                    typeof (record.animation as Record<string, unknown>).swayAngle === 'number'
-                      ? ((record.animation as Record<string, unknown>).swayAngle as number)
-                      : 0,
-                  swaySpeed:
-                    typeof (record.animation as Record<string, unknown>).swaySpeed === 'number'
-                      ? ((record.animation as Record<string, unknown>).swaySpeed as number)
-                      : 0.8,
-                  driftDistance:
-                    typeof (record.animation as Record<string, unknown>).driftDistance === 'number'
-                      ? ((record.animation as Record<string, unknown>).driftDistance as number)
-                      : 0,
-                  driftSpeed:
-                    typeof (record.animation as Record<string, unknown>).driftSpeed === 'number'
-                      ? ((record.animation as Record<string, unknown>).driftSpeed as number)
-                      : 0.35,
-                  bobDistance:
-                    typeof (record.animation as Record<string, unknown>).bobDistance === 'number'
-                      ? ((record.animation as Record<string, unknown>).bobDistance as number)
-                      : 0,
-                  bobSpeed:
-                    typeof (record.animation as Record<string, unknown>).bobSpeed === 'number'
-                      ? ((record.animation as Record<string, unknown>).bobSpeed as number)
-                      : 0.5,
-                  collisionAware:
-                    typeof (record.animation as Record<string, unknown>).collisionAware === 'boolean'
-                      ? ((record.animation as Record<string, unknown>).collisionAware as boolean)
-                      : false,
-                  speed:
-                    typeof (record.animation as Record<string, unknown>).speed === 'number'
-                      ? ((record.animation as Record<string, unknown>).speed as number)
-                      : 0.45,
-                  boundaryPadding:
-                    typeof (record.animation as Record<string, unknown>).boundaryPadding === 'number'
-                      ? ((record.animation as Record<string, unknown>).boundaryPadding as number)
-                      : 0.8,
-                  turnJitter:
-                    typeof (record.animation as Record<string, unknown>).turnJitter === 'number'
-                      ? ((record.animation as Record<string, unknown>).turnJitter as number)
-                      : 0.35,
-                  direction:
-                    Array.isArray((record.animation as Record<string, unknown>).direction) &&
-                    (record.animation as Record<string, unknown>).direction.length >= 2
-                      ? [
-                          Number(((record.animation as Record<string, unknown>).direction as unknown[])[0]) || 1,
-                          Number(((record.animation as Record<string, unknown>).direction as unknown[])[1]) || 0
-                        ]
-                      : [1, 0]
-                }
-              : undefined
+          animation: coerceProceduralAnimation(record.animation)
         } as ProceduralModelSpec;
       })
       .filter((entry): entry is ProceduralModelSpec => entry !== null);
@@ -3101,59 +3063,7 @@ function R3FViewerInner({
                 name: typeof userData.name === 'string' ? userData.name : undefined
               }
             : undefined,
-          animation:
-            record.animation && typeof record.animation === 'object'
-              ? {
-                  swayAngle:
-                    typeof (record.animation as Record<string, unknown>).swayAngle === 'number'
-                      ? ((record.animation as Record<string, unknown>).swayAngle as number)
-                      : 0,
-                  swaySpeed:
-                    typeof (record.animation as Record<string, unknown>).swaySpeed === 'number'
-                      ? ((record.animation as Record<string, unknown>).swaySpeed as number)
-                      : 0.8,
-                  driftDistance:
-                    typeof (record.animation as Record<string, unknown>).driftDistance === 'number'
-                      ? ((record.animation as Record<string, unknown>).driftDistance as number)
-                      : 0,
-                  driftSpeed:
-                    typeof (record.animation as Record<string, unknown>).driftSpeed === 'number'
-                      ? ((record.animation as Record<string, unknown>).driftSpeed as number)
-                      : 0.35,
-                  bobDistance:
-                    typeof (record.animation as Record<string, unknown>).bobDistance === 'number'
-                      ? ((record.animation as Record<string, unknown>).bobDistance as number)
-                      : 0.03,
-                  bobSpeed:
-                    typeof (record.animation as Record<string, unknown>).bobSpeed === 'number'
-                      ? ((record.animation as Record<string, unknown>).bobSpeed as number)
-                      : 0.5,
-                  collisionAware:
-                    typeof (record.animation as Record<string, unknown>).collisionAware === 'boolean'
-                      ? ((record.animation as Record<string, unknown>).collisionAware as boolean)
-                      : false,
-                  speed:
-                    typeof (record.animation as Record<string, unknown>).speed === 'number'
-                      ? ((record.animation as Record<string, unknown>).speed as number)
-                      : 0.45,
-                  boundaryPadding:
-                    typeof (record.animation as Record<string, unknown>).boundaryPadding === 'number'
-                      ? ((record.animation as Record<string, unknown>).boundaryPadding as number)
-                      : 0.8,
-                  turnJitter:
-                    typeof (record.animation as Record<string, unknown>).turnJitter === 'number'
-                      ? ((record.animation as Record<string, unknown>).turnJitter as number)
-                      : 0.35,
-                  direction:
-                    Array.isArray((record.animation as Record<string, unknown>).direction) &&
-                    (record.animation as Record<string, unknown>).direction.length >= 2
-                      ? [
-                          Number(((record.animation as Record<string, unknown>).direction as unknown[])[0]) || 1,
-                          Number(((record.animation as Record<string, unknown>).direction as unknown[])[1]) || 0
-                        ]
-                      : [1, 0]
-                }
-              : undefined,
+          animation: coerceProceduralAnimation(record.animation, 0.03),
           material: {
             color: typeof material.color === 'string' ? material.color : '#ffffff',
             metalness:
@@ -3261,10 +3171,10 @@ function R3FViewerInner({
     if (typeof rawParams.movementDeceleration === 'number' && Number.isFinite(rawParams.movementDeceleration)) {
       result.movementDeceleration = rawParams.movementDeceleration;
     }
-    if (rawParams.spawnDirection !== undefined) {
+    if (isVisitorDirectionInput(rawParams.spawnDirection)) {
       result.spawnDirection = rawParams.spawnDirection;
     }
-    if (rawParams.visitorDirection !== undefined) {
+    if (isVisitorDirectionInput(rawParams.visitorDirection)) {
       result.visitorDirection = rawParams.visitorDirection;
     }
     if (rawParams.heightOffset !== undefined) {
@@ -3398,7 +3308,7 @@ function R3FViewerInner({
     }
     return mapped;
   }, [config?.physics]);
-  const handleProceduralActorRef = useCallback((id: string, object: Group | null, radius: number) => {
+  const handleProceduralActorRef = useCallback((id: string, object: Object3D | null, radius: number) => {
     if (!object) {
       dynamicActorsRef.current.delete(id);
       return;
@@ -3592,7 +3502,7 @@ function R3FViewerInner({
           refDistance: typeof record.refDistance === 'number' ? record.refDistance : undefined,
           rolloff: typeof record.rolloff === 'number' ? record.rolloff : undefined,
           maxDistance: typeof record.maxDistance === 'number' ? record.maxDistance : undefined,
-          distanceModel: typeof record.distanceModel === 'string' ? record.distanceModel : undefined,
+          distanceModel: coerceAudioDistanceModel(record.distanceModel),
           volume: typeof record.volume === 'number' ? record.volume : undefined,
           directionalCone,
           coneTarget,
@@ -3669,7 +3579,7 @@ function R3FViewerInner({
       return [];
     }
     return config.audioZones
-      .map((entry) => {
+      .map((entry): AudioFloorRoute | null => {
         if (!entry || typeof entry !== 'object') return null;
         const record = entry as Record<string, unknown>;
         const floors = [
@@ -3719,7 +3629,7 @@ function R3FViewerInner({
       return [];
     }
     return config.lightZones
-      .map((entry) => {
+      .map((entry): LightZoneRoute | null => {
         if (!entry || typeof entry !== 'object') return null;
         const record = entry as Record<string, unknown>;
         const surfaces = [
@@ -3978,7 +3888,7 @@ function R3FViewerInner({
   }, []);
 
   useEffect(() => {
-  if (!renderer) return;
+    if (!renderer) return;
     const xrManager = renderer.xr;
     const handleSessionStart = () => {
       setXrSessionActive(true);
@@ -4207,7 +4117,7 @@ function R3FViewerInner({
           enabled={!sceneInteractionsLocked}
           enableDamping
           dampingFactor={0.04}
-          autoRotate={false}
+          autoRotate={thumbnailModeActive && thumbnailCapture.autoRotate}
           autoRotateSpeed={thumbnailCapture.autoRotateSpeed}
           enablePan={thumbnailModeActive}
           enableZoom={thumbnailModeActive}
@@ -4480,6 +4390,28 @@ function VisitorSpatialSensor({
 }
 
 type ControllerParams = Partial<VisitorParams> & Record<string, unknown>;
+type VisitorDirectionInput = NonNullable<VisitorParams['spawnDirection']>;
+type VisitorRuntime = Visitor & {
+  dispose?: () => void;
+  fwdPressed: boolean;
+  bkdPressed: boolean;
+  lftPressed: boolean;
+  rgtPressed: boolean;
+  xrRig: Object3D | null;
+  setJoystickInput: (x?: number, y?: number) => void;
+};
+
+function isVisitorDirectionInput(source: unknown): source is VisitorDirectionInput {
+  if (typeof source === 'string') return true;
+  if (Array.isArray(source) && source.length === 3) return true;
+  return Boolean(
+    source &&
+    typeof source === 'object' &&
+    typeof (source as Record<string, unknown>).x === 'number' &&
+    typeof (source as Record<string, unknown>).y === 'number' &&
+    typeof (source as Record<string, unknown>).z === 'number'
+  );
+}
 
 function FirstPersonController({
   collider,
@@ -4499,7 +4431,7 @@ function FirstPersonController({
   const { camera, gl, scene } = useThree();
   const controls = useThree((state) => state.controls) as OrbitControlsImpl | undefined;
 
-  const visitor = useMemo(() => {
+  const visitor = useMemo<VisitorRuntime | null>(() => {
     if (enabled === false) return null;
     if (!controls) return null;
     const heightOffsetVec = toVector3(params?.heightOffset, [0, 1.05, 0]);
@@ -4522,7 +4454,7 @@ function FirstPersonController({
       params: defaults,
       renderer: gl,
       xrRig: null
-    });
+    }) as VisitorRuntime;
   }, [camera, controls, enabled, gl, params]);
 
   const lastPosition = useRef<Vector3 | null>(null);
@@ -4566,7 +4498,7 @@ function FirstPersonController({
   useEffect(() => {
     if (!visitor) return undefined;
     const updateRigReference = () => {
-      const xrCamera = gl.xr.getCamera(camera);
+      const xrCamera = gl.xr.getCamera();
       const rigObject = (xrCamera?.parent ?? xrCamera ?? null) as Object3D | null;
       visitor.xrRig = rigObject;
       if (rigObject) {
@@ -4813,7 +4745,6 @@ function RendererTuning({
   const toneMapping = toneMappingValueForName(params?.toneMapping);
 
   useEffect(() => {
-    gl.physicallyCorrectLights = highQualityMode;
     gl.outputColorSpace = SRGBColorSpace;
     gl.shadowMap.enabled = highQualityMode;
     if (highQualityMode) {

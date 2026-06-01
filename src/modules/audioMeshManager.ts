@@ -5,6 +5,8 @@ import { applyPitcherControls } from './applyPitcherControls.js';
 import { applyObjectTransformControls, type ObjectTransformControlOptions } from './applyObjectTransformControls.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from './objectRegistry.js';
 
+type AudioDistanceModel = 'linear' | 'inverse' | 'exponential';
+
 export interface AudioSubtitleCue {
   start: number;
   end: number;
@@ -30,7 +32,7 @@ export interface AudioMeshConfig {
   refDistance?: number;
   rolloff?: number;
   maxDistance?: number;
-  distanceModel?: string;
+  distanceModel?: AudioDistanceModel;
   volume?: number;
   directionalCone?: [innerAngle: number, outerAngle: number, outerGain: number];
   coneTarget?: [x: number, y: number, z: number];
