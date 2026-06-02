@@ -7,9 +7,11 @@ import {
   Quaternion,
   Box3,
   Matrix4,
+  Matrix3,
   Scene,
   MeshStandardMaterial,
-  AudioListener
+  AudioListener,
+  Raycaster
 
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
@@ -50,6 +52,25 @@ export default class Visitor extends Mesh {
     this.autoMoveBlockedSeconds = 0;
     this.autoMoveLastDistance = Infinity;
     this.autoMoveWasActive = false;
+    this.stuckSeconds = 0;
+    this.lastSafePosition = new Vector3();
+    this.hasLastSafePosition = false;
+    this.lastCollisionCorrection = new Vector3();
+    this.preCollisionPosition = new Vector3();
+    this.collisionCorrectionMagnitude = 0;
+    this.horizontalCollisionCorrection = 0;
+    this.lastMovementProgress = 0;
+    this.lastMovementAttempt = 0;
+    this.horizontalStep = new Vector3();
+    this.slideStepA = new Vector3();
+    this.slideStepB = new Vector3();
+    this.sweepHitNormal = new Vector3();
+    this.sweepDirection = new Vector3();
+    this.sweepOrigin = new Vector3();
+    this.sweepNormalMatrix = new Matrix3();
+    this.moveRaycaster = new Raycaster();
+    this.moveRaycaster.firstHitOnly = true;
+    this.sweepBlocked = false;
     this.clickIndicator = null;
     this.joystickVector = new Vector2(0, 0);
 
@@ -72,6 +93,8 @@ export default class Visitor extends Mesh {
 
     this._keyDownHandler = null;
     this._keyUpHandler = null;
+    this._blurHandler = null;
+    this._visibilityChangeHandler = null;
 
     this._setupInput();
     deps.visitor = this;
@@ -246,36 +269,60 @@ export default class Visitor extends Mesh {
       return false;
     };
 
+    const shouldIgnoreForShortcut = (event) => event.metaKey || event.ctrlKey || event.altKey;
+
     this._keyDownHandler = (e) => {
       if (isTypingTarget(e)) {
-        this.fwdPressed = false;
-        this.bkdPressed = false;
-        this.lftPressed = false;
-        this.rgtPressed = false;
+        this.resetKeyboardInput();
         return;
       }
-      if (keyMap[e.key] !== undefined) {
+      if (shouldIgnoreForShortcut(e)) {
+        this.resetKeyboardInput();
+        return;
+      }
+      const movementKey = keyMap[e.key.toLowerCase()] ?? keyMap[e.key];
+      if (movementKey !== undefined) {
         e.preventDefault(); 
-        this[keyMap[e.key]] = true;
+        this[movementKey] = true;
       }
     };
 
     this._keyUpHandler = (e) => {
       if (isTypingTarget(e)) {
-        this.fwdPressed = false;
-        this.bkdPressed = false;
-        this.lftPressed = false;
-        this.rgtPressed = false;
+        this.resetKeyboardInput();
         return;
       }
-      if (keyMap[e.key] !== undefined) {
+      const movementKey = keyMap[e.key.toLowerCase()] ?? keyMap[e.key];
+      if (movementKey !== undefined) {
         e.preventDefault(); 
-        this[keyMap[e.key]] = false;
+        this[movementKey] = false;
+      }
+    };
+
+    this._blurHandler = () => {
+      this.resetKeyboardInput();
+    };
+
+    this._visibilityChangeHandler = () => {
+      if (document.visibilityState !== 'visible') {
+        this.resetKeyboardInput();
       }
     };
 
     window.addEventListener('keydown', this._keyDownHandler);
     window.addEventListener('keyup', this._keyUpHandler);
+    window.addEventListener('blur', this._blurHandler);
+    document.addEventListener('visibilitychange', this._visibilityChangeHandler);
+  }
+
+  resetKeyboardInput() {
+    this.fwdPressed = false;
+    this.bkdPressed = false;
+    this.lftPressed = false;
+    this.rgtPressed = false;
+    this.desiredMove.set(0, 0, 0);
+    this.desiredVelocity.set(0, 0, 0);
+    this.horizontalVelocity.set(0, 0, 0);
   }
 
   dispose() {
@@ -286,12 +333,22 @@ export default class Visitor extends Mesh {
     if (this._keyUpHandler) {
       window.removeEventListener('keyup', this._keyUpHandler);
     }
+    if (this._blurHandler) {
+      window.removeEventListener('blur', this._blurHandler);
+    }
+    if (this._visibilityChangeHandler) {
+      document.removeEventListener('visibilitychange', this._visibilityChangeHandler);
+    }
     this._keyDownHandler = null;
     this._keyUpHandler = null;
+    this._blurHandler = null;
+    this._visibilityChangeHandler = null;
   }
 
   update(delta, collider) {
     const stepDelta = Number.isFinite(delta) ? Math.min(Math.max(delta, 0), 1 / 20) : 0;
+    const startX = this.position.x;
+    const startZ = this.position.z;
 
     if (this.visitorIsOnGround) {
       this.visitorVelocity.y = 0;
@@ -331,6 +388,7 @@ export default class Visitor extends Mesh {
         }
         this.desiredMove.copy(this.autoMoveDirection).multiplyScalar(1 / distance);
         targetSpeed = this.params.autoMoveSpeed ?? this.autoMoveSpeed;
+        targetSpeed = Math.min(targetSpeed, Math.max(0.85, distance * 2.8));
       } else {
         this.cancelAutoMove();
         this.desiredMove.set(0, 0, 0);
@@ -345,19 +403,51 @@ export default class Visitor extends Mesh {
     }
 
     const acceleration = hasMovementTarget
-      ? (this.params.movementAcceleration ?? 12)
-      : (this.params.movementDeceleration ?? 18);
+      ? (this.params.movementAcceleration ?? 18)
+      : (this.params.movementDeceleration ?? 30);
     const smoothing = 1 - Math.exp(-Math.max(0, acceleration) * stepDelta);
     this.horizontalVelocity.lerp(this.desiredVelocity, smoothing);
     if (!hasMovementTarget && this.horizontalVelocity.lengthSq() < 1e-5) {
       this.horizontalVelocity.set(0, 0, 0);
     }
-    this.position.addScaledVector(this.horizontalVelocity, stepDelta);
+    this.horizontalStep.copy(this.horizontalVelocity).multiplyScalar(stepDelta);
+    this.horizontalStep.y = 0;
+    const attemptedHorizontalMove = this.horizontalStep.length();
+    const blockingHit = this.findHorizontalMoveBlock(collider, this.horizontalStep);
+    this.sweepBlocked = Boolean(blockingHit);
+    if (blockingHit) {
+      const didSlide = this.tryApplySlideStep(collider, this.horizontalStep);
+      if (!didSlide) {
+        this.horizontalVelocity.set(0, 0, 0);
+        this.desiredVelocity.set(0, 0, 0);
+      }
+    } else {
+      this.position.add(this.horizontalStep);
+    }
+
+    if (this.sweepBlocked && this.horizontalVelocity.lengthSq() < 1e-5) {
+      this.horizontalVelocity.set(0, 0, 0);
+      this.desiredVelocity.set(0, 0, 0);
+    }
 
     this.position.addScaledVector(this.visitorVelocity, stepDelta);
     this.updateMatrixWorld();
+    this.preCollisionPosition.copy(this.position);
     this.handleCollisions(stepDelta, collider);
-    this.resolveAutoMoveBlock(stepDelta);
+    const actualHorizontalMove = Math.hypot(this.position.x - startX, this.position.z - startZ);
+    if (this.horizontalCollisionCorrection > Math.max(0.18, this.capsuleInfo.radius * 0.35)) {
+      this.recoverFromStuck('excessive collision correction');
+      return;
+    }
+    const hasBlockingCollision =
+      this.sweepBlocked ||
+      this.verticalCollisionDetected ||
+      this.horizontalCollisionCorrection > Math.max(0.015, attemptedHorizontalMove * 0.35);
+    this.lastMovementAttempt = attemptedHorizontalMove;
+    this.lastMovementProgress = actualHorizontalMove;
+    this.updateSafePosition(hasBlockingCollision);
+    this.resolveAutoMoveBlock(stepDelta, attemptedHorizontalMove, actualHorizontalMove, hasBlockingCollision);
+    this.resolveMovementStuck(stepDelta, hasMovementTarget, attemptedHorizontalMove, actualHorizontalMove, hasBlockingCollision);
 
     if (this.position.y < -10) {
       console.warn('Visitor fell below floor. Resetting.');
@@ -365,6 +455,89 @@ export default class Visitor extends Mesh {
     }
 
 
+  }
+
+  updateSafePosition(hasBlockingCollision) {
+    if (!this.visitorIsOnGround || hasBlockingCollision) {
+      return;
+    }
+    this.lastSafePosition.copy(this.position);
+    this.hasLastSafePosition = true;
+  }
+
+  isHorizontalMoveBlocked(collider, movement) {
+    return Boolean(this.findHorizontalMoveBlock(collider, movement));
+  }
+
+  findHorizontalMoveBlock(collider, movement) {
+    const moveDistance = movement.length();
+    if (!collider || moveDistance <= 1e-5) return null;
+
+    this.sweepDirection.copy(movement).multiplyScalar(1 / moveDistance);
+    const radius = this.capsuleInfo.radius;
+    const maxDistance = moveDistance + radius * 0.92;
+    const sampleHeights = [radius * 0.35, radius, radius * 1.65];
+
+    for (const height of sampleHeights) {
+      this.sweepOrigin.copy(this.position);
+      this.sweepOrigin.y += height;
+      this.moveRaycaster.set(this.sweepOrigin, this.sweepDirection);
+      this.moveRaycaster.near = 0;
+      this.moveRaycaster.far = maxDistance;
+      const hit = this.moveRaycaster.intersectObject(collider, false)[0];
+      if (hit && hit.distance <= maxDistance) {
+        if (hit.face) {
+          this.sweepNormalMatrix.getNormalMatrix(hit.object.matrixWorld);
+          this.sweepHitNormal.copy(hit.face.normal).applyNormalMatrix(this.sweepNormalMatrix).normalize();
+          this.sweepHitNormal.y = 0;
+          if (this.sweepHitNormal.lengthSq() > 1e-8) {
+            this.sweepHitNormal.normalize();
+          } else {
+            this.sweepHitNormal.copy(this.sweepDirection).multiplyScalar(-1);
+          }
+        } else {
+          this.sweepHitNormal.copy(this.sweepDirection).multiplyScalar(-1);
+        }
+        return hit;
+      }
+    }
+
+    return null;
+  }
+
+  tryApplySlideStep(collider, movement) {
+    if (!collider || movement.lengthSq() <= 1e-10 || this.sweepHitNormal.lengthSq() <= 1e-8) {
+      return false;
+    }
+
+    this.slideStepA.copy(movement).addScaledVector(this.sweepHitNormal, -movement.dot(this.sweepHitNormal));
+    this.slideStepA.y = 0;
+    const originalLength = movement.length();
+    const slideLength = this.slideStepA.length();
+    if (slideLength <= 1e-5) {
+      return false;
+    }
+
+    if (slideLength > originalLength) {
+      this.slideStepA.multiplyScalar(originalLength / slideLength);
+    }
+
+    if (!this.isHorizontalMoveBlocked(collider, this.slideStepA)) {
+      this.position.add(this.slideStepA);
+      this.horizontalVelocity.addScaledVector(this.sweepHitNormal, -this.horizontalVelocity.dot(this.sweepHitNormal));
+      this.desiredVelocity.addScaledVector(this.sweepHitNormal, -this.desiredVelocity.dot(this.sweepHitNormal));
+      return true;
+    }
+
+    this.slideStepB.copy(this.slideStepA).multiplyScalar(0.5);
+    if (this.slideStepB.lengthSq() > 1e-10 && !this.isHorizontalMoveBlocked(collider, this.slideStepB)) {
+      this.position.add(this.slideStepB);
+      this.horizontalVelocity.addScaledVector(this.sweepHitNormal, -this.horizontalVelocity.dot(this.sweepHitNormal));
+      this.desiredVelocity.addScaledVector(this.sweepHitNormal, -this.desiredVelocity.dot(this.sweepHitNormal));
+      return true;
+    }
+
+    return false;
   }
 
   setJoystickInput(x = 0, y = 0) {
@@ -384,12 +557,13 @@ export default class Visitor extends Mesh {
     this.desiredMove.set(0, 0, 0);
     this.desiredVelocity.set(0, 0, 0);
     this.horizontalVelocity.set(0, 0, 0);
+    this.stuckSeconds = 0;
     if (this.clickIndicator) {
       this.clickIndicator.visible = false;
     }
   }
 
-  resolveAutoMoveBlock(delta) {
+  resolveAutoMoveBlock(delta, attemptedHorizontalMove = 0, actualHorizontalMove = 0, hasBlockingCollision = false) {
     if (!this.isAutoMoving || !this.target) {
       this.autoMoveBlockedSeconds = 0;
       this.autoMoveLastDistance = Infinity;
@@ -399,10 +573,11 @@ export default class Visitor extends Mesh {
 
     const remaining = Math.hypot(this.target.x - this.position.x, this.target.z - this.position.z);
     const progress = this.autoMoveLastDistance - remaining;
-    const expectedMove = this.horizontalVelocity.length() * delta;
+    const expectedMove = Math.max(this.horizontalVelocity.length() * delta, attemptedHorizontalMove);
     const minProgress = Math.max(0.006, expectedMove * 0.12);
+    const lowActualMove = expectedMove > 0.01 && actualHorizontalMove < expectedMove * 0.2;
 
-    if (this.verticalCollisionDetected && progress < minProgress) {
+    if ((hasBlockingCollision && progress < minProgress) || lowActualMove) {
       this.autoMoveBlockedSeconds += delta;
     } else {
       this.autoMoveBlockedSeconds = Math.max(0, this.autoMoveBlockedSeconds - delta * 2);
@@ -411,16 +586,64 @@ export default class Visitor extends Mesh {
     this.autoMoveLastDistance = remaining;
     this.autoMoveWasActive = true;
 
-    if (this.autoMoveBlockedSeconds > 0.35) {
+    if (this.autoMoveBlockedSeconds > 0.25) {
       console.warn('Visitor auto-move target is blocked. Cancelling movement.');
       this.cancelAutoMove();
+      this.recoverFromStuck('auto-move blocked');
     }
+  }
+
+  resolveMovementStuck(delta, hasMovementTarget, attemptedHorizontalMove, actualHorizontalMove, hasBlockingCollision) {
+    if (!hasMovementTarget || attemptedHorizontalMove <= 0.004) {
+      this.stuckSeconds = Math.max(0, this.stuckSeconds - delta * 2);
+      return;
+    }
+
+    const lowProgress = actualHorizontalMove < Math.max(0.002, attemptedHorizontalMove * 0.18);
+    if (hasBlockingCollision && lowProgress) {
+      this.stuckSeconds += delta;
+    } else {
+      this.stuckSeconds = Math.max(0, this.stuckSeconds - delta * 3);
+    }
+
+    if (this.stuckSeconds > 0.45) {
+      this.recoverFromStuck('collision trap');
+    }
+  }
+
+  recoverFromStuck(reason = 'stuck', fallbackPosition = null) {
+    if (!this.hasLastSafePosition) {
+      this.cancelAutoMove();
+      this.visitorVelocity.set(0, 0, 0);
+      this.horizontalVelocity.set(0, 0, 0);
+      if (fallbackPosition) {
+        this.position.copy(fallbackPosition);
+        this.syncCameraRig();
+      }
+      this.stuckSeconds = 0;
+      return;
+    }
+
+    console.warn(`Visitor recovered from ${reason}.`);
+    this.cancelAutoMove();
+    this.visitorVelocity.set(0, 0, 0);
+    this.horizontalVelocity.set(0, 0, 0);
+    this.desiredVelocity.set(0, 0, 0);
+    this.desiredMove.set(0, 0, 0);
+    this.position.copy(this.lastSafePosition);
+    this.stuckSeconds = 0;
+    this.updateMatrixWorld();
+    this.syncCameraRig();
   }
 
   teleportTo(point) {
     this.position.set(point.x, this.position.y, point.z);
+    this.lastSafePosition.copy(this.position);
+    this.hasLastSafePosition = true;
+    this.stuckSeconds = 0;
     this.cancelAutoMove();
     this.target = null;
+    this.syncCameraRig();
   }
 
 
@@ -446,6 +669,9 @@ export default class Visitor extends Mesh {
     this.tempBox.max.addScalar(capsule.radius);
 
     this.verticalCollisionDetected = false;
+    this.collisionCorrectionMagnitude = 0;
+    this.horizontalCollisionCorrection = 0;
+    this.lastCollisionCorrection.set(0, 0, 0);
 
 
 
@@ -458,7 +684,12 @@ export default class Visitor extends Mesh {
 
         if (dist < capsule.radius) {
           const depth = capsule.radius - dist;
-          const direction = capsulePoint.sub(triPoint).normalize();
+          const direction = capsulePoint.sub(triPoint);
+          if (direction.lengthSq() < 1e-12) {
+            direction.set(0, 1, 0);
+          } else {
+            direction.normalize();
+          }
           const adj = Math.min(depth, 0.05);//0.05
 
           this.tempSegment.start.addScaledVector(direction, adj);
@@ -478,6 +709,9 @@ export default class Visitor extends Mesh {
 
     const offset = Math.max(0.0, this.tempVector2.length() - 1e-5);
     this.tempVector2.normalize().multiplyScalar(offset);
+    this.lastCollisionCorrection.copy(this.tempVector2);
+    this.collisionCorrectionMagnitude = this.lastCollisionCorrection.length();
+    this.horizontalCollisionCorrection = Math.hypot(this.lastCollisionCorrection.x, this.lastCollisionCorrection.z);
     this.position.add(this.tempVector2);
 
     if (!this.visitorIsOnGround) {
@@ -486,8 +720,10 @@ export default class Visitor extends Mesh {
       this.visitorVelocity.set(0, 0, 0);
     }
 
- 
-    // Update camera/rig depending on XR session state
+    this.syncCameraRig();
+  }
+
+  syncCameraRig() {
     this.tempVector.copy(this.position).add(this.params.heightOffset);
     if (this.renderer?.xr?.isPresenting && this.xrRig) {
       // In XR, the headset controls the camera pose. Move the rig instead.
@@ -513,6 +749,9 @@ export default class Visitor extends Mesh {
     this.verticalCollisionDetected = false;
     this.cancelAutoMove();
     this.position.copy(spawnPosition);
+    this.lastSafePosition.copy(this.position);
+    this.hasLastSafePosition = true;
+    this.stuckSeconds = 0;
     if (spawnDirection) {
       const spawnYaw = Math.atan2(spawnDirection.x, spawnDirection.z);
       this.rotation.set(0, spawnYaw, 0);

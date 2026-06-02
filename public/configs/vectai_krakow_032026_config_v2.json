@@ -511,7 +511,7 @@
         "description": "Lighting profile for the documentation room. Uses Natural tone mapping with lower fixed exposure so documents and wall materials stay readable without the brighter filmic contrast of the main installation space.",
         "surfaces": ["dokumentacja_floor"],
         "transitionSeconds": 0.8,
-        "params": { "toneMapping": "natural" },
+        "params": { "toneMapping": "cineon" },
         "lights": {
           "ambientIntensity": 3.0,
           "hemisphereIntensity": 1.0,
@@ -520,7 +520,7 @@
         },
         "exposure": {
           "autoExposure": false,
-          "value": 0.92,
+          "value": 0.72,
           "target": 0.58,
           "min": 0.45,
           "max": 1.35

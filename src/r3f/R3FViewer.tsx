@@ -4115,8 +4115,8 @@ function R3FViewerInner({
         <OrbitControls
           makeDefault
           enabled={!sceneInteractionsLocked}
-          enableDamping
-          dampingFactor={0.04}
+          enableDamping={thumbnailModeActive}
+          dampingFactor={0.02}
           autoRotate={thumbnailModeActive && thumbnailCapture.autoRotate}
           autoRotateSpeed={thumbnailCapture.autoRotateSpeed}
           enablePan={thumbnailModeActive}
@@ -4443,8 +4443,8 @@ function FirstPersonController({
       rotateOrbit: typeof params?.rotateOrbit === 'number' ? params.rotateOrbit : 15,
       visitorEnter: visitorEnterVec,
       autoMoveSpeed: typeof params?.autoMoveSpeed === 'number' ? params.autoMoveSpeed : 5,
-      movementAcceleration: typeof params?.movementAcceleration === 'number' ? params.movementAcceleration : 12,
-      movementDeceleration: typeof params?.movementDeceleration === 'number' ? params.movementDeceleration : 18,
+      movementAcceleration: typeof params?.movementAcceleration === 'number' ? params.movementAcceleration : 18,
+      movementDeceleration: typeof params?.movementDeceleration === 'number' ? params.movementDeceleration : 30,
       spawnDirection: params?.spawnDirection,
       visitorDirection: params?.visitorDirection
     };
