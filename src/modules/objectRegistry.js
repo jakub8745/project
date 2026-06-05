@@ -86,6 +86,16 @@ function registerEntry(entries, key, entry) {
   });
 }
 
+function entryCategory(entry) {
+  return normalizeCategory(entry?.category ?? entry?.type ?? entry?.role ?? entry?.kind);
+}
+
+function hasConflictingExplicitType(entry, userData) {
+  const legacyCategory = normalizeCategory(userData?.type);
+  const configuredCategory = entryCategory(entry);
+  return Boolean(legacyCategory && configuredCategory && legacyCategory !== configuredCategory);
+}
+
 export function normalizeObjectRegistry(rawRegistry) {
   if (!rawRegistry) return undefined;
   const root = asRecord(rawRegistry);
@@ -134,7 +144,9 @@ function getEntryMatch(registry, object) {
 
     for (const candidate of candidates) {
       const entry = registry.get(candidate);
-      if (entry) return { entry, object: current, userData };
+      if (!entry) continue;
+      if (hasConflictingExplicitType(entry, userData)) continue;
+      return { entry, object: current, userData };
     }
     current = current.parent;
   }

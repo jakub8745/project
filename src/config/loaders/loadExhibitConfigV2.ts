@@ -319,6 +319,40 @@ function mapViewerExtensions(manifest: ExhibitConfigV2): UnknownRecord {
   };
 }
 
+function audioEntryKey(entry: UnknownRecord): string | undefined {
+  const id = typeof entry.id === 'string' && entry.id.trim() ? entry.id.trim() : undefined;
+  const name = typeof entry.name === 'string' && entry.name.trim() ? entry.name.trim() : undefined;
+  return id ?? name;
+}
+
+function mergeAudioEntries(generatedAudio: UnknownRecord[], viewerAudio: unknown): UnknownRecord[] {
+  if (!Array.isArray(viewerAudio)) return generatedAudio;
+
+  const generatedByKey = new Map<string, UnknownRecord>();
+  for (const entry of generatedAudio) {
+    const key = audioEntryKey(entry);
+    if (key) generatedByKey.set(key, entry);
+  }
+
+  const merged = viewerAudio
+    .filter((entry): entry is UnknownRecord => Boolean(entry && typeof entry === 'object' && !Array.isArray(entry)))
+    .map((viewerEntry) => {
+      const key = audioEntryKey(viewerEntry);
+      const generatedEntry = key ? generatedByKey.get(key) : undefined;
+      if (key) generatedByKey.delete(key);
+      if (!generatedEntry) return viewerEntry;
+      return {
+        ...generatedEntry,
+        ...viewerEntry,
+        subtitleTracks: Array.isArray(viewerEntry.subtitleTracks)
+          ? viewerEntry.subtitleTracks
+          : generatedEntry.subtitleTracks
+      };
+    });
+
+  return [...merged, ...generatedByKey.values()];
+}
+
 function mapSceneSpawnParams(manifest: ExhibitConfigV2): UnknownRecord {
   const spawn = manifest.scene.spawn;
   if (!spawn) return {};
@@ -339,6 +373,7 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
   const audio = (
     await Promise.all(audioInstances.map((instance) => mapAudioInstance(instance, manifest)))
   ).filter((entry): entry is UnknownRecord => entry !== null);
+  const viewerExtensions = mapViewerExtensions(manifest);
 
   const runtime: ExhibitConfig = {
     id: manifest.id,
@@ -359,16 +394,17 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
     sculptures: mapSculptures(manifest),
     thumbnailCapture: manifest.thumbnailCapture as UnknownRecord | undefined,
     ...mapSceneTransforms(manifest),
-    ...mapViewerExtensions(manifest)
+    ...viewerExtensions
   };
+  runtime.audio = mergeAudioEntries(audio, viewerExtensions.audio);
 
   const spawnParams = mapSceneSpawnParams(manifest);
   const existingParams = runtime.params && typeof runtime.params === 'object' ? runtime.params : {};
   if (Object.keys(spawnParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.scene.renderer) {
     runtime.params = {
+      ...manifest.scene.renderer,
       ...spawnParams,
-      ...existingParams,
-      ...manifest.scene.renderer
+      ...existingParams
     };
   }
 

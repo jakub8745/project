@@ -183,6 +183,10 @@ export default class Visitor extends Mesh {
       if (normalized === '-y' || normalized === 'down') return new Vector3(0, -1, 0);
       if (normalized === 'z' || normalized === '+z' || normalized === 'south') return new Vector3(0, 0, 1);
       if (normalized === '-z' || normalized === 'north') return new Vector3(0, 0, -1);
+      if (normalized === 'north-east' || normalized === 'northeast' || normalized === 'ne') return new Vector3(1, 0, -1);
+      if (normalized === 'north-west' || normalized === 'northwest' || normalized === 'nw') return new Vector3(-1, 0, -1);
+      if (normalized === 'south-east' || normalized === 'southeast' || normalized === 'se') return new Vector3(1, 0, 1);
+      if (normalized === 'south-west' || normalized === 'southwest' || normalized === 'sw') return new Vector3(-1, 0, 1);
     }
 
     if (Array.isArray(value) && value.length === 3) {

@@ -3143,6 +3143,10 @@ function R3FViewerInner({
   const rotation = useMemo(() => coerceVector(config?.rotation), [config?.rotation]);
   const scale = typeof config?.scale === 'number' ? config.scale : 1;
   const rawParams = config?.params as Record<string, unknown> | undefined;
+  const orbitRotateSpeed =
+    typeof rawParams?.orbitRotateSpeed === 'number' && Number.isFinite(rawParams.orbitRotateSpeed)
+      ? Math.max(0.05, rawParams.orbitRotateSpeed)
+      : 0.65;
   const configuredToneMapping = normalizeToneMappingName(rawParams?.toneMapping);
   const [toneMappingName, setToneMappingName] = useState<ToneMappingName>(configuredToneMapping);
   useEffect(() => {
@@ -4123,6 +4127,7 @@ function R3FViewerInner({
           autoRotateSpeed={thumbnailCapture.autoRotateSpeed}
           enablePan={thumbnailModeActive}
           enableZoom={thumbnailModeActive}
+          rotateSpeed={orbitRotateSpeed}
           minDistance={thumbnailModeActive ? 2 : 1e-4}
           maxDistance={thumbnailModeActive ? 80 : 1e-4}
           maxPolarAngle={Math.PI}

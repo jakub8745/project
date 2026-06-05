@@ -104,6 +104,136 @@ describe('loadExhibitConfigV2', () => {
     });
   });
 
+  it('lets viewer params override scene renderer defaults during compatibility normalization', async () => {
+    const config = await loadExhibitConfigV2({
+      schemaVersion: '2.0.0',
+      id: 'renderer-override-test',
+      kind: 'exhibit',
+      metadata: {
+        title: 'Renderer Override Test',
+        description: 'Fixture'
+      },
+      assets: {
+        scene_model: {
+          kind: 'model',
+          uri: '/models/test.glb',
+          mimeType: 'model/gltf-binary'
+        }
+      },
+      scene: {
+        model: {
+          asset: 'scene_model'
+        },
+        renderer: {
+          toneMapping: 'neutral',
+          exposure: 1
+        }
+      },
+      nodes: {},
+      viewer: {
+        params: {
+          toneMapping: 'cineon'
+        }
+      }
+    });
+
+    expect(config.params).toMatchObject({
+      toneMapping: 'cineon',
+      exposure: 1
+    });
+  });
+
+  it('keeps generated subtitle tracks when legacy viewer audio overrides a v2 audio module', async () => {
+    const subtitleAsset = encodeURIComponent(JSON.stringify({
+      tracks: [
+        {
+          language: 'en',
+          label: 'EN',
+          cues: [{ start: 0, end: 1, text: 'Hello' }]
+        },
+        {
+          language: 'pl',
+          label: 'PL',
+          cues: [{ start: 0, end: 1, text: 'Czesc' }]
+        }
+      ]
+    }));
+
+    const config = await loadExhibitConfigV2({
+      schemaVersion: '2.0.0',
+      id: 'audio-merge-test',
+      kind: 'exhibit',
+      metadata: {
+        title: 'Audio Merge Test',
+        description: 'Fixture'
+      },
+      assets: {
+        scene_model: {
+          kind: 'model',
+          uri: '/models/test.glb',
+          mimeType: 'model/gltf-binary'
+        },
+        intro_audio: {
+          kind: 'audio',
+          uri: '/audio/intro.mp3',
+          mimeType: 'audio/mpeg'
+        },
+        intro_subtitles: {
+          kind: 'subtitle',
+          uri: `data:application/json,${subtitleAsset}`,
+          mimeType: 'application/json'
+        }
+      },
+      scene: {
+        model: {
+          asset: 'scene_model'
+        }
+      },
+      nodes: {
+        introduction_audio: {
+          kind: 'audio_anchor',
+          ref: 'introduction_audio'
+        }
+      },
+      media: {
+        introduction_audio_media: {
+          kind: 'audio',
+          title: 'introduction_audio',
+          sources: [{ asset: 'intro_audio' }],
+          subtitles: ['intro_subtitles']
+        }
+      },
+      modules: {
+        audio: {
+          instances: [
+            {
+              id: 'introduction_audio_module',
+              targetNode: 'introduction_audio',
+              media: 'introduction_audio_media',
+              labelPaused: 'Play Intro'
+            }
+          ]
+        }
+      },
+      viewer: {
+        audio: [
+          {
+            id: 'introduction_audio',
+            labelPaused: 'Legacy Play Intro',
+            volume: 0.5
+          }
+        ]
+      }
+    });
+
+    expect(config.audio?.[0]).toMatchObject({
+      id: 'introduction_audio',
+      labelPaused: 'Legacy Play Intro',
+      volume: 0.5
+    });
+    expect(config.audio?.[0]?.subtitleTracks).toHaveLength(2);
+  });
+
   it.each([
     'tom_exhibit_config.json',
     'bednarczyk_config.json',
