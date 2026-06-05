@@ -34,7 +34,7 @@ import {
   CineonToneMapping,
   ACESFilmicToneMapping,
   NeutralToneMapping,
-  PCFSoftShadowMap,
+  PCFShadowMap,
   PerspectiveCamera,
   SRGBColorSpace,
   Texture,
@@ -3396,6 +3396,7 @@ function R3FViewerInner({
       const ipfsImagePath = typeof record.ipfsImagePath === 'string' ? record.ipfsImagePath : undefined;
       const pdfPath = typeof record.pdfPath === 'string' ? record.pdfPath : undefined;
       const pdfOpenPath = typeof record.pdfOpenPath === 'string' ? record.pdfOpenPath : undefined;
+      const pdfOpenLabel = typeof record.pdfOpenLabel === 'string' ? record.pdfOpenLabel : undefined;
       const pdfExternalUrl = typeof record.pdfExternalUrl === 'string' ? record.pdfExternalUrl : undefined;
       const oraclePdfPath = typeof record.oraclePdfPath === 'string' ? record.oraclePdfPath : undefined;
       const ipfsPdfPath = typeof record.ipfsPdfPath === 'string' ? record.ipfsPdfPath : undefined;
@@ -3415,6 +3416,7 @@ function R3FViewerInner({
         ...(ipfsImagePath ? { ipfsImagePath } : {}),
         ...(pdfPath ? { pdfPath } : {}),
         ...(pdfOpenPath ? { pdfOpenPath } : {}),
+        ...(pdfOpenLabel ? { pdfOpenLabel } : {}),
         ...(pdfExternalUrl ? { pdfExternalUrl } : {}),
         ...(oraclePdfPath ? { oraclePdfPath } : {}),
         ...(ipfsPdfPath ? { ipfsPdfPath } : {}),
@@ -4748,7 +4750,7 @@ function RendererTuning({
     gl.outputColorSpace = SRGBColorSpace;
     gl.shadowMap.enabled = highQualityMode;
     if (highQualityMode) {
-      gl.shadowMap.type = PCFSoftShadowMap;
+      gl.shadowMap.type = PCFShadowMap;
     }
     if (typeof window !== 'undefined') {
       gl.setPixelRatio(Math.min(maxDpr, window.devicePixelRatio || 1));

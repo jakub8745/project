@@ -30,6 +30,7 @@ export interface ObjectRegistryEntry extends Record<string, unknown> {
   type?: string;
   role?: string;
   kind?: string;
+  tooltipLabel?: string;
   visible?: boolean;
   interactive?: boolean;
   forwardAxis?: string | [number, number, number] | { x?: number; y?: number; z?: number };

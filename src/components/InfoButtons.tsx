@@ -4,6 +4,7 @@ import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
 import { COMMON_ICONS } from '../data/galleryConfig';
 import { normalizeConfigUrl, toSafeExternalUrl } from '../utils/url';
 import { sanitizeSidebarHtml } from '../utils/sanitizeHtml';
+import { InlineFormattedText } from './InlineFormattedText';
 
 export interface InfoItem {
   id: string;
@@ -12,6 +13,7 @@ export interface InfoItem {
   content?: string;
   link?: string;
   pdfPath?: string;
+  pdfOpenLabel?: string;
 }
 
 interface InfoButtonsProps {
@@ -25,6 +27,8 @@ interface SidebarItemConfig {
   content?: string;
   link?: string;
   pdfPath?: string;
+  pdfOpenLabel?: string;
+  openLabel?: string;
 }
 
 interface ExhibitConfigResponse {
@@ -40,7 +44,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   // ✅ Always declare hooks first
   const [items, setItems] = useState<InfoItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
-  const [activePdf, setActivePdf] = useState<{ title: string; src: string } | null>(null);
+  const [activePdf, setActivePdf] = useState<{ title: string; src: string; openLabel?: string } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,6 +91,12 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           const link = 'link' in item ? item.link : undefined;
           const content = 'content' in item ? item.content : undefined;
           const pdfPath = 'pdfPath' in item && typeof item.pdfPath === 'string' ? item.pdfPath : undefined;
+          const pdfOpenLabel =
+            'pdfOpenLabel' in item && typeof item.pdfOpenLabel === 'string'
+              ? item.pdfOpenLabel
+              : 'openLabel' in item && typeof item.openLabel === 'string'
+                ? item.openLabel
+                : undefined;
           // Prefer common icons for well-known ids
           let overrideIcon: string | undefined;
           if (item.id === 'info-icon') overrideIcon = COMMON_ICONS.info;
@@ -114,6 +124,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             content,
             link: toSafeExternalUrl(link) ?? undefined,
             pdfPath,
+            pdfOpenLabel
           };
         });
         const sanitized: InfoItem[] = normalized.map((item) => ({
@@ -169,7 +180,9 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
                     <div className="mmodal__desc">
                       <h3>{activePdf.title}</h3>
                       <p>
-                        <a href={activePdf.src} target="_blank" rel="noreferrer noopener">Open PDF in new tab</a>
+                        <a href={activePdf.src} target="_blank" rel="noreferrer noopener">
+                          <InlineFormattedText text={activePdf.openLabel ?? 'Open PDF in new tab'} />
+                        </a>
                       </p>
                     </div>
                   </div>
@@ -200,7 +213,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
               <button
                 onClick={() => {
                   if (item.pdfPath) {
-                    setActivePdf({ title: item.label || 'PDF document', src: item.pdfPath });
+                    setActivePdf({ title: item.label || 'PDF document', src: item.pdfPath, openLabel: item.pdfOpenLabel });
                     return;
                   }
                   setOpenId(openId === item.id ? null : item.id);

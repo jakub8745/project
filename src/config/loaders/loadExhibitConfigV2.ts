@@ -122,6 +122,7 @@ function toImageRecord(media: MediaDescriptor, manifest: ExhibitConfigV2): Unkno
   if (media.kind === 'image') {
     return {
       title: media.title,
+      tooltipLabel: media.tooltipLabel,
       description: media.description,
       imagePath: resolveAssetRuntimeUri(media.image.asset, manifest)
     } satisfies UnknownRecord;
@@ -129,10 +130,12 @@ function toImageRecord(media: MediaDescriptor, manifest: ExhibitConfigV2): Unkno
   if (media.kind === 'document') {
     return {
       title: media.title,
+      tooltipLabel: media.tooltipLabel,
       description: media.description,
       imagePath: media.previewImage ? resolveAssetRuntimeUri(media.previewImage.asset, manifest) : undefined,
       pdfPath: 'asset' in media.document ? resolveAssetRuntimeUri(media.document.asset, manifest) : media.document.uri,
-      pdfOpenPath: media.openUri
+      pdfOpenPath: media.openUri,
+      pdfOpenLabel: media.openLabel
     } satisfies UnknownRecord;
   }
   return null;

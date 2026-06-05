@@ -152,6 +152,23 @@ describe('loadExhibitConfigV2', () => {
     } else if (filename === 'vectai_krakow_032026_config_v2.json') {
       expect(config.modelPath).toBe('/models/vectai_room.glb');
       expect(config.videos).toHaveLength(3);
+      expect(config.images?.pdf_manual_pl).toMatchObject({
+        tooltipLabel: 'PDF/Zenodo: workshop manual (PL)',
+        pdfOpenPath: 'https://zenodo.org/records/19220100',
+        pdfOpenLabel: '*Cracks of Meaning* — full methodological publication'
+      });
+      expect(config.images?.pdf_manual_en).toMatchObject({
+        tooltipLabel: 'PDF: manual summary (ENG)',
+        pdfOpenLabel: 'PDF: *Cracks of Meaning* — summary (ENG)'
+      });
+      expect(config.objects?.floor_ucieta).toMatchObject({
+        category: 'floor'
+      });
+      expect(config.objects?.floor_ucieta?.tooltipLabel).toBeUndefined();
+      expect(config.objects?.walls_main).toMatchObject({
+        category: 'walls',
+        tooltipLabel: expect.stringContaining('Final immersive three-screen videopoem')
+      });
     } else if (filename === 'videopoem_lisbon_112025_config_v2.json') {
       expect(config.modelPath).toBe('/models/exhibition_videopoems_low.glb');
       expect(config.videos).toHaveLength(3);

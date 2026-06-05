@@ -176,6 +176,7 @@ export interface MediaSourceRef extends AssetPointer {
 export interface MediaDescriptorBase {
   kind: 'image' | 'document' | 'video' | 'audio' | 'text';
   title?: string;
+  tooltipLabel?: string;
   description?: string;
   author?: string;
   metadata?: Record<string, unknown>;
@@ -191,6 +192,7 @@ export interface DocumentMediaDescriptor extends MediaDescriptorBase {
   previewImage?: AssetPointer;
   document: AssetPointer | { uri: string };
   openUri?: string;
+  openLabel?: string;
 }
 
 export interface VideoMediaDescriptor extends MediaDescriptorBase {
@@ -450,6 +452,10 @@ export interface SidebarItemDefinition {
   contentMedia?: MediaId;
   iconAsset?: AssetId;
   content?: string;
+  link?: string;
+  pdfPath?: string;
+  pdfOpenLabel?: string;
+  openLabel?: string;
   metadata?: Record<string, unknown>;
 }
 

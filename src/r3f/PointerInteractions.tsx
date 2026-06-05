@@ -22,7 +22,7 @@ import { resolveObjectRuntimeData, type ObjectRegistry } from '../modules/object
 type MetaRecord = Record<string, Record<string, unknown>>;
 const CLICKABLE_TYPES = ['Image', 'Wall', 'Walls', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
 const PRIMARY_CLICKABLE_TYPES = new Set(['Image', 'Video', 'VideoControl', 'Link']);
-const HOVERABLE_TYPES = new Set(['Link', 'Image', 'Video', 'Sculpture']);
+const HOVERABLE_TYPES = new Set(['Link', 'Image', 'Video', 'Sculpture', 'Floor', 'Wall', 'Walls']);
 const TARGET_CACHE_MS = 250;
 const OCCLUSION_EPSILON = 0.04;
 
@@ -147,7 +147,7 @@ export function PointerInteractions({
           : runtimeData?.type === 'Video' || runtimeData?.type === 'VideoControl'
             ? runtimeData.ref
             : undefined;
-      return { type, key, elementID, userData };
+      return { type, key, elementID, userData, entry: runtimeData?.entry };
     };
 
     const hasVideoControlProxyAncestor = (object: Mesh) => {
@@ -379,7 +379,10 @@ export function PointerInteractions({
     const resolveImageMeta = (imageKey: string) => {
       const meta = imagesMeta?.[imageKey];
       if (!meta) return null;
-      const title = (typeof meta.title === 'string' && meta.title) || imageKey;
+      const title =
+        (typeof meta.tooltipLabel === 'string' && meta.tooltipLabel) ||
+        (typeof meta.title === 'string' && meta.title) ||
+        imageKey;
       const author = (typeof meta.author === 'string' && meta.author) || '';
       return { title, author };
     };
@@ -387,20 +390,24 @@ export function PointerInteractions({
     const resolveVideoMeta = (videoKey: string, userData: Record<string, unknown> = {}) => {
       const meta = videosMeta?.[videoKey];
       if (!meta && !userData) return null;
+      const tooltipLabel =
+        (typeof meta?.tooltipLabel === 'string' && meta.tooltipLabel.trim()) ||
+        (typeof userData?.tooltipLabel === 'string' && userData.tooltipLabel.trim()) ||
+        '';
       const title =
-        (meta?.title as string | undefined) ||
-        (userData?.title as string | undefined) ||
-        (userData?.name as string | undefined) ||
-        videoKey;
+        tooltipLabel ||
+        (typeof meta?.title === 'string' && meta.title.trim()) ||
+        (typeof userData?.title === 'string' && userData.title.trim()) ||
+        '';
       const description =
-        (meta?.description as string | undefined) ||
-        (userData?.description as string | undefined) ||
-        (userData?.opis as string | undefined) ||
+        (typeof meta?.description === 'string' && meta.description.trim()) ||
+        (typeof userData?.description === 'string' && userData.description.trim()) ||
+        (typeof userData?.opis === 'string' && userData.opis.trim()) ||
         '';
       const author =
-        (meta?.author as string | undefined) ||
-        (userData?.author as string | undefined) ||
-        (userData?.autor as string | undefined) ||
+        (typeof meta?.author === 'string' && meta.author.trim()) ||
+        (typeof userData?.author === 'string' && userData.author.trim()) ||
+        (typeof userData?.autor === 'string' && userData.autor.trim()) ||
         '';
       return { title, description, author };
     };
@@ -409,10 +416,11 @@ export function PointerInteractions({
       const meta = sculpturesMeta?.[sculptureKey];
       if (!meta && !userData) return null;
       const title =
+        (meta?.tooltipLabel as string | undefined) ||
+        (userData?.tooltipLabel as string | undefined) ||
         (meta?.title as string | undefined) ||
         (userData?.title as string | undefined) ||
-        (userData?.name as string | undefined) ||
-        sculptureKey;
+        '';
       const description =
         (meta?.description as string | undefined) ||
         (userData?.description as string | undefined) ||
@@ -425,6 +433,11 @@ export function PointerInteractions({
         '';
       return { title, description, author };
     };
+
+    const resolveObjectTooltipLabel = (entry: Record<string, unknown> | undefined, userData: Record<string, unknown> = {}) =>
+      (typeof entry?.tooltipLabel === 'string' && entry.tooltipLabel) ||
+      (typeof userData.tooltipLabel === 'string' && userData.tooltipLabel) ||
+      '';
 
     const handleHover = (event: PointerEvent) => {
       if (disabled) {
@@ -449,7 +462,7 @@ export function PointerInteractions({
         return;
       }
 
-      const { type, key, elementID, userData } = resolveHitRuntime(hit.object as Mesh);
+      const { type, key, elementID, userData, entry } = resolveHitRuntime(hit.object as Mesh);
       let displayText = '';
 
       if (type === 'Link') {
@@ -477,7 +490,11 @@ export function PointerInteractions({
         if (videoInfo.title) parts.push(videoInfo.title);
         if (videoInfo.author) parts.push(videoInfo.author);
         if (videoInfo.description) parts.push(videoInfo.description);
-        displayText = parts.length ? parts.join(' — ') : videoKey;
+        if (parts.length === 0) {
+          hideHoverTooltip();
+          return;
+        }
+        displayText = parts.join(' — ');
       } else if (type === 'Sculpture') {
         const sculptureInfo = resolveSculptureMeta(key, userData);
         if (!sculptureInfo) {
@@ -488,7 +505,17 @@ export function PointerInteractions({
         if (sculptureInfo.title) parts.push(sculptureInfo.title);
         if (sculptureInfo.author) parts.push(sculptureInfo.author);
         if (sculptureInfo.description) parts.push(sculptureInfo.description);
-        displayText = parts.length ? parts.join(' — ') : key;
+        if (parts.length === 0) {
+          hideHoverTooltip();
+          return;
+        }
+        displayText = parts.join(' — ');
+      } else if (type === 'Floor' || type === 'Wall' || type === 'Walls') {
+        displayText = resolveObjectTooltipLabel(entry, userData);
+        if (!displayText) {
+          hideHoverTooltip();
+          return;
+        }
       } else {
         hideHoverTooltip();
         return;

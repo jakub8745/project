@@ -16,6 +16,23 @@ function ensureTooltipElement(className) {
   return tooltip;
 }
 
+function renderFormattedText(target, text) {
+  target.replaceChildren();
+  const parts = String(text)
+    .split(/(\*[^*]+\*)/g)
+    .filter((part) => part.length > 0);
+
+  parts.forEach((part) => {
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+      const em = document.createElement('em');
+      em.textContent = part.slice(1, -1);
+      target.appendChild(em);
+      return;
+    }
+    target.appendChild(document.createTextNode(part));
+  });
+}
+
 export function createTooltip(options = {}) {
   const className = options.className || DEFAULT_CLASS;
   const tooltip = ensureTooltipElement(className);
@@ -25,8 +42,9 @@ export function createTooltip(options = {}) {
 
   const setText = (text, key = text) => {
     if (!tooltip) return;
-    if (currentKey !== key || tooltip.textContent !== text) {
-      tooltip.textContent = text;
+    if (currentKey !== key || tooltip.dataset.rawText !== text) {
+      renderFormattedText(tooltip, text);
+      tooltip.dataset.rawText = text;
       currentKey = key;
     }
   };
@@ -42,6 +60,7 @@ export function createTooltip(options = {}) {
   const hide = () => {
     if (!tooltip) return;
     tooltip.style.display = 'none';
+    delete tooltip.dataset.rawText;
     currentKey = null;
   };
 

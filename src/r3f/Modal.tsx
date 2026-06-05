@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode, type SyntheticEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { MaterialModalContext, type MaterialModalContextValue } from './materialModalContext';
+import { InlineFormattedText } from '../components/InlineFormattedText';
 
 const ipfsGateways = [
   'https://ipfs.io/ipfs/',
@@ -19,6 +20,7 @@ export type ModalImageMeta = {
   ipfsImagePath?: string;
   pdfPath?: string;
   pdfOpenPath?: string;
+  pdfOpenLabel?: string;
   pdfExternalUrl?: string;
   oraclePdfPath?: string;
   ipfsPdfPath?: string;
@@ -38,6 +40,7 @@ type ModalState = {
   imageSrc: string | null;
   pdfSrc: string | null;
   pdfOpenSrc: string | null;
+  pdfOpenLabel: string | null;
   pdfEmbedBlocked: boolean;
   pendingSources: string[];
   contentWidth: number | null;
@@ -60,6 +63,7 @@ const defaultState = (): ModalState => ({
   imageSrc: null,
   pdfSrc: null,
   pdfOpenSrc: null,
+  pdfOpenLabel: null,
   pdfEmbedBlocked: false,
   pendingSources: [],
   contentWidth: null,
@@ -79,6 +83,10 @@ function isZenodoUrl(url: string) {
   } catch {
     return false;
   }
+}
+
+function pdfOpenFallbackLabel(url: string) {
+  return isZenodoUrl(url) ? 'Open PDF on Zenodo' : 'Open PDF in new tab';
 }
 
 function dispatchMaterialModalState(open: boolean) {
@@ -231,6 +239,7 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
 
     const pdfDirectUrl = meta.pdfPath ?? meta.oraclePdfPath ?? undefined;
     const pdfOpenUrl = meta.pdfOpenPath ?? meta.pdfExternalUrl ?? undefined;
+    const pdfOpenLabel = typeof meta.pdfOpenLabel === 'string' && meta.pdfOpenLabel.trim() ? meta.pdfOpenLabel.trim() : null;
     const pdfIpfsUrl = meta.ipfsPdfPath ?? (pdfDirectUrl?.startsWith('ipfs://') ? pdfDirectUrl : undefined);
     const hasPdf = Boolean(pdfDirectUrl || pdfIpfsUrl);
 
@@ -313,6 +322,7 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       imageSrc: mediaType === 'image' ? initialSource ?? null : null,
       pdfSrc: mediaType === 'pdf' ? initialSource ?? null : null,
       pdfOpenSrc: mediaType === 'pdf' ? pdfOpenUrl ?? initialSource ?? null : null,
+      pdfOpenLabel: mediaType === 'pdf' ? pdfOpenLabel : null,
       pdfEmbedBlocked: isZenodoPdf,
       pendingSources: nextSources,
       contentWidth: mediaType === 'pdf' ? pdfWidth : initialWidth,
@@ -486,11 +496,15 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
                       {state.mediaType === 'pdf' && state.pdfOpenSrc ? (
                         <p>
                           <a href={state.pdfOpenSrc} target="_blank" rel="noreferrer noopener">
-                            {isZenodoUrl(state.pdfOpenSrc) ? 'Open PDF on Zenodo' : 'Open PDF in new tab'}
+                            <InlineFormattedText text={state.pdfOpenLabel ?? pdfOpenFallbackLabel(state.pdfOpenSrc)} />
                           </a>
                         </p>
                       ) : null}
-                      {state.description ? <p>{state.description}</p> : null}
+                      {state.description ? (
+                        <p>
+                          <InlineFormattedText text={state.description} />
+                        </p>
+                      ) : null}
                       {state.author ? (
                         <p>
                           <em>{state.author}</em>
