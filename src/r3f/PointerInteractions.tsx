@@ -5,12 +5,17 @@ import {
   Raycaster,
   Vector2,
   Vector3,
+  BufferGeometry,
+  Line,
+  LineBasicMaterial,
   Mesh,
   MeshBasicMaterial,
   CircleGeometry,
   DoubleSide,
   Quaternion,
-  Matrix3
+  Matrix3,
+  Matrix4,
+  Object3D
 } from 'three';
 import { createTooltip } from '../modules/Tooltip.js';
 import type Visitor from '../modules/Visitor';
@@ -61,6 +66,25 @@ function createClickIndicator() {
   mesh.name = 'clickIndicator';
   mesh.scale.set(1, 1, 1);
   return mesh;
+}
+
+function createXrControllerRay() {
+  const geometry = new BufferGeometry().setFromPoints([
+    new Vector3(0, 0, 0),
+    new Vector3(0, 0, -12)
+  ]);
+  const material = new LineBasicMaterial({
+    color: 0x60a5fa,
+    transparent: true,
+    opacity: 0.85,
+    depthTest: false,
+    depthWrite: false
+  });
+  const line = new Line(geometry, material);
+  line.name = 'xr-controller-ray';
+  line.visible = false;
+  line.renderOrder = 1000;
+  return line;
 }
 
 export function PointerInteractions({
@@ -118,6 +142,48 @@ export function PointerInteractions({
       tooltip.destroy?.();
     };
   }, [tooltip]);
+
+  useEffect(() => {
+    const xrControllers = [gl.xr.getController(0), gl.xr.getController(1)];
+    const controllerRays = xrControllers.map(() => createXrControllerRay());
+    const addedControllers: Object3D[] = [];
+    const setControllerRaysVisible = (visible: boolean) => {
+      controllerRays.forEach((ray) => {
+        ray.visible = visible;
+      });
+    };
+
+    xrControllers.forEach((controller, index) => {
+      controller.add(controllerRays[index]);
+      if (!controller.parent) {
+        scene.add(controller);
+        addedControllers.push(controller);
+      }
+    });
+
+    const handleXrSessionStart = () => setControllerRaysVisible(true);
+    const handleXrSessionEnd = () => setControllerRaysVisible(false);
+    gl.xr.addEventListener('sessionstart', handleXrSessionStart);
+    gl.xr.addEventListener('sessionend', handleXrSessionEnd);
+    setControllerRaysVisible(gl.xr.isPresenting);
+
+    return () => {
+      gl.xr.removeEventListener('sessionstart', handleXrSessionStart);
+      gl.xr.removeEventListener('sessionend', handleXrSessionEnd);
+      controllerRays.forEach((ray) => {
+        ray.removeFromParent();
+        ray.geometry.dispose();
+        if (Array.isArray(ray.material)) {
+          ray.material.forEach((material) => material.dispose());
+        } else {
+          ray.material.dispose();
+        }
+      });
+      addedControllers.forEach((controller) => {
+        scene.remove(controller);
+      });
+    };
+  }, [gl, scene]);
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -203,17 +269,17 @@ export function PointerInteractions({
       }
     };
 
-    const isOccludedByCollider = (hit: Intersection) => {
+    const isOccludedByCollider = (hit: Intersection, originOverride?: Vector3) => {
       if (!collider || hit.object === collider) return false;
-      const cameraPosition = camera.getWorldPosition(new Vector3());
-      const direction = hit.point.clone().sub(cameraPosition);
+      const rayOrigin = originOverride?.clone() ?? camera.getWorldPosition(new Vector3());
+      const direction = hit.point.clone().sub(rayOrigin);
       const distance = direction.length();
       if (distance <= OCCLUSION_EPSILON) return false;
       direction.normalize();
       occlusionRaycaster.firstHitOnly = true;
       occlusionRaycaster.near = 0;
       occlusionRaycaster.far = Math.max(0, distance - OCCLUSION_EPSILON);
-      occlusionRaycaster.set(cameraPosition, direction);
+      occlusionRaycaster.set(rayOrigin, direction);
       const blocker = occlusionRaycaster.intersectObject(collider, false)[0];
       return Boolean(blocker && blocker.distance < distance - OCCLUSION_EPSILON);
     };
@@ -326,11 +392,22 @@ export function PointerInteractions({
       return best;
     };
 
-    const moveVisitor = (point: Vector3, worldNormal: Vector3, hitType?: string) => {
+    const moveVisitor = (point: Vector3, worldNormal: Vector3, hitType?: string, mode: 'walk' | 'teleport' = 'walk') => {
       const destination = findSupportedDestination(point, worldNormal, hitType);
       if (!destination) {
         stopAutoMove();
         console.warn('PointerInteractions: ignored movement click without supported floor below target.');
+        return;
+      }
+      if (mode === 'teleport') {
+        stopAutoMove();
+        visitor.teleportTo(destination.point);
+        placeClickIndicator(destination.point, destination.normal);
+        window.setTimeout(() => {
+          if (visitor.clickIndicator === clickIndicator) {
+            clickIndicator.visible = false;
+          }
+        }, 450);
         return;
       }
       if (!hasReachableWalkingPath(destination.point)) {
@@ -539,28 +616,25 @@ export function PointerInteractions({
       });
     };
 
-    const handleClick = (event: PointerEvent) => {
-      if (disabled) return;
-      hideHoverTooltip();
-      const bounds = gl.domElement.getBoundingClientRect();
-      const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-      const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
-      pointer.set(x, y);
-
-      raycaster.setFromCamera(pointer, camera);
-      raycaster.firstHitOnly = true;
+    const pickClickHit = (occlusionOrigin?: Vector3, requireNavigationOcclusion = false) => {
       const targets = getRaycastTargets();
       const primaryIntersects = raycaster.intersectObjects(targets.primaryClick, false);
       const hitPrimary = primaryIntersects.find((i) => {
         const { type } = resolveHitRuntime(i.object as Mesh);
-        return Boolean(type && PRIMARY_CLICKABLE_TYPES.has(type) && !isOccludedByCollider(i));
+        return Boolean(type && PRIMARY_CLICKABLE_TYPES.has(type) && !isOccludedByCollider(i, occlusionOrigin));
       });
-      const hit = hitPrimary || raycaster.intersectObjects(targets.click, false).find((i) => {
+      return hitPrimary || raycaster.intersectObjects(targets.click, false).find((i) => {
         const { type } = resolveHitRuntime(i.object as Mesh);
         const isNavigationTarget = type === 'Floor' || type === 'Room' || type === 'Wall' || type === 'Walls';
-        return Boolean(type && CLICKABLE_TYPES.includes(type) && (isNavigationTarget || !isOccludedByCollider(i)));
+        return Boolean(
+          type &&
+          CLICKABLE_TYPES.includes(type) &&
+          ((!requireNavigationOcclusion && isNavigationTarget) || !isOccludedByCollider(i, occlusionOrigin))
+        );
       });
+    };
 
+    const activateHit = (hit: Intersection | undefined, movementMode: 'walk' | 'teleport' = 'walk') => {
       if (!hit) return;
 
       const { type, elementID, key, userData } = resolveHitRuntime(hit.object as Mesh);
@@ -635,16 +709,24 @@ export function PointerInteractions({
         if (!localNormal) return;
         const normalMatrix = new Matrix3().getNormalMatrix(hit.object.matrixWorld);
         const worldNormal = localNormal.applyMatrix3(normalMatrix).normalize();
-        moveVisitor(point, worldNormal, type);
+        moveVisitor(point, worldNormal, type, movementMode);
       }
     };
 
-    const resolveVideoControlHit = (event: PointerEvent) => {
+    const handleClick = (event: PointerEvent) => {
+      if (disabled) return;
+      hideHoverTooltip();
       const bounds = gl.domElement.getBoundingClientRect();
       const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
       const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
       pointer.set(x, y);
+
       raycaster.setFromCamera(pointer, camera);
+      raycaster.firstHitOnly = true;
+      activateHit(pickClickHit(raycaster.ray.origin));
+    };
+
+    const resolveVideoControlHitFromCurrentRay = (occlusionOrigin?: Vector3) => {
       const prevFirstHitOnly = raycaster.firstHitOnly;
       raycaster.firstHitOnly = false;
       const intersects = raycaster.intersectObjects(getRaycastTargets().click, false);
@@ -654,7 +736,7 @@ export function PointerInteractions({
       let touchedControlRig = false;
 
       for (const hit of intersects) {
-        if (isOccludedByCollider(hit)) continue;
+        if (isOccludedByCollider(hit, occlusionOrigin)) continue;
         let node: typeof hit.object | null = hit.object;
 
         while (node) {
@@ -699,6 +781,53 @@ export function PointerInteractions({
       }
 
       return { consumed: false as const };
+    };
+
+    const resolveVideoControlHit = (event: PointerEvent) => {
+      const bounds = gl.domElement.getBoundingClientRect();
+      const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      const y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+      pointer.set(x, y);
+      raycaster.setFromCamera(pointer, camera);
+      return resolveVideoControlHitFromCurrentRay(raycaster.ray.origin);
+    };
+
+    const controllerRayOrigin = new Vector3();
+    const controllerRayDirection = new Vector3();
+    const controllerRotation = new Matrix4();
+    const setRayFromController = (controller: Object3D) => {
+      controller.updateMatrixWorld(true);
+      controllerRayOrigin.setFromMatrixPosition(controller.matrixWorld);
+      controllerRotation.extractRotation(controller.matrixWorld);
+      controllerRayDirection.set(0, 0, -1).applyMatrix4(controllerRotation).normalize();
+      raycaster.set(controllerRayOrigin, controllerRayDirection);
+      raycaster.firstHitOnly = true;
+    };
+
+    const handleXrSelect = (event: { target?: unknown }) => {
+      if (disabled) return;
+      hideHoverTooltip();
+      const controller = event.target instanceof Object3D ? event.target : null;
+      if (!controller) return;
+      const suppressUntil =
+        typeof controller.userData.__xrHoldRotationSuppressSelectUntil === 'number'
+          ? controller.userData.__xrHoldRotationSuppressSelectUntil
+          : 0;
+      if (suppressUntil > performance.now()) {
+        return;
+      }
+
+      setRayFromController(controller);
+      const rayOrigin = controllerRayOrigin.clone();
+      const controlHit = resolveVideoControlHitFromCurrentRay(rayOrigin);
+      if (controlHit.consumed) {
+        if (controlHit.videoKey && controlHit.action) {
+          invokeVideoControlById(controlHit.videoKey, controlHit.action, controlHit.value);
+        }
+        return;
+      }
+
+      activateHit(pickClickHit(rayOrigin, true), 'teleport');
     };
 
     const onPointerDown = (event: PointerEvent) => {
@@ -776,12 +905,19 @@ export function PointerInteractions({
     canvas.addEventListener('pointermove', onPointerMove);
     canvas.addEventListener('pointerup', onPointerUp);
     canvas.addEventListener('mouseleave', hideHoverTooltip);
+    const xrControllers = [gl.xr.getController(0), gl.xr.getController(1)];
+    xrControllers.forEach((controller) => {
+      controller.addEventListener('select', handleXrSelect);
+    });
 
     return () => {
       canvas.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('pointermove', onPointerMove);
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('mouseleave', hideHoverTooltip);
+      xrControllers.forEach((controller) => {
+        controller.removeEventListener('select', handleXrSelect);
+      });
     };
   }, [camera, clickIndicator, collider, disabled, gl, imagesMeta, links, objectRegistry, occlusionRaycaster, onCloseSidebar, pathRaycaster, pointer, popupCallback, raycaster, scene, sculpturesMeta, tooltip, videosInteraction, videosMeta, visitor]);
 

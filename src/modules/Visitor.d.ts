@@ -35,4 +35,5 @@ export default class Visitor extends Mesh {
   reset(): void;
   update(delta: number, collider: Mesh): void;
   setJoystickInput(x?: number, y?: number): void;
+  teleportTo(point: { x: number; y?: number; z: number }): void;
 }

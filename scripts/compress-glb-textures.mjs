@@ -210,6 +210,7 @@ async function main() {
       }
       return { ...view };
     });
+    json.bufferViews = newBufferViews;
 
     const rebuiltParts = [];
     let cursor = 0;

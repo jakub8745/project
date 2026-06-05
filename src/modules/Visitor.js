@@ -356,7 +356,6 @@ export default class Visitor extends Mesh {
       this.visitorVelocity.y += stepDelta * this.params.gravity;
     }
 
-    const angle = this.controls.getAzimuthalAngle();
     const keyX = (this.rgtPressed ? 1 : 0) - (this.lftPressed ? 1 : 0);
     const keyZ = (this.bkdPressed ? 1 : 0) - (this.fwdPressed ? 1 : 0);
     this.desiredMove.set(
@@ -375,7 +374,26 @@ export default class Visitor extends Mesh {
       if (this.desiredMove.lengthSq() > 1) {
         this.desiredMove.normalize();
       }
-      this.desiredMove.applyAxisAngle(this.upVector, angle);
+      if (this.renderer?.xr?.isPresenting) {
+        const xrCamera = this.renderer.xr.getCamera(this.camera);
+        xrCamera.getWorldDirection(this.tempVector);
+        this.tempVector.y = 0;
+        if (this.tempVector.lengthSq() > 1e-6) {
+          this.tempVector.normalize();
+          this.tempVector2.set(-this.tempVector.z, 0, this.tempVector.x);
+          this.desiredMove
+            .copy(this.tempVector2)
+            .multiplyScalar(keyX + this.joystickVector.x)
+            .addScaledVector(this.tempVector, -(keyZ - this.joystickVector.y));
+          if (this.desiredMove.lengthSq() > 1) {
+            this.desiredMove.normalize();
+          }
+        } else {
+          this.desiredMove.set(0, 0, 0);
+        }
+      } else {
+        this.desiredMove.applyAxisAngle(this.upVector, this.controls.getAzimuthalAngle());
+      }
     } else if (this.isAutoMoving && this.target) {
       this.autoMoveDirection.subVectors(this.target, this.position);
       this.autoMoveDirection.y = 0;
@@ -436,7 +454,17 @@ export default class Visitor extends Mesh {
     this.handleCollisions(stepDelta, collider);
     const actualHorizontalMove = Math.hypot(this.position.x - startX, this.position.z - startZ);
     if (this.horizontalCollisionCorrection > Math.max(0.18, this.capsuleInfo.radius * 0.35)) {
-      this.recoverFromStuck('excessive collision correction');
+      if (this.renderer?.xr?.isPresenting) {
+        this.visitorVelocity.set(0, 0, 0);
+        this.horizontalVelocity.set(0, 0, 0);
+        this.desiredVelocity.set(0, 0, 0);
+        this.lastSafePosition.copy(this.position);
+        this.hasLastSafePosition = true;
+        this.stuckSeconds = 0;
+        this.syncCameraRig();
+      } else {
+        this.recoverFromStuck('excessive collision correction');
+      }
       return;
     }
     const hasBlockingCollision =
@@ -637,7 +665,8 @@ export default class Visitor extends Mesh {
   }
 
   teleportTo(point) {
-    this.position.set(point.x, this.position.y, point.z);
+    const y = Number.isFinite(point.y) ? point.y : this.position.y;
+    this.position.set(point.x, y, point.z);
     this.lastSafePosition.copy(this.position);
     this.hasLastSafePosition = true;
     this.stuckSeconds = 0;
@@ -724,11 +753,11 @@ export default class Visitor extends Mesh {
   }
 
   syncCameraRig() {
-    this.tempVector.copy(this.position).add(this.params.heightOffset);
     if (this.renderer?.xr?.isPresenting && this.xrRig) {
-      // In XR, the headset controls the camera pose. Move the rig instead.
-      this.xrRig.position.copy(this.tempVector);
+      // In XR local-floor space, the headset pose already includes eye height.
+      this.xrRig.position.copy(this.position);
     } else {
+      this.tempVector.copy(this.position).add(this.params.heightOffset);
       // Desktop: keep OrbitControls target following the visitor
       this.camera.position.sub(this.controls.target);
       this.controls.target.copy(this.tempVector);
@@ -767,8 +796,7 @@ export default class Visitor extends Mesh {
     const offset = this.params.heightOffset ?? new Vector3(0, 4.5, 0);
     const target = this.position.clone().add(offset);
     if (this.renderer?.xr?.isPresenting && this.xrRig) {
-      // Place rig at target height; camera orientation comes from HMD
-      this.xrRig.position.copy(target);
+      this.xrRig.position.copy(this.position);
       if (spawnDirection) {
         const spawnYaw = Math.atan2(spawnDirection.x, spawnDirection.z);
         this.xrRig.rotation.set(0, spawnYaw, 0);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Object3D, Raycaster, Vector2 } from 'three';
+import { Matrix4, Object3D, Raycaster, Vector2, Vector3 } from 'three';
 import { resolveObjectRuntimeData, type ObjectRegistry, type ObjectRegistryEntry } from '../modules/objectRegistry.js';
 
 const HOLD_DELAY_MS = 450;
@@ -83,7 +83,8 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
   const pointerIdRef = useRef<number | null>(null);
   const startRef = useRef({ x: 0, y: 0 });
 
-  const clearHold = useCallback(() => {
+  const clearHold = useCallback((source?: unknown) => {
+    const wasRotating = Boolean(rotatingRef.current);
     if (holdTimerRef.current !== null) {
       window.clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
@@ -92,6 +93,9 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
     rotatingRef.current = null;
     pointerIdRef.current = null;
     speedRef.current = DEFAULT_CLOCKWISE_Y_RADIANS_PER_SECOND;
+    if (wasRotating && source instanceof Object3D) {
+      source.userData.__xrHoldRotationSuppressSelectUntil = performance.now() + 350;
+    }
   }, []);
 
   const findHoldRotationTarget = useCallback((object: Object3D) => {
@@ -106,6 +110,15 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
     return null;
   }, [objectRegistry]);
 
+  const pickHoldRotationTargetFromCurrentRay = useCallback(() => {
+    raycaster.firstHitOnly = true;
+    const hit = raycaster
+      .intersectObjects(scene.children, true)
+      .find((intersection) => findHoldRotationTarget(intersection.object));
+
+    return hit ? findHoldRotationTarget(hit.object) : null;
+  }, [findHoldRotationTarget, raycaster, scene]);
+
   const pickHoldRotationTarget = useCallback((event: PointerEvent) => {
     const bounds = gl.domElement.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
@@ -113,13 +126,8 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
     pointer.set(x, y);
 
     raycaster.setFromCamera(pointer, camera);
-    raycaster.firstHitOnly = true;
-    const hit = raycaster
-      .intersectObjects(scene.children, true)
-      .find((intersection) => findHoldRotationTarget(intersection.object));
-
-    return hit ? findHoldRotationTarget(hit.object) : null;
-  }, [camera, findHoldRotationTarget, gl, pointer, raycaster, scene]);
+    return pickHoldRotationTargetFromCurrentRay();
+  }, [camera, gl, pickHoldRotationTargetFromCurrentRay, pointer, raycaster]);
 
   useEffect(() => {
     if (!enabled) {
@@ -159,11 +167,53 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
       clearHold();
     };
 
+    const controllerRayOrigin = new Vector3();
+    const controllerRayDirection = new Vector3();
+    const controllerRotation = new Matrix4();
+    const setRayFromController = (controller: Object3D) => {
+      controller.updateMatrixWorld(true);
+      controllerRayOrigin.setFromMatrixPosition(controller.matrixWorld);
+      controllerRotation.extractRotation(controller.matrixWorld);
+      controllerRayDirection.set(0, 0, -1).applyMatrix4(controllerRotation).normalize();
+      raycaster.set(controllerRayOrigin, controllerRayDirection);
+    };
+
+    const onXrSelectStart = (event: { target?: unknown }) => {
+      const controller = event.target instanceof Object3D ? event.target : null;
+      if (!controller) return;
+      setRayFromController(controller);
+      const target = pickHoldRotationTargetFromCurrentRay();
+      if (!target) return;
+
+      clearHold();
+      candidateRef.current = target.object;
+      speedRef.current = target.speed;
+      holdTimerRef.current = window.setTimeout(() => {
+        rotatingRef.current = candidateRef.current;
+        holdTimerRef.current = null;
+      }, HOLD_DELAY_MS);
+    };
+
+    const onXrSelectEnd = (event: { target?: unknown }) => {
+      const controller = event.target instanceof Object3D ? event.target : null;
+      clearHold(controller);
+    };
+
     canvas.addEventListener('pointerdown', onPointerDown);
     canvas.addEventListener('pointermove', onPointerMove);
     canvas.addEventListener('pointerup', onPointerEnd);
     canvas.addEventListener('pointercancel', onPointerEnd);
     canvas.addEventListener('mouseleave', clearHold);
+    const xrControllers = [gl.xr.getController(0), gl.xr.getController(1)];
+    const addedControllers: Object3D[] = [];
+    xrControllers.forEach((controller) => {
+      controller.addEventListener('selectstart', onXrSelectStart);
+      controller.addEventListener('selectend', onXrSelectEnd);
+      if (!controller.parent) {
+        scene.add(controller);
+        addedControllers.push(controller);
+      }
+    });
 
     return () => {
       clearHold();
@@ -172,8 +222,15 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
       canvas.removeEventListener('pointerup', onPointerEnd);
       canvas.removeEventListener('pointercancel', onPointerEnd);
       canvas.removeEventListener('mouseleave', clearHold);
+      xrControllers.forEach((controller) => {
+        controller.removeEventListener('selectstart', onXrSelectStart);
+        controller.removeEventListener('selectend', onXrSelectEnd);
+      });
+      addedControllers.forEach((controller) => {
+        scene.remove(controller);
+      });
     };
-  }, [clearHold, enabled, gl, pickHoldRotationTarget]);
+  }, [clearHold, enabled, gl, pickHoldRotationTarget, pickHoldRotationTargetFromCurrentRay, raycaster, scene]);
 
   useFrame((_, delta) => {
     if (!enabled || !rotatingRef.current) return;

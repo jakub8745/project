@@ -3939,7 +3939,7 @@ function R3FViewerInner({
     }
     try {
       const session = await xrSystem.requestSession('immersive-vr', {
-        optionalFeatures: ['local-floor', 'bounded-floor']
+        optionalFeatures: ['local-floor']
       });
       xrSessionRef.current = session;
       const handleEnd = () => {
@@ -4403,6 +4403,64 @@ type VisitorRuntime = Visitor & {
   setJoystickInput: (x?: number, y?: number) => void;
 };
 
+const XR_JOYSTICK_DEADZONE = 0.16;
+
+function applyXrAxisDeadzone(value: number) {
+  if (!Number.isFinite(value) || Math.abs(value) < XR_JOYSTICK_DEADZONE) {
+    return 0;
+  }
+  const sign = Math.sign(value);
+  return sign * ((Math.abs(value) - XR_JOYSTICK_DEADZONE) / (1 - XR_JOYSTICK_DEADZONE));
+}
+
+function readGamepadAxes(gamepad?: Gamepad) {
+  const axes = gamepad?.axes;
+  if (!axes || axes.length < 2) {
+    return null;
+  }
+
+  const candidates: Array<[number, number]> = [];
+  if (axes.length >= 4) {
+    candidates.push([2, 3]);
+  }
+  candidates.push([0, 1]);
+  for (let index = 0; index + 1 < axes.length; index += 2) {
+    if (!candidates.some(([xIndex, yIndex]) => xIndex === index && yIndex === index + 1)) {
+      candidates.push([index, index + 1]);
+    }
+  }
+
+  let best = { x: 0, y: 0, magnitudeSq: 0 };
+  candidates.forEach(([xIndex, yIndex]) => {
+    const x = applyXrAxisDeadzone(Number(axes[xIndex]) || 0);
+    const y = applyXrAxisDeadzone(Number(axes[yIndex]) || 0);
+    const magnitudeSq = x * x + y * y;
+    if (magnitudeSq > best.magnitudeSq) {
+      best = { x, y, magnitudeSq };
+    }
+  });
+
+  return best.magnitudeSq > 0 ? { x: best.x, y: best.y } : null;
+}
+
+function readXrJoystickInput(session: XRSession | null) {
+  if (!session?.inputSources) {
+    return { x: 0, y: 0 };
+  }
+
+  let fallback: { x: number; y: number } | null = null;
+  for (const inputSource of session.inputSources) {
+    const axes = readGamepadAxes(inputSource.gamepad);
+    if (!axes) continue;
+    if (inputSource.handedness === 'left') {
+      return axes;
+    }
+    fallback ??= axes;
+  }
+
+  return fallback ?? { x: 0, y: 0 };
+}
+
 function isVisitorDirectionInput(source: unknown): source is VisitorDirectionInput {
   if (typeof source === 'string') return true;
   if (Array.isArray(source) && source.length === 3) return true;
@@ -4432,6 +4490,11 @@ function FirstPersonController({
 }) {
   const { camera, gl, scene } = useThree();
   const controls = useThree((state) => state.controls) as OrbitControlsImpl | undefined;
+  const xrRig = useMemo(() => {
+    const rig = new Group();
+    rig.name = 'xr-visitor-rig';
+    return rig;
+  }, []);
 
   const visitor = useMemo<VisitorRuntime | null>(() => {
     if (enabled === false) return null;
@@ -4500,14 +4563,15 @@ function FirstPersonController({
   useEffect(() => {
     if (!visitor) return undefined;
     const updateRigReference = () => {
-      const xrCamera = gl.xr.getCamera();
-      const rigObject = (xrCamera?.parent ?? xrCamera ?? null) as Object3D | null;
-      visitor.xrRig = rigObject;
-      if (rigObject) {
-        const offset = toVector3(params?.heightOffset, [0, 1.05, 0]);
-        const targetPosition = visitor.position.clone().add(offset);
-        rigObject.position.copy(targetPosition);
+      if (!xrRig.parent) {
+        scene.add(xrRig);
       }
+      xrRig.attach(camera);
+      camera.position.set(0, 0, 0);
+      camera.rotation.set(0, 0, 0);
+      camera.scale.set(1, 1, 1);
+      visitor.xrRig = xrRig;
+      xrRig.position.copy(visitor.position);
     };
     const handleSessionStart = () => {
       if (controls) {
@@ -4516,7 +4580,14 @@ function FirstPersonController({
       updateRigReference();
     };
     const handleSessionEnd = () => {
+      scene.attach(camera);
+      if (xrRig.parent === scene) {
+        scene.remove(xrRig);
+      }
+      xrRig.position.set(0, 0, 0);
+      xrRig.rotation.set(0, 0, 0);
       visitor.xrRig = null;
+      visitor.setJoystickInput(0, 0);
       if (controls) {
         controls.enabled = true;
       }
@@ -4528,17 +4599,30 @@ function FirstPersonController({
     return () => {
       gl.xr.removeEventListener('sessionstart', handleSessionStart);
       gl.xr.removeEventListener('sessionend', handleSessionEnd);
+      scene.attach(camera);
+      if (xrRig.parent === scene) {
+        scene.remove(xrRig);
+      }
+      xrRig.position.set(0, 0, 0);
+      xrRig.rotation.set(0, 0, 0);
       visitor.xrRig = null;
+      visitor.setJoystickInput(0, 0);
       if (controls) {
         controls.enabled = true;
       }
     };
-  }, [camera, controls, gl, params?.heightOffset, visitor]);
+  }, [camera, controls, gl, params?.heightOffset, scene, visitor, xrRig]);
 
   useFrame((_, delta) => {
     if (!visitor || !collider) return;
     if (controls) {
-      controls.enabled = !interactionLocked;
+      controls.enabled = !interactionLocked && !gl.xr.isPresenting;
+    }
+    if (gl.xr.isPresenting && !interactionLocked) {
+      const input = readXrJoystickInput(gl.xr.getSession());
+      visitor.setJoystickInput(input.x, -input.y);
+    } else if (gl.xr.isPresenting) {
+      visitor.setJoystickInput(0, 0);
     }
     if (interactionLocked) return;
     visitor.update(delta, collider);
@@ -4752,7 +4836,7 @@ function RendererTuning({
     if (highQualityMode) {
       gl.shadowMap.type = PCFShadowMap;
     }
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !gl.xr.isPresenting) {
       gl.setPixelRatio(Math.min(maxDpr, window.devicePixelRatio || 1));
     }
   }, [gl, highQualityMode, maxDpr]);
