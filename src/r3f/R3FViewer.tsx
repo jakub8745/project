@@ -78,6 +78,7 @@ import {
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
 import { MaterialModalProvider } from './Modal';
 import {
+  getAudioPlaybackSnapshot,
   playAudioByIds,
   setAudioControlTargetIds,
   stopAudioByIds,
@@ -99,6 +100,7 @@ Mesh.prototype.raycast = acceleratedRaycast;
 
 const DEBUG_COLLIDER = false;
 const DEFAULT_BACKGROUND = '#111827';
+const XR_EXIT_HOLD_MS = 1200;
 
 let sharedDracoLoader: DRACOLoader | null = null;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
@@ -3564,6 +3566,21 @@ function R3FViewerInner({
   }, [audioConfig]);
   const [subtitleLanguage, setSubtitleLanguage] = useState<string | null | undefined>(undefined);
 
+  const cycleSubtitleLanguage = useCallback(() => {
+    if (subtitleLanguageOptions.length === 0) return;
+    const values = subtitleLanguageOptions.map((option) => option.value);
+    setSubtitleLanguage((current) => {
+      if (current === undefined || current === null) {
+        return values[0];
+      }
+      const currentIndex = values.indexOf(current);
+      if (currentIndex < 0 || currentIndex >= values.length - 1) {
+        return null;
+      }
+      return values[currentIndex + 1];
+    });
+  }, [subtitleLanguageOptions]);
+
   useEffect(() => {
     if (subtitleLanguageOptions.length === 0) {
       if (subtitleLanguage !== undefined) {
@@ -3975,6 +3992,84 @@ function R3FViewerInner({
     }
   }, []);
 
+  const exitVrSessionAndReload = useCallback(async () => {
+    await exitVrSession();
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  }, [exitVrSession]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!xrSessionRef.current) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        void exitVrSession();
+      } else if (event.key.toLowerCase() === 'r' && event.shiftKey) {
+        event.preventDefault();
+        void exitVrSessionAndReload();
+      } else if (event.key.toLowerCase() === 'c') {
+        event.preventDefault();
+        cycleSubtitleLanguage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [cycleSubtitleLanguage, exitVrSession, exitVrSessionAndReload]);
+
+  useEffect(() => {
+    if (!renderer || !xrSupported) return undefined;
+    const xrControllers = [renderer.xr.getController(0), renderer.xr.getController(1)];
+    const exitTimers = new Map<Object3D, number>();
+
+    const clearExitTimer = (controller: Object3D, cycleCaptions = false) => {
+      const timer = exitTimers.get(controller);
+      if (timer !== undefined) {
+        window.clearTimeout(timer);
+        exitTimers.delete(controller);
+        if (cycleCaptions) {
+          cycleSubtitleLanguage();
+        }
+      }
+    };
+
+    const startExitTimer = (event: { target?: unknown }) => {
+      if (!xrSessionRef.current) return;
+      const controller = event.target instanceof Object3D ? event.target : null;
+      if (!controller || exitTimers.has(controller)) return;
+      const timer = window.setTimeout(() => {
+        exitTimers.delete(controller);
+        void exitVrSession();
+      }, XR_EXIT_HOLD_MS);
+      exitTimers.set(controller, timer);
+    };
+
+    const stopExitTimer = (event: { target?: unknown }) => {
+      const controller = event.target instanceof Object3D ? event.target : null;
+      if (controller) {
+        clearExitTimer(controller, true);
+      }
+    };
+
+    xrControllers.forEach((controller) => {
+      controller.addEventListener('squeezestart', startExitTimer);
+      controller.addEventListener('squeezeend', stopExitTimer);
+    });
+
+    return () => {
+      xrControllers.forEach((controller) => {
+        controller.removeEventListener('squeezestart', startExitTimer);
+        controller.removeEventListener('squeezeend', stopExitTimer);
+        clearExitTimer(controller);
+      });
+      exitTimers.clear();
+    };
+  }, [cycleSubtitleLanguage, exitVrSession, renderer, xrSupported]);
+
   useEffect(() => {
     if (!modelPath && !useProceduralRoom) {
       setCollider(null);
@@ -4185,6 +4280,7 @@ function R3FViewerInner({
           sceneVersion={sceneVersion}
           objectRegistry={objectRegistry}
         />
+        <XrAudioSubtitlePanel tracks={audioConfig} language={subtitleLanguage} />
         <AutoExposureControl params={activeRendererParams} />
       </Canvas>
       <ToneMappingMenu
@@ -4819,6 +4915,91 @@ function AudioSystem({
       sceneVersion={sceneVersion}
       objectRegistry={objectRegistry}
     />
+  );
+}
+
+function XrAudioSubtitlePanel({
+  tracks,
+  language
+}: {
+  tracks?: Array<{ id: string; subtitleTracks?: AudioSubtitleTrack[] }>;
+  language?: string | null;
+}) {
+  const { camera, gl } = useThree();
+  const groupRef = useRef<Group | null>(null);
+  const activeTextRef = useRef<string | null>(null);
+  const [activeText, setActiveText] = useState<string | null>(null);
+  const subtitleTracks = useMemo(() => {
+    if (!language) return [];
+    return (tracks ?? [])
+      .map((track) => {
+        const selectedTrack = track.subtitleTracks?.find((subtitleTrack) => subtitleTrack.language === language);
+        return selectedTrack ? { id: track.id, cues: selectedTrack.cues } : null;
+      })
+      .filter((track): track is { id: string; cues: AudioSubtitleCue[] } => track !== null && track.cues.length > 0);
+  }, [language, tracks]);
+
+  useEffect(() => {
+    const group = groupRef.current;
+    if (!group) return undefined;
+    camera.add(group);
+    return () => {
+      group.removeFromParent();
+    };
+  }, [camera]);
+
+  useEffect(() => {
+    activeTextRef.current = null;
+    setActiveText(null);
+  }, [subtitleTracks]);
+
+  useFrame(() => {
+    let nextText: string | null = null;
+    if (gl.xr.isPresenting && subtitleTracks.length > 0) {
+      for (const track of subtitleTracks) {
+        const snapshot = getAudioPlaybackSnapshot(track.id);
+        if (!snapshot?.isPlaying) continue;
+        const cue = track.cues.find((entry) => snapshot.currentTime >= entry.start && snapshot.currentTime < entry.end);
+        if (cue) {
+          nextText = cue.text;
+          break;
+        }
+      }
+    }
+
+    if (activeTextRef.current !== nextText) {
+      activeTextRef.current = nextText;
+      setActiveText(nextText);
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[0, -0.58, -2.15]} visible={Boolean(activeText)}>
+      <mesh renderOrder={2000}>
+        <planeGeometry args={[2.25, 0.42]} />
+        <meshBasicMaterial
+          color="#000000"
+          transparent
+          opacity={0.78}
+          depthTest={false}
+          depthWrite={false}
+          side={DoubleSide}
+        />
+      </mesh>
+      <Text
+        position={[0, 0, 0.018]}
+        fontSize={0.065}
+        maxWidth={1.95}
+        lineHeight={1.15}
+        anchorX="center"
+        anchorY="middle"
+        textAlign="center"
+        renderOrder={2001}
+      >
+        {activeText ?? ''}
+        <meshBasicMaterial color="#ffffff" depthTest={false} depthWrite={false} />
+      </Text>
+    </group>
   );
 }
 

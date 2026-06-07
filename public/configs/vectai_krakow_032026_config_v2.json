@@ -294,33 +294,33 @@
     "scan_baletnica": {
       "kind": "sculpture",
       "ref": "scan_baletnica",
-      "holdRotate": false,
+      "holdRotate": true,
       "metadata": {
-        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it."
+        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
       }
     },
     "scan_parasol": {
       "kind": "sculpture",
       "ref": "scan_parasol",
-      "holdRotate": false,
+      "holdRotate": true,
       "metadata": {
-        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it."
+        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
       }
     },
     "scan_snake": {
       "kind": "sculpture",
       "ref": "scan_snake",
-      "holdRotate": false,
+      "holdRotate": true,
       "metadata": {
-        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it."
+        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
       }
     },
     "scan_zajac": {
       "kind": "sculpture",
       "ref": "scan_zajac",
-      "holdRotate": false,
+      "holdRotate": true,
       "metadata": {
-        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it."
+        "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
       }
     }
   },
@@ -646,7 +646,7 @@
           "id": "audio_intro_runtime",
           "targetNode": "audio_intro",
           "media": "audio_intro",
-          "autoplayOnEnter": true,
+          "autoplayOnEnter": false,
           "autoplayDelayMs": 6000,
           "labelPlaying": "Intro is playing",
           "labelPaused": "Play Intro",
@@ -672,7 +672,7 @@
           "mode": "rotate",
           "size": 0.5,
           "hover": true,
-          "holdRotate": false,
+          "holdRotate": true,
           "light": {
             "enabled": false
           }
@@ -683,7 +683,7 @@
           "mode": "rotate",
           "size": 0.5,
           "hover": true,
-          "holdRotate": false,
+          "holdRotate": true,
           "light": {
             "enabled": false
           }
@@ -694,7 +694,7 @@
           "mode": "rotate",
           "size": 0.5,
           "hover": true,
-          "holdRotate": false,
+          "holdRotate": true,
           "light": {
             "enabled": false
           }
@@ -705,7 +705,7 @@
           "mode": "rotate",
           "size": 0.5,
           "hover": true,
-          "holdRotate": false,
+          "holdRotate": true,
           "light": {
             "enabled": false
           }
@@ -863,7 +863,7 @@
         },
         {
           "category": "sculptures",
-          "description": "The scan objects use transformControls instead of holdRotate. Hovering a scan shows its label and rotation gizmo. Dragging the gizmo ring rotates the selected scan manually; moving to another scan reattaches the same shared gizmo to that scan. When the pointer leaves the scan and no gizmo drag is active, the gizmo remains available for about 2 seconds and then hides automatically. Click-and-hold auto-rotation is disabled for these scans.",
+          "description": "The scan objects use transformControls on desktop and holdRotate in VR. Hovering a scan shows its label and rotation gizmo. Dragging the gizmo ring rotates the selected scan manually; moving to another scan reattaches the same shared gizmo to that scan. When the pointer leaves the scan and no gizmo drag is active, the gizmo remains available for about 2 seconds and then hides automatically. In VR, aim at a scan and hold the trigger to rotate it.",
           "objects": [
             "scan_baletnica",
             "scan_parasol",

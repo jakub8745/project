@@ -71,13 +71,13 @@ function createClickIndicator() {
 function createXrControllerRay() {
   const geometry = new BufferGeometry().setFromPoints([
     new Vector3(0, 0, 0),
-    new Vector3(0, 0, -12)
+    new Vector3(0, 0, -5)
   ]);
   const material = new LineBasicMaterial({
-    color: 0x60a5fa,
+    color: 0xd7e2ea,
     transparent: true,
-    opacity: 0.85,
-    depthTest: false,
+    opacity: 0.42,
+    depthTest: true,
     depthWrite: false
   });
   const line = new Line(geometry, material);
@@ -147,29 +147,54 @@ export function PointerInteractions({
     const xrControllers = [gl.xr.getController(0), gl.xr.getController(1)];
     const controllerRays = xrControllers.map(() => createXrControllerRay());
     const addedControllers: Object3D[] = [];
-    const setControllerRaysVisible = (visible: boolean) => {
+    const setControllerRaysVisible = (visible: boolean, controller?: Object3D) => {
+      if (controller) {
+        const controllerIndex = xrControllers.findIndex((xrController) => xrController === controller);
+        if (controllerIndex >= 0) {
+          controllerRays[controllerIndex].visible = visible;
+        }
+        return;
+      }
       controllerRays.forEach((ray) => {
         ray.visible = visible;
       });
     };
+    const showControllerRay = (event: { target?: unknown }) => {
+      const controller = event.target instanceof Object3D ? event.target : undefined;
+      setControllerRaysVisible(true, controller);
+    };
+    const hideControllerRay = (event: { target?: unknown }) => {
+      const controller = event.target instanceof Object3D ? event.target : undefined;
+      setControllerRaysVisible(false, controller);
+    };
 
     xrControllers.forEach((controller, index) => {
       controller.add(controllerRays[index]);
+      controller.addEventListener('selectstart', showControllerRay);
+      controller.addEventListener('selectend', hideControllerRay);
+      controller.addEventListener('squeezestart', showControllerRay);
+      controller.addEventListener('squeezeend', hideControllerRay);
       if (!controller.parent) {
         scene.add(controller);
         addedControllers.push(controller);
       }
     });
 
-    const handleXrSessionStart = () => setControllerRaysVisible(true);
+    const handleXrSessionStart = () => setControllerRaysVisible(false);
     const handleXrSessionEnd = () => setControllerRaysVisible(false);
     gl.xr.addEventListener('sessionstart', handleXrSessionStart);
     gl.xr.addEventListener('sessionend', handleXrSessionEnd);
-    setControllerRaysVisible(gl.xr.isPresenting);
+    setControllerRaysVisible(false);
 
     return () => {
       gl.xr.removeEventListener('sessionstart', handleXrSessionStart);
       gl.xr.removeEventListener('sessionend', handleXrSessionEnd);
+      xrControllers.forEach((controller) => {
+        controller.removeEventListener('selectstart', showControllerRay);
+        controller.removeEventListener('selectend', hideControllerRay);
+        controller.removeEventListener('squeezestart', showControllerRay);
+        controller.removeEventListener('squeezeend', hideControllerRay);
+      });
       controllerRays.forEach((ray) => {
         ray.removeFromParent();
         ray.geometry.dispose();

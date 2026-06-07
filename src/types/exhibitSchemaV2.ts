@@ -455,6 +455,9 @@ export interface SidebarItemDefinition {
   link?: string;
   pdfPath?: string;
   pdfOpenLabel?: string;
+  videoPath?: string;
+  videoType?: string;
+  videoPoster?: string;
   openLabel?: string;
   metadata?: Record<string, unknown>;
 }

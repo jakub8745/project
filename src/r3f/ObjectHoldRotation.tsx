@@ -85,6 +85,7 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
 
   const clearHold = useCallback((source?: unknown) => {
     const wasRotating = Boolean(rotatingRef.current);
+    const hadCandidate = Boolean(candidateRef.current);
     if (holdTimerRef.current !== null) {
       window.clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
@@ -93,7 +94,7 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
     rotatingRef.current = null;
     pointerIdRef.current = null;
     speedRef.current = DEFAULT_CLOCKWISE_Y_RADIANS_PER_SECOND;
-    if (wasRotating && source instanceof Object3D) {
+    if ((wasRotating || hadCandidate) && source instanceof Object3D) {
       source.userData.__xrHoldRotationSuppressSelectUntil = performance.now() + 350;
     }
   }, []);

@@ -14,6 +14,9 @@ export interface InfoItem {
   link?: string;
   pdfPath?: string;
   pdfOpenLabel?: string;
+  videoPath?: string;
+  videoType?: string;
+  videoPoster?: string;
 }
 
 interface InfoButtonsProps {
@@ -29,6 +32,9 @@ interface SidebarItemConfig {
   pdfPath?: string;
   pdfOpenLabel?: string;
   openLabel?: string;
+  videoPath?: string;
+  videoType?: string;
+  videoPoster?: string;
 }
 
 interface ExhibitConfigResponse {
@@ -40,16 +46,29 @@ interface ExhibitConfigResponse {
 
 const sidebarCache = new Map<string, InfoItem[]>();
 
+function normalizePublicAssetUrl(rawUrl: string | undefined): string | undefined {
+  if (!rawUrl) return undefined;
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return undefined;
+  if (trimmed.startsWith('public/')) {
+    return `/${trimmed.slice('public/'.length)}`;
+  }
+  return normalizeConfigUrl(trimmed);
+}
+
 export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
   // ✅ Always declare hooks first
   const [items, setItems] = useState<InfoItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [activePdf, setActivePdf] = useState<{ title: string; src: string; openLabel?: string } | null>(null);
+  const [activeVideo, setActiveVideo] = useState<{ title: string; src: string; type?: string; poster?: string } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setOpenId(null);
+    setActivePdf(null);
+    setActiveVideo(null);
 
     if (!configUrl) {
       setItems([]);
@@ -91,6 +110,13 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           const link = 'link' in item ? item.link : undefined;
           const content = 'content' in item ? item.content : undefined;
           const pdfPath = 'pdfPath' in item && typeof item.pdfPath === 'string' ? item.pdfPath : undefined;
+          const videoPath = 'videoPath' in item && typeof item.videoPath === 'string'
+            ? normalizePublicAssetUrl(item.videoPath)
+            : undefined;
+          const videoType = 'videoType' in item && typeof item.videoType === 'string' ? item.videoType : undefined;
+          const videoPoster = 'videoPoster' in item && typeof item.videoPoster === 'string'
+            ? normalizePublicAssetUrl(item.videoPoster)
+            : undefined;
           const pdfOpenLabel =
             'pdfOpenLabel' in item && typeof item.pdfOpenLabel === 'string'
               ? item.pdfOpenLabel
@@ -124,7 +150,10 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             content,
             link: toSafeExternalUrl(link) ?? undefined,
             pdfPath,
-            pdfOpenLabel
+            pdfOpenLabel,
+            videoPath,
+            videoType,
+            videoPoster
           };
         });
         const sanitized: InfoItem[] = normalized.map((item) => ({
@@ -150,6 +179,22 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
 
     return () => controller.abort();
   }, [configUrl]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !activeVideo) return undefined;
+    window.dispatchEvent(new CustomEvent('video-player-modal-state', { detail: { open: true } }));
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setActiveVideo(null);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      window.dispatchEvent(new CustomEvent('video-player-modal-state', { detail: { open: false } }));
+    };
+  }, [activeVideo]);
 
   // ✅ Conditional rendering can go *after* hook declarations
   if (!configUrl) return null;
@@ -194,6 +239,38 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         )
       : null;
 
+  const videoModal =
+    activeVideo && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            className="video-modal-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-label={activeVideo.title}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setActiveVideo(null);
+              }
+            }}
+          >
+            <div className="video-modal">
+              <button className="video-modal__close" onClick={() => setActiveVideo(null)} type="button" aria-label="Close video">×</button>
+              <video
+                key={activeVideo.src}
+                className="video-modal__video"
+                controls
+                autoPlay
+                playsInline
+                poster={activeVideo.poster}
+              >
+                <source src={activeVideo.src} type={activeVideo.type ?? 'video/mp4'} />
+              </video>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
   return (
     <div className="flex flex-col items-center space-y-4 mt-4">
       {items.map(item => (
@@ -216,6 +293,15 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
                     setActivePdf({ title: item.label || 'PDF document', src: item.pdfPath, openLabel: item.pdfOpenLabel });
                     return;
                   }
+                  if (item.videoPath) {
+                    setActiveVideo({
+                      title: item.label || 'Video',
+                      src: item.videoPath,
+                      type: item.videoType,
+                      poster: item.videoPoster
+                    });
+                    return;
+                  }
                   setOpenId(openId === item.id ? null : item.id);
                 }}
                 className="w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition"
@@ -234,6 +320,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         </div>
       ))}
       {pdfModal}
+      {videoModal}
     </div>
   );
 };
