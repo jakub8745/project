@@ -541,6 +541,34 @@ export function PointerInteractions({
       (typeof userData.tooltipLabel === 'string' && userData.tooltipLabel) ||
       '';
 
+    const hasHoldRotateConfig = (entry: Record<string, unknown> | undefined, userData: Record<string, unknown> = {}) => {
+      const interactions =
+        entry?.interactions && typeof entry.interactions === 'object' && !Array.isArray(entry.interactions)
+          ? entry.interactions as Record<string, unknown>
+          : null;
+      return (
+        entry?.holdRotate === true ||
+        entry?.holdRotation === true ||
+        userData.holdRotate === true ||
+        userData.holdRotation === true ||
+        interactions?.holdRotate === true ||
+        interactions?.holdRotation === true
+      );
+    };
+
+    const isHoldRotateObject = (object: Object3D) => {
+      let current: Object3D | null = object;
+      while (current) {
+        const runtimeData = resolveObjectRuntimeData(current, objectRegistry);
+        const userData = (current.userData || {}) as Record<string, unknown>;
+        if (hasHoldRotateConfig(runtimeData?.entry, userData)) {
+          return true;
+        }
+        current = current.parent;
+      }
+      return false;
+    };
+
     const handleHover = (event: PointerEvent) => {
       if (disabled) {
         hideHoverTooltip();
@@ -659,7 +687,7 @@ export function PointerInteractions({
       });
     };
 
-    const activateHit = (hit: Intersection | undefined, movementMode: 'walk' | 'teleport' = 'walk') => {
+    const activateHit = (hit: Intersection | undefined, movementMode: 'walk' | 'teleport' | 'none' = 'walk') => {
       if (!hit) return;
 
       const { type, elementID, key, userData } = resolveHitRuntime(hit.object as Mesh);
@@ -729,6 +757,7 @@ export function PointerInteractions({
       }
 
       if (type && ['Floor', 'Room', 'Wall', 'Walls'].includes(type)) {
+        if (movementMode === 'none') return;
         const point = hit.point.clone();
         const localNormal = hit.face?.normal?.clone();
         if (!localNormal) return;
@@ -759,6 +788,7 @@ export function PointerInteractions({
       if (!intersects.length) return { consumed: false as const };
 
       let touchedControlRig = false;
+      let touchedControlRigDistance = Infinity;
 
       for (const hit of intersects) {
         if (isOccludedByCollider(hit, occlusionOrigin)) continue;
@@ -768,6 +798,7 @@ export function PointerInteractions({
           const userData = node.userData as Record<string, unknown> | undefined;
           if (userData?.__isVideoControlProxy === true) {
             touchedControlRig = true;
+            touchedControlRigDistance = Math.min(touchedControlRigDistance, hit.distance);
           }
           if (userData?.type === 'VideoControl') {
             const videoKey =
@@ -792,7 +823,8 @@ export function PointerInteractions({
               consumed: true as const,
               action,
               videoKey,
-              value
+              value,
+              distance: hit.distance
             };
           }
           node = node.parent;
@@ -802,7 +834,7 @@ export function PointerInteractions({
       // Click landed on control panel/background but not a specific button:
       // consume it so floor/wall teleport doesn't fire through controls.
       if (touchedControlRig) {
-        return { consumed: true as const };
+        return { consumed: true as const, distance: touchedControlRigDistance };
       }
 
       return { consumed: false as const };
@@ -829,6 +861,14 @@ export function PointerInteractions({
       raycaster.firstHitOnly = true;
     };
 
+    const getHoldRotationHitDistanceFromCurrentRay = () => {
+      const prevFirstHitOnly = raycaster.firstHitOnly;
+      raycaster.firstHitOnly = false;
+      const hit = raycaster.intersectObjects(scene.children, true).find((intersection) => isHoldRotateObject(intersection.object));
+      raycaster.firstHitOnly = prevFirstHitOnly;
+      return hit?.distance ?? null;
+    };
+
     const handleXrSelect = (event: { target?: unknown }) => {
       if (disabled) return;
       hideHoverTooltip();
@@ -844,15 +884,27 @@ export function PointerInteractions({
 
       setRayFromController(controller);
       const rayOrigin = controllerRayOrigin.clone();
+      const holdRotationHitDistance = getHoldRotationHitDistanceFromCurrentRay();
       const controlHit = resolveVideoControlHitFromCurrentRay(rayOrigin);
       if (controlHit.consumed) {
+        if (
+          holdRotationHitDistance !== null &&
+          Number.isFinite(controlHit.distance) &&
+          holdRotationHitDistance < controlHit.distance - OCCLUSION_EPSILON
+        ) {
+          return;
+        }
         if (controlHit.videoKey && controlHit.action) {
           invokeVideoControlById(controlHit.videoKey, controlHit.action, controlHit.value);
         }
         return;
       }
 
-      activateHit(pickClickHit(rayOrigin, true), 'teleport');
+      if (holdRotationHitDistance !== null) {
+        return;
+      }
+
+      activateHit(pickClickHit(rayOrigin, true), 'none');
     };
 
     const onPointerDown = (event: PointerEvent) => {

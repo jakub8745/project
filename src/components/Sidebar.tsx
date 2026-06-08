@@ -33,7 +33,7 @@ const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, children }) => (
     <aside
       id="app-sidebar"
       className={`
-        fixed inset-y-0 left-0 transform bg-slate-500/35 text-white overflow-y-auto
+        fixed inset-y-0 left-0 transform bg-slate-600/65 text-white overflow-y-auto
         transition-transform duration-300 ease-in-out z-30
         ${open ? 'translate-x-0' : '-translate-x-full'}
         w-[90vw] md:w-[32rem] border-r border-slate-200 backdrop-blur

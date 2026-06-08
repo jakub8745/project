@@ -120,19 +120,25 @@
       },
       {
         "id": "lisbon-exhibition-video",
-        "label": "the Lisbon exhibition",
+        "label": "Video documentation of the Lisbon exhibition",
         "icon": "/icons/ButtonPlay.png",
         "videoPath": "/video/lisbon_exhibition_spatial-onsite.mp4",
         "videoType": "video/mp4"
       },
       {
         "id": "living-heritage-zenodo",
-        "label": "Zenodo: Living Heritage",
+        "label": "Zenodo PDF: Curatorial Dossier",
         "link": "https://zenodo.org/records/20101415"
       },
       {
+        "id": "lisbon-articles",
+        "label": "Articles related to the project",
+        "target": "info_text",
+        "content": "<p><strong>Articles related to the Lisbon exhibition</strong></p><p>Gorzkowicz, Justyna, Jarosław Solecki, and Marcin Jerzyna. <em>Wideopoemat Jedna ziemia. Rozmowa z poetycką wizją Stanisława Młodożeńca</em>. In Henryk Czubała, Justyna Gorzkowicz, Joanna Kulczyńska-Kruk (red.), <em>Wszędzie Jedna Ziemia. Stanisław Młodożeniec: Miejsca - Ludzie - Teksty</em>, Wydawnictwo Muzeum Historii Polskiego Ruchu Ludowego, PUNO Press, p. 766. Warszawa - Londyn: Zenodo, 2025.<br /><a href=\"https://doi.org/10.5281/zenodo.20581328\">https://doi.org/10.5281/zenodo.20581328</a></p><p>Gorzkowicz, Justyna. <em>The Textography of the Videopoem: Poetic Texts and Their Variants in Transmedial Practice</em>. <em>Quart</em> 4, no. 78 (2025): 110-131.<br /><a href=\"https://doi.org/10.19195/2449-9285.78.9\">https://doi.org/10.19195/2449-9285.78.9</a><br /><a href=\"https://czasopisma.uwr.edu.pl/quart/article/view/18743/17307\">PDF/article page</a></p><p><strong>Coming soon:</strong> Solecki, Jarosław. <em>CAPHE in Practice: Hybrid Pedagogies, XR Learning Environments and Exhibitions in Lisbon 2025</em>. <em>Zeszyty Naukowe PUNO / Research Papers PUA (The Polish University Abroad)</em>, 2025, p. 167.</p>"
+      },
+      {
         "label": "Blue Point Art homepage",
-        "link": "https://bluepointart.uk/lockdowns-ciechanowska/"
+        "link": "https://bluepointart.uk/living-heritage-after-the-exhibition-caphe-krakow-2026/"
       }
     ]
   },

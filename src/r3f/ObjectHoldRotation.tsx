@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Matrix4, Object3D, Raycaster, Vector2, Vector3 } from 'three';
+import { Matrix4, Object3D, Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import { resolveObjectRuntimeData, type ObjectRegistry, type ObjectRegistryEntry } from '../modules/objectRegistry.js';
 
 const HOLD_DELAY_MS = 450;
@@ -82,6 +82,14 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
   const holdTimerRef = useRef<number | null>(null);
   const pointerIdRef = useRef<number | null>(null);
   const startRef = useRef({ x: 0, y: 0 });
+  const xrControllerRef = useRef<Object3D | null>(null);
+  const xrControllerStartQuaternionRef = useRef(new Quaternion());
+  const xrControllerStartInverseQuaternionRef = useRef(new Quaternion());
+  const xrControllerCurrentQuaternionRef = useRef(new Quaternion());
+  const xrObjectStartWorldQuaternionRef = useRef(new Quaternion());
+  const xrRotationDeltaRef = useRef(new Quaternion());
+  const xrTargetWorldQuaternionRef = useRef(new Quaternion());
+  const xrParentWorldInverseQuaternionRef = useRef(new Quaternion());
 
   const clearHold = useCallback((source?: unknown) => {
     const wasRotating = Boolean(rotatingRef.current);
@@ -92,6 +100,7 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
     }
     candidateRef.current = null;
     rotatingRef.current = null;
+    xrControllerRef.current = null;
     pointerIdRef.current = null;
     speedRef.current = DEFAULT_CLOCKWISE_Y_RADIANS_PER_SECOND;
     if ((wasRotating || hadCandidate) && source instanceof Object3D) {
@@ -190,7 +199,16 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
       candidateRef.current = target.object;
       speedRef.current = target.speed;
       holdTimerRef.current = window.setTimeout(() => {
-        rotatingRef.current = candidateRef.current;
+        const targetObject = candidateRef.current;
+        if (targetObject) {
+          controller.updateMatrixWorld(true);
+          targetObject.updateMatrixWorld(true);
+          controller.getWorldQuaternion(xrControllerStartQuaternionRef.current);
+          xrControllerStartInverseQuaternionRef.current.copy(xrControllerStartQuaternionRef.current).invert();
+          targetObject.getWorldQuaternion(xrObjectStartWorldQuaternionRef.current);
+          rotatingRef.current = targetObject;
+          xrControllerRef.current = controller;
+        }
         holdTimerRef.current = null;
       }, HOLD_DELAY_MS);
     };
@@ -235,6 +253,28 @@ export function ObjectHoldRotation({ enabled, objectRegistry }: ObjectHoldRotati
 
   useFrame((_, delta) => {
     if (!enabled || !rotatingRef.current) return;
+    if (xrControllerRef.current) {
+      const object = rotatingRef.current;
+      xrControllerRef.current.updateMatrixWorld(true);
+      object.parent?.updateMatrixWorld(true);
+      xrControllerRef.current.getWorldQuaternion(xrControllerCurrentQuaternionRef.current);
+      xrRotationDeltaRef.current
+        .copy(xrControllerCurrentQuaternionRef.current)
+        .multiply(xrControllerStartInverseQuaternionRef.current);
+      xrTargetWorldQuaternionRef.current
+        .copy(xrObjectStartWorldQuaternionRef.current)
+        .premultiply(xrRotationDeltaRef.current);
+
+      if (object.parent) {
+        object.parent.getWorldQuaternion(xrParentWorldInverseQuaternionRef.current).invert();
+        object.quaternion
+          .copy(xrParentWorldInverseQuaternionRef.current)
+          .multiply(xrTargetWorldQuaternionRef.current);
+      } else {
+        object.quaternion.copy(xrTargetWorldQuaternionRef.current);
+      }
+      return;
+    }
     rotatingRef.current.rotation.y += speedRef.current * delta;
   });
 

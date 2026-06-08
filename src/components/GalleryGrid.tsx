@@ -27,7 +27,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
   const base =
     'relative pointer-events-auto cursor-pointer rounded-xl transition ring-offset-2 focus:outline-none focus:ring-2 focus:ring-sky-300 bg-white/30 border border-white/35 backdrop-blur-sm';
   const selected =
-    'ring-2 ring-sky-300 shadow-lg shadow-sky-400/30 bg-white/40';
+    'ring-4 ring-cyan-100 border-cyan-100 bg-white/60 shadow-2xl shadow-cyan-200/55';
   const unselected =
     'hover:ring-2 hover:ring-sky-200 hover:bg-white/35';
 

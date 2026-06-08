@@ -311,7 +311,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
               </button>
               {openId === item.id && item.content && (
                 <div
-                  className="mt-2 p-4 bg-white/10 border border-white/20 rounded-lg text-white text-lg font-light shadow-sm"
+                  className="mt-2 p-4 bg-white/10 border border-white/20 rounded-lg text-white text-lg font-light shadow-sm [&_a]:text-cyan-100 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-cyan-200/80 hover:[&_a]:text-white"
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
               )}

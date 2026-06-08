@@ -101,6 +101,10 @@ Mesh.prototype.raycast = acceleratedRaycast;
 const DEBUG_COLLIDER = false;
 const DEFAULT_BACKGROUND = '#111827';
 const XR_EXIT_HOLD_MS = 1200;
+const XR_INTRO_DELAY_MS = 3000;
+const XR_SNAP_TURN_RADIANS = Math.PI / 6;
+const XR_SNAP_TURN_THRESHOLD = 0.72;
+const XR_SNAP_TURN_COOLDOWN_MS = 320;
 
 let sharedDracoLoader: DRACOLoader | null = null;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
@@ -3550,6 +3554,25 @@ function R3FViewerInner({
         : undefined
     };
   }, [audioConfig]);
+  const xrIntroAudioIds = useMemo(() => {
+    if (!Array.isArray(audioConfig) || audioConfig.length === 0) {
+      return [];
+    }
+    return audioConfig
+      .filter((entry) => {
+        const searchable = [
+          entry.id,
+          entry.name,
+          entry.labelPlaying,
+          entry.labelPaused
+        ]
+          .filter((value): value is string => typeof value === 'string')
+          .join(' ')
+          .toLowerCase();
+        return searchable.includes('intro');
+      })
+      .map((entry) => entry.id);
+  }, [audioConfig]);
 
   const subtitleLanguageOptions = useMemo<AudioSubtitleLanguageOption[]>(() => {
     const options = new Map<string, AudioSubtitleLanguageOption>();
@@ -3565,21 +3588,6 @@ function R3FViewerInner({
     return Array.from(options.values());
   }, [audioConfig]);
   const [subtitleLanguage, setSubtitleLanguage] = useState<string | null | undefined>(undefined);
-
-  const cycleSubtitleLanguage = useCallback(() => {
-    if (subtitleLanguageOptions.length === 0) return;
-    const values = subtitleLanguageOptions.map((option) => option.value);
-    setSubtitleLanguage((current) => {
-      if (current === undefined || current === null) {
-        return values[0];
-      }
-      const currentIndex = values.indexOf(current);
-      if (currentIndex < 0 || currentIndex >= values.length - 1) {
-        return null;
-      }
-      return values[currentIndex + 1];
-    });
-  }, [subtitleLanguageOptions]);
 
   useEffect(() => {
     if (subtitleLanguageOptions.length === 0) {
@@ -3708,8 +3716,6 @@ function R3FViewerInner({
       exposureTransitionSeconds: activeLightZone.transitionSeconds
     };
   }, [activeLightZone?.params, activeLightZone?.transitionSeconds, rawParams, toneMappingName]);
-
-  const effectiveToneMappingName = normalizeToneMappingName(activeRendererParams?.toneMapping);
 
   const lightRigSettings = useMemo<SceneLightSettings>(() => {
     const zoneLights = activeLightZone?.lights;
@@ -3916,6 +3922,12 @@ function R3FViewerInner({
     const handleSessionStart = () => {
       setXrSessionActive(true);
       setXrError(null);
+      const timer = window.setTimeout(() => {
+        if (xrSessionRef.current && xrIntroAudioIds.length > 0) {
+          void playAudioByIds(xrIntroAudioIds);
+        }
+      }, XR_INTRO_DELAY_MS);
+      xrSessionRef.current?.addEventListener('end', () => window.clearTimeout(timer), { once: true });
     };
     const handleSessionEnd = () => {
       setXrSessionActive(false);
@@ -3927,7 +3939,7 @@ function R3FViewerInner({
       xrManager.removeEventListener('sessionstart', handleSessionStart);
       xrManager.removeEventListener('sessionend', handleSessionEnd);
     };
-  }, [renderer]);
+  }, [renderer, xrIntroAudioIds]);
 
   useEffect(() => {
     if (!renderer) return;
@@ -4009,9 +4021,6 @@ function R3FViewerInner({
       } else if (event.key.toLowerCase() === 'r' && event.shiftKey) {
         event.preventDefault();
         void exitVrSessionAndReload();
-      } else if (event.key.toLowerCase() === 'c') {
-        event.preventDefault();
-        cycleSubtitleLanguage();
       }
     };
 
@@ -4019,21 +4028,18 @@ function R3FViewerInner({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [cycleSubtitleLanguage, exitVrSession, exitVrSessionAndReload]);
+  }, [exitVrSession, exitVrSessionAndReload]);
 
   useEffect(() => {
     if (!renderer || !xrSupported) return undefined;
     const xrControllers = [renderer.xr.getController(0), renderer.xr.getController(1)];
     const exitTimers = new Map<Object3D, number>();
 
-    const clearExitTimer = (controller: Object3D, cycleCaptions = false) => {
+    const clearExitTimer = (controller: Object3D) => {
       const timer = exitTimers.get(controller);
       if (timer !== undefined) {
         window.clearTimeout(timer);
         exitTimers.delete(controller);
-        if (cycleCaptions) {
-          cycleSubtitleLanguage();
-        }
       }
     };
 
@@ -4051,7 +4057,7 @@ function R3FViewerInner({
     const stopExitTimer = (event: { target?: unknown }) => {
       const controller = event.target instanceof Object3D ? event.target : null;
       if (controller) {
-        clearExitTimer(controller, true);
+        clearExitTimer(controller);
       }
     };
 
@@ -4068,7 +4074,7 @@ function R3FViewerInner({
       });
       exitTimers.clear();
     };
-  }, [cycleSubtitleLanguage, exitVrSession, renderer, xrSupported]);
+  }, [exitVrSession, renderer, xrSupported]);
 
   useEffect(() => {
     if (!modelPath && !useProceduralRoom) {
@@ -4280,13 +4286,9 @@ function R3FViewerInner({
           sceneVersion={sceneVersion}
           objectRegistry={objectRegistry}
         />
-        <XrAudioSubtitlePanel tracks={audioConfig} language={subtitleLanguage} />
+        <XrAudioSubtitlePanel tracks={audioConfig} language={xrSessionActive ? null : subtitleLanguage} />
         <AutoExposureControl params={activeRendererParams} />
       </Canvas>
-      <ToneMappingMenu
-        value={effectiveToneMappingName}
-        onChange={setToneMappingName}
-      />
       <AudioPlayerControls
         labelPlaying={audioControlLabels?.labelPlaying}
         labelPaused={audioControlLabels?.labelPaused}
@@ -4294,7 +4296,7 @@ function R3FViewerInner({
         subtitleLanguage={subtitleLanguage}
         onSubtitleLanguageChange={(language) => setSubtitleLanguage(language)}
       />
-      <AudioSubtitles tracks={audioConfig} language={subtitleLanguage} />
+      <AudioSubtitles tracks={audioConfig} language={xrSessionActive ? null : subtitleLanguage} />
       <OnscreenJoystick visitor={sceneReadyForVisitor ? visitorInstance : null} />
       <SceneLoadingOverlay
         visible={!thumbnailModeActive && (!sceneLoadArmed || !sceneReadyForVisitor)}
@@ -4343,34 +4345,6 @@ export function R3FViewer(props: R3FViewerProps) {
 }
 
 export default R3FViewer;
-
-function ToneMappingMenu({
-  value,
-  onChange
-}: {
-  value: ToneMappingName;
-  onChange: (value: ToneMappingName) => void;
-}) {
-  return (
-    <div className="pointer-events-none absolute right-6 top-6 z-30 max-w-[calc(100vw-3rem)]">
-      <label className="pointer-events-auto flex items-center gap-2 rounded-full bg-black/75 px-3 py-2 text-xs font-medium text-white shadow-xl backdrop-blur">
-        <span className="whitespace-nowrap text-white/70">Tone</span>
-        <select
-          value={value}
-          onChange={(event) => onChange(normalizeToneMappingName(event.target.value))}
-          aria-label="Tone mapping"
-          className="h-8 rounded-full border border-white/15 bg-white/10 px-3 text-xs font-semibold text-white outline-none transition hover:bg-white/20 focus:border-white/50"
-        >
-          {TONE_MAPPING_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value} className="bg-slate-950 text-white">
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
-    </div>
-  );
-}
 
 function VisitorSpatialSensor({
   visitor,
@@ -4544,22 +4518,34 @@ function readGamepadAxes(gamepad?: Gamepad) {
   return best.magnitudeSq > 0 ? { x: best.x, y: best.y } : null;
 }
 
-function readXrJoystickInput(session: XRSession | null) {
+function readXrControllerInput(session: XRSession | null) {
   if (!session?.inputSources) {
-    return { x: 0, y: 0 };
+    return {
+      move: { x: 0, y: 0 },
+      turn: 0
+    };
   }
 
+  let move: { x: number; y: number } | null = null;
   let fallback: { x: number; y: number } | null = null;
+  let right: { x: number; y: number } | null = null;
+
   for (const inputSource of session.inputSources) {
     const axes = readGamepadAxes(inputSource.gamepad);
     if (!axes) continue;
     if (inputSource.handedness === 'left') {
-      return axes;
+      move = axes;
+    } else if (inputSource.handedness === 'right') {
+      right = axes;
+    } else {
+      fallback ??= axes;
     }
-    fallback ??= axes;
   }
 
-  return fallback ?? { x: 0, y: 0 };
+  return {
+    move: move ?? fallback ?? { x: 0, y: 0 },
+    turn: right?.x ?? 0
+  };
 }
 
 function isVisitorDirectionInput(source: unknown): source is VisitorDirectionInput {
@@ -4626,6 +4612,8 @@ function FirstPersonController({
   const lastPosition = useRef<Vector3 | null>(null);
   const lastAngle = useRef<number | null>(null);
   const lastActivityStamp = useRef(0);
+  const lastXrSnapTurnAt = useRef(0);
+  const xrTurnReady = useRef(true);
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -4720,8 +4708,24 @@ function FirstPersonController({
       controls.enabled = !interactionLocked && !gl.xr.isPresenting;
     }
     if (gl.xr.isPresenting && !interactionLocked) {
-      const input = readXrJoystickInput(gl.xr.getSession());
-      visitor.setJoystickInput(input.x, -input.y);
+      const input = readXrControllerInput(gl.xr.getSession());
+      visitor.setJoystickInput(input.move.x, -input.move.y);
+      const now = performance.now();
+      if (Math.abs(input.turn) < 0.35) {
+        xrTurnReady.current = true;
+      } else if (
+        xrTurnReady.current &&
+        Math.abs(input.turn) >= XR_SNAP_TURN_THRESHOLD &&
+        now - lastXrSnapTurnAt.current >= XR_SNAP_TURN_COOLDOWN_MS
+      ) {
+        const turnAmount = input.turn > 0 ? -XR_SNAP_TURN_RADIANS : XR_SNAP_TURN_RADIANS;
+        if (visitor.xrRig) {
+          visitor.xrRig.rotation.y += turnAmount;
+        }
+        visitor.rotation.y += turnAmount;
+        lastXrSnapTurnAt.current = now;
+        xrTurnReady.current = false;
+      }
     } else if (gl.xr.isPresenting) {
       visitor.setJoystickInput(0, 0);
     }
