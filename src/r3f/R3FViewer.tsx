@@ -3919,25 +3919,42 @@ function R3FViewerInner({
   useEffect(() => {
     if (!renderer) return;
     const xrManager = renderer.xr;
+    let activeIntroTimer: number | null = null;
     const handleSessionStart = () => {
+      if (activeIntroTimer !== null) {
+        window.clearTimeout(activeIntroTimer);
+        activeIntroTimer = null;
+      }
       setXrSessionActive(true);
       setXrError(null);
-      const timer = window.setTimeout(() => {
-        if (xrSessionRef.current && xrIntroAudioIds.length > 0) {
+      const session = xrSessionRef.current;
+      activeIntroTimer = window.setTimeout(() => {
+        if (xrSessionRef.current === session && xrIntroAudioIds.length > 0) {
           void playAudioByIds(xrIntroAudioIds);
         }
+        activeIntroTimer = null;
       }, XR_INTRO_DELAY_MS);
-      xrSessionRef.current?.addEventListener('end', () => window.clearTimeout(timer), { once: true });
+      session?.addEventListener('end', () => {
+        if (activeIntroTimer !== null) window.clearTimeout(activeIntroTimer);
+        activeIntroTimer = null;
+      }, { once: true });
     };
     const handleSessionEnd = () => {
       setXrSessionActive(false);
       xrSessionRef.current = null;
+      if (activeIntroTimer !== null) {
+        window.clearTimeout(activeIntroTimer);
+        activeIntroTimer = null;
+      }
     };
     xrManager.addEventListener('sessionstart', handleSessionStart);
     xrManager.addEventListener('sessionend', handleSessionEnd);
     return () => {
       xrManager.removeEventListener('sessionstart', handleSessionStart);
       xrManager.removeEventListener('sessionend', handleSessionEnd);
+      if (activeIntroTimer !== null) {
+        window.clearTimeout(activeIntroTimer);
+      }
     };
   }, [renderer, xrIntroAudioIds]);
 
@@ -4651,6 +4668,22 @@ function FirstPersonController({
 
   useEffect(() => {
     if (!visitor) return undefined;
+    const xrControllerObjects = [
+      gl.xr.getController(0),
+      gl.xr.getController(1),
+      gl.xr.getControllerGrip(0),
+      gl.xr.getControllerGrip(1)
+    ];
+    const parentXrControllersToRig = () => {
+      xrControllerObjects.forEach((controller) => {
+        xrRig.add(controller);
+      });
+    };
+    const parentXrControllersToScene = () => {
+      xrControllerObjects.forEach((controller) => {
+        scene.add(controller);
+      });
+    };
     const updateRigReference = () => {
       if (!xrRig.parent) {
         scene.add(xrRig);
@@ -4659,6 +4692,7 @@ function FirstPersonController({
       camera.position.set(0, 0, 0);
       camera.rotation.set(0, 0, 0);
       camera.scale.set(1, 1, 1);
+      parentXrControllersToRig();
       visitor.xrRig = xrRig;
       xrRig.position.copy(visitor.position);
     };
@@ -4669,6 +4703,7 @@ function FirstPersonController({
       updateRigReference();
     };
     const handleSessionEnd = () => {
+      parentXrControllersToScene();
       scene.attach(camera);
       if (xrRig.parent === scene) {
         scene.remove(xrRig);
@@ -4688,6 +4723,7 @@ function FirstPersonController({
     return () => {
       gl.xr.removeEventListener('sessionstart', handleSessionStart);
       gl.xr.removeEventListener('sessionend', handleSessionEnd);
+      parentXrControllersToScene();
       scene.attach(camera);
       if (xrRig.parent === scene) {
         scene.remove(xrRig);
@@ -4700,7 +4736,7 @@ function FirstPersonController({
         controls.enabled = true;
       }
     };
-  }, [camera, controls, gl, params?.heightOffset, scene, visitor, xrRig]);
+  }, [camera, controls, gl, scene, visitor, xrRig]);
 
   useFrame((_, delta) => {
     if (!visitor || !collider) return;
