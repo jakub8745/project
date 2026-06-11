@@ -66,6 +66,7 @@ const ipfsGateways = [
   'https://gateway.pinata.cloud/ipfs/',
   'https://dweb.link/ipfs/'
 ];
+const audioBufferCache = new Map<string, Promise<AudioBuffer>>();
 
 type ManagedAudio = PositionalAudio & {
   userData: PositionalAudio['userData'] & {
@@ -473,49 +474,52 @@ function loadAudioWithFallback(
   const primary = cfg?.url ?? '';
   const ipfsUrl = cfg?.ipfsUrl || (typeof primary === 'string' && primary.startsWith('ipfs://') ? primary : null);
 
-  const tryIpfs = (gwIndex = 0) => {
+  const loadAudioBuffer = (url: string): Promise<AudioBuffer> => {
+    const cached = audioBufferCache.get(url);
+    if (cached) return cached;
+    const pending = new Promise<AudioBuffer>((resolve, reject) => {
+      loader.load(url, (buffer) => resolve(buffer), undefined, reject);
+    });
+    audioBufferCache.set(url, pending);
+    pending.catch(() => {
+      audioBufferCache.delete(url);
+    });
+    return pending;
+  };
+
+  const tryIpfs = (gwIndex = 0): Promise<AudioBuffer> => {
     if (!ipfsUrl) {
       console.error(`[AudioMesh] Primary failed and no IPFS fallback for ${cfg?.id || cfg?.name}`);
-      return;
+      return Promise.reject(new Error('No IPFS fallback configured'));
     }
     if (gwIndex >= ipfsGateways.length) {
       console.error(`[AudioMesh] Failed to load audio from all gateways: ${ipfsUrl}`);
-      return;
+      return Promise.reject(new Error(`Failed to load audio from all gateways: ${ipfsUrl}`));
     }
     const cid = ipfsUrl.replace('ipfs://', '');
     const url = ipfsGateways[gwIndex] + cid;
-    loader.load(
-      url,
-      (buffer) => onSuccess(buffer),
-      undefined,
-      () => {
+    return loadAudioBuffer(url).catch(() => {
         console.warn(`[AudioMesh] IPFS gateway failed (${gwIndex + 1}/${ipfsGateways.length}), retrying...`);
-        tryIpfs(gwIndex + 1);
-      }
-    );
+        return tryIpfs(gwIndex + 1);
+      });
   };
 
-  const tryPrimary = () => {
+  const tryPrimary = (): Promise<AudioBuffer> => {
     if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
-      tryIpfs(0);
-      return;
+      return tryIpfs(0);
     }
     if (!primary) {
-      tryIpfs(0);
-      return;
+      return tryIpfs(0);
     }
-    loader.load(
-      primary,
-      (buffer) => onSuccess(buffer),
-      undefined,
-      () => {
+    return loadAudioBuffer(primary).catch(() => {
         console.warn(`[AudioMesh] Primary failed, falling back to IPFS: ${primary}`);
-        tryIpfs(0);
-      }
-    );
+        return tryIpfs(0);
+      });
   };
 
-  tryPrimary();
+  void tryPrimary()
+    .then((buffer) => onSuccess(buffer))
+    .catch(() => undefined);
 }
 
 function reverseAudioBuffer(buffer: AudioBuffer, context: BaseAudioContext): AudioBuffer {

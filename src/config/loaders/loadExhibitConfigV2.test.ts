@@ -143,6 +143,104 @@ describe('loadExhibitConfigV2', () => {
     });
   });
 
+  it('fills node metadata from referenced media when node metadata is omitted', async () => {
+    const config = await loadExhibitConfigV2({
+      schemaVersion: '2.0.0',
+      id: 'media-metadata-test',
+      kind: 'exhibit',
+      metadata: {
+        title: 'Media Metadata Test',
+        description: 'Fixture'
+      },
+      assets: {
+        scene_model: {
+          kind: 'model',
+          uri: '/models/test.glb',
+          mimeType: 'model/gltf-binary'
+        },
+        image_asset: {
+          kind: 'image',
+          uri: '/textures/test.jpg',
+          mimeType: 'image/jpeg'
+        }
+      },
+      scene: {
+        model: {
+          asset: 'scene_model'
+        }
+      },
+      nodes: {
+        ArtworkAnchor: {
+          kind: 'image_anchor',
+          media: 'artwork'
+        }
+      },
+      media: {
+        artwork: {
+          kind: 'image',
+          title: 'Artwork Title',
+          tooltipLabel: 'Open artwork',
+          description: 'Artwork description',
+          author: 'Archive',
+          image: {
+            asset: 'image_asset'
+          }
+        }
+      }
+    });
+
+    expect(config.objects?.ArtworkAnchor).toMatchObject({
+      category: 'image',
+      title: 'Artwork Title',
+      tooltipLabel: 'Open artwork',
+      description: 'Artwork description',
+      author: 'Archive'
+    });
+  });
+
+  it('uses exhibit metadata as default info sidebar content', async () => {
+    const config = await loadExhibitConfigV2({
+      schemaVersion: '2.0.0',
+      id: 'sidebar-fallback-test',
+      kind: 'exhibit',
+      metadata: {
+        title: 'Sidebar Fallback Test',
+        description: 'Exhibit description'
+      },
+      assets: {
+        scene_model: {
+          kind: 'model',
+          uri: '/models/test.glb',
+          mimeType: 'model/gltf-binary'
+        }
+      },
+      scene: {
+        model: {
+          asset: 'scene_model'
+        }
+      },
+      nodes: {},
+      sidebar: {
+        items: [
+          {
+            id: 'info-icon',
+            label: 'About'
+          }
+        ]
+      }
+    });
+
+    expect(config.sidebar).toMatchObject({
+      items: [
+        {
+          id: 'info-icon',
+          label: 'About',
+          content: 'Exhibit description'
+        }
+      ]
+    });
+  });
+
   it('keeps generated subtitle tracks when legacy viewer audio overrides a v2 audio module', async () => {
     const subtitleAsset = encodeURIComponent(JSON.stringify({
       tracks: [

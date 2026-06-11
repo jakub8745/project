@@ -94,6 +94,7 @@ function buildObjectRegistry(manifest: ExhibitConfigV2): Record<string, UnknownR
                 }
               }
             : {}),
+          ...nodeMediaMetadata(node, manifest),
           ...(node.metadata || {})
         } satisfies UnknownRecord
       ];
@@ -116,6 +117,27 @@ function mediaDescription(meta?: MediaDescriptor): string | undefined {
 
 function mediaAuthor(meta?: MediaDescriptor): string | undefined {
   return meta?.author;
+}
+
+function mediaMetadata(media?: MediaDescriptor): UnknownRecord {
+  if (!media) return {};
+  return {
+    ...(media.title ? { title: media.title } : {}),
+    ...(media.tooltipLabel ? { tooltipLabel: media.tooltipLabel } : {}),
+    ...(media.description ? { description: media.description } : {}),
+    ...(media.author ? { author: media.author } : {})
+  };
+}
+
+function nodeMediaMetadata(node: SceneNodeDefinition, manifest: ExhibitConfigV2): UnknownRecord {
+  const mediaId = typeof node.media === 'string' && node.media.trim() ? node.media.trim() : undefined;
+  return mediaMetadata(mediaById(manifest, mediaId));
+}
+
+function sidebarContentFromMedia(media?: MediaDescriptor): string | undefined {
+  if (!media) return undefined;
+  if (media.kind === 'text') return media.text;
+  return media.description;
 }
 
 function toImageRecord(media: MediaDescriptor, manifest: ExhibitConfigV2): UnknownRecord | null {
@@ -292,13 +314,19 @@ function mapSidebar(manifest: ExhibitConfigV2): UnknownRecord | undefined {
   if (!manifest.sidebar) return undefined;
   return {
     logo: manifest.sidebar.logoText ? { text: manifest.sidebar.logoText } : undefined,
-    items: manifest.sidebar.items?.map((item) => ({
-      id: item.id,
-      label: item.label,
-      content: item.content,
-      target: item.contentMedia,
-      icon: item.iconAsset ? resolveAssetRuntimeUri(item.iconAsset, manifest) : undefined
-    }))
+    items: manifest.sidebar.items?.map((item) => {
+      const contentMedia = mediaById(manifest, item.contentMedia);
+      return {
+        id: item.id,
+        label: item.label,
+        content:
+          item.content ??
+          sidebarContentFromMedia(contentMedia) ??
+          (item.id === 'info-icon' ? manifest.metadata.description : undefined),
+        target: item.contentMedia,
+        icon: item.iconAsset ? resolveAssetRuntimeUri(item.iconAsset, manifest) : undefined
+      };
+    })
   };
 }
 

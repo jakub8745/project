@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluepointart.uk/schemas/exhibit_manifest_v3.schema.json",
+  "title": "Future-Proof Exhibit Archive Manifest v3",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "manifestType",
+    "profile",
+    "id",
+    "metadata",
+    "nft",
+    "assets",
+    "content",
+    "sceneGraph",
+    "interactions",
+    "viewerBrief",
+    "preservation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^3\\."
+    },
+    "manifestType": {
+      "const": "future-proof-exhibit-archive"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "slug": {
+      "type": "string"
+    },
+    "sourceManifest": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["title", "description"],
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "archiveDescription": { "type": "string" },
+        "language": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "rights": {
+      "type": "object"
+    },
+    "nft": {
+      "type": "object",
+      "required": ["mintable", "canonicalManifestAsset", "canonicalSceneAsset", "canonicalPreviewAsset", "tokenMetadataTemplate"],
+      "properties": {
+        "mintable": { "type": "boolean" },
+        "canonicalManifestAsset": { "type": "string" },
+        "canonicalSceneAsset": { "type": "string" },
+        "canonicalPreviewAsset": { "type": "string" },
+        "tokenMetadataTemplate": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "assets": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "kind", "sourceUri", "ipfsUri", "mimeType", "preservation"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string" },
+          "role": { "type": "string" },
+          "sourceUri": { "type": "string" },
+          "ipfsUri": {
+            "anyOf": [
+              { "type": "string", "pattern": "^ipfs://" },
+              { "type": "null" }
+            ]
+          },
+          "arweaveUri": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "null" }
+            ]
+          },
+          "fallbackUris": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "mimeType": { "type": "string" },
+          "byteSize": { "type": ["integer", "null"] },
+          "sha256": {
+            "anyOf": [
+              { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+              { "type": "null" }
+            ]
+          },
+          "availableLocal": { "type": "boolean" },
+          "preservation": { "type": "object" },
+          "rights": { "type": "object" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "content": {
+      "type": "object"
+    },
+    "sceneGraph": {
+      "type": "object",
+      "required": ["sourceScene", "nodes"],
+      "properties": {
+        "coordinateSystem": { "type": "object" },
+        "sourceScene": { "type": "object" },
+        "nodes": { "type": "object" },
+        "modules": { "type": "object" },
+        "viewerProfiles": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "interactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "description": { "type": "string" },
+          "targets": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "behavior": { "type": "object" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "viewerBrief": {
+      "type": "object",
+      "required": ["purpose", "requiredCapabilities", "reconstructionPrompt"],
+      "properties": {
+        "purpose": { "type": "string" },
+        "requiredCapabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "reconstructionPrompt": { "type": "string" },
+        "visualTone": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "preservation": {
+      "type": "object",
+      "required": ["futureProofDefinition", "requiredBeforeMinting"],
+      "additionalProperties": true
+    },
+    "exports": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

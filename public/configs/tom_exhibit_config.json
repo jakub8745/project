@@ -70,9 +70,6 @@
       "kind": "image_anchor",
       "media": "Manifesto",
       "metadata": {
-        "title": "Manifesto, huge printed poster",
-        "description": "Videopoetry: A Manifesto, published on Sept. 6, 2011",
-        "author": "by Tom Konyves",
         "interactionDescription": "Click Manifesto to open the image metadata panel."
       }
     },
@@ -80,9 +77,6 @@
       "kind": "video_surface",
       "media": "Video",
       "metadata": {
-        "title": "video projection",
-        "description": "Selection of videopoems - video projection, approximately 90 minutes.",
-        "author": "",
         "interactionDescription": "The Video mesh is a video surface. Playback mode, loop, mute, fullscreen, and source selection are declared by the video module instance."
       }
     },
@@ -90,9 +84,6 @@
       "kind": "video_surface",
       "media": "Screen",
       "metadata": {
-        "title": "Screen",
-        "description": "~15 inch screen with info about currently seen videopoem.",
-        "author": "",
         "interactionDescription": "The Screen mesh is a video surface. Playback mode, loop, mute, fullscreen, and source selection are declared by the video module instance."
       }
     },

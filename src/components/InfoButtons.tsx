@@ -27,6 +27,9 @@ interface SidebarItemConfig {
   id: string;
   label: string;
   icon?: string;
+  iconAsset?: string;
+  target?: string;
+  contentMedia?: string;
   content?: string;
   link?: string;
   pdfPath?: string;
@@ -39,6 +42,20 @@ interface SidebarItemConfig {
 
 interface ExhibitConfigResponse {
   id?: string;
+  metadata?: {
+    description?: string;
+  };
+  assets?: Record<string, { uri?: string; fallbackUris?: string[]; mimeType?: string }>;
+  media?: Record<string, {
+    kind?: string;
+    description?: string;
+    text?: string;
+    document?: { asset?: string; uri?: string } | string;
+    openUri?: string;
+    openLabel?: string;
+    sources?: Array<{ asset?: string }>;
+    poster?: { asset?: string };
+  }>;
   sidebar?: {
     items?: SidebarItemConfig[];
   };
@@ -54,6 +71,47 @@ function normalizePublicAssetUrl(rawUrl: string | undefined): string | undefined
     return `/${trimmed.slice('public/'.length)}`;
   }
   return normalizeConfigUrl(trimmed);
+}
+
+function resolveConfigAsset(cfg: ExhibitConfigResponse, assetId: string | undefined): string | undefined {
+  if (!assetId) return undefined;
+  const asset = cfg.assets?.[assetId];
+  const rawUrl = asset?.uri || asset?.fallbackUris?.find((candidate) => candidate.trim());
+  if (!rawUrl) return undefined;
+  if (isIpfsUri(rawUrl) && cfg.id) return resolveOracleUrl(rawUrl, cfg.id);
+  return normalizePublicAssetUrl(rawUrl);
+}
+
+function resolveSidebarMediaContent(cfg: ExhibitConfigResponse, mediaId: string | undefined): string | undefined {
+  if (!mediaId) return undefined;
+  const media = cfg.media?.[mediaId];
+  if (!media) return undefined;
+  if (media.kind === 'text') return media.text;
+  return media.description;
+}
+
+function resolveSidebarDocumentPath(cfg: ExhibitConfigResponse, mediaId: string | undefined): string | undefined {
+  if (!mediaId) return undefined;
+  const media = cfg.media?.[mediaId];
+  if (!media || media.kind !== 'document') return undefined;
+  const document = media.document;
+  if (!document) return undefined;
+  if (typeof document === 'string') return normalizePublicAssetUrl(document);
+  return normalizePublicAssetUrl(document.uri) ?? resolveConfigAsset(cfg, document.asset);
+}
+
+function resolveSidebarVideoPath(cfg: ExhibitConfigResponse, mediaId: string | undefined): string | undefined {
+  if (!mediaId) return undefined;
+  const media = cfg.media?.[mediaId];
+  if (!media || media.kind !== 'video') return undefined;
+  return resolveConfigAsset(cfg, media.sources?.[0]?.asset);
+}
+
+function resolveSidebarPosterPath(cfg: ExhibitConfigResponse, mediaId: string | undefined): string | undefined {
+  if (!mediaId) return undefined;
+  const media = cfg.media?.[mediaId];
+  if (!media || media.kind !== 'video') return undefined;
+  return resolveConfigAsset(cfg, media.poster?.asset);
 }
 
 export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
@@ -106,22 +164,40 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         // because help content is shown in the startup modal.
         const merged: Array<InfoItem | SidebarItemConfig> = sidebarItems.filter((item) => item.id !== 'help-icon');
         const normalized: InfoItem[] = merged.map((item) => {
-          const baseIcon = 'icon' in item ? item.icon ?? '' : '';
+          const mediaId =
+            'contentMedia' in item && typeof item.contentMedia === 'string'
+              ? item.contentMedia
+              : 'target' in item && typeof item.target === 'string'
+                ? item.target
+                : undefined;
+          const iconFromAsset =
+            'iconAsset' in item && typeof item.iconAsset === 'string'
+              ? resolveConfigAsset(cfg, item.iconAsset)
+              : undefined;
+          const baseIcon = 'icon' in item ? item.icon ?? iconFromAsset ?? '' : iconFromAsset ?? '';
           const link = 'link' in item ? item.link : undefined;
-          const content = 'content' in item ? item.content : undefined;
-          const pdfPath = 'pdfPath' in item && typeof item.pdfPath === 'string' ? item.pdfPath : undefined;
+          const content =
+            'content' in item && typeof item.content === 'string'
+              ? item.content
+              : resolveSidebarMediaContent(cfg, mediaId) ??
+                (item.id === 'info-icon' ? cfg.metadata?.description : undefined);
+          const pdfPath = 'pdfPath' in item && typeof item.pdfPath === 'string'
+            ? item.pdfPath
+            : resolveSidebarDocumentPath(cfg, mediaId);
           const videoPath = 'videoPath' in item && typeof item.videoPath === 'string'
             ? normalizePublicAssetUrl(item.videoPath)
-            : undefined;
+            : resolveSidebarVideoPath(cfg, mediaId);
           const videoType = 'videoType' in item && typeof item.videoType === 'string' ? item.videoType : undefined;
           const videoPoster = 'videoPoster' in item && typeof item.videoPoster === 'string'
             ? normalizePublicAssetUrl(item.videoPoster)
-            : undefined;
+            : resolveSidebarPosterPath(cfg, mediaId);
           const pdfOpenLabel =
             'pdfOpenLabel' in item && typeof item.pdfOpenLabel === 'string'
               ? item.pdfOpenLabel
               : 'openLabel' in item && typeof item.openLabel === 'string'
                 ? item.openLabel
+                : mediaId && cfg.media?.[mediaId]?.openLabel
+                  ? cfg.media[mediaId].openLabel
                 : undefined;
           // Prefer common icons for well-known ids
           let overrideIcon: string | undefined;

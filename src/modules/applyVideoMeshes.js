@@ -199,6 +199,16 @@ function getImageIconTexture(url) {
   });
 }
 
+function ensureVideoTexture(cfg, video, posterTexture) {
+  const existing = getVideoResource(cfg.id);
+  if (existing.texture) return existing.texture;
+  const texture = new VideoTexture(video);
+  texture.colorSpace = SRGBColorSpace;
+  texture.flipY = false;
+  setVideoResource(cfg.id, { video, texture, posterTexture });
+  return texture;
+}
+
 function getGlyphIconTexture(kind) {
   return getCachedTexture(`glyph:${kind}`, () => {
     const canvas = document.createElement('canvas');
@@ -1388,13 +1398,12 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
       setVideoResource(cfg.id, { posterTexture });
     }
 
-    // Prepare a video texture up front so we can swap immediately on play
+    const deferVideoTexture = shouldDeferVideoLoad(cfg);
     let videoTexture = cachedTexture;
-    if (!videoTexture) {
-      videoTexture = new VideoTexture(video);
-      videoTexture.colorSpace = SRGBColorSpace;
-      videoTexture.flipY = false;
-      setVideoResource(cfg.id, { video, texture: videoTexture, posterTexture });
+    if (!videoTexture && !deferVideoTexture) {
+      videoTexture = ensureVideoTexture(cfg, video, posterTexture);
+    } else {
+      setVideoResource(cfg.id, { video, posterTexture });
     }
 
     const meshDisposers = getMeshDisposers(obj);
@@ -1468,10 +1477,12 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
       let hasPlayed = false;
 
       const swapToVideo = () => {
-        if (videoTexture) {
-          baseMaterial.map = videoTexture;
+        const activeVideoTexture = videoTexture ?? ensureVideoTexture(cfg, video, posterTexture);
+        videoTexture = activeVideoTexture;
+        if (activeVideoTexture) {
+          baseMaterial.map = activeVideoTexture;
           if (cfg.videoSurface?.projection === true) {
-            baseMaterial.emissiveMap = videoTexture;
+            baseMaterial.emissiveMap = activeVideoTexture;
           }
           baseMaterial.needsUpdate = true;
         }

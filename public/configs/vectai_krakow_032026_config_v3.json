@@ -1,0 +1,2015 @@
+{
+  "schemaVersion": "3.0.0-draft",
+  "manifestType": "future-proof-exhibit-archive",
+  "profile": "portable-exhibit-nft",
+  "id": "vectai_krakow_032026",
+  "slug": "vectai-krakow-032026-cracks-of-meaning",
+  "sourceManifest": {
+    "schemaVersion": "2.0.0",
+    "path": "public/configs/vectai_krakow_032026_config_v2.json",
+    "migration": "v2-to-v3-draft-manual-2026-06-11"
+  },
+  "metadata": {
+    "title": "Cracks of Meaning: Videopoetry in the age of AI",
+    "description": "Critical work with AI in art education",
+    "language": "en",
+    "ogImage": {
+      "asset": "og_image"
+    },
+    "archiveDescription": "A portable archival 3D exhibit manifest for Cracks of Meaning, designed to preserve the scene, media, interactions, provenance, and reconstruction intent beyond the lifetime of any single viewer implementation.",
+    "dates": {
+      "originalPresentation": "2026-03-12/2026-03-15",
+      "configDrafted": "2026-06-11"
+    },
+    "location": {
+      "venue": "The Design Pharmacy / Apteka Designu",
+      "city": "Krakow",
+      "country": "Poland"
+    },
+    "subjects": [
+      "AI art education",
+      "videopoetry",
+      "critical AI literacy",
+      "virtual archive",
+      "3D exhibition documentation"
+    ]
+  },
+  "provenance": {
+    "project": "VECT-AI collective within the CAPHE project",
+    "creators": [
+      "Wojciech Brzozowski",
+      "Justyna Gorzkowicz",
+      "Kamila Koziolek",
+      "Aleksandra Lukaszewicz",
+      "Jaroslaw Solecki",
+      "Mikolaj Straus",
+      "Joanna Szczepanik",
+      "Lilly Venyan",
+      "Beata Winiarska"
+    ],
+    "sourceDescription": "Virtual exhibition space created from a 3D scan of the original venue and linked media documentation of the workshop and final videopoem.",
+    "externalReferences": [
+      {
+        "label": "Zenodo: Cracks of Meaning",
+        "uri": "https://zenodo.org/records/19220100"
+      },
+      {
+        "label": "Blue Point Art homepage",
+        "uri": "https://bluepointart.uk/cracks-of-meaning-in-the-bpaa/"
+      }
+    ]
+  },
+  "rights": {
+    "defaultLicense": "TBD",
+    "defaultCredit": "TBD",
+    "notes": "Fill asset-level rights before minting. NFT metadata should not imply transfer of copyright unless explicitly stated."
+  },
+  "nft": {
+    "mintable": true,
+    "metadataStandardTargets": [
+      "ERC-721 metadata JSON",
+      "ERC-1155 metadata JSON"
+    ],
+    "canonicalManifestAsset": "manifest_v3_json",
+    "canonicalSceneAsset": "scene_model",
+    "canonicalPreviewAsset": "og_image",
+    "animationUrlAsset": "scene_model",
+    "imageAsset": "og_image",
+    "tokenMetadataTemplate": {
+      "name": "Cracks of Meaning: Videopoetry in the age of AI",
+      "description": "Critical work with AI in art education",
+      "image": "ipfs://CID_FOR_og_image",
+      "animation_url": "ipfs://CID_FOR_scene_model",
+      "external_url": "https://bluepointart.uk/cracks-of-meaning-in-the-bpaa/",
+      "attributes": [
+        {
+          "trait_type": "Archive Type",
+          "value": "Portable 3D exhibit"
+        },
+        {
+          "trait_type": "Scene Source",
+          "value": "3D scan and archival media"
+        },
+        {
+          "trait_type": "Location",
+          "value": "Krakow"
+        },
+        {
+          "trait_type": "Year",
+          "value": "2026"
+        }
+      ],
+      "properties": {
+        "manifest": "ipfs://CID_FOR_vectai_krakow_032026_config_v3_json",
+        "files": [
+          {
+            "id": "scene_model",
+            "uri": "ipfs://CID_FOR_scene_model",
+            "type": "model/gltf-binary"
+          },
+          {
+            "id": "og_image",
+            "uri": "ipfs://CID_FOR_og_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "manual_thumb",
+            "uri": "ipfs://CID_FOR_manual_thumb",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "manual_pl_pdf",
+            "uri": "ipfs://CID_FOR_manual_pl_pdf",
+            "type": "application/pdf"
+          },
+          {
+            "id": "manual_en_pdf",
+            "uri": "ipfs://CID_FOR_manual_en_pdf",
+            "type": "application/pdf"
+          },
+          {
+            "id": "poster_obowiazki",
+            "uri": "ipfs://CID_FOR_poster_obowiazki",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "scanning01_image",
+            "uri": "ipfs://CID_FOR_scanning01_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "second_day_image",
+            "uri": "ipfs://CID_FOR_second_day_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "zajac_image",
+            "uri": "ipfs://CID_FOR_zajac_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "parasol_image",
+            "uri": "ipfs://CID_FOR_parasol_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "snake_image",
+            "uri": "ipfs://CID_FOR_snake_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "baletnica_image",
+            "uri": "ipfs://CID_FOR_baletnica_image",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "text_layer_01",
+            "uri": "ipfs://CID_FOR_text_layer_01",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "text_layer_02",
+            "uri": "ipfs://CID_FOR_text_layer_02",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "text_layer_03",
+            "uri": "ipfs://CID_FOR_text_layer_03",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "left_screen_poster",
+            "uri": "ipfs://CID_FOR_left_screen_poster",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "middle_screen_poster",
+            "uri": "ipfs://CID_FOR_middle_screen_poster",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "right_screen_poster",
+            "uri": "ipfs://CID_FOR_right_screen_poster",
+            "type": "image/jpeg"
+          },
+          {
+            "id": "left_screen_video",
+            "uri": "ipfs://CID_FOR_left_screen_video",
+            "type": "video/mp4"
+          },
+          {
+            "id": "middle_screen_video",
+            "uri": "ipfs://CID_FOR_middle_screen_video",
+            "type": "video/mp4"
+          },
+          {
+            "id": "right_screen_video",
+            "uri": "ipfs://CID_FOR_right_screen_video",
+            "type": "video/mp4"
+          },
+          {
+            "id": "audio_left_mp3",
+            "uri": "ipfs://CID_FOR_audio_left_mp3",
+            "type": "audio/mpeg"
+          },
+          {
+            "id": "audio_right_mp3",
+            "uri": "ipfs://CID_FOR_audio_right_mp3",
+            "type": "audio/mpeg"
+          },
+          {
+            "id": "audio_intro_mp3",
+            "uri": "ipfs://CID_FOR_audio_intro_mp3",
+            "type": "audio/mpeg"
+          },
+          {
+            "id": "audio_intro_subtitles",
+            "uri": "ipfs://CID_FOR_audio_intro_subtitles",
+            "type": "application/json"
+          },
+          {
+            "id": "manifest_v3_json",
+            "uri": "ipfs://CID_FOR_manifest_v3_json",
+            "type": "application/json"
+          }
+        ]
+      }
+    }
+  },
+  "assets": {
+    "scene_model": {
+      "id": "scene_model",
+      "kind": "model",
+      "role": "canonical_scene",
+      "sourceUri": "/models/vectai_room.glb",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "model/gltf-binary",
+      "byteSize": 15057924,
+      "sha256": "8446cba22eb06ea22aa2a09e156d331ce7027fe79a8ab3a8c122c031c04ef657",
+      "localPath": "public/models/vectai_room.glb",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "og_image": {
+      "id": "og_image",
+      "kind": "image",
+      "role": "canonical_preview",
+      "sourceUri": "/textures/vectai/og_image_vectai.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "width": 1200,
+      "height": 630,
+      "byteSize": 120799,
+      "sha256": "005e79048f910ce7c574013af7256b683aa0c662c26f743fac04a2e3dd002bd9",
+      "localPath": "public/textures/vectai/og_image_vectai.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "manual_thumb": {
+      "id": "manual_thumb",
+      "kind": "image",
+      "sourceUri": "/textures/thubm_PeknieciaSensu.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 67627,
+      "sha256": "198cc7edfc5abd9ba59c9062221cbcc3788f615cc9c88551e0daafb10bba1a51",
+      "localPath": "public/textures/thubm_PeknieciaSensu.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "manual_pl_pdf": {
+      "id": "manual_pl_pdf",
+      "kind": "document",
+      "sourceUri": "/pdfs/pekniecia_sensu.pdf",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "application/pdf",
+      "byteSize": 7147232,
+      "sha256": "1d2bbf3316dc07ef106d3d17fea215b38c708b7de6a70a9f4fd36c8ce998003f",
+      "localPath": "public/pdfs/pekniecia_sensu.pdf",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "manual_en_pdf": {
+      "id": "manual_en_pdf",
+      "kind": "document",
+      "sourceUri": "/pdfs/CRACKS OF MEANING_ENG.pdf",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "application/pdf",
+      "byteSize": 267930,
+      "sha256": "edf634d638711b5969685dc74da6578726974ede9fbd599856d1cdb40d7bf3da",
+      "localPath": "public/pdfs/CRACKS OF MEANING_ENG.pdf",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "poster_obowiazki": {
+      "id": "poster_obowiazki",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/cracks_title.png",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 404815,
+      "sha256": "c0f8cf88dc492cf952280633845e49fed2101336bec97363a03a74ffca723644",
+      "localPath": "public/textures/vectai/cracks_title.png",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "scanning01_image": {
+      "id": "scanning01_image",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/skanowanie01.jpeg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 273447,
+      "sha256": "c8e428d3057cbc3fe1bbbe69b343fb6d0643215da3f2ca18420278c4f7d9f48d",
+      "localPath": "public/textures/vectai/skanowanie01.jpeg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "second_day_image": {
+      "id": "second_day_image",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/2dzien.jpeg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 171591,
+      "sha256": "474e3e3db174a1b4e6d9124bb21d096dabf444d5b8f4c65febb3f5d7c9f2fcbf",
+      "localPath": "public/textures/vectai/2dzien.jpeg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "zajac_image": {
+      "id": "zajac_image",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/zajac_g4.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 58630,
+      "sha256": "20882d7b663f71dbbc75d310b9d19205fcb4b62dcda1554f51f0c56c6c005aaf",
+      "localPath": "public/textures/vectai/zajac_g4.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "parasol_image": {
+      "id": "parasol_image",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/parasol.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 67447,
+      "sha256": "291eb20eeb0c9ff2d05579ccd796387ed4690b6960f5750bffd614b3cac4aed1",
+      "localPath": "public/textures/vectai/parasol.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "snake_image": {
+      "id": "snake_image",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/waz.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 39584,
+      "sha256": "3c49783457a874e8d279dec6fe3ae6b380f410d32d659e16a1bcbdb2c91f0d0a",
+      "localPath": "public/textures/vectai/waz.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "baletnica_image": {
+      "id": "baletnica_image",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/baletnica.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 40473,
+      "sha256": "1015e128caee054e4e632ccac609a4f0d395120878d34cfcad4ef0d7f6456cb8",
+      "localPath": "public/textures/vectai/baletnica.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "text_layer_01": {
+      "id": "text_layer_01",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/kartka01.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 218488,
+      "sha256": "a3d346a0342d0018a302f58982009ae22f18215be863357bccae36c50e450924",
+      "localPath": "public/textures/vectai/kartka01.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "text_layer_02": {
+      "id": "text_layer_02",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/kartka02.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 211942,
+      "sha256": "0da796118b85ff59a284ef6d942107f227f3bdde75f02c2a3180c7f51ed46462",
+      "localPath": "public/textures/vectai/kartka02.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "text_layer_03": {
+      "id": "text_layer_03",
+      "kind": "image",
+      "sourceUri": "/textures/vectai/kartka03.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "byteSize": 286459,
+      "sha256": "b90b06c869091dad68b408129e52b9ffec4501e90c998d5e20297bb009fb3ac2",
+      "localPath": "public/textures/vectai/kartka03.jpg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "left_screen_poster": {
+      "id": "left_screen_poster",
+      "kind": "image",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "middle_screen_poster": {
+      "id": "middle_screen_poster",
+      "kind": "image",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "right_screen_poster": {
+      "id": "right_screen_poster",
+      "kind": "image",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "image/jpeg",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "left_screen_video": {
+      "id": "left_screen_video",
+      "kind": "video",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "video/mp4",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "middle_screen_video": {
+      "id": "middle_screen_video",
+      "kind": "video",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "video/mp4",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "right_screen_video": {
+      "id": "right_screen_video",
+      "kind": "video",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "video/mp4",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "audio_left_mp3": {
+      "id": "audio_left_mp3",
+      "kind": "audio",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/left_audio.mp3",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "audio/mpeg",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "audio_right_mp3": {
+      "id": "audio_right_mp3",
+      "kind": "audio",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "audio/mpeg",
+      "availableLocal": false,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "audio_intro_mp3": {
+      "id": "audio_intro_mp3",
+      "kind": "audio",
+      "sourceUri": "/audio/introduction_Cracks of Meaning.mp3",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "audio/mpeg",
+      "byteSize": 929375,
+      "sha256": "94c1945577f42ca72c694b630941f288e629da9105afde9de8a2828669a6f2f7",
+      "localPath": "public/audio/introduction_Cracks of Meaning.mp3",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "audio_intro_subtitles": {
+      "id": "audio_intro_subtitles",
+      "kind": "subtitle",
+      "sourceUri": "/audio/vectai_intro_subtitles.json",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "application/json",
+      "byteSize": 6584,
+      "sha256": "b6e2d09c1f58e9c4f211c5fa3db33ecd1df536ed50087b2e2d3c4844763e82ec",
+      "localPath": "public/audio/vectai_intro_subtitles.json",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    },
+    "manifest_v3_json": {
+      "id": "manifest_v3_json",
+      "kind": "manifest",
+      "role": "canonical_manifest",
+      "sourceUri": "/configs/vectai_krakow_032026_config_v3.json",
+      "ipfsUri": null,
+      "arweaveUri": null,
+      "fallbackUris": [],
+      "mimeType": "application/json",
+      "localPath": "public/configs/vectai_krakow_032026_config_v3.json",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "needs_ipfs_uri_after_final_manifest_is_frozen"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      }
+    }
+  },
+  "content": {
+    "media": {
+      "pdf_manual_pl": {
+        "kind": "document",
+        "title": " ",
+        "tooltipLabel": "PDF/Zenodo: workshop manual (PL)",
+        "description": " ",
+        "previewImage": {
+          "asset": "manual_thumb"
+        },
+        "document": {
+          "asset": "manual_pl_pdf"
+        },
+        "openUri": "https://zenodo.org/records/19220100",
+        "openLabel": "*Cracks of Meaning* — full methodological publication"
+      },
+      "pdf_manual_en": {
+        "kind": "document",
+        "title": " ",
+        "tooltipLabel": "PDF: manual summary (ENG)",
+        "description": " ",
+        "previewImage": {
+          "asset": "manual_thumb"
+        },
+        "document": {
+          "asset": "manual_en_pdf"
+        },
+        "openLabel": "PDF: *Cracks of Meaning* — summary (ENG)"
+      },
+      "image_tablica": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "About the project",
+        "description": " ",
+        "image": {
+          "asset": "poster_obowiazki"
+        }
+      },
+      "image_scanning01": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Workshop Day 1: object scanning",
+        "description": " ",
+        "image": {
+          "asset": "scanning01_image"
+        }
+      },
+      "image_2nd_day": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Workshop Day 2: performative sound-layer selection",
+        "description": " ",
+        "image": {
+          "asset": "second_day_image"
+        }
+      },
+      "image_screenshot_zajac": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Workshop Day 1: Phase II screenshot 1/4",
+        "description": "Selected for AI analysis",
+        "image": {
+          "asset": "zajac_image"
+        }
+      },
+      "image_screenshot_parasol": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Workshop Day 1: Phase II screenshot 2/4",
+        "description": "Selected for AI analysis",
+        "image": {
+          "asset": "parasol_image"
+        }
+      },
+      "image_screenshot_snake": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Workshop Day 1: Phase II screenshot 3/4",
+        "description": "Selected for AI analysis",
+        "image": {
+          "asset": "snake_image"
+        }
+      },
+      "image_screenshot_baletnica": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Workshop Day 1: Phase II screenshot 4/4",
+        "description": "Selected for AI analysis",
+        "image": {
+          "asset": "baletnica_image"
+        }
+      },
+      "image_text_layer01": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Videopoem text layer: triptych timing plan 1/3",
+        "description": "Workshop Day 2: phrases selected by participants from a ChatGPT-assisted Text Bank and arranged across three screens to create textual continuity.",
+        "image": {
+          "asset": "text_layer_01"
+        }
+      },
+      "image_text_layer02": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Videopoem text layer: triptych timing plan 2/3",
+        "description": "Workshop Day 2: phrases selected by participants from a ChatGPT-assisted Text Bank and arranged across three screens to create textual continuity.",
+        "image": {
+          "asset": "text_layer_02"
+        }
+      },
+      "image_text_layer03": {
+        "kind": "image",
+        "title": " ",
+        "tooltipLabel": "Videopoem text layer: triptych timing plan 3/3",
+        "description": "Workshop Day 2: phrases selected by participants from a ChatGPT-assisted Text Bank and arranged across three screens to create textual continuity.",
+        "image": {
+          "asset": "text_layer_03"
+        }
+      },
+      "left_screen": {
+        "kind": "video",
+        "title": "",
+        "description": "",
+        "author": "",
+        "poster": {
+          "asset": "left_screen_poster"
+        },
+        "sources": [
+          {
+            "asset": "left_screen_video"
+          }
+        ]
+      },
+      "middle_screen": {
+        "kind": "video",
+        "title": "",
+        "description": "",
+        "author": "",
+        "poster": {
+          "asset": "middle_screen_poster"
+        },
+        "sources": [
+          {
+            "asset": "middle_screen_video"
+          }
+        ]
+      },
+      "right_screen": {
+        "kind": "video",
+        "title": "",
+        "description": "",
+        "author": "",
+        "poster": {
+          "asset": "right_screen_poster"
+        },
+        "sources": [
+          {
+            "asset": "right_screen_video"
+          }
+        ]
+      },
+      "audio_left": {
+        "kind": "audio",
+        "title": "audio_left",
+        "sources": [
+          {
+            "asset": "audio_left_mp3"
+          }
+        ]
+      },
+      "audio_right": {
+        "kind": "audio",
+        "title": "audio_right",
+        "sources": [
+          {
+            "asset": "audio_right_mp3"
+          }
+        ]
+      },
+      "audio_intro": {
+        "kind": "audio",
+        "title": "audio_intro",
+        "sources": [
+          {
+            "asset": "audio_intro_mp3"
+          }
+        ],
+        "subtitles": [
+          "audio_intro_subtitles"
+        ]
+      }
+    },
+    "sidebar": {
+      "logoText": "VECT-AI workshops and exhibit documentation ",
+      "items": [
+        {
+          "id": "info-icon",
+          "label": "About Project",
+          "content": "<p><em>Cracks of Meaning</em> is a 3D documentation of a pilot workshop on critical thinking about AI through videopoetry in art education. The workshop was carried out by the VECT-AI collective within the CAPHE project, and its original presentation took place at The Design Pharmacy (Apteka Designu) in Kraków, 12–15 March 2026.</p><p>The public outcome of the process was the immersive videopoem <em>Obowiązki własnej ręki wciągniętej ( ) do środka (Duties of One’s Own Hand Drawn ( ) Inward)</em> — a nonlinear composition of text, image and sound, developed through work with error, deformation and ambiguity.</p><p>This virtual archive consists of two rooms. The first room documents the workshop process and presents the accompanying workshop manual. The second room is dedicated to multimedia documentation of the final outcome of the two-day workshop: <em>Obowiązki własnej ręki wciągniętej ( ) do środka</em>. The work was created collaboratively by workshop participants, leaders and the curatorial team: Wojciech Brzozowski, Justyna Gorzkowicz, Kamila Koziołek, Aleksandra Łukaszewicz, Jarosław Solecki, Mikołaj Straus, Joanna Szczepanik, Lilly Venyan and Beata Winiarska.</p><p>The virtual exhibition space was created from a 3D scan of the original venue. A detailed discussion of the workshop method, structure and project assumptions is available in the accompanying documentation.</p>"
+        },
+        {
+          "id": "vectai-zenodo",
+          "label": "Zenodo: Cracks of Meaning",
+          "link": "https://zenodo.org/records/19220100"
+        },
+        {
+          "id": "bpa-home",
+          "label": "Blue Point Art homepage",
+          "link": "https://bluepointart.uk/cracks-of-meaning-in-the-bpaa/"
+        }
+      ]
+    }
+  },
+  "sceneGraph": {
+    "coordinateSystem": {
+      "upAxis": "Y",
+      "units": "meters",
+      "handedness": "right-handed-or-source-default"
+    },
+    "sourceScene": {
+      "model": {
+        "asset": "scene_model"
+      },
+      "background": {
+        "color": "#000000"
+      },
+      "spawn": {
+        "node": "Visitor_enter",
+        "direction": "west"
+      },
+      "camera": {
+        "mode": "first_person"
+      }
+    },
+    "nodes": {
+      "audio_left": {
+        "kind": "audio_anchor",
+        "ref": "audio_left"
+      },
+      "audio_right": {
+        "kind": "audio_anchor",
+        "ref": "audio_right"
+      },
+      "audio_intro": {
+        "kind": "audio_anchor",
+        "ref": "audio_intro"
+      },
+      "Visitor_enter": {
+        "kind": "spawn_anchor",
+        "spawnDirection": "west"
+      },
+      "floor_ucieta": {
+        "kind": "floor",
+        "ref": "videopoemat_floor_ucieta"
+      },
+      "dokumentacja_floor": {
+        "kind": "floor",
+        "ref": "dokumentacja_floor"
+      },
+      "walls_main": {
+        "kind": "wall",
+        "ref": "videopoemat_walls",
+        "metadata": {
+          "tooltipLabel": "Final immersive three-screen videopoem\nMultimedia documentation of the final workshop outcome — *Obowiązki własnej ręki wciągniętej ( ) do środka / Duties of One’s Own Hand Drawn ( ) Inward.*"
+        }
+      },
+      "walls_frames": {
+        "kind": "wall",
+        "ref": "dokumentacja_walls"
+      },
+      "sufit_swiatla_uciete": {
+        "kind": "wall",
+        "ref": "videopoemat_sufit_swiatla_uciente"
+      },
+      "left_screen": {
+        "kind": "video_surface",
+        "ref": "left_screen"
+      },
+      "middle_screen": {
+        "kind": "video_surface",
+        "ref": "middle_screen"
+      },
+      "right_screen": {
+        "kind": "video_surface",
+        "ref": "right_screen"
+      },
+      "pdf_manual_pl": {
+        "kind": "document_anchor",
+        "ref": "pdf_manual_pl",
+        "media": "pdf_manual_pl"
+      },
+      "pdf_manual_en": {
+        "kind": "document_anchor",
+        "ref": "pdf_manual_en",
+        "media": "pdf_manual_en"
+      },
+      "image_tablica": {
+        "kind": "image_anchor",
+        "ref": "frame_title",
+        "media": "image_tablica"
+      },
+      "image_text_layer01": {
+        "kind": "image_anchor",
+        "ref": "image_text_layer01",
+        "media": "image_text_layer01"
+      },
+      "image_text_layer02": {
+        "kind": "image_anchor",
+        "ref": "image_text_layer02",
+        "media": "image_text_layer02"
+      },
+      "image_text_layer03": {
+        "kind": "image_anchor",
+        "ref": "image_text_layer03",
+        "media": "image_text_layer03"
+      },
+      "image_screenshot_parasol": {
+        "kind": "image_anchor",
+        "ref": "image_screenshot_parasol",
+        "media": "image_screenshot_parasol"
+      },
+      "image_screenshot_snake": {
+        "kind": "image_anchor",
+        "ref": "image_screenshot_snake",
+        "media": "image_screenshot_snake"
+      },
+      "image_screenshot_zajac": {
+        "kind": "image_anchor",
+        "ref": "image_screenshot_zajac",
+        "media": "image_screenshot_zajac"
+      },
+      "image_screenshot_baletnica": {
+        "kind": "image_anchor",
+        "ref": "image_screenshot_baletnica",
+        "media": "image_screenshot_baletnica"
+      },
+      "image_scanning01": {
+        "kind": "image_anchor",
+        "ref": "frame_scanning01",
+        "media": "image_scanning01"
+      },
+      "image_2nd_day": {
+        "kind": "image_anchor",
+        "ref": "frame_2nd_day",
+        "media": "image_2nd_day"
+      },
+      "scan_baletnica": {
+        "kind": "sculpture",
+        "ref": "scan_baletnica",
+        "holdRotate": true,
+        "metadata": {
+          "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
+        }
+      },
+      "scan_parasol": {
+        "kind": "sculpture",
+        "ref": "scan_parasol",
+        "holdRotate": true,
+        "metadata": {
+          "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
+        }
+      },
+      "scan_snake": {
+        "kind": "sculpture",
+        "ref": "scan_snake",
+        "holdRotate": true,
+        "metadata": {
+          "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
+        }
+      },
+      "scan_zajac": {
+        "kind": "sculpture",
+        "ref": "scan_zajac",
+        "holdRotate": true,
+        "metadata": {
+          "description": "One of several objects scanned during the workshop with KIRI. Hover over the sculpture, then drag the ring to explore it. In VR, aim at the sculpture and hold the trigger to rotate it."
+        }
+      }
+    },
+    "modules": {
+      "video": {
+        "instances": [
+          {
+            "id": "left_screen_runtime",
+            "targetNode": "left_screen",
+            "media": "left_screen",
+            "playbackMode": "synced_silent",
+            "autoplayOnEnter": true,
+            "syncGroup": "vectai_krakow_032026_main",
+            "controls": false,
+            "interactive": false,
+            "allowFullscreen": false,
+            "disableAudio": true,
+            "loop": true,
+            "muted": true,
+            "showLoader": false,
+            "surface": {
+              "projection": true,
+              "roughness": 0.9,
+              "metalness": 0.02,
+              "envMapIntensity": 0.2,
+              "emissiveIntensity": 0.53,
+              "emissiveColor": "#fff6ea"
+            }
+          },
+          {
+            "id": "middle_screen_runtime",
+            "targetNode": "middle_screen",
+            "media": "middle_screen",
+            "playbackMode": "synced_silent",
+            "autoplayOnEnter": true,
+            "syncGroup": "vectai_krakow_032026_main",
+            "controls": false,
+            "interactive": false,
+            "allowFullscreen": false,
+            "disableAudio": true,
+            "loop": true,
+            "muted": true,
+            "showLoader": false,
+            "surface": {
+              "projection": true,
+              "roughness": 0.9,
+              "metalness": 0.02,
+              "envMapIntensity": 0.2,
+              "emissiveIntensity": 0.53,
+              "emissiveColor": "#fff6ea"
+            }
+          },
+          {
+            "id": "right_screen_runtime",
+            "targetNode": "right_screen",
+            "media": "right_screen",
+            "playbackMode": "synced_silent",
+            "autoplayOnEnter": true,
+            "syncGroup": "vectai_krakow_032026_main",
+            "controls": false,
+            "interactive": false,
+            "allowFullscreen": false,
+            "disableAudio": true,
+            "loop": true,
+            "muted": true,
+            "showLoader": false,
+            "surface": {
+              "projection": true,
+              "roughness": 0.9,
+              "metalness": 0.02,
+              "envMapIntensity": 0.2,
+              "emissiveIntensity": 0.53,
+              "emissiveColor": "#fff6ea"
+            }
+          }
+        ],
+        "syncGroups": [
+          {
+            "id": "vectai_krakow_032026_main",
+            "startPolicy": "all_ready"
+          }
+        ]
+      },
+      "audio": {
+        "instances": [
+          {
+            "id": "audio_left_runtime",
+            "targetNode": "audio_left",
+            "media": "audio_left",
+            "autoplayOnEnter": false,
+            "loop": true,
+            "refDistance": 2,
+            "rolloff": 0.8,
+            "maxDistance": 50,
+            "distanceModel": "linear",
+            "directionalCone": [
+              45,
+              90,
+              0.3
+            ],
+            "coneTarget": [
+              0,
+              2,
+              0
+            ],
+            "volume": 1
+          },
+          {
+            "id": "audio_right_runtime",
+            "targetNode": "audio_right",
+            "media": "audio_right",
+            "autoplayOnEnter": false,
+            "loop": true,
+            "refDistance": 1,
+            "rolloff": 0.8,
+            "maxDistance": 10,
+            "distanceModel": "linear",
+            "directionalCone": [
+              45,
+              90,
+              0.3
+            ],
+            "coneTarget": [
+              0,
+              2,
+              0
+            ],
+            "reverse": false,
+            "volume": 5
+          },
+          {
+            "id": "audio_intro_runtime",
+            "targetNode": "audio_intro",
+            "media": "audio_intro",
+            "autoplayOnEnter": false,
+            "autoplayDelayMs": 6000,
+            "labelPlaying": "Intro is playing",
+            "labelPaused": "Play Intro",
+            "loop": false,
+            "refDistance": 3,
+            "rolloff": 1,
+            "maxDistance": 20,
+            "distanceModel": "linear",
+            "coneTarget": [
+              0,
+              2,
+              0
+            ],
+            "volume": 1
+          }
+        ]
+      },
+      "sculptureControls": {
+        "instances": [
+          {
+            "id": "scan_baletnica_rotate",
+            "targetNode": "scan_baletnica",
+            "mode": "rotate",
+            "size": 0.5,
+            "hover": true,
+            "holdRotate": true,
+            "light": {
+              "enabled": false
+            }
+          },
+          {
+            "id": "scan_parasol_rotate",
+            "targetNode": "scan_parasol",
+            "mode": "rotate",
+            "size": 0.5,
+            "hover": true,
+            "holdRotate": true,
+            "light": {
+              "enabled": false
+            }
+          },
+          {
+            "id": "scan_snake_rotate",
+            "targetNode": "scan_snake",
+            "mode": "rotate",
+            "size": 0.5,
+            "hover": true,
+            "holdRotate": true,
+            "light": {
+              "enabled": false
+            }
+          },
+          {
+            "id": "scan_zajac_rotate",
+            "targetNode": "scan_zajac",
+            "mode": "rotate",
+            "size": 0.5,
+            "hover": true,
+            "holdRotate": true,
+            "light": {
+              "enabled": false
+            }
+          }
+        ]
+      },
+      "chat": {
+        "enabled": false
+      }
+    },
+    "viewerProfiles": {
+      "r3fCurrent": {
+        "status": "reference_implementation_profile",
+        "params": {
+          "exposure": 1,
+          "autoExposure": true,
+          "toneMapping": "neutral",
+          "exposureTarget": 0.68,
+          "exposureMin": 0.5,
+          "exposureMax": 1.65,
+          "exposureSampleInterval": 30,
+          "colorGrade": {
+            "brightness": 1,
+            "contrast": 0.9,
+            "saturate": 0.68
+          },
+          "lightIntensity": 2,
+          "gravity": -8,
+          "visitorSpeed": 2,
+          "heightOffset": {
+            "x": 0,
+            "y": 1.1,
+            "z": 0
+          }
+        },
+        "lights": {
+          "hemisphereIntensity": 0,
+          "directionalIntensity": 0
+        },
+        "audioZones": [
+          {
+            "floors": [
+              "dokumentacja_floor"
+            ],
+            "stopAudioIds": [
+              "audio_left",
+              "audio_right"
+            ],
+            "controlAudioIds": [
+              "audio_intro"
+            ]
+          },
+          {
+            "floors": [
+              "floor_ucieta",
+              "walls_main"
+            ],
+            "stopAudioIds": [
+              "audio_intro"
+            ],
+            "playAudioIds": [
+              "audio_left",
+              "audio_right"
+            ],
+            "controlAudioIds": []
+          }
+        ],
+        "lightZones": [
+          {
+            "id": "documentation_light",
+            "description": "Lighting profile for the documentation room. Uses Natural tone mapping with lower fixed exposure so documents and wall materials stay readable without the brighter filmic contrast of the main installation space.",
+            "surfaces": [
+              "dokumentacja_floor"
+            ],
+            "transitionSeconds": 0.8,
+            "params": {
+              "toneMapping": "cineon"
+            },
+            "lights": {
+              "ambientIntensity": 2,
+              "hemisphereIntensity": 1,
+              "directionalIntensity": 0,
+              "spotIntensity": 0
+            },
+            "exposure": {
+              "autoExposure": false,
+              "value": 0.72,
+              "target": 0.58,
+              "min": 0.45,
+              "max": 1.35
+            }
+          },
+          {
+            "id": "main_room_light",
+            "description": "Lighting profile for the main installation room. Uses ACES Filmic tone mapping with slightly higher fixed exposure for stronger contrast on the video screens, scans, and darker baked surfaces. Also applies when moving onto walls_main.",
+            "surfaces": [
+              "floor_ucieta",
+              "walls_main"
+            ],
+            "transitionSeconds": 0.8,
+            "params": {
+              "toneMapping": "aces"
+            },
+            "lights": {
+              "ambientIntensity": 0.65,
+              "hemisphereIntensity": 0,
+              "directionalIntensity": 0,
+              "spotIntensity": 0
+            },
+            "exposure": {
+              "autoExposure": false,
+              "value": 1.08,
+              "target": 0.72,
+              "min": 0.5,
+              "max": 1.65
+            }
+          }
+        ]
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "visitor",
+      "type": "visitor",
+      "description": "The visitor is the first-person presence in the gallery. Move through the scene with W, A, S, D or the arrow keys, drag to look around, and use double-click or double-tap on reachable surfaces to set an automatic walking destination. Touch visitors can drag to look and use the on-screen joystick for movement.",
+      "targets": [
+        "Visitor_enter"
+      ],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "floor_and_walls",
+      "type": "floor_and_walls",
+      "description": "Double-click or double-tap a reachable floor or wall surface to move there. A blue marker shows the selected destination.",
+      "targets": [
+        "floor_ucieta",
+        "dokumentacja_floor",
+        "walls_main",
+        "walls_frames",
+        "sufit_swiatla_uciete"
+      ],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "images_and_documentation",
+      "type": "images_and_documentation",
+      "description": "Hover over images or documentation pages to see their title. Double-click or double-tap them to open the detail view. Documentation entries can open their PDF or external record from the detail view.",
+      "targets": [
+        "pdf_manual_pl",
+        "pdf_manual_en",
+        "image_tablica",
+        "image_text_layer01",
+        "image_text_layer02",
+        "image_text_layer03",
+        "image_screenshot_parasol",
+        "image_screenshot_snake",
+        "image_screenshot_zajac",
+        "image_screenshot_baletnica",
+        "image_scanning01",
+        "image_2nd_day"
+      ],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "sculptures",
+      "type": "sculptures",
+      "description": "The scan objects use transformControls on desktop and holdRotate in VR. Hovering a scan shows its label and rotation gizmo. Dragging the gizmo ring rotates the selected scan manually; moving to another scan reattaches the same shared gizmo to that scan. When the pointer leaves the scan and no gizmo drag is active, the gizmo remains available for about 2 seconds and then hides automatically. In VR, aim at a scan and hold the trigger to rotate it.",
+      "targets": [
+        "scan_baletnica",
+        "scan_parasol",
+        "scan_snake",
+        "scan_zajac"
+      ],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "videopoem_screens",
+      "type": "videopoem_screens",
+      "description": "The three screen objects play as synchronized silent video surfaces. They are part of the installation and do not open a separate player in this scene.",
+      "targets": [
+        "left_screen",
+        "middle_screen",
+        "right_screen"
+      ],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "audio_zones",
+      "type": "audio_zones",
+      "description": "Audio changes by location. In the documentation floor area the intro audio control is available. On the main floor the left and right spatial audio tracks play and the intro is stopped.",
+      "targets": [
+        "audio_intro",
+        "audio_left",
+        "audio_right",
+        "dokumentacja_floor",
+        "floor_ucieta",
+        "walls_main"
+      ],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "hover_labels",
+      "type": "hover_labels",
+      "description": "Interactive images, video surfaces, links, and sculptures show a short label when hovered.",
+      "targets": [],
+      "portability": "semantic_contract",
+      "implementationNotes": "A future viewer may implement this with contemporary navigation, picking, UI, and spatial media APIs while preserving the described behavior."
+    },
+    {
+      "id": "left_screen_runtime",
+      "type": "video_surface",
+      "targets": [
+        "left_screen"
+      ],
+      "media": "left_screen",
+      "behavior": {
+        "playbackMode": "synced_silent",
+        "autoplayOnEnter": true,
+        "syncGroup": "vectai_krakow_032026_main",
+        "controls": false,
+        "interactive": false,
+        "allowFullscreen": false,
+        "loop": true,
+        "muted": true,
+        "surface": {
+          "projection": true,
+          "roughness": 0.9,
+          "metalness": 0.02,
+          "envMapIntensity": 0.2,
+          "emissiveIntensity": 0.53,
+          "emissiveColor": "#fff6ea"
+        }
+      }
+    },
+    {
+      "id": "middle_screen_runtime",
+      "type": "video_surface",
+      "targets": [
+        "middle_screen"
+      ],
+      "media": "middle_screen",
+      "behavior": {
+        "playbackMode": "synced_silent",
+        "autoplayOnEnter": true,
+        "syncGroup": "vectai_krakow_032026_main",
+        "controls": false,
+        "interactive": false,
+        "allowFullscreen": false,
+        "loop": true,
+        "muted": true,
+        "surface": {
+          "projection": true,
+          "roughness": 0.9,
+          "metalness": 0.02,
+          "envMapIntensity": 0.2,
+          "emissiveIntensity": 0.53,
+          "emissiveColor": "#fff6ea"
+        }
+      }
+    },
+    {
+      "id": "right_screen_runtime",
+      "type": "video_surface",
+      "targets": [
+        "right_screen"
+      ],
+      "media": "right_screen",
+      "behavior": {
+        "playbackMode": "synced_silent",
+        "autoplayOnEnter": true,
+        "syncGroup": "vectai_krakow_032026_main",
+        "controls": false,
+        "interactive": false,
+        "allowFullscreen": false,
+        "loop": true,
+        "muted": true,
+        "surface": {
+          "projection": true,
+          "roughness": 0.9,
+          "metalness": 0.02,
+          "envMapIntensity": 0.2,
+          "emissiveIntensity": 0.53,
+          "emissiveColor": "#fff6ea"
+        }
+      }
+    },
+    {
+      "id": "audio_left_runtime",
+      "type": "spatial_audio",
+      "targets": [
+        "audio_left"
+      ],
+      "media": "audio_left",
+      "behavior": {
+        "autoplayOnEnter": false,
+        "loop": true,
+        "refDistance": 2,
+        "rolloff": 0.8,
+        "maxDistance": 50,
+        "distanceModel": "linear",
+        "directionalCone": [
+          45,
+          90,
+          0.3
+        ],
+        "coneTarget": [
+          0,
+          2,
+          0
+        ],
+        "volume": 1,
+        "labels": {}
+      }
+    },
+    {
+      "id": "audio_right_runtime",
+      "type": "spatial_audio",
+      "targets": [
+        "audio_right"
+      ],
+      "media": "audio_right",
+      "behavior": {
+        "autoplayOnEnter": false,
+        "loop": true,
+        "refDistance": 1,
+        "rolloff": 0.8,
+        "maxDistance": 10,
+        "distanceModel": "linear",
+        "directionalCone": [
+          45,
+          90,
+          0.3
+        ],
+        "coneTarget": [
+          0,
+          2,
+          0
+        ],
+        "volume": 5,
+        "reverse": false,
+        "labels": {}
+      }
+    },
+    {
+      "id": "audio_intro_runtime",
+      "type": "spatial_audio",
+      "targets": [
+        "audio_intro"
+      ],
+      "media": "audio_intro",
+      "behavior": {
+        "autoplayOnEnter": false,
+        "autoplayDelayMs": 6000,
+        "loop": false,
+        "refDistance": 3,
+        "rolloff": 1,
+        "maxDistance": 20,
+        "distanceModel": "linear",
+        "coneTarget": [
+          0,
+          2,
+          0
+        ],
+        "volume": 1,
+        "labels": {
+          "playing": "Intro is playing",
+          "paused": "Play Intro"
+        }
+      }
+    },
+    {
+      "id": "scan_baletnica_rotate",
+      "type": "object_manipulation",
+      "targets": [
+        "scan_baletnica"
+      ],
+      "behavior": {
+        "mode": "rotate",
+        "hover": true,
+        "holdRotate": true,
+        "gizmoSize": 0.5,
+        "light": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "id": "scan_parasol_rotate",
+      "type": "object_manipulation",
+      "targets": [
+        "scan_parasol"
+      ],
+      "behavior": {
+        "mode": "rotate",
+        "hover": true,
+        "holdRotate": true,
+        "gizmoSize": 0.5,
+        "light": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "id": "scan_snake_rotate",
+      "type": "object_manipulation",
+      "targets": [
+        "scan_snake"
+      ],
+      "behavior": {
+        "mode": "rotate",
+        "hover": true,
+        "holdRotate": true,
+        "gizmoSize": 0.5,
+        "light": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "id": "scan_zajac_rotate",
+      "type": "object_manipulation",
+      "targets": [
+        "scan_zajac"
+      ],
+      "behavior": {
+        "mode": "rotate",
+        "hover": true,
+        "holdRotate": true,
+        "gizmoSize": 0.5,
+        "light": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "id": "audio_zone_1",
+      "type": "location_audio_route",
+      "targets": [
+        "dokumentacja_floor"
+      ],
+      "behavior": {
+        "playAudioIds": [],
+        "stopAudioIds": [
+          "audio_left",
+          "audio_right"
+        ],
+        "controlAudioIds": [
+          "audio_intro"
+        ]
+      }
+    },
+    {
+      "id": "audio_zone_2",
+      "type": "location_audio_route",
+      "targets": [
+        "floor_ucieta",
+        "walls_main"
+      ],
+      "behavior": {
+        "playAudioIds": [
+          "audio_left",
+          "audio_right"
+        ],
+        "stopAudioIds": [
+          "audio_intro"
+        ],
+        "controlAudioIds": []
+      }
+    },
+    {
+      "id": "documentation_light",
+      "type": "location_light_profile",
+      "description": "Lighting profile for the documentation room. Uses Natural tone mapping with lower fixed exposure so documents and wall materials stay readable without the brighter filmic contrast of the main installation space.",
+      "targets": [
+        "dokumentacja_floor"
+      ],
+      "behavior": {
+        "transitionSeconds": 0.8,
+        "params": {
+          "toneMapping": "cineon"
+        },
+        "lights": {
+          "ambientIntensity": 2,
+          "hemisphereIntensity": 1,
+          "directionalIntensity": 0,
+          "spotIntensity": 0
+        },
+        "exposure": {
+          "autoExposure": false,
+          "value": 0.72,
+          "target": 0.58,
+          "min": 0.45,
+          "max": 1.35
+        }
+      }
+    },
+    {
+      "id": "main_room_light",
+      "type": "location_light_profile",
+      "description": "Lighting profile for the main installation room. Uses ACES Filmic tone mapping with slightly higher fixed exposure for stronger contrast on the video screens, scans, and darker baked surfaces. Also applies when moving onto walls_main.",
+      "targets": [
+        "floor_ucieta",
+        "walls_main"
+      ],
+      "behavior": {
+        "transitionSeconds": 0.8,
+        "params": {
+          "toneMapping": "aces"
+        },
+        "lights": {
+          "ambientIntensity": 0.65,
+          "hemisphereIntensity": 0,
+          "directionalIntensity": 0,
+          "spotIntensity": 0
+        },
+        "exposure": {
+          "autoExposure": false,
+          "value": 1.08,
+          "target": 0.72,
+          "min": 0.5,
+          "max": 1.65
+        }
+      }
+    }
+  ],
+  "previews": {
+    "default": {
+      "mode": "auto_or_asset",
+      "canonicalAsset": "og_image",
+      "camera": {
+        "intent": "Use a representative first-person or three-quarter view of the two-room archive. Preserve visibility of video screens and documentation room context.",
+        "position": "renderer_decides_from_scene_bounds",
+        "target": "renderer_decides_from_scene_bounds",
+        "fov": 35
+      },
+      "size": [
+        1200,
+        630
+      ],
+      "outputKind": "image/jpeg"
+    }
+  },
+  "viewerBrief": {
+    "purpose": "Build an archival viewer for this manifest using current stable 3D/web/native tools. The viewer should preserve content relationships, spatial layout, interaction semantics, provenance, and access to all media/documentation.",
+    "audience": "Curators, researchers, students, collectors, and future agents reconstructing the archive from NFT metadata or decentralized storage.",
+    "requiredCapabilities": [
+      "load glTF/GLB scene asset",
+      "first-person or equivalent spatial navigation",
+      "spawn anchor support",
+      "interactive image/document panels",
+      "PDF or external document access",
+      "mapped synchronized video surfaces",
+      "spatial audio with location-based routing",
+      "subtitle display for audio where available",
+      "hover/selection labels or accessible alternatives",
+      "object rotation/manipulation for scan sculptures",
+      "light/exposure profiles by visitor zone",
+      "sidebar or equivalent archive/context panel"
+    ],
+    "reconstructionPrompt": "Given this manifest, choose the most suitable contemporary 3D framework and build a viewer that loads the listed assets, reconstructs the scene graph, implements the interaction contracts, and presents the archive as a quiet, legible documentation environment. Prefer faithful preservation over stylistic reinterpretation. If a specific feature cannot be implemented in the chosen environment, provide an accessible equivalent while preserving the archival meaning.",
+    "visualTone": "Quiet archival exhibition, minimal UI, dark gallery base, readable media panels, avoid decorative reinterpretation of the artworks.",
+    "nonGoals": [
+      "Do not replace the archival media with generated substitutes.",
+      "Do not alter authorship or rights metadata.",
+      "Do not require this original React/R3F app to view the archive."
+    ]
+  },
+  "preservation": {
+    "futureProofDefinition": "The manifest must be sufficient for a future agent to retrieve/verify assets, understand the exhibit intent, choose a contemporary rendering stack, and rebuild an equivalent preview/viewer without depending on this codebase.",
+    "requiredBeforeMinting": [
+      "Upload every asset in assets to IPFS or another immutable store.",
+      "Fill each assets.*.ipfsUri and sha256/byteSize for remote-only assets.",
+      "Fill rights.defaultLicense and asset-level rights.",
+      "Upload this v3 manifest itself and set nft.tokenMetadataTemplate.properties.manifest.",
+      "Export final token metadata JSON with image and animation_url pointing to immutable URIs."
+    ],
+    "integrity": {
+      "hashAlgorithm": "sha256",
+      "contentAddressing": [
+        "ipfs"
+      ],
+      "mutableFallbacksAllowed": true
+    }
+  },
+  "exports": {
+    "nftMetadata": {
+      "status": "draft_requires_ipfs_cids",
+      "outputPathSuggestion": "dist/nft/vectai_krakow_032026_metadata.json"
+    },
+    "runtimeAdapters": {
+      "currentR3F": "Can be compiled to the current ExhibitConfig runtime shape by a v3-to-runtime adapter."
+    }
+  },
+  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json"
+}
