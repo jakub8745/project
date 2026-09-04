@@ -185,9 +185,12 @@ export default function App() {
   } = useBlobChatBridge({ enabled: blobChatSettings.enabled });
   const {
     config: exhibitConfig,
+    resolvedUrl: exhibitConfigUrl,
     loading: exhibitConfigLoading,
-    error: exhibitConfigError
+    error: exhibitConfigError,
+    retry: retryExhibitConfig
   } = useExhibitConfig(selectedConfigUrl);
+  const activeExhibitConfig = exhibitConfigUrl === selectedConfigUrl ? exhibitConfig : null;
   const AUTO_HIDE_DELAY_MS = 5000;
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
@@ -248,8 +251,8 @@ export default function App() {
       (selectedSlug ? GALLERIES.find((gallery) => gallery.slug === selectedSlug) : null) ??
       GALLERIES.find((gallery) => gallery.configUrl === selectedConfigUrl);
     const fallbackMetadata = metadataFromGallery(selectedGallery);
-    applyPageMetadata(metadataFromConfig(exhibitConfig, fallbackMetadata));
-  }, [exhibitConfig, selectedConfigUrl, selectedSlug]);
+    applyPageMetadata(metadataFromConfig(activeExhibitConfig, fallbackMetadata));
+  }, [activeExhibitConfig, selectedConfigUrl, selectedSlug]);
 
   const scheduleSidebarAutoHide = useCallback(() => {
     if (!sidebarOpen) {
@@ -391,14 +394,14 @@ export default function App() {
   }, [selectedSlug]);
 
   useEffect(() => {
-    if (!selectedConfigUrl || !exhibitConfig) {
+    if (!selectedConfigUrl || !activeExhibitConfig) {
       setBlobChatSettings(DEFAULT_BLOB_CHAT_SETTINGS);
       setActiveBlobId(DEFAULT_BLOB_CHAT_SETTINGS.blobs[0]?.id || null);
       return;
     }
 
     const controller = new AbortController();
-    const configRecord = exhibitConfig as Record<string, unknown>;
+    const configRecord = activeExhibitConfig as Record<string, unknown>;
     const chat = configRecord.chat && typeof configRecord.chat === 'object' ? (configRecord.chat as Record<string, unknown>) : {};
 
     void (async () => {
@@ -424,7 +427,7 @@ export default function App() {
     return () => {
       controller.abort();
     };
-  }, [exhibitConfig, selectedConfigUrl]);
+  }, [activeExhibitConfig, selectedConfigUrl]);
 
   useEffect(() => {
     if (!blobChatSettings.enabled) return;
@@ -702,9 +705,10 @@ export default function App() {
             >
               <R3FViewer
                 configUrl={selectedConfigUrl}
-                config={exhibitConfig}
+                config={activeExhibitConfig}
                 loading={exhibitConfigLoading}
                 error={exhibitConfigError}
+                onRetryConfig={retryExhibitConfig}
                 onVisitorEntered={handleVisitorEntered}
                 onPhysicsCollision={handlePhysicsCollision}
               />

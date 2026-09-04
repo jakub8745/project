@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { useProgress } from '@react-three/drei';
 import type { Mesh } from 'three';
 import Visitor from '../modules/Visitor.js';
 import { setVideoScenePlaybackEnabled } from '../modules/applyVideoMeshes.js';
 
 export function useSceneReadiness({
+  transitionId,
   configUrl,
   modelPath,
   useProceduralRoom,
@@ -16,6 +16,7 @@ export function useSceneReadiness({
   debugLoading,
   onVisitorEntered
 }: {
+  transitionId: string;
   configUrl: string | null;
   modelPath?: string;
   useProceduralRoom: boolean;
@@ -29,22 +30,15 @@ export function useSceneReadiness({
 }) {
   const [sceneVersion, bumpSceneVersion] = useReducer((value: number) => value + 1, 0);
   const [sceneAssetsReady, setSceneAssetsReady] = useState(false);
-  const [sceneAssetLoadsSettled, setSceneAssetLoadsSettled] = useState(false);
   const [sceneLoadArmed, setSceneLoadArmed] = useState(false);
-  const {
-    active: sceneAssetsLoading,
-    item: sceneLoadingItem,
-    loaded: sceneLoadedCount,
-    total: sceneTotalCount,
-    progress: sceneLoadProgress
-  } = useProgress();
+  const [timedOut, setTimedOut] = useState(false);
   const lastSceneVersionRef = useRef(sceneVersion);
   const lastLoadingLogRef = useRef<string | null>(null);
 
   useEffect(() => {
     setSceneAssetsReady(false);
-    setSceneAssetLoadsSettled(false);
     setSceneLoadArmed(false);
+    setTimedOut(false);
     let raf = 0;
     const timeout = window.setTimeout(() => {
       raf = window.requestAnimationFrame(() => setSceneLoadArmed(true));
@@ -53,30 +47,27 @@ export function useSceneReadiness({
       window.clearTimeout(timeout);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [configUrl, modelPath, useProceduralRoom]);
+  }, [configUrl, modelPath, transitionId, useProceduralRoom]);
 
   useEffect(() => {
-    if (!sceneAssetsReady || sceneAssetsLoading || sceneAssetLoadsSettled) return undefined;
-    const raf = window.requestAnimationFrame(() => {
-      setSceneAssetLoadsSettled(true);
-    });
-    return () => {
-      window.cancelAnimationFrame(raf);
-    };
-  }, [sceneAssetLoadsSettled, sceneAssetsLoading, sceneAssetsReady]);
+    if (!sceneLoadArmed || sceneAssetsReady || loading || error) return undefined;
+    const timeout = window.setTimeout(() => setTimedOut(true), 30_000);
+    return () => window.clearTimeout(timeout);
+  }, [error, loading, sceneAssetsReady, sceneLoadArmed, transitionId]);
 
   useEffect(() => {
     if (!debugLoading) return;
-    const percentage = Number.isFinite(sceneLoadProgress) ? Math.round(sceneLoadProgress) : 0;
-    const loadingKey = `${sceneAssetsLoading}:${sceneLoadedCount}:${sceneTotalCount}:${percentage}:${sceneLoadingItem || ''}`;
+    const loadingKey = `${transitionId}:${sceneLoadArmed}:${sceneAssetsReady}:${Boolean(collider)}:${Boolean(visitor)}`;
     if (lastLoadingLogRef.current === loadingKey) return;
     lastLoadingLogRef.current = loadingKey;
-    const status = sceneAssetsLoading ? 'loading' : 'settled';
-    console.info(
-      `[SceneLoader] ${status} ${sceneLoadedCount}/${sceneTotalCount} ${percentage}%`,
-      sceneLoadingItem || '(no active item)'
-    );
-  }, [debugLoading, sceneAssetsLoading, sceneLoadedCount, sceneLoadingItem, sceneLoadProgress, sceneTotalCount]);
+    console.info('[SceneLoader]', {
+      transitionId,
+      armed: sceneLoadArmed,
+      essentialAssetsReady: sceneAssetsReady,
+      colliderReady: Boolean(collider),
+      visitorReady: Boolean(visitor)
+    });
+  }, [collider, debugLoading, sceneAssetsReady, sceneLoadArmed, transitionId, visitor]);
 
   const handleSceneReady = useCallback(() => {
     setSceneAssetsReady(true);
@@ -85,14 +76,12 @@ export function useSceneReadiness({
 
   const sceneReadyForVisitor =
     sceneAssetsReady &&
-    sceneAssetLoadsSettled &&
     Boolean(collider) &&
     (thumbnailModeActive || Boolean(visitor)) &&
     !loading &&
     !error;
   const visitorEntryReady =
     sceneAssetsReady &&
-    sceneAssetLoadsSettled &&
     Boolean(collider) &&
     !loading &&
     !error;
@@ -125,7 +114,7 @@ export function useSceneReadiness({
     sceneLoadArmed,
     sceneReadyForVisitor,
     visitorEntryReady,
-    sceneLoadingItem,
+    timedOut,
     handleSceneReady
   };
 }

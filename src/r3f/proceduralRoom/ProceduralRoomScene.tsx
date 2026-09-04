@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
@@ -27,7 +27,6 @@ import {
   CubeCamera
 } from 'three';
 import type { SphereGeometry } from 'three';
-import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { StaticGeometryGenerator, MeshBVH } from 'three-mesh-bvh';
 import Visitor from '../../modules/Visitor.js';
 import Robot from '../../modules/Robot.js';
@@ -949,28 +948,33 @@ export function ProceduralRoomModels({
   onActorRef?: ProceduralActorRefCallback;
   objectRegistry?: ObjectRegistry;
 }) {
-  const gltfs = useConfiguredGLTFs(models.map((item) => item.path));
+  const modelPaths = useMemo(() => models.map((item) => item.path), [models]);
+  const gltfs = useConfiguredGLTFs(modelPaths);
   const modelRefs = useRef<Map<number, Group>>(new Map());
+  const sceneClones = useMemo(() => gltfs.map((gltf, index) => {
+    if (!gltf?.scene) return null;
+    const clone = gltf.scene.clone(true);
+    clone.name = models[index]?.id || clone.name;
+    clone.traverse((object) => {
+      applyObjectRuntimeData(object, objectRegistry);
+      if (object instanceof Mesh) {
+        object.castShadow = true;
+        object.receiveShadow = true;
+        if (Array.isArray(object.material)) {
+          object.material.forEach((mat) => enableMaterialDithering(mat));
+        } else if (object.material) {
+          enableMaterialDithering(object.material);
+        }
+      }
+    });
+    return clone;
+  }), [gltfs, models, objectRegistry]);
 
   return (
     <>
       {models.map((item, index) => {
-        const gltf = gltfs[index] as GLTF | undefined;
-        if (!gltf?.scene) return null;
-        const clone = gltf.scene.clone(true);
-        clone.name = item.id || clone.name;
-        clone.traverse((object) => {
-          applyObjectRuntimeData(object, objectRegistry);
-          if (object instanceof Mesh) {
-            object.castShadow = true;
-            object.receiveShadow = true;
-            if (Array.isArray(object.material)) {
-              object.material.forEach((mat) => enableMaterialDithering(mat));
-            } else if (object.material) {
-              enableMaterialDithering(object.material);
-            }
-          }
-        });
+        const clone = sceneClones[index];
+        if (!clone) return null;
         const hasAnimation = Boolean(item.animation);
         return (
           hasAnimation ? (
@@ -1690,7 +1694,7 @@ export function GeneratedExhibitScene({
     <>
       <ProceduralRoomModel
         roomSpec={roomSpec}
-        models={models}
+        models={undefined}
         visitor={visitor}
         onActorRef={onActorRef}
         position={position}
@@ -1700,6 +1704,18 @@ export function GeneratedExhibitScene({
         onSceneReady={onSceneReady}
         objectRegistry={objectRegistry}
       />
+      {models && models.length > 0 ? (
+        <Suspense fallback={null}>
+          <ProceduralRoomModels
+            models={models}
+            roomBounds={roomBounds}
+            collider={roomCollider}
+            visitor={visitor}
+            onActorRef={onActorRef}
+            objectRegistry={objectRegistry}
+          />
+        </Suspense>
+      ) : null}
       {objects && objects.length > 0 ? (
         <ProceduralObjects
           objects={objects}

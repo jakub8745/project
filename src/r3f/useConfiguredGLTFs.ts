@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLoader, useThree } from '@react-three/fiber';
-import type { WebGLRenderer } from 'three';
+import type { Mesh, Texture, WebGLRenderer } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -10,6 +10,25 @@ import { getKtx2Loader } from '../loaders/ktx2Loader';
 
 let sharedDracoLoader: DRACOLoader | null = null;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
+const modelLeases = new Map<string, { refs: number; gltf: GLTF; disposeTimer: number | null }>();
+
+function disposeGltf(gltf: GLTF) {
+  gltf.scene.traverse((object) => {
+    const mesh = object as Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry?.dispose();
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    materials.forEach((material) => {
+      if (!material) return;
+      for (const value of Object.values(material)) {
+        if (value && typeof value === 'object' && 'isTexture' in value && value.isTexture === true) {
+          (value as Texture).dispose();
+        }
+      }
+      material.dispose();
+    });
+  });
+}
 
 function ensureKtx2Support(renderer: WebGLRenderer) {
   if (ktx2SupportedRenderers.has(renderer)) return;
@@ -47,5 +66,36 @@ export function useConfiguredGLTFs(paths: string[]): GLTF[] {
     }
   ) as GLTF | GLTF[];
 
-  return Array.isArray(gltfResults) ? gltfResults : [gltfResults];
+  const results = useMemo(() => Array.isArray(gltfResults) ? gltfResults : [gltfResults], [gltfResults]);
+  useEffect(() => {
+    paths.forEach((path, index) => {
+      const gltf = results[index];
+      const entry = modelLeases.get(path) || { refs: 0, gltf, disposeTimer: null };
+      if (entry.disposeTimer !== null) window.clearTimeout(entry.disposeTimer);
+      entry.disposeTimer = null;
+      entry.refs += 1;
+      entry.gltf = gltf;
+      modelLeases.set(path, entry);
+    });
+    return () => {
+      paths.forEach((path) => {
+        const entry = modelLeases.get(path);
+        if (!entry) return;
+        entry.refs = Math.max(0, entry.refs - 1);
+        if (entry.refs > 0) return;
+        entry.disposeTimer = window.setTimeout(() => {
+          if (entry.refs > 0) return;
+          clearConfiguredGLTF(path);
+          disposeGltf(entry.gltf);
+          modelLeases.delete(path);
+        }, 0);
+      });
+    };
+  }, [paths, results]);
+
+  return results;
+}
+
+export function clearConfiguredGLTF(path: string): void {
+  useLoader.clear(GLTFLoader, path);
 }

@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 *.tsbuildinfo
+.secrets/
+.arweave-staging/
 
 # Editor directories and files
 .vscode/*

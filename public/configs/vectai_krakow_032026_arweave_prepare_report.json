@@ -1,34 +1,30 @@
 {
-  "manifestId": "vectai_krakow_032026",
-  "generatedAt": "2026-06-11",
-  "note": "Upload each row to IPFS and replace ipfsUri placeholders in the v3 config with actual CIDs. Remote-only sourceUri rows must be downloaded or pinned from their current URL before final minting.",
+  "generatedAt": "2026-06-14T01:45:30.081Z",
+  "mode": "write",
+  "walletAddress": "EckggJBkhmTar9V-wdQ2aPzGliTI-n4uBmhhVrFkvMQ",
+  "assetCount": 25,
+  "totalBytes": 62609915,
+  "estimatedTotalPriceWinston": "650486008557",
+  "estimatedTotalPriceAR": "0.650486008557",
+  "walletBalanceWinston": "0",
+  "walletBalanceAR": "0",
+  "hasEnoughBalanceForAssets": false,
+  "excludes": [
+    "manifest_v3_json",
+    "nft_metadata"
+  ],
+  "stagingDir": ".arweave-staging/vectai_krakow_032026/assets",
   "assets": [
-    {
-      "id": "manifest_v3_json",
-      "kind": "manifest",
-      "mimeType": "application/json",
-      "sourceUri": "/configs/vectai_krakow_032026_config_v3.json",
-      "localPath": "public/configs/vectai_krakow_032026_config_v3.json",
-      "availableLocal": true,
-      "byteSize": "",
-      "sha256": "",
-      "ipfsUri": "ipfs://CID_FOR_manifest_v3_json"
-    },
     {
       "id": "scene_model",
       "kind": "model",
       "mimeType": "model/gltf-binary",
       "sourceUri": "/models/vectai_room.glb",
       "localPath": "public/models/vectai_room.glb",
-      "availableLocal": true,
       "byteSize": 15057924,
       "sha256": "8446cba22eb06ea22aa2a09e156d331ce7027fe79a8ab3a8c122c031c04ef657",
-      "ipfsUri": "ipfs://CID_FOR_scene_model",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "148388691594",
-        "estimatedPriceAR": "0.148388691594"
-      }
+      "estimatedPriceWinston": "148388691594",
+      "estimatedPriceAR": "0.148388691594"
     },
     {
       "id": "og_image",
@@ -36,15 +32,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/og_image_vectai.jpg",
       "localPath": "public/textures/vectai/og_image_vectai.jpg",
-      "availableLocal": true,
       "byteSize": 120799,
       "sha256": "005e79048f910ce7c574013af7256b683aa0c662c26f743fac04a2e3dd002bd9",
-      "ipfsUri": "ipfs://CID_FOR_og_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "manual_thumb",
@@ -52,15 +43,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/thubm_PeknieciaSensu.jpg",
       "localPath": "public/textures/thubm_PeknieciaSensu.jpg",
-      "availableLocal": true,
       "byteSize": 67627,
       "sha256": "198cc7edfc5abd9ba59c9062221cbcc3788f615cc9c88551e0daafb10bba1a51",
-      "ipfsUri": "ipfs://CID_FOR_manual_thumb",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "manual_pl_pdf",
@@ -68,15 +54,10 @@
       "mimeType": "application/pdf",
       "sourceUri": "/pdfs/pekniecia_sensu.pdf",
       "localPath": "public/pdfs/pekniecia_sensu.pdf",
-      "availableLocal": true,
       "byteSize": 7147232,
       "sha256": "1d2bbf3316dc07ef106d3d17fea215b38c708b7de6a70a9f4fd36c8ce998003f",
-      "ipfsUri": "ipfs://CID_FOR_manual_pl_pdf",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "71652120993",
-        "estimatedPriceAR": "0.071652120993"
-      }
+      "estimatedPriceWinston": "71652120993",
+      "estimatedPriceAR": "0.071652120993"
     },
     {
       "id": "manual_en_pdf",
@@ -84,15 +65,10 @@
       "mimeType": "application/pdf",
       "sourceUri": "/pdfs/CRACKS OF MEANING_ENG.pdf",
       "localPath": "public/pdfs/CRACKS OF MEANING_ENG.pdf",
-      "availableLocal": true,
       "byteSize": 267930,
       "sha256": "edf634d638711b5969685dc74da6578726974ede9fbd599856d1cdb40d7bf3da",
-      "ipfsUri": "ipfs://CID_FOR_manual_en_pdf",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "5147093139",
-        "estimatedPriceAR": "0.005147093139"
-      }
+      "estimatedPriceWinston": "5147093139",
+      "estimatedPriceAR": "0.005147093139"
     },
     {
       "id": "poster_obowiazki",
@@ -100,15 +76,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/cracks_title.png",
       "localPath": "public/textures/vectai/cracks_title.png",
-      "availableLocal": true,
       "byteSize": 404815,
       "sha256": "c0f8cf88dc492cf952280633845e49fed2101336bec97363a03a74ffca723644",
-      "ipfsUri": "ipfs://CID_FOR_poster_obowiazki",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "5147093139",
-        "estimatedPriceAR": "0.005147093139"
-      }
+      "estimatedPriceWinston": "5147093139",
+      "estimatedPriceAR": "0.005147093139"
     },
     {
       "id": "scanning01_image",
@@ -116,15 +87,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/skanowanie01.jpeg",
       "localPath": "public/textures/vectai/skanowanie01.jpeg",
-      "availableLocal": true,
       "byteSize": 273447,
       "sha256": "c8e428d3057cbc3fe1bbbe69b343fb6d0643215da3f2ca18420278c4f7d9f48d",
-      "ipfsUri": "ipfs://CID_FOR_scanning01_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "5147093139",
-        "estimatedPriceAR": "0.005147093139"
-      }
+      "estimatedPriceWinston": "5147093139",
+      "estimatedPriceAR": "0.005147093139"
     },
     {
       "id": "second_day_image",
@@ -132,15 +98,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/2dzien.jpeg",
       "localPath": "public/textures/vectai/2dzien.jpeg",
-      "availableLocal": true,
       "byteSize": 171591,
       "sha256": "474e3e3db174a1b4e6d9124bb21d096dabf444d5b8f4c65febb3f5d7c9f2fcbf",
-      "ipfsUri": "ipfs://CID_FOR_second_day_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "zajac_image",
@@ -148,15 +109,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/zajac_g4.jpg",
       "localPath": "public/textures/vectai/zajac_g4.jpg",
-      "availableLocal": true,
       "byteSize": 58630,
       "sha256": "20882d7b663f71dbbc75d310b9d19205fcb4b62dcda1554f51f0c56c6c005aaf",
-      "ipfsUri": "ipfs://CID_FOR_zajac_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "parasol_image",
@@ -164,15 +120,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/parasol.jpg",
       "localPath": "public/textures/vectai/parasol.jpg",
-      "availableLocal": true,
       "byteSize": 67447,
       "sha256": "291eb20eeb0c9ff2d05579ccd796387ed4690b6960f5750bffd614b3cac4aed1",
-      "ipfsUri": "ipfs://CID_FOR_parasol_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "snake_image",
@@ -180,15 +131,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/waz.jpg",
       "localPath": "public/textures/vectai/waz.jpg",
-      "availableLocal": true,
       "byteSize": 39584,
       "sha256": "3c49783457a874e8d279dec6fe3ae6b380f410d32d659e16a1bcbdb2c91f0d0a",
-      "ipfsUri": "ipfs://CID_FOR_snake_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "baletnica_image",
@@ -196,15 +142,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/baletnica.jpg",
       "localPath": "public/textures/vectai/baletnica.jpg",
-      "availableLocal": true,
       "byteSize": 40473,
       "sha256": "1015e128caee054e4e632ccac609a4f0d395120878d34cfcad4ef0d7f6456cb8",
-      "ipfsUri": "ipfs://CID_FOR_baletnica_image",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "text_layer_01",
@@ -212,15 +153,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/kartka01.jpg",
       "localPath": "public/textures/vectai/kartka01.jpg",
-      "availableLocal": true,
       "byteSize": 218488,
       "sha256": "a3d346a0342d0018a302f58982009ae22f18215be863357bccae36c50e450924",
-      "ipfsUri": "ipfs://CID_FOR_text_layer_01",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "text_layer_02",
@@ -228,15 +164,10 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/kartka02.jpg",
       "localPath": "public/textures/vectai/kartka02.jpg",
-      "availableLocal": true,
       "byteSize": 211942,
       "sha256": "0da796118b85ff59a284ef6d942107f227f3bdde75f02c2a3180c7f51ed46462",
-      "ipfsUri": "ipfs://CID_FOR_text_layer_02",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "text_layer_03",
@@ -244,151 +175,98 @@
       "mimeType": "image/jpeg",
       "sourceUri": "/textures/vectai/kartka03.jpg",
       "localPath": "public/textures/vectai/kartka03.jpg",
-      "availableLocal": true,
       "byteSize": 286459,
       "sha256": "b90b06c869091dad68b408129e52b9ffec4501e90c998d5e20297bb009fb3ac2",
-      "ipfsUri": "ipfs://CID_FOR_text_layer_03",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "5147093139",
-        "estimatedPriceAR": "0.005147093139"
-      }
+      "estimatedPriceWinston": "5147093139",
+      "estimatedPriceAR": "0.005147093139"
     },
     {
       "id": "left_screen_poster",
       "kind": "image",
       "mimeType": "image/jpeg",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/left_screen_poster__lewy.jpg",
       "byteSize": 151582,
       "sha256": "412a75daff11434c8b4a128e25a099fbd6b749043c29b5c22e3d23960322564c",
-      "ipfsUri": "ipfs://CID_FOR_left_screen_poster",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/left_screen_poster__lewy.jpg",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "middle_screen_poster",
       "kind": "image",
       "mimeType": "image/jpeg",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/middle_screen_poster__srodek.jpg",
       "byteSize": 92972,
       "sha256": "c24358ae834d0208b44c680f635278b78d51b09a5dcb5d7b64c0daa5c9341972",
-      "ipfsUri": "ipfs://CID_FOR_middle_screen_poster",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/middle_screen_poster__srodek.jpg",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "right_screen_poster",
       "kind": "image",
       "mimeType": "image/jpeg",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/right_screen_poster__prawy.jpg",
       "byteSize": 60396,
       "sha256": "ca4ce8c5c2d80fe37e47204be77563006660baaf2cd2704a57fa77c3af45fc1d",
-      "ipfsUri": "ipfs://CID_FOR_right_screen_poster",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/right_screen_poster__prawy.jpg",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     },
     {
       "id": "left_screen_video",
       "kind": "video",
       "mimeType": "video/mp4",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/left_screen_video__lewy_ekran.mp4",
       "byteSize": 8929359,
       "sha256": "280d2097506cf5d0fa65956b60d3b07b024a6f0e513a8ffd8fb2dd01ef75db34",
-      "ipfsUri": "ipfs://CID_FOR_left_screen_video",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/left_screen_video__lewy_ekran.mp4",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "89557320800",
-        "estimatedPriceAR": "0.0895573208"
-      }
+      "estimatedPriceWinston": "89557320800",
+      "estimatedPriceAR": "0.0895573208"
     },
     {
       "id": "middle_screen_video",
       "kind": "video",
       "mimeType": "video/mp4",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/middle_screen_video__srodek_ekran.mp4",
       "byteSize": 9090163,
       "sha256": "8ec8afa8d07682c8815cc642a96ea9811d1dce41a21d99e0247a4f94b41c72e7",
-      "ipfsUri": "ipfs://CID_FOR_middle_screen_video",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/middle_screen_video__srodek_ekran.mp4",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "89557320800",
-        "estimatedPriceAR": "0.0895573208"
-      }
+      "estimatedPriceWinston": "89557320800",
+      "estimatedPriceAR": "0.0895573208"
     },
     {
       "id": "right_screen_video",
       "kind": "video",
       "mimeType": "video/mp4",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/right_screen_video__prawy_ekran.mp4",
       "byteSize": 9113674,
       "sha256": "b574d73afcef9084c89285415367448f14d819fe06fd8ff3ee265c001ad7673e",
-      "ipfsUri": "ipfs://CID_FOR_right_screen_video",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/right_screen_video__prawy_ekran.mp4",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "89557320800",
-        "estimatedPriceAR": "0.0895573208"
-      }
+      "estimatedPriceWinston": "89557320800",
+      "estimatedPriceAR": "0.0895573208"
     },
     {
       "id": "audio_left_mp3",
       "kind": "audio",
       "mimeType": "audio/mpeg",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/left_audio.mp3",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/audio_left_mp3__left_audio.mp3",
       "byteSize": 4900711,
       "sha256": "579076e97e0422f001d22df5b0f056f66f6432c29da289addd71b86213ceb558",
-      "ipfsUri": "ipfs://CID_FOR_audio_left_mp3",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/audio_left_mp3__left_audio.mp3",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "48631149813",
-        "estimatedPriceAR": "0.048631149813"
-      }
+      "estimatedPriceWinston": "48631149813",
+      "estimatedPriceAR": "0.048631149813"
     },
     {
       "id": "audio_right_mp3",
       "kind": "audio",
       "mimeType": "audio/mpeg",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3",
-      "localPath": "",
-      "availableLocal": false,
+      "localPath": ".arweave-staging/vectai_krakow_032026/assets/audio_right_mp3__right_audio.mp3",
       "byteSize": 4900711,
       "sha256": "2525e2c6905ba1ce8f56f8f258a6fdcce70bb61613f18939d2ce92090eeb05e6",
-      "ipfsUri": "ipfs://CID_FOR_audio_right_mp3",
-      "stagedLocalPath": ".arweave-staging/vectai_krakow_032026/assets/audio_right_mp3__right_audio.mp3",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "48631149813",
-        "estimatedPriceAR": "0.048631149813"
-      }
+      "estimatedPriceWinston": "48631149813",
+      "estimatedPriceAR": "0.048631149813"
     },
     {
       "id": "audio_intro_mp3",
@@ -396,15 +274,10 @@
       "mimeType": "audio/mpeg",
       "sourceUri": "/audio/introduction_Cracks of Meaning.mp3",
       "localPath": "public/audio/introduction_Cracks of Meaning.mp3",
-      "availableLocal": true,
       "byteSize": 929375,
       "sha256": "94c1945577f42ca72c694b630941f288e629da9105afde9de8a2828669a6f2f7",
-      "ipfsUri": "ipfs://CID_FOR_audio_intro_mp3",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "10262864512",
-        "estimatedPriceAR": "0.010262864512"
-      }
+      "estimatedPriceWinston": "10262864512",
+      "estimatedPriceAR": "0.010262864512"
     },
     {
       "id": "audio_intro_subtitles",
@@ -412,15 +285,10 @@
       "mimeType": "application/json",
       "sourceUri": "/audio/vectai_intro_subtitles.json",
       "localPath": "public/audio/vectai_intro_subtitles.json",
-      "availableLocal": true,
       "byteSize": 6584,
       "sha256": "b6e2d09c1f58e9c4f211c5fa3db33ecd1df536ed50087b2e2d3c4844763e82ec",
-      "ipfsUri": "ipfs://CID_FOR_audio_intro_subtitles",
-      "arweave": {
-        "status": "ready_for_asset_upload",
-        "estimatedPriceWinston": "2589207452",
-        "estimatedPriceAR": "0.002589207452"
-      }
+      "estimatedPriceWinston": "2589207452",
+      "estimatedPriceAR": "0.002589207452"
     }
   ]
 }

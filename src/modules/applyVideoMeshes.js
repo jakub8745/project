@@ -39,6 +39,7 @@ const PAUSE_ICON_URL = '/icons/ButtonPause.png';
 const _videoResourceCache = new Map(); // id -> { video, texture }
 const _syncPlaybackGroups = new Map(); // groupId -> sync state
 let _videoScenePlaybackEnabled = false;
+let _activeVideoLifecycleId = null;
 
 export function setVideoScenePlaybackEnabled(enabled) {
   _videoScenePlaybackEnabled = enabled === true;
@@ -93,13 +94,18 @@ function loadVideoSource(video, cfg) {
 
   const ipfsGateways = IPFS_GATEWAYS;
   let gwIndex = 0;
+  const lifecycleId = cfg.__lifecycleId;
+  const isCurrentLifecycle = () => !lifecycleId || lifecycleId === _activeVideoLifecycleId;
   const markLoaded = () => {
+    if (!isCurrentLifecycle()) return;
     setVideoResource(cfg.id, { sourceLoaded: true, sourceLoading: false });
   };
   const markFailed = () => {
+    if (!isCurrentLifecycle()) return;
     setVideoResource(cfg.id, { sourceLoading: false });
   };
   const loadIpfs = () => {
+    if (!isCurrentLifecycle()) return;
     if (!ipfsUrl) {
       console.error(`[VideoMesh] Primary failed and no IPFS fallback: ${primary}`);
       markFailed();
@@ -117,6 +123,7 @@ function loadVideoSource(video, cfg) {
     video.type = srcObj?.type || '';
     video.load();
     video.onerror = () => {
+      if (!isCurrentLifecycle()) return;
       console.warn(`[VideoMesh] Retrying IPFS gateway ${gwIndex}/${ipfsGateways.length}`);
       setTimeout(loadIpfs, 200);
     };
@@ -136,6 +143,7 @@ function loadVideoSource(video, cfg) {
     video.type = srcObj?.type || '';
     video.load();
     video.onerror = () => {
+      if (!isCurrentLifecycle()) return;
       console.warn(`[VideoMesh] Primary source failed, falling back to IPFS: ${primary}`);
       setVideoResource(cfg.id, { sourceLoaded: false, sourceLoading: false });
       loadIpfs();
@@ -419,6 +427,12 @@ export function disposeAllVideoMeshes() {
   _overlayDisposers.clear();
   Array.from(_videoResourceCache.keys()).forEach((id) => disposeVideoResource(id));
   _syncPlaybackGroups.clear();
+  _activeVideoLifecycleId = null;
+}
+
+export function disposeVideoMeshesForLifecycle(lifecycleId) {
+  if (_activeVideoLifecycleId !== lifecycleId) return;
+  disposeAllVideoMeshes();
 }
 
 function getMeshDisposers(mesh) {
@@ -1340,7 +1354,12 @@ function addPlayIcon(mesh, video, camera) {
  * - Ensures depthTest/write for full visibility/
  */
 export function applyVideoMeshes(scene, camera, galleryConfig) {
-  const videoList = galleryConfig.videos || [];
+  const lifecycleId = galleryConfig.lifecycleId || 'legacy';
+  if (_activeVideoLifecycleId && _activeVideoLifecycleId !== lifecycleId) {
+    disposeAllVideoMeshes();
+  }
+  _activeVideoLifecycleId = lifecycleId;
+  const videoList = (galleryConfig.videos || []).map((cfg) => ({ ...cfg, __lifecycleId: lifecycleId }));
   const configMap = new Map(videoList.map(cfg => [cfg.id, cfg]));
   const objectRegistry = galleryConfig.objectRegistry;
   const syncGroups = createSyncPlaybackGroups(videoList);

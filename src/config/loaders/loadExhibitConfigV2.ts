@@ -236,12 +236,16 @@ function parseSubtitleTracks(raw: unknown): SubtitleTrack[] | undefined {
   return undefined;
 }
 
-async function loadSubtitleTracks(assetId: string | undefined, manifest: ExhibitConfigV2): Promise<SubtitleTrack[] | undefined> {
+async function loadSubtitleTracks(
+  assetId: string | undefined,
+  manifest: ExhibitConfigV2,
+  signal?: AbortSignal
+): Promise<SubtitleTrack[] | undefined> {
   const asset = assetId ? manifest.assets[assetId] : undefined;
   const url = resolveAssetRuntimeUri(assetId, manifest);
   if (!asset || !url) return undefined;
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) {
       throw new Error(`Failed to load subtitle asset ${assetId}: ${response.status}`);
     }
@@ -258,10 +262,9 @@ async function loadSubtitleTracks(assetId: string | undefined, manifest: Exhibit
   return undefined;
 }
 
-async function mapAudioInstance(instance: AudioModuleInstance, manifest: ExhibitConfigV2): Promise<UnknownRecord | null> {
+function mapAudioInstance(instance: AudioModuleInstance, manifest: ExhibitConfigV2): UnknownRecord | null {
   const media = mediaById(manifest, instance.media);
   if (!media || media.kind !== 'audio') return null;
-  const subtitleTracks = await loadSubtitleTracks(media.subtitles?.[0], manifest);
   return {
     id: instance.targetNode,
     name: instance.targetNode,
@@ -280,7 +283,7 @@ async function mapAudioInstance(instance: AudioModuleInstance, manifest: Exhibit
     startOffset: instance.startOffset,
     reverse: instance.reverse,
     volume: instance.volume,
-    subtitleTracks,
+    subtitleTracks: undefined,
     title: mediaTitle(media),
     description: mediaDescription(media),
     author: mediaAuthor(media)
@@ -390,7 +393,11 @@ function mapSceneSpawnParams(manifest: ExhibitConfigV2): UnknownRecord {
   };
 }
 
-export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> {
+export async function loadExhibitConfigV2(
+  raw: unknown,
+  signal?: AbortSignal,
+  onOptionalUpdate?: (config: ExhibitConfig) => void
+): Promise<ExhibitConfig> {
   const manifest = raw as ExhibitConfigV2;
   const videoInstances = manifest.modules?.video?.instances || [];
   const audioInstances = manifest.modules?.audio?.instances || [];
@@ -398,9 +405,11 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
   const videos = videoInstances
     .map((instance) => mapVideoInstance(instance, manifest))
     .filter((entry): entry is UnknownRecord => entry !== null);
-  const audio = (
-    await Promise.all(audioInstances.map((instance) => mapAudioInstance(instance, manifest)))
-  ).filter((entry): entry is UnknownRecord => entry !== null);
+  // Audio, video, subtitles and decorative resources are optional. Building the
+  // navigable scene must never wait for them. Subtitle tracks are attached later.
+  const audio = audioInstances
+    .map((instance) => mapAudioInstance(instance, manifest))
+    .filter((entry): entry is UnknownRecord => entry !== null);
   const viewerExtensions = mapViewerExtensions(manifest);
 
   const runtime: ExhibitConfig = {
@@ -425,6 +434,29 @@ export async function loadExhibitConfigV2(raw: unknown): Promise<ExhibitConfig> 
     ...viewerExtensions
   };
   runtime.audio = mergeAudioEntries(audio, viewerExtensions.audio);
+
+  const optionalSubtitleLoad = Promise.all(
+    audioInstances.map(async (instance) => {
+      const media = mediaById(manifest, instance.media);
+      if (!media || media.kind !== 'audio') return;
+      const tracks = await loadSubtitleTracks(media.subtitles?.[0], manifest, signal);
+      if (signal?.aborted || !tracks) return;
+      const target = (runtime.audio as UnknownRecord[] | undefined)?.find(
+        (entry) => audioEntryKey(entry) === instance.targetNode
+      );
+      if (target) {
+        target.subtitleTracks = tracks;
+        onOptionalUpdate?.({ ...runtime, audio: [...(runtime.audio || [])] });
+      }
+    })
+  ).catch(() => undefined);
+  if (onOptionalUpdate) {
+    void optionalSubtitleLoad;
+  } else {
+    // Direct loader consumers retain the historical fully-resolved result. The
+    // interactive app supplies onOptionalUpdate and therefore does not block.
+    await optionalSubtitleLoad;
+  }
 
   const spawnParams = mapSceneSpawnParams(manifest);
   const existingParams = runtime.params && typeof runtime.params === 'object' ? runtime.params : {};

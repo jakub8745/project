@@ -254,7 +254,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -281,7 +281,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -305,7 +305,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -329,7 +329,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -353,7 +353,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -377,7 +377,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -401,7 +401,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -425,7 +425,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -449,7 +449,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -473,7 +473,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -497,7 +497,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -521,7 +521,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -545,7 +545,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -569,7 +569,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -593,7 +593,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -614,13 +614,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 151582,
+      "sha256": "412a75daff11434c8b4a128e25a099fbd6b749043c29b5c22e3d23960322564c"
     },
     "middle_screen_poster": {
       "id": "middle_screen_poster",
@@ -635,13 +637,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 92972,
+      "sha256": "c24358ae834d0208b44c680f635278b78d51b09a5dcb5d7b64c0daa5c9341972"
     },
     "right_screen_poster": {
       "id": "right_screen_poster",
@@ -656,13 +660,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 60396,
+      "sha256": "ca4ce8c5c2d80fe37e47204be77563006660baaf2cd2704a57fa77c3af45fc1d"
     },
     "left_screen_video": {
       "id": "left_screen_video",
@@ -677,13 +683,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 8929359,
+      "sha256": "280d2097506cf5d0fa65956b60d3b07b024a6f0e513a8ffd8fb2dd01ef75db34"
     },
     "middle_screen_video": {
       "id": "middle_screen_video",
@@ -698,13 +706,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 9090163,
+      "sha256": "8ec8afa8d07682c8815cc642a96ea9811d1dce41a21d99e0247a4f94b41c72e7"
     },
     "right_screen_video": {
       "id": "right_screen_video",
@@ -719,13 +729,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 9113674,
+      "sha256": "b574d73afcef9084c89285415367448f14d819fe06fd8ff3ee265c001ad7673e"
     },
     "audio_left_mp3": {
       "id": "audio_left_mp3",
@@ -740,13 +752,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 4900711,
+      "sha256": "579076e97e0422f001d22df5b0f056f66f6432c29da289addd71b86213ceb558"
     },
     "audio_right_mp3": {
       "id": "audio_right_mp3",
@@ -761,13 +775,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 4900711,
+      "sha256": "2525e2c6905ba1ce8f56f8f258a6fdcce70bb61613f18939d2ce92090eeb05e6"
     },
     "audio_intro_mp3": {
       "id": "audio_intro_mp3",
@@ -785,7 +801,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",
@@ -809,7 +825,7 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri"
+        "status": "ready_for_arweave_upload"
       },
       "rights": {
         "license": "TBD",

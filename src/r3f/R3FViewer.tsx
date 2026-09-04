@@ -1,4 +1,5 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import type { RootState } from '@react-three/fiber';
 import { Html, OrbitControls } from '@react-three/drei';
@@ -18,7 +19,7 @@ import {
 } from 'three';
 import type { WebGLRenderer } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { StaticGeometryGenerator, MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
+import { StaticGeometryGenerator, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import Visitor from '../modules/Visitor.js';
 import type { PhysicsConfig } from '../modules/physicsSystem';
 import type { ExhibitConfig } from './useExhibitConfig';
@@ -28,7 +29,7 @@ import type { TransformControlsEventMap } from 'three/examples/jsm/controls/Tran
 import { PointerInteractions } from './PointerInteractions';
 import {
   applyVideoMeshes,
-  disposeAllVideoMeshes,
+  disposeVideoMeshesForLifecycle,
   type VideoMeshConfig
 } from '../modules/applyVideoMeshes.js';
 import {
@@ -55,7 +56,8 @@ import {
 import { AutoExposureControl, RendererTuning } from './RendererTuning';
 import { normalizeToneMappingName, type ToneMappingName } from './toneMapping';
 import { XrAudioSubtitlePanel } from './XrAudioSubtitlePanel';
-import { useConfiguredGLTFs } from './useConfiguredGLTFs';
+import { clearConfiguredGLTF, useConfiguredGLTFs } from './useConfiguredGLTFs';
+import { GenerateMeshBVHWorker } from 'three-mesh-bvh/worker';
 import { GeneratedExhibitScene } from './proceduralRoom/ProceduralRoomScene';
 import {
   getProceduralRoomBounds,
@@ -84,6 +86,7 @@ interface R3FViewerProps {
   config: ExhibitConfig | null;
   loading?: boolean;
   error?: Error | null;
+  onRetryConfig?: () => void;
   onRequestSidebarClose?: () => void;
   onVisitorActivity?: () => void;
   onVisitorEntered?: () => void;
@@ -94,6 +97,19 @@ interface R3FViewerProps {
     penetration: number;
     timestamp: number;
   }) => void;
+}
+
+class SceneErrorBoundary extends Component<
+  { onError: (error: Error) => void; children: ReactNode },
+  { error: Error | null }
+> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    void info;
+    this.props.onError(error);
+  }
+  render() { return this.state.error ? null : this.props.children; }
 }
 
 function coerceVector(source: unknown, fallback: Vector3Tuple = [0, 0, 0]): Vector3Tuple {
@@ -220,19 +236,6 @@ function getBooleanFromQuery(name: string): boolean {
   return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
 }
 
-function formatLoadingItem(item?: string): string | undefined {
-  if (!item) return undefined;
-  try {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
-    const parsed = new URL(item, baseUrl);
-    const parts = parsed.pathname.split('/').filter(Boolean);
-    return decodeURIComponent(parts[parts.length - 1] || parsed.pathname || item);
-  } catch {
-    const parts = item.split('/').filter(Boolean);
-    return parts[parts.length - 1] || item;
-  }
-}
-
 function detectIPadLikeDevice(): boolean {
   if (typeof navigator === 'undefined') return false;
   const ua = navigator.userAgent || '';
@@ -339,7 +342,8 @@ function ExhibitModel({
   onColliderReady,
   onSceneReady,
   videosConfig,
-  objectRegistry
+  objectRegistry,
+  lifecycleId
 }: {
   modelPath: string;
   position: Vector3Tuple;
@@ -349,19 +353,17 @@ function ExhibitModel({
   onSceneReady?: () => void;
   videosConfig?: VideoMeshConfig[];
   objectRegistry?: ObjectRegistry;
+  lifecycleId: string;
 }) {
   const loadTargets = useMemo(() => [modelPath], [modelPath]);
   const gltfResults = useConfiguredGLTFs(loadTargets);
   const mainGltf = gltfResults[0] as GLTF | undefined;
   const camera = useThree((state) => state.camera);
+  const [buildError, setBuildError] = useState<Error | null>(null);
 
-  const { displayScene, collider } = useMemo(() => {
+  const displayScene = useMemo(() => {
     if (!mainGltf?.scene) {
-      const emptyResult: { displayScene: Group | null; collider: Mesh | null } = {
-        displayScene: null,
-        collider: null
-      };
-      return emptyResult;
+      return null;
     }
 
     const display = mainGltf.scene.clone(true) as Group;
@@ -388,59 +390,82 @@ function ExhibitModel({
       }
     });
 
-    const colliderSource = display.clone(true);
-    pruneColliderSource(colliderSource, objectRegistry);
-    colliderSource.updateMatrixWorld(true);
-    const staticGen = new StaticGeometryGenerator(colliderSource);
-    staticGen.attributes = ['position', 'normal'];
-    const merged = staticGen.generate();
-    merged.boundsTree = new MeshBVH(merged);
-    const colliderMesh = new Mesh(merged);
-    colliderMesh.name = 'r3f-collider';
-    colliderMesh.visible = DEBUG_COLLIDER;
-
-    const [px, py, pz] = position;
-    const [rx, ry, rz] = rotation;
-    colliderMesh.position.set(px, py, pz);
-    colliderMesh.rotation.set(rx, ry, rz);
-    colliderMesh.scale.setScalar(scale);
-
-    if (DEBUG_COLLIDER) {
-      colliderMesh.material = new MeshBasicMaterial({
-        color: 0x00ffff,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.2
-      });
-      colliderMesh.renderOrder = 999;
-    }
-
-    colliderMesh.updateMatrixWorld(true);
-
-    return { displayScene: display, collider: colliderMesh };
-  }, [mainGltf, objectRegistry, position, rotation, scale]);
+    return display;
+  }, [mainGltf, objectRegistry]);
 
   useEffect(() => {
-    onColliderReady?.(collider);
-    if (displayScene) {
+    if (!displayScene) return undefined;
+    let stale = false;
+    let idleHandle: number | null = null;
+    let timerHandle: ReturnType<typeof setTimeout> | null = null;
+    let generatedGeometry: BufferGeometry | null = null;
+    let worker: GenerateMeshBVHWorker | null = null;
+
+    const buildCollider = async () => {
+      const colliderSource = displayScene.clone(true);
+      pruneColliderSource(colliderSource, objectRegistry);
+      colliderSource.updateMatrixWorld(true);
+      const staticGen = new StaticGeometryGenerator(colliderSource);
+      staticGen.attributes = ['position', 'normal'];
+      const merged = staticGen.generate();
+      generatedGeometry = merged;
+      if (stale) {
+        merged.dispose();
+        return;
+      }
+      worker = new GenerateMeshBVHWorker();
+      merged.boundsTree = await worker.generate(merged, { verbose: false });
+      if (stale) {
+        merged.dispose();
+        return;
+      }
+      const colliderMesh = new Mesh(merged);
+      colliderMesh.name = 'r3f-collider';
+      colliderMesh.visible = DEBUG_COLLIDER;
+      const [px, py, pz] = position;
+      const [rx, ry, rz] = rotation;
+      colliderMesh.position.set(px, py, pz);
+      colliderMesh.rotation.set(rx, ry, rz);
+      colliderMesh.scale.setScalar(scale);
+      if (DEBUG_COLLIDER) {
+        colliderMesh.material = new MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.2 });
+        colliderMesh.renderOrder = 999;
+      }
+      colliderMesh.updateMatrixWorld(true);
+      onColliderReady?.(colliderMesh);
       onSceneReady?.();
+    };
+
+    const schedule = () => void buildCollider().catch((error: unknown) => {
+      if (!stale) setBuildError(error instanceof Error ? error : new Error(String(error)));
+    });
+    if (typeof window.requestIdleCallback === 'function') {
+      idleHandle = window.requestIdleCallback(schedule, { timeout: 250 });
+    } else {
+      timerHandle = globalThis.setTimeout(schedule, 0);
     }
     return () => {
+      stale = true;
+      if (idleHandle !== null) window.cancelIdleCallback(idleHandle);
+      if (timerHandle !== null) globalThis.clearTimeout(timerHandle);
+      (worker as (GenerateMeshBVHWorker & { dispose?: () => void }) | null)?.dispose?.();
       onColliderReady?.(null);
-      collider?.geometry?.dispose?.();
+      generatedGeometry?.dispose();
     };
-  }, [collider, displayScene, onColliderReady, onSceneReady]);
+  }, [displayScene, objectRegistry, onColliderReady, onSceneReady, position, rotation, scale]);
+
+  if (buildError) throw buildError;
 
   useEffect(() => {
     if (!displayScene || !videosConfig || videosConfig.length === 0) {
-      disposeAllVideoMeshes();
+      disposeVideoMeshesForLifecycle(lifecycleId);
       return;
     }
-    applyVideoMeshes(displayScene, camera, { videos: videosConfig, objectRegistry });
+    applyVideoMeshes(displayScene, camera, { videos: videosConfig, objectRegistry, lifecycleId });
     return () => {
-      disposeAllVideoMeshes();
+      disposeVideoMeshesForLifecycle(lifecycleId);
     };
-  }, [camera, displayScene, objectRegistry, videosConfig]);
+  }, [camera, displayScene, lifecycleId, objectRegistry, videosConfig]);
 
   if (!displayScene) {
     return null;
@@ -488,7 +513,51 @@ function SceneLoadingOverlay({
   );
 }
 
+function SceneFailureOverlay({
+  title,
+  message,
+  onRetry
+}: {
+  title: string;
+  message: string;
+  onRetry: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[2147483647] flex items-center justify-center overflow-hidden bg-slate-950/95 p-4 text-white"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="scene-failure-title"
+      aria-describedby="scene-failure-message"
+    >
+      <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-lg min-h-0 flex-col rounded-xl border border-white/15 bg-slate-900 p-5 text-center shadow-2xl">
+        <h2 id="scene-failure-title" className="shrink-0 text-lg font-semibold">
+          {title}
+        </h2>
+        <p
+          id="scene-failure-message"
+          className="my-4 min-h-0 overflow-y-auto overscroll-contain break-words text-sm text-red-200"
+        >
+          {message}
+        </p>
+        <div className="shrink-0 border-t border-white/10 pt-4">
+          <button
+            type="button"
+            autoFocus
+            className="min-h-11 rounded-lg bg-sky-300 px-5 py-2 font-semibold text-slate-950 shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-sky-100"
+            onClick={onRetry}
+          >
+            Retry exhibit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function R3FViewerInner({
+  transitionId,
+  onRetry,
   configUrl,
   config,
   loading = false,
@@ -497,7 +566,7 @@ function R3FViewerInner({
   onVisitorActivity,
   onVisitorEntered,
   onPhysicsCollision
-}: R3FViewerProps) {
+}: R3FViewerProps & { transitionId: string; onRetry: () => void }) {
   const modelPath = config?.modelPath;
   const proceduralRoom = config?.proceduralRoom as Record<string, unknown> | undefined;
   const useProceduralRoom = !modelPath && Boolean(proceduralRoom);
@@ -643,9 +712,10 @@ function R3FViewerInner({
     sceneLoadArmed,
     sceneReadyForVisitor,
     visitorEntryReady,
-    sceneLoadingItem,
+    timedOut,
     handleSceneReady
   } = useSceneReadiness({
+    transitionId,
     configUrl,
     modelPath,
     useProceduralRoom,
@@ -721,10 +791,27 @@ function R3FViewerInner({
   const useShadows = rawParams?.shadows !== false && !isIPadLike && highQualityMode;
 
   const [renderer, setRenderer] = useState<WebGLRenderer | null>(null);
+  const [contextLost, setContextLost] = useState(false);
   const { isVideoPlayerModalOpen, isMaterialModalOpen } = useModalInteractionState();
   const handleCanvasCreated = useCallback((state: RootState) => {
     setRenderer(state.gl);
   }, []);
+
+  useEffect(() => {
+    const canvas = renderer?.domElement;
+    if (!canvas) return undefined;
+    const handleLost = (event: globalThis.Event) => {
+      event.preventDefault();
+      setContextLost(true);
+    };
+    const handleRestored = () => onRetry();
+    canvas.addEventListener('webglcontextlost', handleLost);
+    canvas.addEventListener('webglcontextrestored', handleRestored);
+    return () => {
+      canvas.removeEventListener('webglcontextlost', handleLost);
+      canvas.removeEventListener('webglcontextrestored', handleRestored);
+    };
+  }, [onRetry, renderer]);
 
   const {
     audioConfig,
@@ -858,6 +945,7 @@ function R3FViewerInner({
               onSceneReady={handleSceneReady}
               videosConfig={videosConfig}
               objectRegistry={objectRegistry}
+              lifecycleId={transitionId}
             />
           ) : useProceduralRoom ? (
             <GeneratedExhibitScene
@@ -961,9 +1049,8 @@ function R3FViewerInner({
       <AudioSubtitles tracks={audioConfig} language={xrSessionActive ? null : subtitleLanguage} />
       <OnscreenJoystick visitor={sceneReadyForVisitor ? visitorInstance : null} />
       <SceneLoadingOverlay
-        visible={!thumbnailModeActive && (!sceneLoadArmed || !sceneReadyForVisitor)}
+        visible={!thumbnailModeActive && !timedOut && !contextLost && (!sceneLoadArmed || !sceneReadyForVisitor)}
         label={sceneLoadArmed ? 'Loading exhibit' : 'Preparing exhibit'}
-        detail={formatLoadingItem(sceneLoadingItem)}
       />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-white bg-black/40">
@@ -971,9 +1058,18 @@ function R3FViewerInner({
         </div>
       )}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center text-red-200 bg-black/60">
-          Failed to load config: {error.message}
-        </div>
+        <SceneFailureOverlay
+          title="The exhibit configuration could not be loaded"
+          message={error.message}
+          onRetry={onRetry}
+        />
+      )}
+      {!error && (timedOut || contextLost) && (
+        <SceneFailureOverlay
+          title={contextLost ? 'The 3D renderer stopped responding' : 'This exhibit is taking too long to initialise'}
+          message={contextLost ? 'Graphics resources will be recreated.' : 'An essential model or collider did not become ready.'}
+          onRetry={onRetry}
+        />
       )}
       {xrSupported && (
         <div className="absolute bottom-4 inset-x-0 flex flex-col items-center gap-2 text-white text-center">
@@ -999,9 +1095,37 @@ function R3FViewerInner({
 }
 
 export function R3FViewer(props: R3FViewerProps) {
+  const [attempt, setAttempt] = useState(0);
+  const [sceneError, setSceneError] = useState<Error | null>(null);
+  const [failurePreview, setFailurePreview] = useState(() => getBooleanFromQuery('previewSceneFailure'));
+  const transitionId = `${props.configUrl || 'none'}:${attempt}`;
+  const retryModelPath = props.config?.modelPath;
+  const configError = props.error;
+  const retryConfig = props.onRetryConfig;
+  const retry = useCallback(() => {
+    if (retryModelPath) clearConfiguredGLTF(retryModelPath);
+    setSceneError(null);
+    setFailurePreview(false);
+    setAttempt((value) => value + 1);
+    if (configError) retryConfig?.();
+  }, [configError, retryConfig, retryModelPath]);
+
+  useEffect(() => {
+    setSceneError(null);
+  }, [props.configUrl]);
+
   return (
     <MaterialModalProvider>
-      <R3FViewerInner {...props} />
+      <SceneErrorBoundary key={transitionId} onError={setSceneError}>
+        <R3FViewerInner key={transitionId} {...props} transitionId={transitionId} onRetry={retry} />
+      </SceneErrorBoundary>
+      {(sceneError || failurePreview) && (
+        <SceneFailureOverlay
+          title="The exhibit could not be initialised"
+          message={sceneError?.message || 'Failure preview: this deliberately long diagnostic area can scroll independently while the Retry exhibit button remains fixed, visible, keyboard-focusable, and accessible on small screens. Use Retry exhibit to dismiss this preview and continue into the exhibition.'}
+          onRetry={retry}
+        />
+      )}
     </MaterialModalProvider>
   );
 }
