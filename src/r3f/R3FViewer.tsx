@@ -19,7 +19,7 @@ import {
 } from 'three';
 import type { WebGLRenderer } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { StaticGeometryGenerator, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
+import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 import Visitor from '../modules/Visitor.js';
 import type { PhysicsConfig } from '../modules/physicsSystem';
 import type { ExhibitConfig } from './useExhibitConfig';
@@ -74,12 +74,19 @@ import { useXrSessionControls } from './useXrSessionControls';
 import { useModalInteractionState } from './useModalInteractionState';
 import { surfaceZoneRouteKey, type LightZoneRoute, useSceneLightZones } from './useSceneLightZones';
 import { useSceneVideoConfig } from './useSceneVideoConfig';
+import { buildColliderGeometryInWorker } from './buildColliderGeometry';
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
 Mesh.prototype.raycast = acceleratedRaycast;
 
 const DEBUG_COLLIDER = false;
+let transitionSequence = 0;
+
+function createTransitionId(configUrl: string | null, attempt: number): string {
+  transitionSequence += 1;
+  return `${configUrl || 'none'}:${attempt}:${transitionSequence}`;
+}
 
 interface R3FViewerProps {
   configUrl: string | null;
@@ -315,23 +322,18 @@ function materialIsCollisionHidden(material: Material | Material[] | undefined):
   });
 }
 
-function pruneColliderSource(root: Object3D, objectRegistry?: ObjectRegistry) {
-  const excluded: Object3D[] = [];
-  root.traverse((object) => {
-    if (!(object instanceof Mesh)) return;
-    const runtimeData = resolveObjectRuntimeData(object, objectRegistry);
-    const type = runtimeData?.type || (typeof object.userData?.type === 'string' ? object.userData.type : undefined);
-    const collisionOnly = isCollisionOnlyRuntimeObject(runtimeData) || object.userData?.collisionOnly === true;
-    if (
-      !object.visible ||
-      (!collisionOnly && ((type && COLLIDER_EXCLUDED_TYPES.has(type)) || materialIsCollisionHidden(object.material)))
-    ) {
-      excluded.push(object);
-    }
-  });
-  excluded.forEach((object) => {
-    object.parent?.remove(object);
-  });
+function isColliderMeshIncluded(object: Mesh, objectRegistry?: ObjectRegistry): boolean {
+  const runtimeData = resolveObjectRuntimeData(object, objectRegistry);
+  const type = runtimeData?.type || (typeof object.userData?.type === 'string' ? object.userData.type : undefined);
+  const collisionOnly = isCollisionOnlyRuntimeObject(runtimeData) || object.userData?.collisionOnly === true;
+  let ancestor: Object3D | null = object;
+  while (ancestor) {
+    if (!ancestor.visible) return false;
+    ancestor = ancestor.parent;
+  }
+  return (
+    collisionOnly || !((type && COLLIDER_EXCLUDED_TYPES.has(type)) || materialIsCollisionHidden(object.material))
+  );
 }
 
 function ExhibitModel({
@@ -399,22 +401,21 @@ function ExhibitModel({
     let idleHandle: number | null = null;
     let timerHandle: ReturnType<typeof setTimeout> | null = null;
     let generatedGeometry: BufferGeometry | null = null;
-    let worker: GenerateMeshBVHWorker | null = null;
+    let bvhWorker: GenerateMeshBVHWorker | null = null;
 
     const buildCollider = async () => {
-      const colliderSource = displayScene.clone(true);
-      pruneColliderSource(colliderSource, objectRegistry);
-      colliderSource.updateMatrixWorld(true);
-      const staticGen = new StaticGeometryGenerator(colliderSource);
-      staticGen.attributes = ['position', 'normal'];
-      const merged = staticGen.generate();
+      const merged = await buildColliderGeometryInWorker(
+        displayScene,
+        (mesh) => isColliderMeshIncluded(mesh, objectRegistry),
+        () => stale
+      );
       generatedGeometry = merged;
       if (stale) {
         merged.dispose();
         return;
       }
-      worker = new GenerateMeshBVHWorker();
-      merged.boundsTree = await worker.generate(merged, { verbose: false });
+      bvhWorker = new GenerateMeshBVHWorker();
+      merged.boundsTree = await bvhWorker.generate(merged, { verbose: false });
       if (stale) {
         merged.dispose();
         return;
@@ -437,7 +438,9 @@ function ExhibitModel({
     };
 
     const schedule = () => void buildCollider().catch((error: unknown) => {
-      if (!stale) setBuildError(error instanceof Error ? error : new Error(String(error)));
+      if (!stale && !(error instanceof DOMException && error.name === 'AbortError')) {
+        setBuildError(error instanceof Error ? error : new Error(String(error)));
+      }
     });
     if (typeof window.requestIdleCallback === 'function') {
       idleHandle = window.requestIdleCallback(schedule, { timeout: 250 });
@@ -448,7 +451,7 @@ function ExhibitModel({
       stale = true;
       if (idleHandle !== null) window.cancelIdleCallback(idleHandle);
       if (timerHandle !== null) globalThis.clearTimeout(timerHandle);
-      (worker as (GenerateMeshBVHWorker & { dispose?: () => void }) | null)?.dispose?.();
+      (bvhWorker as (GenerateMeshBVHWorker & { dispose?: () => void }) | null)?.dispose?.();
       onColliderReady?.(null);
       generatedGeometry?.dispose();
     };
@@ -907,6 +910,7 @@ function R3FViewerInner({
   }, [modelPath, useProceduralRoom]);
 
   const sceneInteractionsLocked = !sceneReadyForVisitor || isVideoPlayerModalOpen || isMaterialModalOpen;
+  const missingSceneDefinition = Boolean(config) && !loading && !error && !modelPath && !useProceduralRoom;
 
   return (
     <div className="relative h-full w-full bg-gallery-dark">
@@ -1049,7 +1053,7 @@ function R3FViewerInner({
       <AudioSubtitles tracks={audioConfig} language={xrSessionActive ? null : subtitleLanguage} />
       <OnscreenJoystick visitor={sceneReadyForVisitor ? visitorInstance : null} />
       <SceneLoadingOverlay
-        visible={!thumbnailModeActive && !timedOut && !contextLost && (!sceneLoadArmed || !sceneReadyForVisitor)}
+        visible={!thumbnailModeActive && !missingSceneDefinition && !timedOut && !contextLost && (!sceneLoadArmed || !sceneReadyForVisitor)}
         label={sceneLoadArmed ? 'Loading exhibit' : 'Preparing exhibit'}
       />
       {loading && (
@@ -1068,6 +1072,13 @@ function R3FViewerInner({
         <SceneFailureOverlay
           title={contextLost ? 'The 3D renderer stopped responding' : 'This exhibit is taking too long to initialise'}
           message={contextLost ? 'Graphics resources will be recreated.' : 'An essential model or collider did not become ready.'}
+          onRetry={onRetry}
+        />
+      )}
+      {!error && missingSceneDefinition && (
+        <SceneFailureOverlay
+          title="The exhibit has no scene to display"
+          message="The configuration does not define a model or procedural room."
           onRetry={onRetry}
         />
       )}
@@ -1098,17 +1109,19 @@ export function R3FViewer(props: R3FViewerProps) {
   const [attempt, setAttempt] = useState(0);
   const [sceneError, setSceneError] = useState<Error | null>(null);
   const [failurePreview, setFailurePreview] = useState(() => getBooleanFromQuery('previewSceneFailure'));
-  const transitionId = `${props.configUrl || 'none'}:${attempt}`;
+  const transitionId = useMemo(
+    () => createTransitionId(props.configUrl, attempt),
+    [props.configUrl, attempt]
+  );
   const retryModelPath = props.config?.modelPath;
-  const configError = props.error;
   const retryConfig = props.onRetryConfig;
   const retry = useCallback(() => {
     if (retryModelPath) clearConfiguredGLTF(retryModelPath);
     setSceneError(null);
     setFailurePreview(false);
     setAttempt((value) => value + 1);
-    if (configError) retryConfig?.();
-  }, [configError, retryConfig, retryModelPath]);
+    retryConfig?.();
+  }, [retryConfig, retryModelPath]);
 
   useEffect(() => {
     setSceneError(null);

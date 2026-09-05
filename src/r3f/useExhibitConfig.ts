@@ -3,6 +3,7 @@ import { loadExhibitConfig } from '../config/loaders/loadExhibitConfig';
 import type { ExhibitConfig } from '../config/runtimeTypes';
 
 const configCache = new Map<string, ExhibitConfig>();
+const CONFIG_LOAD_TIMEOUT_MS = 20_000;
 
 interface UseExhibitConfigResult {
   config: ExhibitConfig | null;
@@ -38,6 +39,11 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     }
 
     const controller = new AbortController();
+    let didTimeOut = false;
+    const timeout = window.setTimeout(() => {
+      didTimeOut = true;
+      controller.abort();
+    }, CONFIG_LOAD_TIMEOUT_MS);
     setLoading(true);
     setError(null);
     setConfig(null);
@@ -62,14 +68,21 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
         }
       })
       .catch((err: unknown) => {
-        if (controller.signal.aborted) return;
-        const errorObject = err instanceof Error ? err : new Error(String(err));
+        if (controller.signal.aborted && !didTimeOut) return;
+        const errorObject = didTimeOut
+          ? new Error(`The exhibit configuration did not respond within ${CONFIG_LOAD_TIMEOUT_MS / 1000} seconds.`)
+          : err instanceof Error ? err : new Error(String(err));
         setError(errorObject);
         setConfig(null);
+        setResolvedUrl(null);
         setLoading(false);
+      })
+      .finally(() => {
+        window.clearTimeout(timeout);
       });
 
     return () => {
+      window.clearTimeout(timeout);
       controller.abort();
     };
   }, [configUrl, attempt]);
@@ -79,7 +92,10 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     resolvedUrl,
     loading,
     error,
-    retry: () => setAttempt((value) => value + 1)
+    retry: () => {
+      if (configUrl) configCache.delete(configUrl);
+      setAttempt((value) => value + 1);
+    }
   };
 }
 

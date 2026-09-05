@@ -24,6 +24,7 @@ export interface AudioMeshConfig {
   name?: string;
   url?: string;
   ipfsUrl?: string;
+  fallbackUrls?: string[];
   autoplayOnEnter?: boolean;
   labelPlaying?: string;
   labelPaused?: string;
@@ -268,6 +269,9 @@ export function disposeAudioMeshes(options: DisposeOptions = {}): void {
     sound.parent?.remove(sound);
     (sound as ManagedAudio & { buffer: AudioBuffer | null }).buffer = null;
   });
+  // Decoded AudioBuffers are large. Scene teardown releases them instead of
+  // retaining every exhibition visited during the session.
+  audioBufferCache.clear();
   if (resetState) {
     setAvailability(false);
     updateFallbackControls();
@@ -473,6 +477,9 @@ function loadAudioWithFallback(
 ) {
   const primary = cfg?.url ?? '';
   const ipfsUrl = cfg?.ipfsUrl || (typeof primary === 'string' && primary.startsWith('ipfs://') ? primary : null);
+  const fallbackUrls = Array.isArray(cfg?.fallbackUrls)
+    ? cfg.fallbackUrls.filter((url) => typeof url === 'string' && url.trim())
+    : [];
 
   const loadAudioBuffer = (url: string): Promise<AudioBuffer> => {
     const cached = audioBufferCache.get(url);
@@ -504,16 +511,21 @@ function loadAudioWithFallback(
       });
   };
 
+  const tryFallback = (index = 0): Promise<AudioBuffer> => {
+    if (index >= fallbackUrls.length) return tryIpfs(0);
+    return loadAudioBuffer(fallbackUrls[index]).catch(() => tryFallback(index + 1));
+  };
+
   const tryPrimary = (): Promise<AudioBuffer> => {
     if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
       return tryIpfs(0);
     }
     if (!primary) {
-      return tryIpfs(0);
+      return tryFallback(0);
     }
     return loadAudioBuffer(primary).catch(() => {
-        console.warn(`[AudioMesh] Primary failed, falling back to IPFS: ${primary}`);
-        return tryIpfs(0);
+        console.warn(`[AudioMesh] Primary failed, trying configured fallbacks: ${primary}`);
+        return tryFallback(0);
       });
   };
 

@@ -268,10 +268,14 @@ async function loadSubtitleTracks(
 function mapAudioInstance(instance: AudioModuleInstance, manifest: ExhibitConfigV2): UnknownRecord | null {
   const media = mediaById(manifest, instance.media);
   if (!media || media.kind !== 'audio') return null;
+  const sourceAsset = manifest.assets[media.sources[0]?.asset];
   return {
     id: instance.targetNode,
     name: instance.targetNode,
     url: resolveAssetRuntimeUri(media.sources[0]?.asset, manifest),
+    fallbackUrls: sourceAsset?.fallbackUris?.filter(
+      (candidate): candidate is string => typeof candidate === 'string' && candidate.trim().length > 0
+    ),
     autoplayOnEnter: instance.autoplayOnEnter,
     autoplayDelayMs: instance.autoplayDelayMs,
     labelPlaying: instance.labelPlaying,

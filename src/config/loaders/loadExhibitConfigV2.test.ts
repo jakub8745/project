@@ -400,8 +400,10 @@ describe('loadExhibitConfigV2', () => {
     } else if (filename === 'videopoem_lisbon_112025_config_v2.json') {
       expect(config.modelPath).toBe('/models/exhibition_videopoems_low.glb');
       expect(config.videos).toHaveLength(3);
-      expect(config.videos?.[0]?.sources[0]).toMatchObject({
-        fallbackSrcs: ['https://assets.bluepointart.uk/living/Mlodozeniec_JednaZiemia.mp4']
+      expect(config.videos?.[0]).toMatchObject({
+        sources: [{
+          fallbackSrcs: ['https://assets.bluepointart.uk/living/Mlodozeniec_JednaZiemia.mp4']
+        }]
       });
     } else {
       expect(config.modelPath).toBeTruthy();

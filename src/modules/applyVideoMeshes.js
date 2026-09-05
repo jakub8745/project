@@ -29,6 +29,7 @@ const IPFS_GATEWAYS = [
 ];
 
 const DEFAULT_VOLUME = 0.66;
+const VIDEO_SOURCE_TIMEOUT_MS = 20_000;
 const MAX_OVERLAY_DISTANCE = 4; // hide controls when user is far
 const _overlayDisposers = new Set(); // track active HTML overlay cleanup fns
 const _controlIconTextureCache = new Map();
@@ -100,11 +101,16 @@ function loadVideoSource(video, cfg) {
     return IPFS_GATEWAYS.map((gateway) => `${gateway}${cid}`);
   });
   let candidateIndex = 0;
+  let candidateTimer = null;
+  let sourceAttempt = 0;
   const lifecycleId = cfg.__lifecycleId;
   const isCurrentLifecycle = () => !lifecycleId || lifecycleId === _activeVideoLifecycleId;
   const markLoaded = () => {
     if (!isCurrentLifecycle()) return;
-    setVideoResource(cfg.id, { sourceLoaded: true, sourceLoading: false });
+    if (candidateTimer !== null) clearTimeout(candidateTimer);
+    candidateTimer = null;
+    video.dataset.loadState = 'ready';
+    setVideoResource(cfg.id, { sourceLoaded: true, sourceLoading: false, sourceTimer: null });
   };
   const markFailed = () => {
     if (!isCurrentLifecycle()) return;
@@ -112,22 +118,42 @@ function loadVideoSource(video, cfg) {
   };
   const loadNextCandidate = () => {
     if (!isCurrentLifecycle()) return;
+    const attempt = ++sourceAttempt;
+    if (candidateTimer !== null) clearTimeout(candidateTimer);
+    candidateTimer = null;
     if (candidateIndex >= expandedCandidates.length) {
       console.error(`[VideoMesh] Failed to load video from all configured sources: ${cfg.id}`);
+      video.onerror = null;
+      video.onloadedmetadata = null;
+      video.removeAttribute('src');
+      video.dataset.loadState = 'failed';
+      video.dispatchEvent(new CustomEvent('videoloaderror', {
+        detail: { id: cfg.id, sources: [...expandedCandidates] }
+      }));
       markFailed();
       return;
     }
     const src = expandedCandidates[candidateIndex++];
     video.src = src;
     video.type = srcObj?.type || '';
+    video.dataset.loadState = 'loading';
+    video.onloadedmetadata = () => {
+      if (attempt !== sourceAttempt) return;
+      markLoaded();
+    };
     video.onerror = () => {
-      if (!isCurrentLifecycle()) return;
+      if (!isCurrentLifecycle() || attempt !== sourceAttempt) return;
       console.warn(`[VideoMesh] Source failed, trying fallback ${candidateIndex}/${expandedCandidates.length}: ${src}`);
       setVideoResource(cfg.id, { sourceLoaded: false, sourceLoading: true });
       setTimeout(loadNextCandidate, 200);
     };
+    candidateTimer = setTimeout(() => {
+      if (!isCurrentLifecycle() || attempt !== sourceAttempt) return;
+      console.warn(`[VideoMesh] Source timed out, trying fallback: ${src}`);
+      loadNextCandidate();
+    }, VIDEO_SOURCE_TIMEOUT_MS);
+    setVideoResource(cfg.id, { sourceTimer: candidateTimer });
     video.load();
-    markLoaded();
   };
 
   loadNextCandidate();
@@ -157,6 +183,9 @@ function disposeVideoResource(id) {
   }
   if (res.video) {
     try {
+      if (res.sourceTimer) clearTimeout(res.sourceTimer);
+      res.video.onerror = null;
+      res.video.onloadedmetadata = null;
       res.video.pause();
       res.video.removeAttribute('src');
       res.video.load();
