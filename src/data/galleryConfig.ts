@@ -23,7 +23,7 @@ export const GALLERIES: GalleryItem[] = [
     title: 'Cracks of Meaning: Videopoetry in the age of AI',
     description: 'Critical work with AI in art education',
     configUrl: './configs/vectai_krakow_032026_config_v2.json',
-    ogImage: '/textures/vectai/og_image_vectai.jpg',
+    ogImage: 'https://assets.bluepointart.uk/cracks/og_image_vectai.jpg',
   },
   {
     slug: 'videopoem_lisbon_112025',

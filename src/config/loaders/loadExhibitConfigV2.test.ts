@@ -378,7 +378,7 @@ describe('loadExhibitConfigV2', () => {
       });
       expect(config.objects?.logo_oficyny?.visible).toBeUndefined();
     } else if (filename === 'vectai_krakow_032026_config_v2.json') {
-      expect(config.modelPath).toBe('/models/vectai_room.glb');
+      expect(config.modelPath).toBe('https://assets.bluepointart.uk/cracks/vectai_room.glb');
       expect(config.videos).toHaveLength(3);
       expect(config.images?.pdf_manual_pl).toMatchObject({
         tooltipLabel: 'PDF/Zenodo: workshop manual (PL)',
@@ -400,6 +400,9 @@ describe('loadExhibitConfigV2', () => {
     } else if (filename === 'videopoem_lisbon_112025_config_v2.json') {
       expect(config.modelPath).toBe('/models/exhibition_videopoems_low.glb');
       expect(config.videos).toHaveLength(3);
+      expect(config.videos?.[0]?.sources[0]).toMatchObject({
+        fallbackSrcs: ['https://assets.bluepointart.uk/living/Mlodozeniec_JednaZiemia.mp4']
+      });
     } else {
       expect(config.modelPath).toBeTruthy();
     }

@@ -219,6 +219,9 @@ function mapVideoInstance(instance: VideoModuleInstance, manifest: ExhibitConfig
       const asset = manifest.assets[source.asset];
       return {
         src: resolveAssetRuntimeUri(source.asset, manifest),
+        fallbackSrcs: asset?.fallbackUris?.filter(
+          (candidate): candidate is string => typeof candidate === 'string' && candidate.trim().length > 0
+        ),
         type: asset?.mimeType
       } satisfies UnknownRecord;
     }),

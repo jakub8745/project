@@ -16,6 +16,7 @@ export interface VideoMeshConfig {
     src: string;
     type?: string;
     ipfsSrc?: string;
+    fallbackSrcs?: string[];
   }>;
   loop?: boolean;
   muted?: boolean;

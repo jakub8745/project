@@ -64,15 +64,17 @@ function setVideoResource(id, data) {
   _videoResourceCache.set(id, { ...prev, ...data });
 }
 
-function getPrimaryVideoSource(cfg) {
+function getVideoSourceCandidates(cfg) {
   const srcObj = Array.isArray(cfg?.sources) ? cfg.sources[0] : null;
   const primary = typeof srcObj?.src === 'string' ? srcObj.src : '';
-  const ipfsUrl = typeof srcObj?.ipfsSrc === 'string'
-    ? srcObj.ipfsSrc
-    : primary.startsWith('ipfs://')
-      ? primary
-      : null;
-  return { srcObj, primary, ipfsUrl };
+  const candidates = [
+    primary,
+    ...(Array.isArray(srcObj?.fallbackSrcs) ? srcObj.fallbackSrcs : []),
+    typeof srcObj?.ipfsSrc === 'string' ? srcObj.ipfsSrc : ''
+  ].filter((candidate, index, all) => (
+    typeof candidate === 'string' && candidate.trim() && all.indexOf(candidate) === index
+  ));
+  return { srcObj, candidates };
 }
 
 function shouldDeferVideoLoad(cfg) {
@@ -87,13 +89,17 @@ function loadVideoSource(video, cfg) {
   const existing = getVideoResource(cfg.id);
   if (existing.sourceLoaded || existing.sourceLoading || video.currentSrc || video.src) return true;
 
-  const { srcObj, primary, ipfsUrl } = getPrimaryVideoSource(cfg);
-  if (!srcObj && !primary && !ipfsUrl) return false;
+  const { srcObj, candidates } = getVideoSourceCandidates(cfg);
+  if (!srcObj || candidates.length === 0) return false;
 
   setVideoResource(cfg.id, { sourceLoading: true });
 
-  const ipfsGateways = IPFS_GATEWAYS;
-  let gwIndex = 0;
+  const expandedCandidates = candidates.flatMap((candidate) => {
+    if (!candidate.startsWith('ipfs://')) return [candidate];
+    const cid = candidate.slice('ipfs://'.length);
+    return IPFS_GATEWAYS.map((gateway) => `${gateway}${cid}`);
+  });
+  let candidateIndex = 0;
   const lifecycleId = cfg.__lifecycleId;
   const isCurrentLifecycle = () => !lifecycleId || lifecycleId === _activeVideoLifecycleId;
   const markLoaded = () => {
@@ -104,54 +110,27 @@ function loadVideoSource(video, cfg) {
     if (!isCurrentLifecycle()) return;
     setVideoResource(cfg.id, { sourceLoading: false });
   };
-  const loadIpfs = () => {
+  const loadNextCandidate = () => {
     if (!isCurrentLifecycle()) return;
-    if (!ipfsUrl) {
-      console.error(`[VideoMesh] Primary failed and no IPFS fallback: ${primary}`);
+    if (candidateIndex >= expandedCandidates.length) {
+      console.error(`[VideoMesh] Failed to load video from all configured sources: ${cfg.id}`);
       markFailed();
       return;
     }
-    if (gwIndex >= ipfsGateways.length) {
-      console.error(`[VideoMesh] Failed to load video from all gateways: ${ipfsUrl}`);
-      markFailed();
-      return;
-    }
-    const cid = ipfsUrl.replace("ipfs://", "");
-    const src = ipfsGateways[gwIndex] + cid;
-    gwIndex++;
+    const src = expandedCandidates[candidateIndex++];
     video.src = src;
     video.type = srcObj?.type || '';
-    video.load();
     video.onerror = () => {
       if (!isCurrentLifecycle()) return;
-      console.warn(`[VideoMesh] Retrying IPFS gateway ${gwIndex}/${ipfsGateways.length}`);
-      setTimeout(loadIpfs, 200);
+      console.warn(`[VideoMesh] Source failed, trying fallback ${candidateIndex}/${expandedCandidates.length}: ${src}`);
+      setVideoResource(cfg.id, { sourceLoaded: false, sourceLoading: true });
+      setTimeout(loadNextCandidate, 200);
     };
+    video.load();
     markLoaded();
   };
 
-  const loadPrimary = () => {
-    if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
-      loadIpfs();
-      return;
-    }
-    if (!primary) {
-      loadIpfs();
-      return;
-    }
-    video.src = primary;
-    video.type = srcObj?.type || '';
-    video.load();
-    video.onerror = () => {
-      if (!isCurrentLifecycle()) return;
-      console.warn(`[VideoMesh] Primary source failed, falling back to IPFS: ${primary}`);
-      setVideoResource(cfg.id, { sourceLoaded: false, sourceLoading: false });
-      loadIpfs();
-    };
-    markLoaded();
-  };
-
-  loadPrimary();
+  loadNextCandidate();
   return true;
 }
 

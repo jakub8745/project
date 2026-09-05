@@ -18,79 +18,79 @@
   "assets": {
     "scene_model": {
       "kind": "model",
-      "uri": "/models/vectai_room.glb",
+      "uri": "https://assets.bluepointart.uk/cracks/vectai_room.glb",
       "mimeType": "model/gltf-binary"
     },
     "og_image": {
       "kind": "image",
-      "uri": "/textures/vectai/og_image_vectai.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/og_image_vectai.jpg",
       "mimeType": "image/jpeg",
       "width": 1200,
       "height": 630
     },
     "manual_thumb": {
       "kind": "image",
-      "uri": "/textures/thubm_PeknieciaSensu.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/thubm_PeknieciaSensu.jpg",
       "mimeType": "image/jpeg"
     },
     "manual_pl_pdf": {
       "kind": "document",
-      "uri": "/pdfs/pekniecia_sensu.pdf",
+      "uri": "https://assets.bluepointart.uk/cracks/pekniecia_sensu.pdf",
       "mimeType": "application/pdf"
     },
     "manual_en_pdf": {
       "kind": "document",
-      "uri": "/pdfs/CRACKS OF MEANING_ENG.pdf",
+      "uri": "https://assets.bluepointart.uk/cracks/CRACKS%20OF%20MEANING_ENG.pdf",
       "mimeType": "application/pdf"
     },
     "poster_obowiazki": {
       "kind": "image",
-      "uri": "/textures/vectai/cracks_title.png",
-      "mimeType": "image/jpeg"
+      "uri": "https://assets.bluepointart.uk/cracks/cracks_title.png",
+      "mimeType": "image/png"
     },
     "scanning01_image": {
       "kind": "image",
-      "uri": "/textures/vectai/skanowanie01.jpeg",
+      "uri": "https://assets.bluepointart.uk/cracks/skanowanie01.jpeg",
       "mimeType": "image/jpeg"
     },
     "second_day_image": {
       "kind": "image",
-      "uri": "/textures/vectai/2dzien.jpeg",
+      "uri": "https://assets.bluepointart.uk/cracks/2dzien.jpeg",
       "mimeType": "image/jpeg"
     },
     "zajac_image": {
       "kind": "image",
-      "uri": "/textures/vectai/zajac_g4.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/zajac_g4.jpg",
       "mimeType": "image/jpeg"
     },
     "parasol_image": {
       "kind": "image",
-      "uri": "/textures/vectai/parasol.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/parasol.jpg",
       "mimeType": "image/jpeg"
     },
     "snake_image": {
       "kind": "image",
-      "uri": "/textures/vectai/waz.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/waz.jpg",
       "mimeType": "image/jpeg"
     },
     "baletnica_image": {
       "kind": "image",
-      "uri": "/textures/vectai/baletnica.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/baletnica.jpg",
       "mimeType": "image/jpeg"
     },
     "text_layer_01": {
       "kind": "image",
-      "uri": "/textures/vectai/kartka01.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/kartka01.jpg",
       "mimeType": "image/jpeg"
     },
     "text_layer_02": {
       "kind": "image",
-      "uri": "/textures/vectai/kartka02.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/kartka02.jpg",
       "mimeType": "image/jpeg"
     },
     "text_layer_03": {
       "kind": "image",
-      "uri": "/textures/vectai/kartka03.jpg",
+      "uri": "https://assets.bluepointart.uk/cracks/kartka03.jpg",
       "mimeType": "image/jpeg"
     },
     "left_screen_poster": {
@@ -135,12 +135,12 @@
     },
     "audio_intro_mp3": {
       "kind": "audio",
-      "uri": "/audio/introduction_Cracks of Meaning.mp3",
+      "uri": "https://assets.bluepointart.uk/cracks/introduction_Cracks%20of%20Meaning.mp3",
       "mimeType": "audio/mpeg"
     },
     "audio_intro_subtitles": {
       "kind": "subtitle",
-      "uri": "/audio/vectai_intro_subtitles.json",
+      "uri": "https://assets.bluepointart.uk/cracks/vectai_intro_subtitles.json",
       "mimeType": "application/json"
     }
   },
