@@ -2088,5 +2088,5 @@
       "currentR3F": "Can be compiled to the current ExhibitConfig runtime shape by a v3-to-runtime adapter."
     }
   },
-  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json"
+  "$schema": "./schemas/exhibit_manifest_v3.schema.json"
 }
