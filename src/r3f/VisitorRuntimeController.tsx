@@ -159,6 +159,67 @@ export function FirstPersonController({
   const lastActivityStamp = useRef(0);
   const lastXrSnapTurnAt = useRef(0);
   const xrTurnReady = useRef(true);
+  const windowFocused = useRef(
+    typeof document === 'undefined' || (document.visibilityState === 'visible' && document.hasFocus())
+  );
+
+  useEffect(() => {
+    if (!controls) return undefined;
+
+    const activePointers = new Map<number, string>();
+    const canvas = gl.domElement;
+    const recordPointerDown = (event: PointerEvent) => {
+      activePointers.set(event.pointerId, event.pointerType);
+    };
+    const clearPointer = (event: PointerEvent) => {
+      activePointers.delete(event.pointerId);
+    };
+    const handleBlur = () => {
+      windowFocused.current = false;
+      controls.enabled = false;
+
+      // OrbitControls keeps a drag active until it receives pointerup/cancel.
+      // If focus moves to the opened link first, that event may never reach the canvas.
+      for (const [pointerId, pointerType] of activePointers) {
+        canvas.dispatchEvent(new PointerEvent('pointercancel', {
+          bubbles: true,
+          pointerId,
+          pointerType,
+          button: 0,
+          buttons: 0
+        }));
+      }
+      activePointers.clear();
+    };
+    const handleFocus = () => {
+      windowFocused.current = document.visibilityState === 'visible';
+      controls.enabled = windowFocused.current && !interactionLocked && !gl.xr.isPresenting;
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleFocus();
+      } else {
+        handleBlur();
+      }
+    };
+
+    canvas.addEventListener('pointerdown', recordPointerDown, true);
+    document.addEventListener('pointerup', clearPointer, true);
+    document.addEventListener('pointercancel', clearPointer, true);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      canvas.removeEventListener('pointerdown', recordPointerDown, true);
+      document.removeEventListener('pointerup', clearPointer, true);
+      document.removeEventListener('pointercancel', clearPointer, true);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      activePointers.clear();
+    };
+  }, [controls, gl, interactionLocked]);
 
   useEffect(() => {
     if (!visitor) return undefined;
@@ -268,7 +329,7 @@ export function FirstPersonController({
   useFrame((_, delta) => {
     if (!visitor || !collider) return;
     if (controls) {
-      controls.enabled = !interactionLocked && !gl.xr.isPresenting;
+      controls.enabled = windowFocused.current && !interactionLocked && !gl.xr.isPresenting;
     }
     if (gl.xr.isPresenting && !interactionLocked) {
       const input = readXrControllerInput(gl.xr.getSession());

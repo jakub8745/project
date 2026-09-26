@@ -8,7 +8,7 @@
   "sourceManifest": {
     "schemaVersion": "2.0.0",
     "path": "public/configs/bednarczyk_config.json",
-    "sha256": "d9af8d9081e34af69e93c3984a60d5a5f4d5ee0127a85657061b2c47af233621",
+    "sha256": "242bc5c425731f7ffd8cb66bd8f0434fc82c237822d49ed7e02d63e1567da522",
     "migration": "v2-to-v3-structural-1",
     "id": "dystopia"
   },
@@ -80,6 +80,94 @@
       "fallbackUris": [
         "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/pouring_milk.mp3"
       ]
+    },
+    "ARtourPhoto01_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto01_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto01.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto02_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto02_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto02.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto03_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto03_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto03.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto04_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto04_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto04.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto05_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto05_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto05.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto06_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto06_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto06.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto07_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto07_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto07.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "ARtourPhoto08_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "ARtourPhoto08_image",
+      "sourceUri": "/textures/bednarczyk/ARtourPhoto08.JPG",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
     }
   },
   "content": {
@@ -104,6 +192,62 @@
       "info_text": {
         "kind": "text",
         "text": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
+      },
+      "ARtourPhoto01": {
+        "kind": "image",
+        "title": "ARtourPhoto01",
+        "image": {
+          "asset": "ARtourPhoto03_image"
+        }
+      },
+      "ARtourPhoto02": {
+        "kind": "image",
+        "title": "ARtourPhoto02",
+        "image": {
+          "asset": "ARtourPhoto08_image"
+        }
+      },
+      "ARtourPhoto03": {
+        "kind": "image",
+        "title": "ARtourPhoto03",
+        "image": {
+          "asset": "ARtourPhoto02_image"
+        }
+      },
+      "ARtourPhoto04": {
+        "kind": "image",
+        "title": "ARtourPhoto04",
+        "image": {
+          "asset": "ARtourPhoto01_image"
+        }
+      },
+      "ARtourPhoto05": {
+        "kind": "image",
+        "title": "ARtourPhoto05",
+        "image": {
+          "asset": "ARtourPhoto07_image"
+        }
+      },
+      "ARtourPhoto06": {
+        "kind": "image",
+        "title": "ARtourPhoto06",
+        "image": {
+          "asset": "ARtourPhoto04_image"
+        }
+      },
+      "ARtourPhoto07": {
+        "kind": "image",
+        "title": "ARtourPhoto07",
+        "image": {
+          "asset": "ARtourPhoto05_image"
+        }
+      },
+      "ARtourPhoto08": {
+        "kind": "image",
+        "title": "ARtourPhoto08",
+        "image": {
+          "asset": "ARtourPhoto06_image"
+        }
       }
     },
     "sidebar": {
@@ -172,6 +316,91 @@
         "metadata": {
           "interactionDescription": "The dzbanDystopia node anchors spatial audio. Distance, rolloff, looping, volume, and optional transform behavior are declared in the audio module."
         }
+      },
+      "pano_bake.000": {
+        "kind": "link_anchor",
+        "metadata": {
+          "url": "https://krystynabednarczyk.bluepointart.uk/",
+          "interactionDescription": "Click pano_bake.000 to open https://krystynabednarczyk.bluepointart.uk/ in a new browser tab."
+        }
+      },
+      "pano_bako.001": {
+        "kind": "link_anchor",
+        "metadata": {
+          "url": "https://krystynabednarczyk.bluepointart.uk/map/",
+          "interactionDescription": "Click pano_bako.001 to open https://krystynabednarczyk.bluepointart.uk/map/ in a new browser tab."
+        }
+      },
+      "pano_bake.002": {
+        "kind": "link_anchor",
+        "metadata": {
+          "url": "https://krystynabednarczyk.bluepointart.uk/outcomes/",
+          "interactionDescription": "Click pano_bake.002 to open https://krystynabednarczyk.bluepointart.uk/outcomes/ in a new browser tab."
+        }
+      },
+      "ARtourPhoto01": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto01",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto01 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto02": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto02",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto02 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto03": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto03",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto03 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto04": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto04",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto04 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto05": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto05",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto05 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto06": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto06",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto06 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto07": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto07",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto07 to open its image in the exhibit panel."
+        }
+      },
+      "ARtourPhoto08": {
+        "kind": "image_anchor",
+        "media": "ARtourPhoto08",
+        "interactive": true,
+        "metadata": {
+          "interactionDescription": "Click ARtourPhoto08 to open its image in the exhibit panel."
+        }
       }
     },
     "modules": {
@@ -227,12 +456,215 @@
           "backgroundIntensity": 0.5
         },
         "links": {
-          "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/"
+          "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/",
+          "pano_bake.000": "https://krystynabednarczyk.bluepointart.uk/",
+          "pano_bako.001": "https://krystynabednarczyk.bluepointart.uk/map/",
+          "pano_bake.002": "https://krystynabednarczyk.bluepointart.uk/outcomes/"
         }
       }
     }
   },
   "interactions": [
+    {
+      "id": "ARtourPhoto08_open_image",
+      "targetNode": "ARtourPhoto08",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto08"
+      },
+      "ui": {
+        "title": "ARtourPhoto08",
+        "description": "Clicking ARtourPhoto08 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto08 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto08"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto08"
+      },
+      "description": "Clicking ARtourPhoto08 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto07_open_image",
+      "targetNode": "ARtourPhoto07",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto07"
+      },
+      "ui": {
+        "title": "ARtourPhoto07",
+        "description": "Clicking ARtourPhoto07 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto07 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto07"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto07"
+      },
+      "description": "Clicking ARtourPhoto07 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto06_open_image",
+      "targetNode": "ARtourPhoto06",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto06"
+      },
+      "ui": {
+        "title": "ARtourPhoto06",
+        "description": "Clicking ARtourPhoto06 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto06 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto06"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto06"
+      },
+      "description": "Clicking ARtourPhoto06 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto05_open_image",
+      "targetNode": "ARtourPhoto05",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto05"
+      },
+      "ui": {
+        "title": "ARtourPhoto05",
+        "description": "Clicking ARtourPhoto05 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto05 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto05"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto05"
+      },
+      "description": "Clicking ARtourPhoto05 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto04_open_image",
+      "targetNode": "ARtourPhoto04",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto04"
+      },
+      "ui": {
+        "title": "ARtourPhoto04",
+        "description": "Clicking ARtourPhoto04 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto04 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto04"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto04"
+      },
+      "description": "Clicking ARtourPhoto04 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto03_open_image",
+      "targetNode": "ARtourPhoto03",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto03"
+      },
+      "ui": {
+        "title": "ARtourPhoto03",
+        "description": "Clicking ARtourPhoto03 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto03 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto03"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto03"
+      },
+      "description": "Clicking ARtourPhoto03 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto02_open_image",
+      "targetNode": "ARtourPhoto02",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto02"
+      },
+      "ui": {
+        "title": "ARtourPhoto02",
+        "description": "Clicking ARtourPhoto02 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto02 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto02"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto02"
+      },
+      "description": "Clicking ARtourPhoto02 opens its image in the exhibit panel."
+    },
+    {
+      "id": "ARtourPhoto01_open_image",
+      "targetNode": "ARtourPhoto01",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "ARtourPhoto01"
+      },
+      "ui": {
+        "title": "ARtourPhoto01",
+        "description": "Clicking ARtourPhoto01 opens its image in the exhibit panel."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking ARtourPhoto01 opens its image in the exhibit panel."
+      },
+      "type": "open_image",
+      "targets": [
+        "ARtourPhoto01"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "ARtourPhoto01"
+      },
+      "description": "Clicking ARtourPhoto01 opens its image in the exhibit panel."
+    },
     {
       "id": "Milkmaid_open_image",
       "targetNode": "Milkmaid",
@@ -282,6 +714,81 @@
         "uri": "https://krystynabednarczyk.bluepointart.uk/"
       },
       "description": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+    },
+    {
+      "id": "pano_bake.000_open_link",
+      "targetNode": "pano_bake.000",
+      "trigger": "click",
+      "action": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+      },
+      "ui": {
+        "title": "pano_bake.000",
+        "description": "Clicking pano_bake.000 opens the external link https://krystynabednarczyk.bluepointart.uk/."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking pano_bake.000 opens the external link https://krystynabednarczyk.bluepointart.uk/."
+      },
+      "type": "open_link",
+      "targets": [
+        "pano_bake.000"
+      ],
+      "behavior": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+      },
+      "description": "Clicking pano_bake.000 opens the external link https://krystynabednarczyk.bluepointart.uk/."
+    },
+    {
+      "id": "pano_bako.001_open_link",
+      "targetNode": "pano_bako.001",
+      "trigger": "click",
+      "action": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/map/"
+      },
+      "ui": {
+        "title": "pano_bako.001",
+        "description": "Clicking pano_bako.001 opens the external link https://krystynabednarczyk.bluepointart.uk/map/."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking pano_bako.001 opens the external link https://krystynabednarczyk.bluepointart.uk/map/."
+      },
+      "type": "open_link",
+      "targets": [
+        "pano_bako.001"
+      ],
+      "behavior": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/map/"
+      },
+      "description": "Clicking pano_bako.001 opens the external link https://krystynabednarczyk.bluepointart.uk/map/."
+    },
+    {
+      "id": "pano_bake.002_open_link",
+      "targetNode": "pano_bake.002",
+      "trigger": "click",
+      "action": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/outcomes/"
+      },
+      "ui": {
+        "title": "pano_bake.002",
+        "description": "Clicking pano_bake.002 opens the external link https://krystynabednarczyk.bluepointart.uk/outcomes/."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking pano_bake.002 opens the external link https://krystynabednarczyk.bluepointart.uk/outcomes/."
+      },
+      "type": "open_link",
+      "targets": [
+        "pano_bake.002"
+      ],
+      "behavior": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/outcomes/"
+      },
+      "description": "Clicking pano_bake.002 opens the external link https://krystynabednarczyk.bluepointart.uk/outcomes/."
     },
     {
       "id": "dzbanDystopia_spatial_audio",

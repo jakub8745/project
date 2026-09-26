@@ -746,10 +746,9 @@ export function PointerInteractions({
             return;
           }
           const features = 'noopener=yes,noreferrer=yes';
-          const opened = window.open(safeUrl, '_blank', features);
-          if (!opened) {
-            window.location.href = safeUrl;
-          }
+          // With `noopener`, browsers may return `null` even when the new tab
+          // was opened successfully. Never navigate the archive as a fallback.
+          window.open(safeUrl, '_blank', features);
         } else {
           console.warn(`PointerInteractions: no link mapped for interactive "${linkKey}"`);
         }
