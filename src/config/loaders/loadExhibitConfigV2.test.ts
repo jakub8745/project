@@ -357,14 +357,14 @@ describe('loadExhibitConfigV2', () => {
       expect(config.chat).toMatchObject({ enabled: true });
       expect(config.thumbnailCapture).toMatchObject({ enabled: true });
     } else if (filename === 'identity_config.json') {
-      expect(config.modelPath).toBe('/models/exhibition_identity_merged.glb');
+      expect(config.modelPath).toBe('https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/exhibition_identity_merged.glb');
       expect(config.videos).toHaveLength(2);
       expect(config.videos?.every((video) => video.playbackMode === 'synced_silent')).toBe(true);
     } else if (filename === 'wakeup_config.json') {
-      expect(config.modelPath).toBe('/models/exhibition_wakeupcall_merged.glb');
+      expect(config.modelPath).toBe('https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/exhibition_wakeupcall_merged.glb');
       expect(Object.keys(config.images || {})).toHaveLength(13);
     } else if (filename === 'cipriani_config.json') {
-      expect(config.modelPath).toBe('/models/exhibition_cipriani_merged.glb');
+      expect(config.modelPath).toBe('https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/exhibition_cipriani.glb');
       expect(Object.keys(config.images || {})).toHaveLength(40);
       expect(config.audio).toHaveLength(1);
       expect(config.objects?.cipriani_opis).toMatchObject({
@@ -378,7 +378,7 @@ describe('loadExhibitConfigV2', () => {
       });
       expect(config.objects?.logo_oficyny?.visible).toBeUndefined();
     } else if (filename === 'vectai_krakow_032026_config_v2.json') {
-      expect(config.modelPath).toBe('https://assets.bluepointart.uk/cracks/vectai_room.glb');
+      expect(config.modelPath).toBe('https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/vectai_room.glb');
       expect(config.videos).toHaveLength(3);
       expect(config.images?.pdf_manual_pl).toMatchObject({
         tooltipLabel: 'PDF/Zenodo: workshop manual (PL)',
@@ -398,11 +398,11 @@ describe('loadExhibitConfigV2', () => {
         tooltipLabel: expect.stringContaining('Final immersive three-screen videopoem')
       });
     } else if (filename === 'videopoem_lisbon_112025_config_v2.json') {
-      expect(config.modelPath).toBe('/models/exhibition_videopoems_low.glb');
+      expect(config.modelPath).toBe('https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/exhibition_videopoems_low.glb');
       expect(config.videos).toHaveLength(3);
       expect(config.videos?.[0]).toMatchObject({
         sources: [{
-          fallbackSrcs: ['https://assets.bluepointart.uk/living/Mlodozeniec_JednaZiemia.mp4']
+          fallbackSrcs: ['https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4']
         }]
       });
     } else {

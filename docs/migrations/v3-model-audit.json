@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-09-26T12:01:46.474Z",
+  "results": [
+    {
+      "slug": "vectai_krakow_032026",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/vectai_room.glb",
+      "modelNodeCount": 44,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "lockdowns",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/exhibition_lockdowns_merged.glb",
+      "modelNodeCount": 19,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "wakeupcall",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/exhibition_wakeupcall_merged.glb",
+      "modelNodeCount": 17,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "bednarczyk",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/bednarczyk_exhibition.glb",
+      "modelNodeCount": 16,
+      "missingDeclaredNodes": [
+        "Milkmaid",
+        "dzbanDystopia"
+      ]
+    },
+    {
+      "slug": "dystopia",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/exhibition_dystopia.glb",
+      "modelNodeCount": 6,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "cipriani",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/exhibition_cipriani.glb",
+      "modelNodeCount": 48,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "identity",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/exhibition_identity_merged.glb",
+      "modelNodeCount": 16,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "videopoetry",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/tom/o/wystawaTom_ktx.glb",
+      "modelNodeCount": 9,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "videopoem_lisbon_112025",
+      "status": "inspected",
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/exhibition_videopoems_low.glb",
+      "modelNodeCount": 14,
+      "missingDeclaredNodes": []
+    },
+    {
+      "slug": "prompt_procedural_room",
+      "status": "procedural_scene",
+      "nodes": [
+        "visitor",
+        "robot",
+        "robot_2",
+        "blob_alpha",
+        "blob_beta"
+      ]
+    }
+  ]
+}

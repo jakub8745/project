@@ -1,0 +1,113 @@
+{
+  "uploadedAt": "2026-09-26T09:29:19.164Z",
+  "assets": [
+    {
+      "id": "scene_model",
+      "cid": "QmQkFhM9nQCypgwJn79cHGxxbFKXNv6PuA3DL8yfQPtzKN"
+    },
+    {
+      "id": "og_image",
+      "cid": "QmYegKGjajgCvbC8VVzpxHdKDVHzFRw4hjhSEYfRqN7Dag"
+    },
+    {
+      "id": "manual_thumb",
+      "cid": "QmRG14PuiubexmmAsPYW1RF2uhtHJubVsUPwoSAsZDp2Fg"
+    },
+    {
+      "id": "manual_pl_pdf",
+      "cid": "QmdcYmBVk8ZWSjJwtUSsbGMoVoDS2uied1ZWR4PYSQYvqR"
+    },
+    {
+      "id": "manual_en_pdf",
+      "cid": "QmShfdiRk8LRcAFXQJULeJZbUs3SRZ9sBexx1s8zEuuDeS"
+    },
+    {
+      "id": "poster_obowiazki",
+      "cid": "QmUEjaAM22FyGmYv2TNGbM2G9PTpahgSWbCSCWgJV6oB89"
+    },
+    {
+      "id": "scanning01_image",
+      "cid": "QmYrfmqKmAYBf4gQGKm24nH3iNBVsXi6FnUXjMjbRYEtmi"
+    },
+    {
+      "id": "second_day_image",
+      "cid": "QmdxrHoPsRmSHhcwWjG4yfWtFk5n7GKn5R8QYJhjSSv28z"
+    },
+    {
+      "id": "zajac_image",
+      "cid": "QmSwUY7jqc3h6HeFiPzp3FEgJJDKgUyNpTPeRNFpb2JqjX"
+    },
+    {
+      "id": "parasol_image",
+      "cid": "QmXMWA8tcLU5NkKcxczgheu7AMbFkhMVn6ADRg5g4wYLof"
+    },
+    {
+      "id": "snake_image",
+      "cid": "QmUKr8vLCAv3orinjgqVZd2y7HwQKMcdjpT95EKpNENgKJ"
+    },
+    {
+      "id": "baletnica_image",
+      "cid": "QmU1ssJd75oDvxXgtHtATjFDWAmcsGosCSb8KQxnxVZfeW"
+    },
+    {
+      "id": "text_layer_01",
+      "cid": "QmfADBD9Uu2bgfG9sv9nkUV4dpjSXCwMys4PAeTpDTjkNm"
+    },
+    {
+      "id": "text_layer_02",
+      "cid": "QmcAYhWh22vib4m6QU3GKrgy4UsTHcbBfBERit8eJRo7UC"
+    },
+    {
+      "id": "text_layer_03",
+      "cid": "Qmf5FYzk3ynM7jbmTWhJ2ty59mHkqY8XPpRWBqXiarsc78"
+    },
+    {
+      "id": "left_screen_poster",
+      "cid": "QmYY15ayKrmHZdB62youDpnEmYSv6fQ6yyZpMmZtqd8rAT"
+    },
+    {
+      "id": "middle_screen_poster",
+      "cid": "QmVHQmzJhmt3XUY7Ht4cJPS3guD6gxWf4BxakiFGbzU7bw"
+    },
+    {
+      "id": "right_screen_poster",
+      "cid": "Qmdb1ZW2WtMFaa3g5ZTPuWEGTBLTTYqWRPY74SHnZmBGRb"
+    },
+    {
+      "id": "left_screen_video",
+      "cid": "QmQQ1vM71HNcwyfVkjtRE1KEss8uR17RLNkZa1eSH91etD"
+    },
+    {
+      "id": "middle_screen_video",
+      "cid": "QmVJn5zUuuYdtSrUg8ZSQzKrv8cCCgWAq6CVwu4agwtLz9"
+    },
+    {
+      "id": "right_screen_video",
+      "cid": "QmbwTo2yzKK6qqvn1vGcdHjGY5a3D7Db7dWNtmTiG8gysn"
+    },
+    {
+      "id": "audio_left_mp3",
+      "cid": "QmaFH3RTNZYF9ZjCRbe3yHjifYNtXuEsixAs6wkc5KAsiX"
+    },
+    {
+      "id": "audio_right_mp3",
+      "cid": "QmQ4ZsLhFWcWr4nd6YPr2kgADwLtiyDtW5z38RxJGBiBjS"
+    },
+    {
+      "id": "audio_intro_mp3",
+      "cid": "QmXJ3aCN1TqEvgkRtuNQMzRALK1ZM3P8cHNkjn2dxHwrm8"
+    },
+    {
+      "id": "audio_intro_subtitles",
+      "cid": "QmSupdU37w51QUT8BHMrm5ZR8nAzgrpKkK2yXDUxCD3SbQ"
+    }
+  ],
+  "manifest": {
+    "cid": "QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha",
+    "uri": "ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha"
+  },
+  "nftMetadata": {
+    "cid": "QmRE926P7h6ZqTAHXDSMbgrHQsqSsiPEoJaaDDfefFNTX3",
+    "uri": "ipfs://QmRE926P7h6ZqTAHXDSMbgrHQsqSsiPEoJaaDDfefFNTX3"
+  }
+}

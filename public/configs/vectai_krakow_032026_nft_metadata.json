@@ -1,0 +1,160 @@
+{
+  "name": "Cracks of Meaning: Videopoetry in the age of AI",
+  "description": "Critical work with AI in art education",
+  "image": "ipfs://QmYegKGjajgCvbC8VVzpxHdKDVHzFRw4hjhSEYfRqN7Dag",
+  "animation_url": "ipfs://QmQkFhM9nQCypgwJn79cHGxxbFKXNv6PuA3DL8yfQPtzKN",
+  "external_url": "https://bluepointart.uk/cracks-of-meaning-in-the-bpaa/",
+  "attributes": [
+    {
+      "trait_type": "Archive Type",
+      "value": "Portable 3D exhibit"
+    },
+    {
+      "trait_type": "Scene Source",
+      "value": "3D scan and archival media"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Krakow"
+    },
+    {
+      "trait_type": "Year",
+      "value": "2026"
+    }
+  ],
+  "properties": {
+    "manifest": "ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha",
+    "files": [
+      {
+        "id": "scene_model",
+        "uri": "ipfs://QmQkFhM9nQCypgwJn79cHGxxbFKXNv6PuA3DL8yfQPtzKN",
+        "type": "model/gltf-binary"
+      },
+      {
+        "id": "og_image",
+        "uri": "ipfs://QmYegKGjajgCvbC8VVzpxHdKDVHzFRw4hjhSEYfRqN7Dag",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "manual_thumb",
+        "uri": "ipfs://QmRG14PuiubexmmAsPYW1RF2uhtHJubVsUPwoSAsZDp2Fg",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "manual_pl_pdf",
+        "uri": "ipfs://QmdcYmBVk8ZWSjJwtUSsbGMoVoDS2uied1ZWR4PYSQYvqR",
+        "type": "application/pdf"
+      },
+      {
+        "id": "manual_en_pdf",
+        "uri": "ipfs://QmShfdiRk8LRcAFXQJULeJZbUs3SRZ9sBexx1s8zEuuDeS",
+        "type": "application/pdf"
+      },
+      {
+        "id": "poster_obowiazki",
+        "uri": "ipfs://QmUEjaAM22FyGmYv2TNGbM2G9PTpahgSWbCSCWgJV6oB89",
+        "type": "image/png"
+      },
+      {
+        "id": "scanning01_image",
+        "uri": "ipfs://QmYrfmqKmAYBf4gQGKm24nH3iNBVsXi6FnUXjMjbRYEtmi",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "second_day_image",
+        "uri": "ipfs://QmdxrHoPsRmSHhcwWjG4yfWtFk5n7GKn5R8QYJhjSSv28z",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "zajac_image",
+        "uri": "ipfs://QmSwUY7jqc3h6HeFiPzp3FEgJJDKgUyNpTPeRNFpb2JqjX",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "parasol_image",
+        "uri": "ipfs://QmXMWA8tcLU5NkKcxczgheu7AMbFkhMVn6ADRg5g4wYLof",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "snake_image",
+        "uri": "ipfs://QmUKr8vLCAv3orinjgqVZd2y7HwQKMcdjpT95EKpNENgKJ",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "baletnica_image",
+        "uri": "ipfs://QmU1ssJd75oDvxXgtHtATjFDWAmcsGosCSb8KQxnxVZfeW",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "text_layer_01",
+        "uri": "ipfs://QmfADBD9Uu2bgfG9sv9nkUV4dpjSXCwMys4PAeTpDTjkNm",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "text_layer_02",
+        "uri": "ipfs://QmcAYhWh22vib4m6QU3GKrgy4UsTHcbBfBERit8eJRo7UC",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "text_layer_03",
+        "uri": "ipfs://Qmf5FYzk3ynM7jbmTWhJ2ty59mHkqY8XPpRWBqXiarsc78",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "left_screen_poster",
+        "uri": "ipfs://QmYY15ayKrmHZdB62youDpnEmYSv6fQ6yyZpMmZtqd8rAT",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "middle_screen_poster",
+        "uri": "ipfs://QmVHQmzJhmt3XUY7Ht4cJPS3guD6gxWf4BxakiFGbzU7bw",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "right_screen_poster",
+        "uri": "ipfs://Qmdb1ZW2WtMFaa3g5ZTPuWEGTBLTTYqWRPY74SHnZmBGRb",
+        "type": "image/jpeg"
+      },
+      {
+        "id": "left_screen_video",
+        "uri": "ipfs://QmQQ1vM71HNcwyfVkjtRE1KEss8uR17RLNkZa1eSH91etD",
+        "type": "video/mp4"
+      },
+      {
+        "id": "middle_screen_video",
+        "uri": "ipfs://QmVJn5zUuuYdtSrUg8ZSQzKrv8cCCgWAq6CVwu4agwtLz9",
+        "type": "video/mp4"
+      },
+      {
+        "id": "right_screen_video",
+        "uri": "ipfs://QmbwTo2yzKK6qqvn1vGcdHjGY5a3D7Db7dWNtmTiG8gysn",
+        "type": "video/mp4"
+      },
+      {
+        "id": "audio_left_mp3",
+        "uri": "ipfs://QmaFH3RTNZYF9ZjCRbe3yHjifYNtXuEsixAs6wkc5KAsiX",
+        "type": "audio/mpeg"
+      },
+      {
+        "id": "audio_right_mp3",
+        "uri": "ipfs://QmQ4ZsLhFWcWr4nd6YPr2kgADwLtiyDtW5z38RxJGBiBjS",
+        "type": "audio/mpeg"
+      },
+      {
+        "id": "audio_intro_mp3",
+        "uri": "ipfs://QmXJ3aCN1TqEvgkRtuNQMzRALK1ZM3P8cHNkjn2dxHwrm8",
+        "type": "audio/mpeg"
+      },
+      {
+        "id": "audio_intro_subtitles",
+        "uri": "ipfs://QmSupdU37w51QUT8BHMrm5ZR8nAzgrpKkK2yXDUxCD3SbQ",
+        "type": "application/json"
+      },
+      {
+        "id": "manifest_v3_json",
+        "uri": "ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha",
+        "type": "application/json"
+      }
+    ]
+  }
+}

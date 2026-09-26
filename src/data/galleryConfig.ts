@@ -7,6 +7,8 @@ export interface GalleryItem {
   title: string;
   description: string;
   configUrl: string;
+  configUrls: Record<'2' | '3', string>;
+  defaultConfigVersion: '2' | '3';
   ogImage: string;
 }
 
@@ -22,7 +24,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_vectai_cracks.jpg',
     title: 'Cracks of Meaning: Videopoetry in the age of AI',
     description: 'Critical work with AI in art education',
-    configUrl: './configs/vectai_krakow_032026_config_v2.json',
+    configUrl: '/configs/vectai_krakow_032026_config_v3.json',
+    configUrls: { '2': '/configs/vectai_krakow_032026_config_v2.json', '3': '/configs/vectai_krakow_032026_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: 'https://assets.bluepointart.uk/cracks/og_image_vectai.jpg',
   },
   {
@@ -31,7 +35,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_lisbona_videopoetry.jpg',
     title: 'LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY',
     description: '3 videopoems created in the framework of workshops organised within the CAPHE project',
-    configUrl: './configs/videopoem_lisbon_112025_config_v2.json',
+    configUrl: '/configs/videopoem_lisbon_112025_config_v3.json',
+    configUrls: { '2': '/configs/videopoem_lisbon_112025_config_v2.json', '3': '/configs/videopoem_lisbon_112025_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -40,7 +46,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_cipriani.jpg',
     title: 'Cipriani - Vincenz',
     description: 'Modern meets classic',
-    configUrl: './configs/cipriani_config.json',
+    configUrl: '/configs/cipriani_config_v3.json',
+    configUrls: { '2': '/configs/cipriani_config.json', '3': '/configs/cipriani_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -49,7 +57,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_bednarczyk.jpg',
     title: 'Unveiling the Heritage of Krystyna Bednarczyk',
     description: '3D Documentation of the project',
-    configUrl: './configs/bednarczyk_config.json',
+    configUrl: '/configs/bednarczyk_config_v3.json',
+    configUrls: { '2': '/configs/bednarczyk_config.json', '3': '/configs/bednarczyk_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -58,7 +68,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_dystopia.jpg',
     title: 'Dystopia of imitation',
     description: 'Modern meets classic',
-    configUrl: './configs/dystopia_config.json',
+    configUrl: '/configs/dystopia_config_v3.json',
+    configUrls: { '2': '/configs/dystopia_config.json', '3': '/configs/dystopia_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -67,7 +79,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_identity.jpg',
     title: 'Identity Preview',
     description: 'Exploring self and society',
-    configUrl: './configs/identity_config.json',
+    configUrl: '/configs/identity_config_v3.json',
+    configUrls: { '2': '/configs/identity_config.json', '3': '/configs/identity_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -76,7 +90,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_wakeupcall.jpg',
     title: 'WakeUp Call',
     description: 'Modern meets classic',
-    configUrl: './configs/wakeup_config.json',
+    configUrl: '/configs/wakeup_config_v3.json',
+    configUrls: { '2': '/configs/wakeup_config.json', '3': '/configs/wakeup_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -85,7 +101,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_lockdowns.jpg',
     title: 'Joanna Ciechanowska - Lockdowns',
     description: 'A look back at 2020',
-    configUrl: './configs/lockdowns_config.json',
+    configUrl: '/configs/lockdowns_config_v3.json',
+    configUrls: { '2': '/configs/lockdowns_config.json', '3': '/configs/lockdowns_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -94,7 +112,9 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_15poets.jpg',
     title: 'layout for the Tom Konyves exhibition space',
     description: '',
-    configUrl: './configs/tom_exhibit_config.json',
+    configUrl: '/configs/tom_exhibit_config_v3.json',
+    configUrls: { '2': '/configs/tom_exhibit_config.json', '3': '/configs/tom_exhibit_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
   {
@@ -103,7 +123,16 @@ export const GALLERIES: GalleryItem[] = [
     thumbnailPoster: '/sidebar_thumbnails/poster_agentsroom.jpg',
     title: 'Collision Salon',
     description: 'Conversation is not a feature but a consequence',
-    configUrl: './configs/prompt_procedural_room_config.json',
+    configUrl: '/configs/prompt_procedural_room_config_v3.json',
+    configUrls: { '2': '/configs/prompt_procedural_room_config.json', '3': '/configs/prompt_procedural_room_config_v3.json' },
+    defaultConfigVersion: '3',
     ogImage: '',
   },
 ];
+
+/** Select only registered manifests; query overrides remain stable across gallery switches. */
+export function resolveGalleryConfigUrl(gallery: GalleryItem, search = ''): string {
+  const requested = new URLSearchParams(search).get('configVersion');
+  const version = requested === '2' || requested === '3' ? requested : gallery.defaultConfigVersion;
+  return gallery.configUrls[version];
+}

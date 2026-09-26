@@ -16,7 +16,7 @@
   "assets": {
     "scene_model": {
       "kind": "model",
-      "uri": "/models/exhibition_lockdowns_merged.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/exhibition_lockdowns_merged.glb",
       "mimeType": "model/gltf-binary"
     },
     "background_texture": {
@@ -132,9 +132,9 @@
       "exposureMin": 0.5,
       "exposureMax": 1.65,
       "exposureSampleInterval": 30,
-      "antialias": false,
+      "antialias": true,
       "shadows": false,
-      "maxDpr": 1
+      "maxDpr": 2
     }
   },
   "nodes": {
@@ -757,9 +757,9 @@
       "rotateOrbit": 30,
       "backgroundBlurriness": 0.1,
       "backgroundIntensity": 0.5,
-      "performanceMode": true,
-      "maxDpr": 1,
-      "antialias": false,
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
       "shadows": false,
       "logarithmicDepthBuffer": false
     }

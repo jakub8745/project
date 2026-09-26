@@ -14,12 +14,12 @@
   "assets": {
     "scene_model": {
       "kind": "model",
-      "uri": "/models/bednarczyk_exhibition.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/bednarczyk_exhibition.glb",
       "mimeType": "model/gltf-binary"
     },
     "background_texture": {
       "kind": "texture",
-      "uri": "/textures/equMap_podMostem.ktx2",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/equMap_podMostem.ktx2",
       "mimeType": "image/ktx2"
     },
     "Milkmaid_image": {
@@ -185,6 +185,11 @@
   },
   "viewer": {
     "params": {
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
+      "shadows": false,
+      "logarithmicDepthBuffer": false,
       "exposure": 1,
       "autoExposure": true,
       "toneMapping": "neutral",

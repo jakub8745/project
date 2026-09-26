@@ -1,3 +1,6 @@
+import { fetchManifest } from '../config/manifestRepository';
+import { normalizeManifestShape } from '../config/manifestShape';
+import { resolveRuntimeAsset } from '../config/assetResolution';
 import { useState, useEffect, FC } from 'react';
 import { createPortal } from 'react-dom';
 import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
@@ -76,7 +79,7 @@ function normalizePublicAssetUrl(rawUrl: string | undefined): string | undefined
 function resolveConfigAsset(cfg: ExhibitConfigResponse, assetId: string | undefined): string | undefined {
   if (!assetId) return undefined;
   const asset = cfg.assets?.[assetId];
-  const rawUrl = asset?.uri || asset?.fallbackUris?.find((candidate) => candidate.trim());
+  const rawUrl = resolveRuntimeAsset(asset, cfg.id);
   if (!rawUrl) return undefined;
   if (isIpfsUri(rawUrl) && cfg.id) return resolveOracleUrl(rawUrl, cfg.id);
   return normalizePublicAssetUrl(rawUrl);
@@ -148,13 +151,9 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
     setLoading(true);
     setError(null);
 
-    fetch(fetchUrl, { signal: controller.signal })
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
+    fetchManifest(fetchUrl, controller.signal)
       .then(raw => {
-        const cfg = raw as ExhibitConfigResponse;
+        const cfg = normalizeManifestShape(raw) as ExhibitConfigResponse;
         if (!cfg.sidebar?.items) {
           throw new Error(`No sidebar.items in ${fetchUrl}`);
         }
@@ -236,8 +235,8 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           ...item,
           content: sanitizeSidebarHtml(item.content)
         }));
-        sidebarCache.set(fetchUrl, sanitized);
         if (!controller.signal.aborted) {
+          sidebarCache.set(fetchUrl, sanitized);
           setItems(sanitized);
         }
       })

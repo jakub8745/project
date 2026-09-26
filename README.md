@@ -26,11 +26,14 @@ pnpm build
 
 Drop exhibition configs into `public/configs/` (or host them remotely) and update `src/data/galleryConfig.ts` to register new entries.
 
-Target schema artifacts for the normalized manifest live at:
+V3 is the preferred manifest format, using the VectAI archive structure:
 
-- `src/types/exhibitSchemaV2.ts`
-- `docs/exhibit-config-v2.md`
-- `example_of_gallery_config_v2.json`
+- `src/types/exhibitSchemaV3.ts`
+- `docs/exhibit-config-v3.md`
+- `example_of_gallery_config_v3.json`
+- `docs/v2-to-v3-migration-plan.md`
+
+All v2 JSON URLs and loaders remain supported. Use `?configVersion=2#gallery-slug` for the retained version, or `?configVersion=3#gallery-slug` for the migrated version. Run `npm run configs:validate` to validate all v3 manifests. Migration reports and validation results live in `docs/migrations/`.
 
 ---
 
@@ -39,7 +42,7 @@ Target schema artifacts for the normalized manifest live at:
 The `prompt_procedural_room` exhibit is a fully config-driven scene generated in code (no room GLB).  
 Its config is located at:
 
-- `public/configs/prompt_procedural_room_config.json`
+- `public/configs/prompt_procedural_room_config_v3.json`
 
 Key features:
 
@@ -86,7 +89,7 @@ Runtime controls:
 
 Config block:
 
-- `thumbnailCapture` in `public/configs/prompt_procedural_room_config.json`
+- `previews.capture.r3fCurrent` (with viewer profile override support) in `public/configs/prompt_procedural_room_config_v3.json`
   - camera pose: `cameraPosition`, `target`, `fov`
   - recording: `fps`, `mimeType`, `bitsPerSecond`, `filename`
   - behavior: `allowOrbit`, `autoRotate`, `autoRotateSpeed`, `backgroundColor`, `showHint`

@@ -1,0 +1,1415 @@
+{
+  "checkedAt": "2026-09-26T11:56:01.271Z",
+  "results": [
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/vectai_room.glb",
+      "refs": [
+        "vectai_krakow_032026:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "15057924"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/og_image_vectai.jpg",
+      "refs": [
+        "vectai_krakow_032026:og_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "120799"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/thubm_PeknieciaSensu.jpg",
+      "refs": [
+        "vectai_krakow_032026:manual_thumb"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "67627"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/pekniecia_sensu.pdf",
+      "refs": [
+        "vectai_krakow_032026:manual_pl_pdf"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/pdf",
+      "bytes": "7147232"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/CRACKS%20OF%20MEANING_ENG.pdf",
+      "refs": [
+        "vectai_krakow_032026:manual_en_pdf"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/pdf",
+      "bytes": "267930"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/cracks_title.png",
+      "refs": [
+        "vectai_krakow_032026:poster_obowiazki"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "404815"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/skanowanie01.jpeg",
+      "refs": [
+        "vectai_krakow_032026:scanning01_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "273447"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/2dzien.jpeg",
+      "refs": [
+        "vectai_krakow_032026:second_day_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "171591"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/zajac_g4.jpg",
+      "refs": [
+        "vectai_krakow_032026:zajac_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "58630"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/parasol.jpg",
+      "refs": [
+        "vectai_krakow_032026:parasol_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "67447"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/waz.jpg",
+      "refs": [
+        "vectai_krakow_032026:snake_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "39584"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/baletnica.jpg",
+      "refs": [
+        "vectai_krakow_032026:baletnica_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "40473"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/kartka01.jpg",
+      "refs": [
+        "vectai_krakow_032026:text_layer_01"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "218488"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/kartka02.jpg",
+      "refs": [
+        "vectai_krakow_032026:text_layer_02"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "211942"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/kartka03.jpg",
+      "refs": [
+        "vectai_krakow_032026:text_layer_03"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "286459"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg",
+      "refs": [
+        "vectai_krakow_032026:left_screen_poster"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "151582"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg",
+      "refs": [
+        "vectai_krakow_032026:middle_screen_poster"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "92972"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg",
+      "refs": [
+        "vectai_krakow_032026:right_screen_poster"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "60396"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4",
+      "refs": [
+        "vectai_krakow_032026:left_screen_video"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "8929359"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4",
+      "refs": [
+        "vectai_krakow_032026:middle_screen_video"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "9090163"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4",
+      "refs": [
+        "vectai_krakow_032026:right_screen_video"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "9113674"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/left_audio.mp3",
+      "refs": [
+        "vectai_krakow_032026:audio_left_mp3"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "audio/mpeg",
+      "bytes": "4900711"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3",
+      "refs": [
+        "vectai_krakow_032026:audio_right_mp3"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "audio/mpeg",
+      "bytes": "4900711"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/introduction_Cracks%20of%20Meaning.mp3",
+      "refs": [
+        "vectai_krakow_032026:audio_intro_mp3"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "929375"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/vectai_intro_subtitles.json",
+      "refs": [
+        "vectai_krakow_032026:audio_intro_subtitles"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "6584"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/exhibition_lockdowns_merged.glb",
+      "refs": [
+        "lockdowns:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "10385428"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/bg_lockdowns.ktx2",
+      "refs": [
+        "lockdowns:background_texture"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "265520"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/78.jpg",
+      "refs": [
+        "lockdowns:78_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "510578"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/LobsterPyjamas.jpg",
+      "refs": [
+        "lockdowns:LobsterPyjamas_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "575698"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/IndigoBlue.jpg",
+      "refs": [
+        "lockdowns:IndigoBlue_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "389429"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/1000years.jpg",
+      "refs": [
+        "lockdowns:1000years_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "342013"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/BlueRain.jpg",
+      "refs": [
+        "lockdowns:BlueRain_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "580352"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/LastEvening.jpg",
+      "refs": [
+        "lockdowns:LastEvening_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "379794"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Touch.jpg",
+      "refs": [
+        "lockdowns:Touch_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "573983"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/TheMan.jpg",
+      "refs": [
+        "lockdowns:TheMan_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "426455"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Svalbard.jpg",
+      "refs": [
+        "lockdowns:Svalbard_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "512840"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/AncientFears.jpg",
+      "refs": [
+        "lockdowns:AncientFears_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "513881"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/LastFlight.jpg",
+      "refs": [
+        "lockdowns:LastFlight_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "370934"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/City.jpg",
+      "refs": [
+        "lockdowns:City_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "462730"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Cauchemar.jpg",
+      "refs": [
+        "lockdowns:Cauchemar_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "296220"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Shadow.jpg",
+      "refs": [
+        "lockdowns:Shadow_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "187376"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Waves.jpg",
+      "refs": [
+        "lockdowns:Waves_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "416110"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Boat.jpg",
+      "refs": [
+        "lockdowns:Boat_image"
+      ],
+      "status": "network_error",
+      "error": "fetch failed",
+      "retry": {
+        "status": 200,
+        "ok": true
+      }
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/exhibition_wakeupcall_merged.glb",
+      "refs": [
+        "wakeupcall:scene_model"
+      ],
+      "status": "network_error",
+      "error": "fetch failed",
+      "retry": {
+        "status": 200,
+        "ok": true
+      }
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/bg_white.ktx2",
+      "refs": [
+        "wakeupcall:background_texture"
+      ],
+      "status": "network_error",
+      "error": "fetch failed",
+      "retry": {
+        "status": 200,
+        "ok": true
+      }
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/NADIA.jpg",
+      "refs": [
+        "wakeupcall:NADIA_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "29096"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/QUENTIN.jpg",
+      "refs": [
+        "wakeupcall:QUENTIN_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "112124"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SZYMON.jpg",
+      "refs": [
+        "wakeupcall:SZYMON_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "46461"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/TEIJA.jpg",
+      "refs": [
+        "wakeupcall:TEIJA_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "79909"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/LEX.jpg",
+      "refs": [
+        "wakeupcall:LEX_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "37498"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/BARTOSZ.jpg",
+      "refs": [
+        "wakeupcall:BARTOSZ_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "56007"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/VICTOR.jpg",
+      "refs": [
+        "wakeupcall:VICTOR_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "195818"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/XU.jpg",
+      "refs": [
+        "wakeupcall:XU_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "728999"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SIQING.jpg",
+      "refs": [
+        "wakeupcall:SIQING_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "19934"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/BARBORA.jpg",
+      "refs": [
+        "wakeupcall:BARBORA_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "95821"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/HAN.jpg",
+      "refs": [
+        "wakeupcall:HAN_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "16424"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SALOMON.jpg",
+      "refs": [
+        "wakeupcall:SALOMON_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "166059"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/JULIANA.jpg",
+      "refs": [
+        "wakeupcall:JULIANA_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "120818"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/bednarczyk_exhibition.glb",
+      "refs": [
+        "bednarczyk:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "11952828"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/equMap_podMostem.ktx2",
+      "refs": [
+        "bednarczyk:background_texture"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "964183"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/milkmaid.jpg",
+      "refs": [
+        "bednarczyk:Milkmaid_image",
+        "dystopia:Milkmaid_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "270294"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/pouring_milk.mp3",
+      "refs": [
+        "bednarczyk:dzbanDystopia_audio",
+        "dystopia:dzbanDystopia_audio"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "audio/mpeg",
+      "bytes": "1054022"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/exhibition_dystopia.glb",
+      "refs": [
+        "dystopia:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "2934504"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/bg_dystopia.ktx2",
+      "refs": [
+        "dystopia:background_texture"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "650198"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/exhibition_cipriani.glb",
+      "refs": [
+        "cipriani:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "21309052"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/bg_puno85.ktx2",
+      "refs": [
+        "cipriani:background_texture"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "730564"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_opis.jpg",
+      "refs": [
+        "cipriani:cipriani_opis_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "239117"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_5.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_5_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "183810"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_6.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_6_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "170992"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_7.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_7_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "284673"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_8.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_8_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "335361"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_9.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_9_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "327551"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_10.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_10_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "238433"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_11.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_11_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "574965"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_12.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_12_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "696138"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_13.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_13_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "700329"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_14.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_14_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "451996"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_15.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_15_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "909844"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_16.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_16_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "473733"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_17.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_17_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "586891"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_18.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_18_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "511219"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_19.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_19_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "692379"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_20.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_20_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "510358"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_21.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_21_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "750831"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_22.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_22_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "475946"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_23.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_23_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "393636"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_24.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_24_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "471068"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_25.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_25_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "508639"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_26.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_26_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "581983"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_27.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_27_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "585588"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_28.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_28_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "801158"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_29.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_29_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "599834"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_30.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_30_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "590541"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_31.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_31_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "689347"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_32.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_32_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "675447"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_33.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_33_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "599391"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_34.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_34_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "545920"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_35.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_35_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "720603"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_36.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_36_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "782818"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_37.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_37_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "579312"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_38.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_38_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "725300"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_39.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_39_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "603525"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_40.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_40_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "726080"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_41.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_41_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "691358"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_42.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_42_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "444024"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/cipriani_pic_43.jpg",
+      "refs": [
+        "cipriani:cipriani_pic_43_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "667346"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/KapelaCzeremosz_Kolomyjka2.mp3",
+      "refs": [
+        "cipriani:ciprianiAudio_audio"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "audio/mpeg",
+      "bytes": "2578109"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/exhibition_identity_merged.glb",
+      "refs": [
+        "identity:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "12023268"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/bg_puno85.ktx2",
+      "refs": [
+        "identity:background_texture"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "730564"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/WielekEibejzyt.jpg",
+      "refs": [
+        "identity:WielekEibejzyt_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "423144"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/WielekPalec.jpg",
+      "refs": [
+        "identity:WielekPalec_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "208483"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/WilekSchizofrenia.jpg",
+      "refs": [
+        "identity:WilekSchizofrenia_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "234125"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerStarman.jpg",
+      "refs": [
+        "identity:DreamerStarman_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "78165"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerPiotr.jpg",
+      "refs": [
+        "identity:DreamerPiotr_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "95430"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerSpaceman.jpg",
+      "refs": [
+        "identity:DreamerSpaceman_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "139228"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerAura.jpg",
+      "refs": [
+        "identity:DreamerAura_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "68735"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerFlowerman.jpg",
+      "refs": [
+        "identity:DreamerFlowerman_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "172043"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/Hidden.jpg",
+      "refs": [
+        "identity:Hidden_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "image/jpeg",
+      "bytes": "78190"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/UnrealPlaces.mp4",
+      "refs": [
+        "identity:Unreal_video"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "2028446"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/MurzynHeritage.mp4",
+      "refs": [
+        "identity:Heritage_video"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "12072808"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/tom/o/wystawaTom_ktx.glb",
+      "refs": [
+        "videopoetry:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "2580352"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/bg_puno85.ktx2",
+      "refs": [
+        "videopoetry:background_texture"
+      ],
+      "status": 404,
+      "ok": false,
+      "mimeType": null,
+      "bytes": null
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/tom/o/manifesto_TomKonyves.jpg",
+      "refs": [
+        "videopoetry:Manifesto_image"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "332757"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/UnrealPlaces.mp4",
+      "refs": [
+        "videopoetry:Video_source_1"
+      ],
+      "status": 404,
+      "ok": false,
+      "mimeType": null,
+      "bytes": null
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/MurzynHeritage.mp4",
+      "refs": [
+        "videopoetry:Screen_source_1"
+      ],
+      "status": 404,
+      "ok": false,
+      "mimeType": null,
+      "bytes": null
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/exhibition_videopoems_low.glb",
+      "refs": [
+        "videopoem_lisbon_112025:scene_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "2938292"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_living_heritage_videopem.jpg",
+      "refs": [
+        "videopoem_lisbon_112025:enter_image_asset"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "257887"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Living_Heritage_Curatorial_Dossier.pdf",
+      "refs": [
+        "videopoem_lisbon_112025:curatorial_dossier_pdf"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "1738802"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/introduction_to_living_heritage.mp3",
+      "refs": [
+        "videopoem_lisbon_112025:introduction_audio_asset"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "792075"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_jednaZiemia.png",
+      "refs": [
+        "videopoem_lisbon_112025:title_jednaziemia_poster"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "62226"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_echoes.png",
+      "refs": [
+        "videopoem_lisbon_112025:title_echoes_poster"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "48319"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_disappeared.png",
+      "refs": [
+        "videopoem_lisbon_112025:title_disappeared_poster"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "41253"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
+      "refs": [
+        "videopoem_lisbon_112025:jednaziemia_video_asset"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "23635007"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
+      "refs": [
+        "videopoem_lisbon_112025:echoes_video_asset"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "26499913"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
+      "refs": [
+        "videopoem_lisbon_112025:pessoa_video_asset"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "video/mp4",
+      "bytes": "16605186"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_intro_subtitles.json",
+      "refs": [
+        "videopoem_lisbon_112025:audio_intro_subtitles"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "19310"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/cueva-de-los-manos_wallpaper.jpg",
+      "refs": [
+        "prompt_procedural_room:wall_texture",
+        "prompt_procedural_room:environment_texture"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "111524"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/robot_edited.glb",
+      "refs": [
+        "prompt_procedural_room:robot_model",
+        "prompt_procedural_room:robot_2_model"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "2407428"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/blob_alpha_SOUL.md",
+      "refs": [
+        "prompt_procedural_room:blob_alpha_prompt"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "2280"
+    },
+    {
+      "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/blob_beta_SOUL.md",
+      "refs": [
+        "prompt_procedural_room:blob_beta_prompt"
+      ],
+      "status": 200,
+      "ok": true,
+      "mimeType": "application/octet-stream",
+      "bytes": "3183"
+    }
+  ]
+}

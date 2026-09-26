@@ -18,7 +18,7 @@ import {
   resolveBlobFromVisitorText,
   resolveBlobPromptsFromPaths
 } from './chat/config';
-import { GALLERIES, type GalleryItem } from './data/galleryConfig';
+import { GALLERIES, resolveGalleryConfigUrl, type GalleryItem } from './data/galleryConfig';
 import { useBlobChatBridge } from './hooks/useBlobChatBridge';
 import { unlockAudioPlayback } from './modules/audioMeshManager';
 import { useExhibitConfig } from './r3f/useExhibitConfig';
@@ -221,13 +221,17 @@ export default function App() {
         return;
       }
 
-      setSelectedConfigUrl(gallery.configUrl);
+      setSelectedConfigUrl(resolveGalleryConfigUrl(gallery, window.location.search));
       setSelectedSlug(gallery.slug);
     }
 
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
   }, [findGalleryBySlug]);
 
   // On gallery click, update hash and close sidebar
@@ -249,7 +253,7 @@ export default function App() {
   useEffect(() => {
     const selectedGallery =
       (selectedSlug ? GALLERIES.find((gallery) => gallery.slug === selectedSlug) : null) ??
-      GALLERIES.find((gallery) => gallery.configUrl === selectedConfigUrl);
+      GALLERIES.find((gallery) => Object.values(gallery.configUrls).includes(selectedConfigUrl || ''));
     const fallbackMetadata = metadataFromGallery(selectedGallery);
     applyPageMetadata(metadataFromConfig(activeExhibitConfig, fallbackMetadata));
   }, [activeExhibitConfig, selectedConfigUrl, selectedSlug]);

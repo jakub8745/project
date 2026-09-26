@@ -95,6 +95,7 @@ interface AudioManagerState {
   available: boolean;
   isPlaying: boolean;
   volume: number;
+  muted: boolean;
   labelPlaying: string;
   labelPaused: string;
 }
@@ -111,6 +112,7 @@ let audioState: AudioManagerState = {
   available: false,
   isPlaying: false,
   volume: 0.5,
+  muted: false,
   labelPlaying: 'Audio is playing',
   labelPaused: 'Play Audio'
 };
@@ -361,8 +363,21 @@ export function stopAudioByIds(ids: string[]): void {
 
 export function setAudioVolume(volume: number): void {
   const clamped = MathUtils.clamp(volume, 0, 1);
-  if (audioState.volume === clamped) return;
-  audioState = { ...audioState, volume: clamped };
+  const muted = clamped <= 0 ? true : false;
+  if (audioState.volume === clamped && audioState.muted === muted) return;
+  audioState = { ...audioState, volume: clamped, muted };
+  audioObjectsRef.forEach((sound) => applyVolumeToSound(sound));
+  notifyState();
+}
+
+export function setAudioMuted(muted: boolean): void {
+  if (muted) {
+    if (audioState.muted) return;
+    audioState = { ...audioState, muted: true, volume: 0 };
+  } else {
+    const restoredVolume = audioState.volume > 0 ? audioState.volume : 0.5;
+    audioState = { ...audioState, muted: false, volume: restoredVolume };
+  }
   audioObjectsRef.forEach((sound) => applyVolumeToSound(sound));
   notifyState();
 }

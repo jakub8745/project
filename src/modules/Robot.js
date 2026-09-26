@@ -110,6 +110,8 @@ export default class Robot {
       collider = null,
       visitor = null,
       obstacles = [],
+      ignoreObstacle = null,
+      obstacleRadius = 0.8,
       roomBounds = null
     } = context;
 
@@ -118,9 +120,11 @@ export default class Robot {
     }
 
     for (const obstacle of obstacles) {
-      if (!obstacle?.position) continue;
-      const obstacleDistance = clampNumber(obstacle.radius, 0.8) + this.collisionRadius;
-      if (this._avoidPoint(obstacle.position, obstacleDistance)) break;
+      if (obstacle === ignoreObstacle || obstacle?.mesh === ignoreObstacle) continue;
+      const obstaclePosition = obstacle?.position || obstacle?.mesh?.position || obstacle;
+      if (!obstaclePosition?.isVector3) continue;
+      const obstacleDistance = clampNumber(obstacle.radius, obstacleRadius) + this.collisionRadius;
+      if (this._avoidPoint(obstaclePosition, obstacleDistance)) break;
     }
 
     this._resolveColliderCollision(collider);

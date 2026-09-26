@@ -19,31 +19,31 @@
   "assets": {
     "wall_texture": {
       "kind": "image",
-      "uri": "/textures/cueva-de-los-manos_wallpaper.jpg",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/cueva-de-los-manos_wallpaper.jpg",
       "mimeType": "image/jpeg"
     },
     "environment_texture": {
       "kind": "image",
-      "uri": "/textures/cueva-de-los-manos_wallpaper.jpg",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/cueva-de-los-manos_wallpaper.jpg",
       "mimeType": "image/jpeg"
     },
     "robot_model": {
       "kind": "model",
-      "uri": "/models/robot_edited.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/robot_edited.glb",
       "mimeType": "model/gltf-binary"
     },
     "robot_2_model": {
       "kind": "model",
-      "uri": "/models/robot_edited.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/robot_edited.glb",
       "mimeType": "model/gltf-binary"
     },
     "blob_alpha_prompt": {
       "kind": "data",
-      "uri": "/prompts/blob_alpha_SOUL.md"
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/blob_alpha_SOUL.md"
     },
     "blob_beta_prompt": {
       "kind": "data",
-      "uri": "/prompts/blob_beta_SOUL.md"
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/blob_beta_SOUL.md"
     }
   },
   "scene": {
@@ -261,7 +261,7 @@
       "floorColor": "#2f2a24",
       "wallColor": "#d9d1c4",
       "wallPatternType": "silhouettes",
-      "wallTexture": "/textures/cueva-de-los-manos_wallpaper.jpg",
+      "wallTexture": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/cueva-de-los-manos_wallpaper.jpg",
       "wallTextureRepeatX": 2.6,
       "wallTextureRepeatY": 1.2,
       "wallTextureScrollX": 0.008,
@@ -289,7 +289,7 @@
       "roughness": 0.92,
       "metalness": 0.03
     },
-    "environmentTexture": "/textures/cueva-de-los-manos_wallpaper.jpg",
+    "environmentTexture": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/cueva-de-los-manos_wallpaper.jpg",
     "lights": {
       "ambientColor": "#fffaf0",
       "ambientIntensity": 2.75
@@ -297,7 +297,7 @@
     "models": [
       {
         "id": "robot",
-        "path": "/models/robot_edited.glb",
+        "path": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/robot_edited.glb",
         "position": [
           0,
           0,
@@ -329,7 +329,7 @@
       },
       {
         "id": "robot_2",
-        "path": "/models/robot_edited.glb",
+        "path": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/robot_edited.glb",
         "position": [
           2.8,
           0,
@@ -533,14 +533,14 @@
         {
           "id": "blob_alpha",
           "label": "Blob Alpha",
-          "systemPromptPath": "/prompts/blob_alpha_SOUL.md",
+          "systemPromptPath": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/blob_alpha_SOUL.md",
           "collisionPrompt": "A collision happened between Blob Alpha and the visitor in the room. Reply with one short, art-focused message.",
           "chatOnCollision": true
         },
         {
           "id": "blob_beta",
           "label": "Blob Beta",
-          "systemPromptPath": "/prompts/blob_beta_SOUL.md",
+          "systemPromptPath": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/salon/o/blob_beta_SOUL.md",
           "collisionPrompt": "Blob Beta collided with the visitor. Reply with one short art-only reflection tied to movement, form, or installation context.",
           "chatOnCollision": true
         }
@@ -572,6 +572,11 @@
       "filename": "robots_thumbnail_take.webm"
     },
     "params": {
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
+      "shadows": false,
+      "logarithmicDepthBuffer": false,
       "exposure": 1,
       "autoExposure": true,
       "toneMapping": "neutral",

@@ -1,0 +1,933 @@
+{
+  "migration": "v2-to-v3-structural-1",
+  "exhibits": [
+    {
+      "input": "public/configs/vectai_krakow_032026_config_v2.json",
+      "sourceId": "vectai_krakow_032026",
+      "sourceSha256": "59badd1072d12f59ef32290ae9986c0d2cb5e134f338c45715327f64fee58973",
+      "output": "public/configs/vectai_krakow_032026_config_v3.json",
+      "wave": 0,
+      "status": "curated_v3_retained",
+      "outputSha256": "ae5cf53e24477d87a2ca1996156e75b29da980c99508e77a011c72ad9ddaffc0",
+      "warnings": [
+        "Compare portable lighting descriptions with active viewer profiles; current runtime is authoritative for rollout."
+      ]
+    },
+    {
+      "input": "public/configs/lockdowns_config.json",
+      "sourceId": "lockdowns",
+      "sourceSha256": "c4351ddd8fedb0f081388fe6e10ef33b266f79a6e9cec5925e0e87905e1e2b08",
+      "output": "public/configs/lockdowns_config_v3.json",
+      "wave": 1,
+      "id": "lockdowns",
+      "status": "generated",
+      "outputSha256": "30aaf4daa8a58e6ce4137f97ac448a4471389e91cca1ca06a3decb078bbba085",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text",
+        "sidebar.items[1]: assigned stable ID sidebar_1"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "78_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "LobsterPyjamas_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "IndigoBlue_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "1000years_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "BlueRain_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "LastEvening_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Touch_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "TheMan_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Svalbard_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "AncientFears_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "LastFlight_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "City_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Cauchemar_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Shadow_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Waves_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Boat_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/wakeup_config.json",
+      "sourceId": "wakeupcall",
+      "sourceSha256": "b52ed8bcc83f6978ca80f9bc46752798800b6909c31752e194d670269ef2dffb",
+      "output": "public/configs/wakeup_config_v3.json",
+      "wave": 1,
+      "id": "wakeupcall",
+      "status": "generated",
+      "outputSha256": "c36c7866bbfc4611ccfb00c7fe09a5417014f63d4fb3e48110983ff1e335c58b",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text",
+        "sidebar.items[1]: assigned stable ID sidebar_1"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "NADIA_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "QUENTIN_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "SZYMON_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "TEIJA_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "LEX_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "BARTOSZ_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "VICTOR_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "XU_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "SIQING_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "BARBORA_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "HAN_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "SALOMON_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "JULIANA_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/bednarczyk_config.json",
+      "sourceId": "dystopia",
+      "sourceSha256": "d9af8d9081e34af69e93c3984a60d5a5f4d5ee0127a85657061b2c47af233621",
+      "output": "public/configs/bednarczyk_config_v3.json",
+      "wave": 2,
+      "id": "bednarczyk",
+      "status": "generated",
+      "outputSha256": "c699db114de686453e2418d9406c8cfdc5165ff6fe85c46b040e344a34b3ce19",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text",
+        "Identity repaired: dystopia -> bednarczyk; original storage locations retained explicitly."
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Milkmaid_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "dzbanDystopia_audio",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/dystopia_config.json",
+      "sourceId": "dystopia",
+      "sourceSha256": "b69af37156659e374cdecfd99bd564371b98a127f8566b035b632ede6bd1d24c",
+      "output": "public/configs/dystopia_config_v3.json",
+      "wave": 2,
+      "id": "dystopia",
+      "status": "generated",
+      "outputSha256": "55280a24ed4bdfe09517e267d8a15c7bb2365bfe18054b9eaf2ec8c89fd6f521",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Milkmaid_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "dzbanDystopia_audio",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/cipriani_config.json",
+      "sourceId": "cipriani",
+      "sourceSha256": "ef37027d17a5d339549e1820f0a0c39805ff0fd7efc024137981e2c01b7e2680",
+      "output": "public/configs/cipriani_config_v3.json",
+      "wave": 2,
+      "id": "cipriani",
+      "status": "generated",
+      "outputSha256": "f5b8e35b0aa5e511796fef993e5cd92d8d5a5a549cc6f900ebbd21faf5c3bd89",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_opis_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_5_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_6_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_7_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_8_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_9_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_10_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_11_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_12_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_13_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_14_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_15_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_16_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_17_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_18_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_19_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_20_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_21_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_22_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_23_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_24_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_25_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_26_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_27_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_28_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_29_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_30_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_31_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_32_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_33_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_34_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_35_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_36_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_37_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_38_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_39_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_40_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_41_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_42_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "cipriani_pic_43_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "ciprianiAudio_audio",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/identity_config.json",
+      "sourceId": "identity",
+      "sourceSha256": "30063ed73728b6c6d5ac407e88cae28bc97cb448453184c12974f8952f345f3a",
+      "output": "public/configs/identity_config_v3.json",
+      "wave": 3,
+      "id": "identity",
+      "status": "generated",
+      "outputSha256": "9e7da42958d556d96b602462b414fb65e190b813c74b036d4663a719280166df",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text",
+        "sidebar.items[1]: assigned stable ID sidebar_1"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "WielekEibejzyt_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "WielekPalec_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "WilekSchizofrenia_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "DreamerStarman_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "DreamerPiotr_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "DreamerSpaceman_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "DreamerAura_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "DreamerFlowerman_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Hidden_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Unreal_video",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Heritage_video",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/tom_exhibit_config.json",
+      "sourceId": "proposedlayout",
+      "sourceSha256": "0d314e149876f9925ca33d65e77092e7d76884b03288cf2093a3b0b7ca37e8af",
+      "output": "public/configs/tom_exhibit_config_v3.json",
+      "wave": 3,
+      "id": "proposedlayout",
+      "status": "generated",
+      "outputSha256": "4819294411a903080ace27b39eae4c3a73fce11ce08168fafcf48786cc96d8a5",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text",
+        "media.Bench: materialized existing sculpture metadata"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "background_texture",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Manifesto_image",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Video_source_1",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "Screen_source_1",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/videopoem_lisbon_112025_config_v2.json",
+      "sourceId": "videopoem_lisbon_112025",
+      "sourceSha256": "8701cdd088e0df6bc3ef7d4b5ba337058742ed75cfc83b8fdd65e48ee8346677",
+      "output": "public/configs/videopoem_lisbon_112025_config_v3.json",
+      "wave": 3,
+      "id": "videopoem_lisbon_112025",
+      "status": "generated",
+      "outputSha256": "ea1860909ec3968cf48402d7e24187ecefcce65c1a0931843b22e1512bd2e7c9",
+      "warnings": [
+        "media.info_text: materialized existing inline sidebar text",
+        "sidebar.items[4]: assigned stable ID sidebar_4"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "enter_image_asset",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "curatorial_dossier_pdf",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "introduction_audio_asset",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "title_jednaziemia_poster",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "title_echoes_poster",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "title_disappeared_poster",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "jednaziemia_video_asset",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "echoes_video_asset",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "pessoa_video_asset",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "audio_intro_subtitles",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "public/configs/prompt_procedural_room_config.json",
+      "sourceId": "prompt_procedural_room",
+      "sourceSha256": "70feadc6e7cee1d3dc64eb55274d4540e6e11abbf6b7045e3d7cdb7fdb6b7508",
+      "output": "public/configs/prompt_procedural_room_config_v3.json",
+      "wave": 4,
+      "id": "prompt_procedural_room",
+      "status": "generated",
+      "outputSha256": "a8cafe1b8cf27bd7bb92018ca59806fa7c547e83e5d8687033ebd1fd484c95ce",
+      "warnings": [
+        "assets.blob_alpha_prompt: inferred MIME type text/markdown",
+        "assets.blob_beta_prompt: inferred MIME type text/markdown",
+        "media.info_text: materialized existing inline sidebar text"
+      ],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "wall_texture",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "environment_texture",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "robot_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "robot_2_model",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "blob_alpha_prompt",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "blob_beta_prompt",
+          "needsImmutableUri": true,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    },
+    {
+      "input": "example_of_gallery_config_v2.json",
+      "sourceId": "example_exhibit",
+      "sourceSha256": "96393f7913b5f33ccdb1397e7dffc0d0f01b8456c79c0f86f9f8ce22bfbc6a38",
+      "output": "example_of_gallery_config_v3.json",
+      "wave": "documentation",
+      "id": "example_exhibit",
+      "status": "generated",
+      "outputSha256": "8f2e6a53613d2184dee552ded77b39df25a2b0243a3274a0fd9b3d0ba77b57cf",
+      "warnings": [],
+      "unmappedFields": [],
+      "archivalBacklog": [
+        {
+          "id": "scene_model",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "og_image",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "manual_thumb",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "manual_pdf",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "screen_poster",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        },
+        {
+          "id": "screen_video_mp4",
+          "needsImmutableUri": false,
+          "needsIntegrity": true,
+          "needsRights": true
+        }
+      ]
+    }
+  ]
+}

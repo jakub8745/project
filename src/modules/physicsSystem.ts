@@ -47,6 +47,8 @@ export class PhysicsSystem {
   private fallback = new Vector3();
   private contactPoint = new Vector3();
   private pairRules = new Map<string, boolean>();
+  private collisionsByPair = new Map<string, PhysicsCollisionEvent>();
+  private actorRules: Required<PhysicsActorRule>[] = [];
 
   configure(config?: PhysicsConfig) {
     this.pairRules.clear();
@@ -84,7 +86,12 @@ export class PhysicsSystem {
   }
 
   step(config: PhysicsConfig | undefined, actors: PhysicsRuntimeActor[]): PhysicsCollisionEvent[] {
+    this.collisionsByPair.clear();
     if (config?.enabled === false || actors.length < 2) return [];
+    this.actorRules.length = actors.length;
+    for (let index = 0; index < actors.length; index += 1) {
+      this.actorRules[index] = this.getActorRule(config, actors[index]);
+    }
     const collisions: PhysicsCollisionEvent[] = [];
     const iterations = typeof config?.iterations === 'number' && Number.isFinite(config.iterations)
       ? Math.max(1, Math.min(8, Math.floor(config.iterations)))
@@ -93,11 +100,11 @@ export class PhysicsSystem {
     for (let iter = 0; iter < iterations; iter += 1) {
       for (let i = 0; i < actors.length; i += 1) {
         const a = actors[i];
-        const aRule = this.getActorRule(config, a);
+        const aRule = this.actorRules[i];
         if (!aRule.enabled) continue;
         for (let j = i + 1; j < actors.length; j += 1) {
           const b = actors[j];
-          const bRule = this.getActorRule(config, b);
+          const bRule = this.actorRules[j];
           if (!bRule.enabled) continue;
           if (!this.pairEnabled(config, a.id, b.id)) continue;
 
@@ -121,12 +128,21 @@ export class PhysicsSystem {
           if (penetration <= 0) continue;
 
           this.contactPoint.copy(a.object.position).add(b.object.position).multiplyScalar(0.5);
-          collisions.push({
-            a: a.id,
-            b: b.id,
-            point: this.contactPoint.clone(),
-            penetration
-          });
+          const collisionKey = getPairKey(a.id, b.id);
+          const collision = this.collisionsByPair.get(collisionKey);
+          if (collision) {
+            collision.point.copy(this.contactPoint);
+            collision.penetration = penetration;
+          } else {
+            const nextCollision = {
+              a: a.id,
+              b: b.id,
+              point: this.contactPoint.clone(),
+              penetration
+            };
+            this.collisionsByPair.set(collisionKey, nextCollision);
+            collisions.push(nextCollision);
+          }
 
           const invMassA = aRule.pushable ? 1 / aRule.mass : 0;
           const invMassB = bRule.pushable ? 1 / bRule.mass : 0;

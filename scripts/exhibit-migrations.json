@@ -1,0 +1,12 @@
+[
+  {"slug":"vectai_krakow_032026","v2":"vectai_krakow_032026_config_v2.json","v3":"vectai_krakow_032026_config_v3.json","wave":0,"curated":true},
+  {"slug":"lockdowns","v2":"lockdowns_config.json","v3":"lockdowns_config_v3.json","wave":1},
+  {"slug":"wakeupcall","v2":"wakeup_config.json","v3":"wakeup_config_v3.json","wave":1},
+  {"slug":"bednarczyk","v2":"bednarczyk_config.json","v3":"bednarczyk_config_v3.json","wave":2,"id":"bednarczyk"},
+  {"slug":"dystopia","v2":"dystopia_config.json","v3":"dystopia_config_v3.json","wave":2},
+  {"slug":"cipriani","v2":"cipriani_config.json","v3":"cipriani_config_v3.json","wave":2},
+  {"slug":"identity","v2":"identity_config.json","v3":"identity_config_v3.json","wave":3},
+  {"slug":"videopoetry","v2":"tom_exhibit_config.json","v3":"tom_exhibit_config_v3.json","wave":3},
+  {"slug":"videopoem_lisbon_112025","v2":"videopoem_lisbon_112025_config_v2.json","v3":"videopoem_lisbon_112025_config_v3.json","wave":3},
+  {"slug":"prompt_procedural_room","v2":"prompt_procedural_room_config.json","v3":"prompt_procedural_room_config_v3.json","wave":4}
+]

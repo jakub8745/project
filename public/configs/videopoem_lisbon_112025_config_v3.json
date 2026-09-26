@@ -1,0 +1,650 @@
+{
+  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json",
+  "schemaVersion": "3.0.0-draft",
+  "manifestType": "future-proof-exhibit-archive",
+  "profile": "portable-exhibit",
+  "id": "videopoem_lisbon_112025",
+  "slug": "videopoem_lisbon_112025",
+  "sourceManifest": {
+    "schemaVersion": "2.0.0",
+    "path": "public/configs/videopoem_lisbon_112025_config_v2.json",
+    "sha256": "8701cdd088e0df6bc3ef7d4b5ba337058742ed75cfc83b8fdd65e48ee8346677",
+    "migration": "v2-to-v3-structural-1",
+    "id": "videopoem_lisbon_112025"
+  },
+  "metadata": {
+    "title": "LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY",
+    "description": "3 videopoems created in the framework of workshops organised within the CAPHE project",
+    "language": "en",
+    "ogImage": {
+      "asset": "enter_image_asset"
+    }
+  },
+  "provenance": {
+    "sourceKind": "exhibit",
+    "legacyNft": {
+      "mintable": true,
+      "canonicalSceneAsset": "scene_model",
+      "canonicalPreviewAsset": "enter_image_asset"
+    }
+  },
+  "rights": {
+    "status": "review_required"
+  },
+  "nft": {
+    "mintable": false
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "mimeType": "model/gltf-binary",
+      "id": "scene_model",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/exhibition_videopoems_low.glb",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "enter_image_asset": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "enter_image_asset",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_living_heritage_videopem.jpg",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "curatorial_dossier_pdf": {
+      "kind": "document",
+      "mimeType": "application/pdf",
+      "id": "curatorial_dossier_pdf",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Living_Heritage_Curatorial_Dossier.pdf",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "introduction_audio_asset": {
+      "kind": "audio",
+      "mimeType": "audio/mpeg",
+      "id": "introduction_audio_asset",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/introduction_to_living_heritage.mp3",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "title_jednaziemia_poster": {
+      "kind": "image",
+      "mimeType": "image/png",
+      "id": "title_jednaziemia_poster",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_jednaZiemia.png",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "title_echoes_poster": {
+      "kind": "image",
+      "mimeType": "image/png",
+      "id": "title_echoes_poster",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_echoes.png",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "title_disappeared_poster": {
+      "kind": "image",
+      "mimeType": "image/png",
+      "id": "title_disappeared_poster",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_disappeared.png",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "jednaziemia_video_asset": {
+      "kind": "video",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4"
+      ],
+      "mimeType": "video/mp4",
+      "id": "jednaziemia_video_asset",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "echoes_video_asset": {
+      "kind": "video",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES_OF_A_FATHER.mp4"
+      ],
+      "mimeType": "video/mp4",
+      "id": "echoes_video_asset",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "pessoa_video_asset": {
+      "kind": "video",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Pessoa_DissapearedMirrors.mp4"
+      ],
+      "mimeType": "video/mp4",
+      "id": "pessoa_video_asset",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "audio_intro_subtitles": {
+      "kind": "subtitle",
+      "mimeType": "application/json",
+      "id": "audio_intro_subtitles",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_intro_subtitles.json",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    }
+  },
+  "content": {
+    "media": {
+      "enter_image": {
+        "kind": "image",
+        "title": "Living Heritage: Remediating Through Videopoetry",
+        "description": "",
+        "author": "",
+        "image": {
+          "asset": "enter_image_asset"
+        }
+      },
+      "jednaziemia": {
+        "kind": "video",
+        "title": "JEDNA ZIEMIA / ONE EARTH",
+        "description": "based on W drodze (On the Road) by Stanisław Młodożeniec videopoem by Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna, London-Sandomierz, 2024",
+        "author": "Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna",
+        "poster": {
+          "asset": "title_jednaziemia_poster"
+        },
+        "sources": [
+          {
+            "asset": "jednaziemia_video_asset"
+          }
+        ]
+      },
+      "echoes": {
+        "kind": "video",
+        "title": "ECHOES OF A FATHER",
+        "description": "based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer videopoem by Justyna Gorzkowicz & Jarosław Solecki English translation by Anna Zaranko, London, 2025",
+        "author": "Justyna Gorzkowicz & Jarosław Solecki",
+        "poster": {
+          "asset": "title_echoes_poster"
+        },
+        "sources": [
+          {
+            "asset": "echoes_video_asset"
+          }
+        ]
+      },
+      "pessoa": {
+        "kind": "video",
+        "title": "DISAPPEARED MIRRORS",
+        "description": "based on poems by Fernando Pessoa and his heteronyms collaborative videopoem by fine arts students from Lisbon (FBAUL) and the PUNO team edited by Justyna Gorzkowicz & Jarosław Solecki, Lisbon, 2025",
+        "author": "Portuguese student & PUNO collaboration (CAPHE project)",
+        "poster": {
+          "asset": "title_disappeared_poster"
+        },
+        "sources": [
+          {
+            "asset": "pessoa_video_asset"
+          }
+        ]
+      },
+      "introduction_audio_media": {
+        "kind": "audio",
+        "title": "introduction_audio",
+        "sources": [
+          {
+            "asset": "introduction_audio_asset"
+          }
+        ],
+        "subtitles": [
+          "audio_intro_subtitles"
+        ]
+      },
+      "curatorial_dossier": {
+        "kind": "document",
+        "title": "Curatorial Dossier (PDF)",
+        "document": {
+          "asset": "curatorial_dossier_pdf"
+        }
+      },
+      "info_text": {
+        "kind": "text",
+        "text": "This virtual exhibition brings together three videopoems that transform literary texts into immersive audiovisual works, presenting videopoetry as both an artistic practice and a didactic medium for transmitting cultural heritage across languages, media and cultural contexts. Developed through workshops organised within Communities and Artistic Participation in Hybrid Environments (CAPHE, 2023-2025), the exhibition explores how poetry may be reactivated through the interplay of word, image and sound, generating new forms of interpretation and encounter. This archival space documents an exhibition presented simultaneously in two connected formats from 19 to 27 November 2025: as an on-site installation at the Gallery of the Faculty of Fine Arts of the University of Lisbon (Faculdade de Belas-Artes da Universidade de Lisboa) and as a virtual environment in Spacial. Curated by Justyna Gorzkowicz and Jarosław Solecki, the exhibition brought together three videopoems based on works by Stanisław Młodożeniec, Stanisław Vincenz, and Fernando Pessoa with his heteronyms, showing how literary texts can be reimagined through audiovisual form, translation, collaboration and workshop-based practice. The works presented were Jedna ziemia / One Earth, based on Stanisław Młodożeniec's poem W drodze (On the Road); Echoes of a Father, based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer; and Disappearing Mirrors, a collaborative videopoem based on poems by Fernando Pessoa and his heteronyms, developed with students from the Faculty of Fine Arts of the University of Lisbon and the team from the Polish University Abroad (PUNO) in London. Distinctly polyphonic in structure, Disappearing Mirrors combines multiple visual, textual and vocal contributions. It includes Ode Triunfal Redux by Tiago Mendonça, Na Floresta do Alheamento by Carlota Bonito, Estátuas Invisíveis by Margarida Leal, inspired by Cul de Lampe by Álvaro de Campos, and a video by Patrícia Dias based on Tabacaria by Álvaro de Campos. Additional textual layers include Mar Português and Autopsicografia. The work also incorporates Greek translation by Agnieszka Szajner, Italian translation by Giulia Lanciani, vocal contributions by Giuseppe Caprioti, Ellodie Cheikh and Agnieszka Szajner, and editing by Justyna Gorzkowicz and Jarosław Solecki. Although each piece adopts a different strategy, all three are grounded in the same premise: that poetry can move beyond the printed page and be experienced as rhythm, voice, image, movement and audiovisual composition. In this sense, the exhibition presents the videopoem as a medium for the remediation of literary heritage and as a space in which new readings may emerge. Living Heritage proposes that literary works continue to live not only through reading and interpretation, but also through audiovisual transformation, multilingual transmission and shared artistic practice across physical and virtual environments."
+      }
+    },
+    "sidebar": {
+      "logoText": "LIVING HERITAGE: REMEDIATING THROUGH VIDEOPOETRY",
+      "items": [
+        {
+          "id": "info-icon",
+          "label": "About LIVING HERITAGE",
+          "target": "info_text",
+          "content": "This virtual exhibition brings together three videopoems that transform literary texts into immersive audiovisual works, presenting videopoetry as both an artistic practice and a didactic medium for transmitting cultural heritage across languages, media and cultural contexts. Developed through workshops organised within Communities and Artistic Participation in Hybrid Environments (CAPHE, 2023-2025), the exhibition explores how poetry may be reactivated through the interplay of word, image and sound, generating new forms of interpretation and encounter. This archival space documents an exhibition presented simultaneously in two connected formats from 19 to 27 November 2025: as an on-site installation at the Gallery of the Faculty of Fine Arts of the University of Lisbon (Faculdade de Belas-Artes da Universidade de Lisboa) and as a virtual environment in Spacial. Curated by Justyna Gorzkowicz and Jarosław Solecki, the exhibition brought together three videopoems based on works by Stanisław Młodożeniec, Stanisław Vincenz, and Fernando Pessoa with his heteronyms, showing how literary texts can be reimagined through audiovisual form, translation, collaboration and workshop-based practice. The works presented were Jedna ziemia / One Earth, based on Stanisław Młodożeniec's poem W drodze (On the Road); Echoes of a Father, based on Stanisław Vincenz's poetic interpretation of The Lord's Prayer; and Disappearing Mirrors, a collaborative videopoem based on poems by Fernando Pessoa and his heteronyms, developed with students from the Faculty of Fine Arts of the University of Lisbon and the team from the Polish University Abroad (PUNO) in London. Distinctly polyphonic in structure, Disappearing Mirrors combines multiple visual, textual and vocal contributions. It includes Ode Triunfal Redux by Tiago Mendonça, Na Floresta do Alheamento by Carlota Bonito, Estátuas Invisíveis by Margarida Leal, inspired by Cul de Lampe by Álvaro de Campos, and a video by Patrícia Dias based on Tabacaria by Álvaro de Campos. Additional textual layers include Mar Português and Autopsicografia. The work also incorporates Greek translation by Agnieszka Szajner, Italian translation by Giulia Lanciani, vocal contributions by Giuseppe Caprioti, Ellodie Cheikh and Agnieszka Szajner, and editing by Justyna Gorzkowicz and Jarosław Solecki. Although each piece adopts a different strategy, all three are grounded in the same premise: that poetry can move beyond the printed page and be experienced as rhythm, voice, image, movement and audiovisual composition. In this sense, the exhibition presents the videopoem as a medium for the remediation of literary heritage and as a space in which new readings may emerge. Living Heritage proposes that literary works continue to live not only through reading and interpretation, but also through audiovisual transformation, multilingual transmission and shared artistic practice across physical and virtual environments."
+        },
+        {
+          "id": "lisbon-exhibition-video",
+          "label": "Video documentation of the Lisbon exhibition",
+          "icon": "/icons/ButtonPlay.png",
+          "videoPath": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_exhibition_spatial-onsite.mp4",
+          "videoType": "video/mp4"
+        },
+        {
+          "id": "living-heritage-zenodo",
+          "label": "Zenodo PDF: Curatorial Dossier",
+          "link": "https://zenodo.org/records/20101415"
+        },
+        {
+          "id": "lisbon-articles",
+          "label": "Articles related to the project",
+          "target": "info_text",
+          "content": "<p><strong>Articles related to the Lisbon exhibition</strong></p><p>Gorzkowicz, Justyna, Jarosław Solecki, and Marcin Jerzyna. <em>Wideopoemat Jedna ziemia. Rozmowa z poetycką wizją Stanisława Młodożeńca</em>. In Henryk Czubała, Justyna Gorzkowicz, Joanna Kulczyńska-Kruk (red.), <em>Wszędzie Jedna Ziemia. Stanisław Młodożeniec: Miejsca - Ludzie - Teksty</em>, Wydawnictwo Muzeum Historii Polskiego Ruchu Ludowego, PUNO Press, p. 766. Warszawa - Londyn: Zenodo, 2025.<br /><a href=\"https://doi.org/10.5281/zenodo.20581328\">https://doi.org/10.5281/zenodo.20581328</a></p><p>Gorzkowicz, Justyna. <em>The Textography of the Videopoem: Poetic Texts and Their Variants in Transmedial Practice</em>. <em>Quart</em> 4, no. 78 (2025): 110-131.<br /><a href=\"https://doi.org/10.19195/2449-9285.78.9\">https://doi.org/10.19195/2449-9285.78.9</a><br /><a href=\"https://czasopisma.uwr.edu.pl/quart/article/view/18743/17307\">PDF/article page</a></p><p><strong>Coming soon:</strong> Solecki, Jarosław. <em>CAPHE in Practice: Hybrid Pedagogies, XR Learning Environments and Exhibitions in Lisbon 2025</em>. <em>Zeszyty Naukowe PUNO / Research Papers PUA (The Polish University Abroad)</em>, 2025, p. 167.</p>"
+        },
+        {
+          "label": "Blue Point Art homepage",
+          "link": "https://bluepointart.uk/living-heritage-after-the-exhibition-caphe-krakow-2026/",
+          "id": "sidebar_4"
+        }
+      ]
+    }
+  },
+  "sceneGraph": {
+    "sourceScene": {
+      "model": {
+        "asset": "scene_model",
+        "scale": 1
+      },
+      "background": {
+        "color": "#000000"
+      },
+      "spawn": {
+        "position": [
+          0,
+          4,
+          0
+        ],
+        "direction": "north-east"
+      },
+      "camera": {
+        "mode": "first_person"
+      },
+      "renderer": {
+        "toneMapping": "cineon",
+        "exposure": 1,
+        "antialias": true,
+        "shadows": false,
+        "maxDpr": 2,
+        "autoExposure": true
+      }
+    },
+    "nodes": {
+      "floor_main": {
+        "kind": "floor",
+        "ref": "Floor"
+      },
+      "enter_image": {
+        "kind": "image_anchor",
+        "ref": "IMAGE",
+        "media": "enter_image"
+      },
+      "introduction_audio": {
+        "kind": "audio_anchor",
+        "ref": "introduction_audio"
+      },
+      "jedna_video": {
+        "kind": "video_surface",
+        "ref": "jednaziemia"
+      },
+      "echoes_video": {
+        "kind": "video_surface",
+        "ref": "echoes"
+      },
+      "pessoa_video": {
+        "kind": "video_surface",
+        "ref": "pessoa"
+      }
+    },
+    "modules": {
+      "video": {
+        "instances": [
+          {
+            "id": "jednaziemia_video_module",
+            "targetNode": "jedna_video",
+            "media": "jednaziemia",
+            "playbackMode": "spatial_video",
+            "loop": true,
+            "muted": true,
+            "interactive": true,
+            "controls": true
+          },
+          {
+            "id": "echoes_video_module",
+            "targetNode": "echoes_video",
+            "media": "echoes",
+            "playbackMode": "spatial_video",
+            "loop": true,
+            "muted": true,
+            "interactive": true,
+            "controls": true
+          },
+          {
+            "id": "pessoa_video_module",
+            "targetNode": "pessoa_video",
+            "media": "pessoa",
+            "playbackMode": "spatial_video",
+            "loop": true,
+            "muted": true,
+            "interactive": true,
+            "controls": true
+          }
+        ]
+      },
+      "audio": {
+        "instances": [
+          {
+            "id": "introduction_audio_module",
+            "targetNode": "introduction_audio",
+            "media": "introduction_audio_media",
+            "autoplayOnEnter": false,
+            "loop": false,
+            "refDistance": 3,
+            "rolloff": 1,
+            "maxDistance": 20,
+            "distanceModel": "linear",
+            "coneTarget": [
+              0,
+              2,
+              0
+            ],
+            "volume": 1,
+            "labelPlaying": "Intro is playing",
+            "labelPaused": "Play Intro"
+          }
+        ]
+      }
+    },
+    "viewerProfiles": {
+      "r3fCurrent": {
+        "params": {
+          "performanceMode": false,
+          "maxDpr": 2,
+          "antialias": true,
+          "shadows": false,
+          "logarithmicDepthBuffer": false,
+          "exposure": 1,
+          "autoExposure": true,
+          "toneMapping": "aces",
+          "exposureTarget": 0.7,
+          "exposureMin": 0.5,
+          "exposureMax": 1.65,
+          "exposureSampleInterval": 30,
+          "colorGrade": {
+            "brightness": 1,
+            "contrast": 0.9,
+            "saturate": 0.68
+          },
+          "lightIntensity": 1.7,
+          "gravity": -8,
+          "visitorSpeed": 2,
+          "orbitRotateSpeed": 0.45,
+          "heightOffset": {
+            "x": 0,
+            "y": 1.2,
+            "z": 0
+          },
+          "visitorEnter": {
+            "x": -2,
+            "y": 4,
+            "z": 2
+          },
+          "rotateOrbit": -30
+        },
+        "images": {
+          "enter_image": {
+            "tooltipLabel": "About the project",
+            "title": "Living Heritage: Remediating Through Videopoetry",
+            "description": "",
+            "author": "",
+            "imagePath": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_living_heritage_videopem.jpg"
+          }
+        },
+        "videos": [
+          {
+            "id": "jednaziemia",
+            "playbackMode": "spatial_video",
+            "preload": "none",
+            "deferLoadUntilPlay": true,
+            "controlsAnchorName": "VideoControlsAnchor_jednaziemia",
+            "loop": true,
+            "muted": true,
+            "playsinline": true,
+            "title": "JEDNA ZIEMIA / ONE EARTH",
+            "description": "based on *W drodze* (*On the Road*) by Stanisław Młodożeniec videopoem by Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna, London-Sandomierz, 2024.",
+            "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_jednaZiemia.png",
+            "sources": [
+              {
+                "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
+                "fallbackSrcs": [
+                  "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4"
+                ],
+                "type": "video/mp4"
+              }
+            ]
+          },
+          {
+            "id": "echoes",
+            "playbackMode": "spatial_video",
+            "preload": "none",
+            "deferLoadUntilPlay": true,
+            "controlsAnchorName": "VideoControlsAnchor_echoes",
+            "loop": true,
+            "muted": true,
+            "playsinline": true,
+            "title": "ECHOES OF A FATHER",
+            "description": "based on Stanisław Vincenz's poetic interpretation of *The Lord's Prayer*. Videopoem by Justyna Gorzkowicz & Jarosław Solecki, English translation by Anna Zaranko, London, 2025.",
+            "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_echoes.png",
+            "sources": [
+              {
+                "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
+                "fallbackSrcs": [
+                  "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES_OF_A_FATHER.mp4"
+                ],
+                "type": "video/mp4"
+              }
+            ]
+          },
+          {
+            "id": "pessoa",
+            "playbackMode": "spatial_video",
+            "preload": "none",
+            "deferLoadUntilPlay": true,
+            "controlsAnchorName": "VideoControlsAnchor_pessoa",
+            "loop": true,
+            "muted": true,
+            "playsinline": true,
+            "title": "DISAPPEARED MIRRORS",
+            "description": "based on poems by Fernando Pessoa and his heteronyms collaborative videopoem by fine arts students from Lisbon (FBAUL) and the PUNO team edited by Justyna Gorzkowicz & Jarosław Solecki, Lisbon, 2025.",
+            "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_disappeared.png",
+            "sources": [
+              {
+                "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
+                "fallbackSrcs": [
+                  "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Pessoa_DissapearedMirrors.mp4"
+                ],
+                "type": "video/mp4"
+              }
+            ]
+          }
+        ],
+        "audio": [
+          {
+            "id": "introduction_audio",
+            "name": "introduction_audio",
+            "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/introduction_to_living_heritage.mp3",
+            "autoplayOnEnter": false,
+            "labelPlaying": "Intro is playing",
+            "labelPaused": "Play Intro",
+            "loop": false,
+            "refDistance": 3,
+            "rolloff": 1,
+            "maxDistance": 20,
+            "distanceModel": "linear",
+            "coneTarget": [
+              0,
+              2,
+              0
+            ],
+            "volume": 1
+          }
+        ]
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "module_video_jednaziemia_video_module",
+      "type": "video_playback",
+      "targets": [
+        "jedna_video"
+      ],
+      "media": "jednaziemia",
+      "behavior": {
+        "id": "jednaziemia_video_module",
+        "targetNode": "jedna_video",
+        "media": "jednaziemia",
+        "playbackMode": "spatial_video",
+        "loop": true,
+        "muted": true,
+        "interactive": true,
+        "controls": true
+      }
+    },
+    {
+      "id": "module_video_echoes_video_module",
+      "type": "video_playback",
+      "targets": [
+        "echoes_video"
+      ],
+      "media": "echoes",
+      "behavior": {
+        "id": "echoes_video_module",
+        "targetNode": "echoes_video",
+        "media": "echoes",
+        "playbackMode": "spatial_video",
+        "loop": true,
+        "muted": true,
+        "interactive": true,
+        "controls": true
+      }
+    },
+    {
+      "id": "module_video_pessoa_video_module",
+      "type": "video_playback",
+      "targets": [
+        "pessoa_video"
+      ],
+      "media": "pessoa",
+      "behavior": {
+        "id": "pessoa_video_module",
+        "targetNode": "pessoa_video",
+        "media": "pessoa",
+        "playbackMode": "spatial_video",
+        "loop": true,
+        "muted": true,
+        "interactive": true,
+        "controls": true
+      }
+    },
+    {
+      "id": "module_audio_introduction_audio_module",
+      "type": "spatial_audio",
+      "targets": [
+        "introduction_audio"
+      ],
+      "media": "introduction_audio_media",
+      "behavior": {
+        "id": "introduction_audio_module",
+        "targetNode": "introduction_audio",
+        "media": "introduction_audio_media",
+        "autoplayOnEnter": false,
+        "loop": false,
+        "refDistance": 3,
+        "rolloff": 1,
+        "maxDistance": 20,
+        "distanceModel": "linear",
+        "coneTarget": [
+          0,
+          2,
+          0
+        ],
+        "volume": 1,
+        "labelPlaying": "Intro is playing",
+        "labelPaused": "Play Intro"
+      }
+    },
+    {
+      "id": "node_enter_image_open",
+      "type": "open_image",
+      "targets": [
+        "enter_image"
+      ],
+      "media": "enter_image",
+      "behavior": {
+        "trigger": "click"
+      }
+    }
+  ],
+  "previews": {},
+  "viewerBrief": {
+    "purpose": "3 videopoems created in the framework of workshops organised within the CAPHE project",
+    "requiredCapabilities": [
+      "spatial navigation",
+      "named scene nodes",
+      "sidebar and media panels",
+      "load glTF/GLB scene asset",
+      "video surfaces and configured synchronization",
+      "spatial audio and optional subtitles"
+    ],
+    "reconstructionPrompt": "Preserve the source scene, stable node identities, media relationships and configured behavior. The r3fCurrent profile records the working implementation, including overrides. Reconstruct equivalent behavior and document unavailable external services.",
+    "visualTone": "Preserve this exhibit’s configured materials, lighting, exposure and presentation."
+  },
+  "preservation": {
+    "futureProofDefinition": "Preserve assets, scene relationships, behavior, provenance and the information needed to reconstruct the exhibit independently of the original viewer.",
+    "requiredBeforeMinting": [
+      "Verify asset availability and integrity.",
+      "Record verified immutable asset URIs and rights.",
+      "Publish the manifest and keep its final CID/hash in an external receipt."
+    ],
+    "status": "runtime_migration_complete_archival_review_pending"
+  }
+}

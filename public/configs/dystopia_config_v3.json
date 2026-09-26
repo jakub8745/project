@@ -1,0 +1,403 @@
+{
+  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json",
+  "schemaVersion": "3.0.0-draft",
+  "manifestType": "future-proof-exhibit-archive",
+  "profile": "portable-exhibit",
+  "id": "dystopia",
+  "slug": "dystopia",
+  "sourceManifest": {
+    "schemaVersion": "2.0.0",
+    "path": "public/configs/dystopia_config.json",
+    "sha256": "b69af37156659e374cdecfd99bd564371b98a127f8566b035b632ede6bd1d24c",
+    "migration": "v2-to-v3-structural-1",
+    "id": "dystopia"
+  },
+  "metadata": {
+    "title": "Dystopia of Imitation",
+    "description": "A v2 migration of the Dystopia exhibit. The pitcher/audio object and its transform-control interaction are declared in config, while the scene model stays the only GLB.",
+    "language": "en"
+  },
+  "provenance": {
+    "sourceKind": "exhibit",
+    "legacyNft": {
+      "mintable": true,
+      "canonicalSceneAsset": "scene_model"
+    }
+  },
+  "rights": {
+    "status": "review_required"
+  },
+  "nft": {
+    "mintable": false
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "mimeType": "model/gltf-binary",
+      "id": "scene_model",
+      "sourceUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/exhibition_dystopia.glb",
+      "ipfsUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/exhibition_dystopia.glb",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "background_texture": {
+      "kind": "texture",
+      "mimeType": "image/ktx2",
+      "id": "background_texture",
+      "sourceUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/bg_dystopia.ktx2",
+      "ipfsUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/bg_dystopia.ktx2",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "Milkmaid_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "Milkmaid_image",
+      "sourceUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg",
+      "ipfsUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "dzbanDystopia_audio": {
+      "kind": "audio",
+      "mimeType": "audio/mpeg",
+      "id": "dzbanDystopia_audio",
+      "sourceUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
+      "ipfsUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    }
+  },
+  "content": {
+    "media": {
+      "Milkmaid": {
+        "kind": "image",
+        "title": "Milkmaid",
+        "description": "Jaroslaw Solecki's The Dystopia of an Imitation presents a creative way of exploring the 'matter' of art. The central issue taken up in the work is the sculpting process realised in stone, clay and in the form of digital 3D graphics[...] Quote from the exhibition booklet \"The Dystopia of an Imitation\"",
+        "author": "Jaroslaw Solecki",
+        "image": {
+          "asset": "Milkmaid_image"
+        }
+      },
+      "dzbanDystopia": {
+        "kind": "audio",
+        "sources": [
+          {
+            "asset": "dzbanDystopia_audio"
+          }
+        ]
+      },
+      "info_text": {
+        "kind": "text",
+        "text": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
+      }
+    },
+    "sidebar": {
+      "logoText": "Wystawa z okazji 85-lecia PUNO",
+      "items": [
+        {
+          "id": "info-icon",
+          "label": "About Dystopia of Imitation",
+          "target": "info_text",
+          "content": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
+        },
+        {
+          "id": "Strona_G_wna_Blue_Point_Art",
+          "label": "Strona Główna Blue Point Art",
+          "link": "https://bluepointart.uk"
+        }
+      ]
+    }
+  },
+  "sceneGraph": {
+    "sourceScene": {
+      "model": {
+        "asset": "scene_model"
+      },
+      "background": {
+        "backgroundAsset": "background_texture"
+      },
+      "spawn": {
+        "position": [
+          -1,
+          4,
+          1
+        ]
+      },
+      "camera": {
+        "mode": "first_person"
+      },
+      "renderer": {
+        "toneMapping": "neutral",
+        "autoExposure": true,
+        "exposure": 1,
+        "exposureTarget": 0.68,
+        "exposureMin": 0.5,
+        "exposureMax": 1.65,
+        "exposureSampleInterval": 30
+      }
+    },
+    "nodes": {
+      "dzbanDystopia": {
+        "kind": "audio_anchor",
+        "ref": "dzbanDystopia",
+        "metadata": {
+          "transformControls": {
+            "mode": "rotate",
+            "size": 0.3,
+            "hover": true,
+            "light": {
+              "enabled": true,
+              "color": 16777215,
+              "intensity": 40,
+              "yOffset": 3,
+              "angle": 0.4487989505128276,
+              "penumbra": 0.3,
+              "decay": 2,
+              "distance": 35,
+              "castShadow": true,
+              "shadowMapSize": 2048,
+              "shadowBias": 0,
+              "shadowNormalBias": 0.02,
+              "shadowRadius": 2,
+              "shadowCameraNear": 0.5,
+              "shadowCameraFar": 40
+            }
+          },
+          "category": "pitcher",
+          "interactionDescription": "The dzbanDystopia node anchors spatial audio. Distance, rolloff, looping, volume, and optional transform behavior are declared in the audio module."
+        },
+        "media": "dzbanDystopia"
+      },
+      "Milkmaid": {
+        "kind": "image_anchor",
+        "media": "Milkmaid",
+        "metadata": {
+          "interactionDescription": "Click Milkmaid to open the image metadata panel."
+        }
+      }
+    },
+    "modules": {
+      "sculptureControls": {
+        "instances": [
+          {
+            "id": "dzbanDystopia_transform_controls",
+            "targetNode": "dzbanDystopia",
+            "mode": "rotate",
+            "size": 0.3,
+            "hover": true,
+            "light": {
+              "enabled": true,
+              "color": 16777215,
+              "intensity": 40,
+              "yOffset": 3,
+              "angle": 0.4487989505128276,
+              "penumbra": 0.3,
+              "decay": 2,
+              "distance": 35,
+              "castShadow": true,
+              "shadowMapSize": 2048,
+              "shadowBias": 0,
+              "shadowNormalBias": 0.02,
+              "shadowRadius": 2,
+              "shadowCameraNear": 0.5,
+              "shadowCameraFar": 40
+            }
+          }
+        ]
+      },
+      "audio": {
+        "instances": [
+          {
+            "id": "dzbanDystopia_audio",
+            "targetNode": "dzbanDystopia",
+            "media": "dzbanDystopia",
+            "loop": true,
+            "refDistance": 3,
+            "rolloff": 1,
+            "volume": 0.5
+          }
+        ]
+      }
+    },
+    "viewerProfiles": {
+      "r3fCurrent": {
+        "params": {
+          "performanceMode": false,
+          "maxDpr": 2,
+          "antialias": true,
+          "shadows": false,
+          "logarithmicDepthBuffer": false,
+          "exposure": 1,
+          "autoExposure": true,
+          "toneMapping": "neutral",
+          "exposureTarget": 0.68,
+          "exposureMin": 0.5,
+          "exposureMax": 1.65,
+          "exposureSampleInterval": 30,
+          "colorGrade": {
+            "brightness": 1,
+            "contrast": 0.9,
+            "saturate": 0.68
+          },
+          "lightIntensity": 1.1,
+          "gravity": -8,
+          "visitorSpeed": 5,
+          "heightOffset": {
+            "x": 0,
+            "y": 1.05,
+            "z": 0
+          },
+          "visitorEnter": {
+            "x": -1,
+            "y": 4,
+            "z": 1
+          },
+          "rotateOrbit": -65,
+          "backgroundBlurriness": 0.05,
+          "backgroundIntensity": 0.3
+        }
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "dzbanDystopia_transform_controls_hover",
+      "targetNode": "dzbanDystopia",
+      "trigger": "hover",
+      "action": {
+        "type": "enable_transform_controls",
+        "mode": "rotate",
+        "size": 0.3
+      },
+      "ui": {
+        "title": "Rotate dzbanDystopia",
+        "description": "Hovering dzbanDystopia reveals a transform control gizmo. Dragging the gizmo rotates the configured object while the local spotlight settings remain controlled by the config."
+      },
+      "metadata": {
+        "interactionDescription": "Hovering dzbanDystopia reveals a transform control gizmo. Dragging the gizmo rotates the configured object while the local spotlight settings remain controlled by the config."
+      },
+      "type": "enable_transform_controls",
+      "targets": [
+        "dzbanDystopia"
+      ],
+      "behavior": {
+        "type": "enable_transform_controls",
+        "mode": "rotate",
+        "size": 0.3
+      },
+      "description": "Hovering dzbanDystopia reveals a transform control gizmo. Dragging the gizmo rotates the configured object while the local spotlight settings remain controlled by the config."
+    },
+    {
+      "id": "Milkmaid_open_image",
+      "targetNode": "Milkmaid",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Milkmaid"
+      },
+      "ui": {
+        "title": "Milkmaid",
+        "description": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+      },
+      "type": "open_image",
+      "targets": [
+        "Milkmaid"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "Milkmaid"
+      },
+      "description": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+    },
+    {
+      "id": "dzbanDystopia_spatial_audio",
+      "targetNode": "dzbanDystopia",
+      "trigger": "proximity",
+      "action": {
+        "type": "play_audio",
+        "moduleInstance": "dzbanDystopia_audio"
+      },
+      "ui": {
+        "title": "dzbanDystopia",
+        "description": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+      },
+      "metadata": {
+        "interactionDescription": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+      },
+      "type": "play_audio",
+      "targets": [
+        "dzbanDystopia"
+      ],
+      "behavior": {
+        "type": "play_audio",
+        "moduleInstance": "dzbanDystopia_audio"
+      },
+      "description": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+    },
+    {
+      "id": "module_sculptureControls_dzbanDystopia_transform_controls",
+      "type": "object_manipulation",
+      "targets": [
+        "dzbanDystopia"
+      ],
+      "behavior": {
+        "id": "dzbanDystopia_transform_controls",
+        "targetNode": "dzbanDystopia",
+        "mode": "rotate",
+        "size": 0.3,
+        "hover": true,
+        "light": {
+          "enabled": true,
+          "color": 16777215,
+          "intensity": 40,
+          "yOffset": 3,
+          "angle": 0.4487989505128276,
+          "penumbra": 0.3,
+          "decay": 2,
+          "distance": 35,
+          "castShadow": true,
+          "shadowMapSize": 2048,
+          "shadowBias": 0,
+          "shadowNormalBias": 0.02,
+          "shadowRadius": 2,
+          "shadowCameraNear": 0.5,
+          "shadowCameraFar": 40
+        }
+      }
+    }
+  ],
+  "previews": {},
+  "viewerBrief": {
+    "purpose": "A v2 migration of the Dystopia exhibit. The pitcher/audio object and its transform-control interaction are declared in config, while the scene model stays the only GLB.",
+    "requiredCapabilities": [
+      "spatial navigation",
+      "named scene nodes",
+      "sidebar and media panels",
+      "load glTF/GLB scene asset",
+      "spatial audio and optional subtitles"
+    ],
+    "reconstructionPrompt": "Preserve the source scene, stable node identities, media relationships and configured behavior. The r3fCurrent profile records the working implementation, including overrides. Reconstruct equivalent behavior and document unavailable external services.",
+    "visualTone": "Preserve this exhibit’s configured materials, lighting, exposure and presentation."
+  },
+  "preservation": {
+    "futureProofDefinition": "Preserve assets, scene relationships, behavior, provenance and the information needed to reconstruct the exhibit independently of the original viewer.",
+    "requiredBeforeMinting": [
+      "Verify asset availability and integrity.",
+      "Record verified immutable asset URIs and rights.",
+      "Publish the manifest and keep its final CID/hash in an external receipt."
+    ],
+    "status": "runtime_migration_complete_archival_review_pending"
+  }
+}

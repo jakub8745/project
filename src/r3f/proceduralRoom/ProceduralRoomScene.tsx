@@ -474,15 +474,11 @@ function AnimatedProceduralObject({
 
     if (object.animation) {
       if (object.animation.collisionAware && robotRef.current) {
-        const obstacles: Array<{ position: Vector3; radius: number }> = [];
-        for (const [index, entry] of objectRefs.current.entries()) {
-          if (index === objectIndex || !entry?.mesh) continue;
-          obstacles.push({ position: entry.mesh.position, radius: entry.radius });
-        }
         robotRef.current.update(delta, {
           collider,
           visitor,
-          obstacles,
+          obstacles: objectRefs.current.values(),
+          ignoreObstacle: mesh,
           roomBounds: roomBounds || null
         });
       } else {
@@ -810,15 +806,12 @@ function AnimatedProceduralModel({
     const wrapper = wrapperRef.current;
     if (!wrapper || !model.animation) return;
     if (model.animation.collisionAware && robotRef.current) {
-      const obstacles: Array<{ position: Vector3; radius: number }> = [];
-      for (const [index, ref] of modelRefs.current.entries()) {
-        if (index === modelIndex || !ref) continue;
-        obstacles.push({ position: ref.position, radius: model.collisionRadius });
-      }
       robotRef.current.update(delta, {
         collider,
         visitor,
-        obstacles,
+        obstacles: modelRefs.current.values(),
+        ignoreObstacle: wrapper,
+        obstacleRadius: model.collisionRadius,
         roomBounds: roomBounds || null
       });
       return;
@@ -1033,15 +1026,12 @@ export function ProceduralRoomModel({
       mesh: Mesh;
       positionAttr: BufferAttribute;
       basePositions: Float32Array;
+      wavePhases: Float32Array;
+      bendScales: Float32Array;
       bendAxis: 'x' | 'z';
-      span: number;
-      height: number;
-      amplitude: number;
-      frequency: number;
-      phase: number;
-      direction: 1 | -1;
     }>;
   } | null>(null);
+  const wallNormalFrameRef = useRef(0);
   const wallTextureAnimationRef = useRef<{
     texture: Texture;
     speedX: number;
@@ -1398,17 +1388,24 @@ export function ProceduralRoomModel({
         if (!(positionAttr instanceof BufferAttribute)) return null;
         const basePositions = new Float32Array(positionAttr.array.length);
         basePositions.set(positionAttr.array as ArrayLike<number>);
+        const vertexCount = basePositions.length / 3;
+        const wavePhases = new Float32Array(vertexCount);
+        const bendScales = new Float32Array(vertexCount);
+        for (let vertex = 0; vertex < vertexCount; vertex += 1) {
+          const index = vertex * 3;
+          const lateral = bendAxis === 'z' ? basePositions[index] : basePositions[index + 2];
+          const yNorm = Math.max(0, Math.min(1, basePositions[index + 1] / height + 0.5));
+          const strength = 0.35 + 0.65 * yNorm;
+          wavePhases[vertex] = (lateral / span) * Math.PI * wallBendFrequency + phase;
+          bendScales[vertex] = wallBendAmplitude * strength * direction;
+        }
         return {
           mesh,
           positionAttr,
           basePositions,
-          bendAxis,
-          span,
-          height,
-          amplitude: wallBendAmplitude,
-          frequency: wallBendFrequency,
-          phase,
-          direction
+          wavePhases,
+          bendScales,
+          bendAxis
         };
       };
 
@@ -1532,27 +1529,21 @@ export function ProceduralRoomModel({
   useFrame(({ clock }) => {
     const bendState = wallBendRef.current;
     if (bendState) {
+      wallNormalFrameRef.current += 1;
+      const refreshNormals = wallNormalFrameRef.current % 2 === 0;
       const t = clock.elapsedTime * bendState.speed;
       bendState.walls.forEach((wall) => {
         const arr = wall.positionAttr.array as Float32Array;
         const base = wall.basePositions;
+        const wavePhases = wall.wavePhases;
+        const bendScales = wall.bendScales;
         const axisIndex = wall.bendAxis === 'x' ? 0 : 2;
-        for (let i = 0; i < arr.length; i += 3) {
-          const bx = base[i];
-          const by = base[i + 1];
-          const bz = base[i + 2];
-          const lateral = wall.bendAxis === 'z' ? bx : bz;
-          const yNorm = Math.max(0, Math.min(1, by / wall.height + 0.5));
-          const strength = 0.35 + 0.65 * yNorm;
-          const wave = Math.sin((lateral / wall.span) * Math.PI * wall.frequency + t + wall.phase);
-          const bend = wave * wall.amplitude * strength * wall.direction;
-          arr[i] = bx;
-          arr[i + 1] = by;
-          arr[i + 2] = bz;
-          arr[i + axisIndex] = base[i + axisIndex] + bend;
+        for (let vertex = 0; vertex < wavePhases.length; vertex += 1) {
+          const index = vertex * 3 + axisIndex;
+          arr[index] = base[index] + Math.sin(wavePhases[vertex] + t) * bendScales[vertex];
         }
         wall.positionAttr.needsUpdate = true;
-        wall.mesh.geometry.computeVertexNormals();
+        if (refreshNormals) wall.mesh.geometry.computeVertexNormals();
       });
     }
 

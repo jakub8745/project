@@ -3,7 +3,7 @@ export function isAbsoluteUrl(url: string): boolean {
 }
 
 export function normalizeConfigUrl(configUrl: string): string {
-  const trimmed = configUrl.trim();
+  const trimmed = configUrl.trim().replace(/^(?:\.\/)+/, '');
   if (!trimmed) return '';
   // ipfs:// should be treated as absolute.
   if (trimmed.startsWith('ipfs://')) {

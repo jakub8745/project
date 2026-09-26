@@ -11,7 +11,7 @@ describe('VECT-AI v3 future-proof manifest', () => {
     expect(vectaiV3.metadata.archiveDescription).toContain('portable archival 3D exhibit');
     expect(vectaiV3.viewerBrief.requiredCapabilities).toContain('load glTF/GLB scene asset');
     expect(vectaiV3.viewerBrief.reconstructionPrompt).toContain('choose the most suitable contemporary 3D framework');
-    expect(vectaiV3.nft.tokenMetadataTemplate.properties.manifest).toBe('ipfs://CID_FOR_vectai_krakow_032026_config_v3_json');
+    expect(vectaiV3.nft.tokenMetadataTemplate.properties.manifest).toBe('ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha');
   });
 
   it('preserves every v2 asset and adds the v3 manifest as a minting asset', () => {

@@ -18,44 +18,44 @@
   "assets": {
     "scene_model": {
       "kind": "model",
-      "uri": "/models/exhibition_videopoems_low.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/exhibition_videopoems_low.glb",
       "mimeType": "model/gltf-binary"
     },
     "enter_image_asset": {
       "kind": "image",
-      "uri": "https://assets.bluepointart.uk/living/lisbon_living_heritage_videopem.jpg",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_living_heritage_videopem.jpg",
       "mimeType": "image/jpeg"
     },
     "curatorial_dossier_pdf": {
       "kind": "document",
-      "uri": "https://assets.bluepointart.uk/living/Living_Heritage_Curatorial_Dossier.pdf",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Living_Heritage_Curatorial_Dossier.pdf",
       "mimeType": "application/pdf"
     },
     "introduction_audio_asset": {
       "kind": "audio",
-      "uri": "https://assets.bluepointart.uk/living/introduction_to_living_heritage.mp3",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/introduction_to_living_heritage.mp3",
       "mimeType": "audio/mpeg"
     },
     "title_jednaziemia_poster": {
       "kind": "image",
-      "uri": "https://assets.bluepointart.uk/living/title_jednaZiemia.png",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_jednaZiemia.png",
       "mimeType": "image/png"
     },
     "title_echoes_poster": {
       "kind": "image",
-      "uri": "https://assets.bluepointart.uk/living/title_echoes.png",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_echoes.png",
       "mimeType": "image/png"
     },
     "title_disappeared_poster": {
       "kind": "image",
-      "uri": "https://assets.bluepointart.uk/living/title_disappeared.png",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_disappeared.png",
       "mimeType": "image/png"
     },
     "jednaziemia_video_asset": {
       "kind": "video",
       "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
       "fallbackUris": [
-        "https://assets.bluepointart.uk/living/Mlodozeniec_JednaZiemia.mp4"
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4"
       ],
       "mimeType": "video/mp4"
     },
@@ -63,7 +63,7 @@
       "kind": "video",
       "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
       "fallbackUris": [
-        "https://assets.bluepointart.uk/living/ECHOES_OF_A_FATHER.mp4"
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES_OF_A_FATHER.mp4"
       ],
       "mimeType": "video/mp4"
     },
@@ -71,13 +71,13 @@
       "kind": "video",
       "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
       "fallbackUris": [
-        "https://assets.bluepointart.uk/living/Pessoa_DissapearedMirrors.mp4"
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Pessoa_DissapearedMirrors.mp4"
       ],
       "mimeType": "video/mp4"
     },
     "audio_intro_subtitles": {
       "kind": "subtitle",
-      "uri": "https://assets.bluepointart.uk/living/lisbon_intro_subtitles.json",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_intro_subtitles.json",
       "mimeType": "application/json"
     }
   },
@@ -103,9 +103,9 @@
     "renderer": {
       "toneMapping": "cineon",
       "exposure": 1,
-      "antialias": false,
+      "antialias": true,
       "shadows": false,
-      "maxDpr": 1,
+      "maxDpr": 2,
       "autoExposure": true
     }
   },
@@ -122,7 +122,7 @@
         "id": "lisbon-exhibition-video",
         "label": "Video documentation of the Lisbon exhibition",
         "icon": "/icons/ButtonPlay.png",
-        "videoPath": "https://assets.bluepointart.uk/living/lisbon_exhibition_spatial-onsite.mp4",
+        "videoPath": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_exhibition_spatial-onsite.mp4",
         "videoType": "video/mp4"
       },
       {
@@ -302,9 +302,9 @@
   },
   "viewer": {
     "params": {
-      "performanceMode": true,
-      "maxDpr": 1,
-      "antialias": false,
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
       "shadows": false,
       "logarithmicDepthBuffer": false,
       "exposure": 1,
@@ -341,7 +341,7 @@
         "title": "Living Heritage: Remediating Through Videopoetry",
         "description": "",
         "author": "",
-        "imagePath": "https://assets.bluepointart.uk/living/lisbon_living_heritage_videopem.jpg"
+        "imagePath": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/lisbon_living_heritage_videopem.jpg"
       }
     },
     "videos": [
@@ -356,11 +356,11 @@
         "playsinline": true,
         "title": "JEDNA ZIEMIA / ONE EARTH",
         "description": "based on *W drodze* (*On the Road*) by Stanisław Młodożeniec videopoem by Justyna Gorzkowicz & Jarosław Solecki, with Marcin Jerzyna, London-Sandomierz, 2024.",
-        "poster": "https://assets.bluepointart.uk/living/title_jednaZiemia.png",
+        "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_jednaZiemia.png",
         "sources": [
           {
             "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/MLODOZENIEC_JEDNA_ZIEMIA.mp4",
-            "fallbackSrcs": ["https://assets.bluepointart.uk/living/Mlodozeniec_JednaZiemia.mp4"],
+            "fallbackSrcs": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Mlodozeniec_JednaZiemia.mp4"],
             "type": "video/mp4"
           }
         ]
@@ -376,11 +376,11 @@
         "playsinline": true,
         "title": "ECHOES OF A FATHER",
         "description": "based on Stanisław Vincenz's poetic interpretation of *The Lord's Prayer*. Videopoem by Justyna Gorzkowicz & Jarosław Solecki, English translation by Anna Zaranko, London, 2025.",
-        "poster": "https://assets.bluepointart.uk/living/title_echoes.png",
+        "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_echoes.png",
         "sources": [
           {
             "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES%20OF%20A%20FATHER.mp4",
-            "fallbackSrcs": ["https://assets.bluepointart.uk/living/ECHOES_OF_A_FATHER.mp4"],
+            "fallbackSrcs": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/ECHOES_OF_A_FATHER.mp4"],
             "type": "video/mp4"
           }
         ]
@@ -396,11 +396,11 @@
         "playsinline": true,
         "title": "DISAPPEARED MIRRORS",
         "description": "based on poems by Fernando Pessoa and his heteronyms collaborative videopoem by fine arts students from Lisbon (FBAUL) and the PUNO team edited by Justyna Gorzkowicz & Jarosław Solecki, Lisbon, 2025.",
-        "poster": "https://assets.bluepointart.uk/living/title_disappeared.png",
+        "poster": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/title_disappeared.png",
         "sources": [
           {
             "src": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/DISAPPEARED%20MIRRORS%20OF%20FERNANDO%20PESSOA.mp4",
-            "fallbackSrcs": ["https://assets.bluepointart.uk/living/Pessoa_DissapearedMirrors.mp4"],
+            "fallbackSrcs": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/Pessoa_DissapearedMirrors.mp4"],
             "type": "video/mp4"
           }
         ]
@@ -410,7 +410,7 @@
       {
         "id": "introduction_audio",
         "name": "introduction_audio",
-        "url": "https://assets.bluepointart.uk/living/introduction_to_living_heritage.mp3",
+        "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/videopoems_lisbona/o/introduction_to_living_heritage.mp3",
         "autoplayOnEnter": false,
         "labelPlaying": "Intro is playing",
         "labelPaused": "Play Intro",

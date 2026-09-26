@@ -1,0 +1,237 @@
+{
+  "environment": "Chromium headless / desktop 1280x900 / software rendering; local Vite dev server",
+  "results": [
+    {
+      "slug": "vectai_krakow_032026",
+      "version": "2",
+      "ready": false,
+      "elapsedMs": 45390,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "failure": "locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'How to move instructions' }) to be visible\u001b[22m\n",
+      "dialogs": [
+        "  - alertdialog \"This exhibit is taking too long to initialise\":"
+      ]
+    },
+    {
+      "slug": "vectai_krakow_032026",
+      "version": "3",
+      "ready": false,
+      "elapsedMs": 45087,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "failure": "locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'How to move instructions' }) to be visible\u001b[22m\n",
+      "dialogs": [
+        "  - alertdialog \"This exhibit is taking too long to initialise\":"
+      ]
+    },
+    {
+      "slug": "lockdowns",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 11582,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "lockdowns",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 10960,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "wakeupcall",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 5887,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "wakeupcall",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 4241,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "bednarczyk",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 24152,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "bednarczyk",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 19145,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "dystopia",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 15608,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "dystopia",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 14279,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "cipriani",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 13366,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "cipriani",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 13138,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "identity",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 10340,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "identity",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 9667,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "videopoetry",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 5190,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [
+        {
+          "status": 404,
+          "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/bg_puno85.ktx2"
+        },
+        {
+          "status": 404,
+          "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/MurzynHeritage.mp4"
+        },
+        {
+          "status": 404,
+          "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/UnrealPlaces.mp4"
+        }
+      ],
+      "dialogs": []
+    },
+    {
+      "slug": "videopoetry",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 4424,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [
+        {
+          "status": 404,
+          "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/bg_puno85.ktx2"
+        },
+        {
+          "status": 404,
+          "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/UnrealPlaces.mp4"
+        },
+        {
+          "status": 404,
+          "url": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/proposedlayout/o/MurzynHeritage.mp4"
+        }
+      ],
+      "dialogs": []
+    },
+    {
+      "slug": "videopoem_lisbon_112025",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 5104,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "videopoem_lisbon_112025",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 3752,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "prompt_procedural_room",
+      "version": "2",
+      "ready": true,
+      "elapsedMs": 35900,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    },
+    {
+      "slug": "prompt_procedural_room",
+      "version": "3",
+      "ready": true,
+      "elapsedMs": 17059,
+      "manifestResponses": 1,
+      "errors": [],
+      "failedResources": [],
+      "dialogs": []
+    }
+  ]
+}

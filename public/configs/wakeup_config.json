@@ -10,7 +10,7 @@
   "assets": {
     "scene_model": {
       "kind": "model",
-      "uri": "/models/exhibition_wakeupcall_merged.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/exhibition_wakeupcall_merged.glb",
       "mimeType": "model/gltf-binary"
     },
     "background_texture": {
@@ -109,9 +109,9 @@
       "exposureMin": 0.5,
       "exposureMax": 1.65,
       "exposureSampleInterval": 30,
-      "antialias": false,
+      "antialias": true,
       "shadows": false,
-      "maxDpr": 1
+      "maxDpr": 2
     }
   },
   "nodes": {
@@ -635,9 +635,9 @@
         "z": 0
       },
       "rotateOrbit": -150,
-      "performanceMode": true,
-      "maxDpr": 1,
-      "antialias": false,
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
       "shadows": false,
       "logarithmicDepthBuffer": false
     }

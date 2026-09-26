@@ -3,6 +3,7 @@ import {
   subscribeToAudioState,
   setAudioPlaying,
   setAudioVolume,
+  setAudioMuted,
   getAudioState
 } from '../modules/audioMeshManager.ts';
 
@@ -10,6 +11,7 @@ interface AudioStateSnapshot {
   available: boolean;
   isPlaying: boolean;
   volume: number;
+  muted: boolean;
   labelPlaying: string;
   labelPaused: string;
 }
@@ -42,6 +44,31 @@ function VolumeIcon({ className }: { className?: string }) {
       <path d="M16.5 8.5a3.5 3.5 0 0 1 0 7" />
     </svg>
   );
+}
+
+function MutedIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 10v4a1 1 0 0 0 1 1h2.5L11.5 19a1 1 0 0 0 1.5-.86V5.86A1 1 0 0 0 11.5 5l-4 4H5a1 1 0 0 0-1 1Z" />
+      <path d="M16 9l5 6M21 9l-5 6" />
+    </svg>
+  );
+}
+
+function PlayIcon({ className }: { className?: string }) {
+  return <svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M8 5.2v13.6a1 1 0 0 0 1.5.86l10-6.8a1 1 0 0 0 0-1.72l-10-6.8A1 1 0 0 0 8 5.2Z" /></svg>;
+}
+
+function PauseIcon({ className }: { className?: string }) {
+  return <svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M6 5.5A1.5 1.5 0 0 1 7.5 4h1A1.5 1.5 0 0 1 10 5.5v13A1.5 1.5 0 0 1 8.5 20h-1A1.5 1.5 0 0 1 6 18.5v-13ZM14 5.5A1.5 1.5 0 0 1 15.5 4h1A1.5 1.5 0 0 1 18 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-13Z" /></svg>;
 }
 
 function CloseIcon({ className }: { className?: string }) {
@@ -104,6 +131,10 @@ export function AudioPlayerControls({
     setAudioVolume(Number.isFinite(value) ? value : 0);
   }, []);
 
+  const handleMute = useCallback(() => {
+    setAudioMuted(!state.muted);
+  }, [state.muted]);
+
   const toggleCaptions = useCallback(() => {
     setExpandedPanel((current) => (current === 'captions' ? null : 'captions'));
   }, []);
@@ -143,12 +174,7 @@ export function AudioPlayerControls({
             shouldFlashIntro ? 'audio-intro-soft-flash-button' : ''
           }`}
         >
-          <img
-            src={state.isPlaying ? '/icons/ButtonPause.png' : '/icons/ButtonPlay.png'}
-            alt=""
-            className={`h-7 w-7 select-none ${shouldFlashIntro ? 'audio-intro-soft-flash-icon' : ''}`}
-            draggable={false}
-          />
+          {state.isPlaying ? <PauseIcon className="h-7 w-7" /> : <PlayIcon className="h-7 w-7" />}
           <span className="whitespace-nowrap text-sm font-medium tracking-wide">
             {label}
           </span>
@@ -194,6 +220,15 @@ export function AudioPlayerControls({
           </div>
         ) : expandedPanel === 'volume' ? (
           <div className="flex items-center gap-3 pr-1">
+            <button
+              type="button"
+              onClick={handleMute}
+              aria-label={state.muted ? 'Unmute audio' : 'Mute audio'}
+              title={state.muted ? 'Unmute audio' : 'Mute audio'}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
+            >
+              {state.muted ? <VolumeIcon className="h-5 w-5 opacity-50" /> : <MutedIcon className="h-5 w-5" />}
+            </button>
             <label className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-white/70">
               Volume
               <input
@@ -243,7 +278,7 @@ export function AudioPlayerControls({
               title="Show volume control"
               className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
             >
-              <VolumeIcon className="h-5 w-5" />
+              <MutedIcon className="h-5 w-5" />
             </button>
           </>
         )}

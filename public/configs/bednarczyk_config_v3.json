@@ -1,0 +1,334 @@
+{
+  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json",
+  "schemaVersion": "3.0.0-draft",
+  "manifestType": "future-proof-exhibit-archive",
+  "profile": "portable-exhibit",
+  "id": "bednarczyk",
+  "slug": "bednarczyk",
+  "sourceManifest": {
+    "schemaVersion": "2.0.0",
+    "path": "public/configs/bednarczyk_config.json",
+    "sha256": "d9af8d9081e34af69e93c3984a60d5a5f4d5ee0127a85657061b2c47af233621",
+    "migration": "v2-to-v3-structural-1",
+    "id": "dystopia"
+  },
+  "metadata": {
+    "title": "Unveiling the Heritage of Krystyna Bednarczyk",
+    "description": "A 3D exhibit configuration migrated to v2 with media, audio, links, and spawn behavior declared in config instead of an empty interactives GLB.",
+    "language": "en"
+  },
+  "provenance": {
+    "sourceKind": "exhibit",
+    "legacyNft": {
+      "mintable": true,
+      "canonicalSceneAsset": "scene_model"
+    }
+  },
+  "rights": {
+    "status": "review_required"
+  },
+  "nft": {
+    "mintable": false
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "mimeType": "model/gltf-binary",
+      "id": "scene_model",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/bednarczyk_exhibition.glb",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "background_texture": {
+      "kind": "texture",
+      "mimeType": "image/ktx2",
+      "id": "background_texture",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/equMap_podMostem.ktx2",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "Milkmaid_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "Milkmaid_image",
+      "sourceUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg",
+      "ipfsUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/milkmaid.jpg"
+      ]
+    },
+    "dzbanDystopia_audio": {
+      "kind": "audio",
+      "mimeType": "audio/mpeg",
+      "id": "dzbanDystopia_audio",
+      "sourceUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
+      "ipfsUri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/pouring_milk.mp3",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/pouring_milk.mp3"
+      ]
+    }
+  },
+  "content": {
+    "media": {
+      "Milkmaid": {
+        "kind": "image",
+        "title": "Milkmaid",
+        "description": "Jaroslaw Solecki's The Dystopia of an Imitation presents a creative way of exploring the 'matter' of art. The central issue taken up in the work is the sculpting process realised in stone, clay and in the form of digital 3D graphics[...] Quote from the exhibition booklet \"The Dystopia of an Imitation\"",
+        "author": "Jaroslaw Solecki",
+        "image": {
+          "asset": "Milkmaid_image"
+        }
+      },
+      "dzbanDystopia": {
+        "kind": "audio",
+        "sources": [
+          {
+            "asset": "dzbanDystopia_audio"
+          }
+        ]
+      },
+      "info_text": {
+        "kind": "text",
+        "text": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
+      }
+    },
+    "sidebar": {
+      "logoText": "Wystawa z okazji 85-lecia PUNO",
+      "items": [
+        {
+          "id": "info-icon",
+          "label": "About Dystopia of Imitation",
+          "target": "info_text",
+          "content": "This exhibit is still in its experimental stage. Some things may change, break, or disappear as we keep testing new ideas. You're welcome to look around, try things out, and see how it evolves. Thanks for being part of the experiment!"
+        },
+        {
+          "id": "Strona_G_wna_Blue_Point_Art",
+          "label": "Strona Główna Blue Point Art",
+          "link": "https://bluepointart.uk"
+        }
+      ]
+    }
+  },
+  "sceneGraph": {
+    "sourceScene": {
+      "model": {
+        "asset": "scene_model"
+      },
+      "background": {
+        "backgroundAsset": "background_texture"
+      },
+      "spawn": {
+        "position": [
+          -1,
+          4,
+          1
+        ]
+      },
+      "camera": {
+        "mode": "first_person"
+      },
+      "renderer": {
+        "toneMapping": "neutral",
+        "autoExposure": false,
+        "exposure": 1.35,
+        "exposureTarget": 1.2,
+        "exposureMin": 1,
+        "exposureMax": 1.6,
+        "exposureSampleInterval": 30
+      }
+    },
+    "nodes": {
+      "Milkmaid": {
+        "kind": "image_anchor",
+        "media": "Milkmaid",
+        "metadata": {
+          "interactionDescription": "Click Milkmaid to open the image metadata panel."
+        }
+      },
+      "logo_oficyny": {
+        "kind": "link_anchor",
+        "metadata": {
+          "url": "https://krystynabednarczyk.bluepointart.uk/",
+          "interactionDescription": "Click logo_oficyny to open https://krystynabednarczyk.bluepointart.uk/ in a new browser tab."
+        }
+      },
+      "dzbanDystopia": {
+        "kind": "audio_anchor",
+        "media": "dzbanDystopia",
+        "metadata": {
+          "interactionDescription": "The dzbanDystopia node anchors spatial audio. Distance, rolloff, looping, volume, and optional transform behavior are declared in the audio module."
+        }
+      }
+    },
+    "modules": {
+      "audio": {
+        "instances": [
+          {
+            "id": "dzbanDystopia_audio",
+            "targetNode": "dzbanDystopia",
+            "media": "dzbanDystopia",
+            "loop": true,
+            "refDistance": 3,
+            "rolloff": 1,
+            "volume": 0.5
+          }
+        ]
+      }
+    },
+    "viewerProfiles": {
+      "r3fCurrent": {
+        "params": {
+          "performanceMode": false,
+          "maxDpr": 2,
+          "antialias": true,
+          "shadows": false,
+          "logarithmicDepthBuffer": false,
+          "exposure": 1.35,
+          "autoExposure": false,
+          "toneMapping": "neutral",
+          "exposureTarget": 1.2,
+          "exposureMin": 1,
+          "exposureMax": 1.6,
+          "exposureSampleInterval": 30,
+          "colorGrade": {
+            "brightness": 1.2,
+            "contrast": 0.95,
+            "saturate": 0.82
+          },
+          "lightIntensity": 1.45,
+          "gravity": -8,
+          "visitorSpeed": 5,
+          "heightOffset": {
+            "x": 0,
+            "y": 3.5,
+            "z": 0
+          },
+          "visitorEnter": {
+            "x": -1,
+            "y": 4,
+            "z": 1
+          },
+          "rotateOrbit": -65,
+          "backgroundBlurriness": 0.05,
+          "backgroundIntensity": 0.5
+        },
+        "links": {
+          "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/"
+        }
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "Milkmaid_open_image",
+      "targetNode": "Milkmaid",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Milkmaid"
+      },
+      "ui": {
+        "title": "Milkmaid",
+        "description": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+      },
+      "type": "open_image",
+      "targets": [
+        "Milkmaid"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "Milkmaid"
+      },
+      "description": "Clicking Milkmaid opens the image entry \"Milkmaid\" with title, description, author, and source asset from the config."
+    },
+    {
+      "id": "logo_oficyny_open_link",
+      "targetNode": "logo_oficyny",
+      "trigger": "click",
+      "action": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+      },
+      "ui": {
+        "title": "logo_oficyny",
+        "description": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+      },
+      "type": "open_link",
+      "targets": [
+        "logo_oficyny"
+      ],
+      "behavior": {
+        "type": "open_link",
+        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+      },
+      "description": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+    },
+    {
+      "id": "dzbanDystopia_spatial_audio",
+      "targetNode": "dzbanDystopia",
+      "trigger": "proximity",
+      "action": {
+        "type": "play_audio",
+        "moduleInstance": "dzbanDystopia_audio"
+      },
+      "ui": {
+        "title": "dzbanDystopia",
+        "description": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+      },
+      "metadata": {
+        "interactionDescription": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+      },
+      "type": "play_audio",
+      "targets": [
+        "dzbanDystopia"
+      ],
+      "behavior": {
+        "type": "play_audio",
+        "moduleInstance": "dzbanDystopia_audio"
+      },
+      "description": "Approaching dzbanDystopia places the visitor inside the configured spatial audio field. The sound uses refDistance=3, rolloff=1, loop=true, and volume=0.5."
+    }
+  ],
+  "previews": {},
+  "viewerBrief": {
+    "purpose": "A 3D exhibit configuration migrated to v2 with media, audio, links, and spawn behavior declared in config instead of an empty interactives GLB.",
+    "requiredCapabilities": [
+      "spatial navigation",
+      "named scene nodes",
+      "sidebar and media panels",
+      "load glTF/GLB scene asset",
+      "spatial audio and optional subtitles"
+    ],
+    "reconstructionPrompt": "Preserve the source scene, stable node identities, media relationships and configured behavior. The r3fCurrent profile records the working implementation, including overrides. Reconstruct equivalent behavior and document unavailable external services.",
+    "visualTone": "Preserve this exhibit’s configured materials, lighting, exposure and presentation."
+  },
+  "preservation": {
+    "futureProofDefinition": "Preserve assets, scene relationships, behavior, provenance and the information needed to reconstruct the exhibit independently of the original viewer.",
+    "requiredBeforeMinting": [
+      "Verify asset availability and integrity.",
+      "Record verified immutable asset URIs and rights.",
+      "Publish the manifest and keep its final CID/hash in an external receipt."
+    ],
+    "status": "runtime_migration_complete_archival_review_pending"
+  }
+}

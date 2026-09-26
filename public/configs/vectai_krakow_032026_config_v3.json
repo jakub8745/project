@@ -60,8 +60,8 @@
     ]
   },
   "rights": {
-    "defaultLicense": "TBD",
-    "defaultCredit": "TBD",
+    "defaultLicense": "CC BY-NC 4.0",
+    "defaultCredit": "VECT-AI collective within the CAPHE project, 2026.",
     "notes": "Fill asset-level rights before minting. NFT metadata should not imply transfer of copyright unless explicitly stated."
   },
   "nft": {
@@ -78,8 +78,8 @@
     "tokenMetadataTemplate": {
       "name": "Cracks of Meaning: Videopoetry in the age of AI",
       "description": "Critical work with AI in art education",
-      "image": "ipfs://CID_FOR_og_image",
-      "animation_url": "ipfs://CID_FOR_scene_model",
+      "image": "ipfs://QmYegKGjajgCvbC8VVzpxHdKDVHzFRw4hjhSEYfRqN7Dag",
+      "animation_url": "ipfs://QmQkFhM9nQCypgwJn79cHGxxbFKXNv6PuA3DL8yfQPtzKN",
       "external_url": "https://bluepointart.uk/cracks-of-meaning-in-the-bpaa/",
       "attributes": [
         {
@@ -100,136 +100,136 @@
         }
       ],
       "properties": {
-        "manifest": "ipfs://CID_FOR_vectai_krakow_032026_config_v3_json",
+        "manifest": "ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha",
         "files": [
           {
             "id": "scene_model",
-            "uri": "ipfs://CID_FOR_scene_model",
+            "uri": "ipfs://QmQkFhM9nQCypgwJn79cHGxxbFKXNv6PuA3DL8yfQPtzKN",
             "type": "model/gltf-binary"
           },
           {
             "id": "og_image",
-            "uri": "ipfs://CID_FOR_og_image",
+            "uri": "ipfs://QmYegKGjajgCvbC8VVzpxHdKDVHzFRw4hjhSEYfRqN7Dag",
             "type": "image/jpeg"
           },
           {
             "id": "manual_thumb",
-            "uri": "ipfs://CID_FOR_manual_thumb",
+            "uri": "ipfs://QmRG14PuiubexmmAsPYW1RF2uhtHJubVsUPwoSAsZDp2Fg",
             "type": "image/jpeg"
           },
           {
             "id": "manual_pl_pdf",
-            "uri": "ipfs://CID_FOR_manual_pl_pdf",
+            "uri": "ipfs://QmdcYmBVk8ZWSjJwtUSsbGMoVoDS2uied1ZWR4PYSQYvqR",
             "type": "application/pdf"
           },
           {
             "id": "manual_en_pdf",
-            "uri": "ipfs://CID_FOR_manual_en_pdf",
+            "uri": "ipfs://QmShfdiRk8LRcAFXQJULeJZbUs3SRZ9sBexx1s8zEuuDeS",
             "type": "application/pdf"
           },
           {
             "id": "poster_obowiazki",
-            "uri": "ipfs://CID_FOR_poster_obowiazki",
-            "type": "image/jpeg"
+            "uri": "ipfs://QmUEjaAM22FyGmYv2TNGbM2G9PTpahgSWbCSCWgJV6oB89",
+            "type": "image/png"
           },
           {
             "id": "scanning01_image",
-            "uri": "ipfs://CID_FOR_scanning01_image",
+            "uri": "ipfs://QmYrfmqKmAYBf4gQGKm24nH3iNBVsXi6FnUXjMjbRYEtmi",
             "type": "image/jpeg"
           },
           {
             "id": "second_day_image",
-            "uri": "ipfs://CID_FOR_second_day_image",
+            "uri": "ipfs://QmdxrHoPsRmSHhcwWjG4yfWtFk5n7GKn5R8QYJhjSSv28z",
             "type": "image/jpeg"
           },
           {
             "id": "zajac_image",
-            "uri": "ipfs://CID_FOR_zajac_image",
+            "uri": "ipfs://QmSwUY7jqc3h6HeFiPzp3FEgJJDKgUyNpTPeRNFpb2JqjX",
             "type": "image/jpeg"
           },
           {
             "id": "parasol_image",
-            "uri": "ipfs://CID_FOR_parasol_image",
+            "uri": "ipfs://QmXMWA8tcLU5NkKcxczgheu7AMbFkhMVn6ADRg5g4wYLof",
             "type": "image/jpeg"
           },
           {
             "id": "snake_image",
-            "uri": "ipfs://CID_FOR_snake_image",
+            "uri": "ipfs://QmUKr8vLCAv3orinjgqVZd2y7HwQKMcdjpT95EKpNENgKJ",
             "type": "image/jpeg"
           },
           {
             "id": "baletnica_image",
-            "uri": "ipfs://CID_FOR_baletnica_image",
+            "uri": "ipfs://QmU1ssJd75oDvxXgtHtATjFDWAmcsGosCSb8KQxnxVZfeW",
             "type": "image/jpeg"
           },
           {
             "id": "text_layer_01",
-            "uri": "ipfs://CID_FOR_text_layer_01",
+            "uri": "ipfs://QmfADBD9Uu2bgfG9sv9nkUV4dpjSXCwMys4PAeTpDTjkNm",
             "type": "image/jpeg"
           },
           {
             "id": "text_layer_02",
-            "uri": "ipfs://CID_FOR_text_layer_02",
+            "uri": "ipfs://QmcAYhWh22vib4m6QU3GKrgy4UsTHcbBfBERit8eJRo7UC",
             "type": "image/jpeg"
           },
           {
             "id": "text_layer_03",
-            "uri": "ipfs://CID_FOR_text_layer_03",
+            "uri": "ipfs://Qmf5FYzk3ynM7jbmTWhJ2ty59mHkqY8XPpRWBqXiarsc78",
             "type": "image/jpeg"
           },
           {
             "id": "left_screen_poster",
-            "uri": "ipfs://CID_FOR_left_screen_poster",
+            "uri": "ipfs://QmYY15ayKrmHZdB62youDpnEmYSv6fQ6yyZpMmZtqd8rAT",
             "type": "image/jpeg"
           },
           {
             "id": "middle_screen_poster",
-            "uri": "ipfs://CID_FOR_middle_screen_poster",
+            "uri": "ipfs://QmVHQmzJhmt3XUY7Ht4cJPS3guD6gxWf4BxakiFGbzU7bw",
             "type": "image/jpeg"
           },
           {
             "id": "right_screen_poster",
-            "uri": "ipfs://CID_FOR_right_screen_poster",
+            "uri": "ipfs://Qmdb1ZW2WtMFaa3g5ZTPuWEGTBLTTYqWRPY74SHnZmBGRb",
             "type": "image/jpeg"
           },
           {
             "id": "left_screen_video",
-            "uri": "ipfs://CID_FOR_left_screen_video",
+            "uri": "ipfs://QmQQ1vM71HNcwyfVkjtRE1KEss8uR17RLNkZa1eSH91etD",
             "type": "video/mp4"
           },
           {
             "id": "middle_screen_video",
-            "uri": "ipfs://CID_FOR_middle_screen_video",
+            "uri": "ipfs://QmVJn5zUuuYdtSrUg8ZSQzKrv8cCCgWAq6CVwu4agwtLz9",
             "type": "video/mp4"
           },
           {
             "id": "right_screen_video",
-            "uri": "ipfs://CID_FOR_right_screen_video",
+            "uri": "ipfs://QmbwTo2yzKK6qqvn1vGcdHjGY5a3D7Db7dWNtmTiG8gysn",
             "type": "video/mp4"
           },
           {
             "id": "audio_left_mp3",
-            "uri": "ipfs://CID_FOR_audio_left_mp3",
+            "uri": "ipfs://QmaFH3RTNZYF9ZjCRbe3yHjifYNtXuEsixAs6wkc5KAsiX",
             "type": "audio/mpeg"
           },
           {
             "id": "audio_right_mp3",
-            "uri": "ipfs://CID_FOR_audio_right_mp3",
+            "uri": "ipfs://QmQ4ZsLhFWcWr4nd6YPr2kgADwLtiyDtW5z38RxJGBiBjS",
             "type": "audio/mpeg"
           },
           {
             "id": "audio_intro_mp3",
-            "uri": "ipfs://CID_FOR_audio_intro_mp3",
+            "uri": "ipfs://QmXJ3aCN1TqEvgkRtuNQMzRALK1ZM3P8cHNkjn2dxHwrm8",
             "type": "audio/mpeg"
           },
           {
             "id": "audio_intro_subtitles",
-            "uri": "ipfs://CID_FOR_audio_intro_subtitles",
+            "uri": "ipfs://QmSupdU37w51QUT8BHMrm5ZR8nAzgrpKkK2yXDUxCD3SbQ",
             "type": "application/json"
           },
           {
             "id": "manifest_v3_json",
-            "uri": "ipfs://CID_FOR_manifest_v3_json",
+            "uri": "ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha",
             "type": "application/json"
           }
         ]
@@ -242,19 +242,21 @@
       "kind": "model",
       "role": "canonical_scene",
       "sourceUri": "/models/vectai_room.glb",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmQkFhM9nQCypgwJn79cHGxxbFKXNv6PuA3DL8yfQPtzKN",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/vectai_room.glb"
+      ],
       "mimeType": "model/gltf-binary",
       "byteSize": 15057924,
       "sha256": "8446cba22eb06ea22aa2a09e156d331ce7027fe79a8ab3a8c122c031c04ef657",
-      "localPath": "public/models/vectai_room.glb",
+      "localPath": ".tmp-pinata-vectai/vectai_room.glb",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -267,21 +269,23 @@
       "kind": "image",
       "role": "canonical_preview",
       "sourceUri": "/textures/vectai/og_image_vectai.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmYegKGjajgCvbC8VVzpxHdKDVHzFRw4hjhSEYfRqN7Dag",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/og_image_vectai.jpg"
+      ],
       "mimeType": "image/jpeg",
       "width": 1200,
       "height": 630,
       "byteSize": 120799,
       "sha256": "005e79048f910ce7c574013af7256b683aa0c662c26f743fac04a2e3dd002bd9",
-      "localPath": "public/textures/vectai/og_image_vectai.jpg",
+      "localPath": ".tmp-pinata-vectai/og_image_vectai.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -293,19 +297,21 @@
       "id": "manual_thumb",
       "kind": "image",
       "sourceUri": "/textures/thubm_PeknieciaSensu.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmRG14PuiubexmmAsPYW1RF2uhtHJubVsUPwoSAsZDp2Fg",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/thubm_PeknieciaSensu.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 67627,
       "sha256": "198cc7edfc5abd9ba59c9062221cbcc3788f615cc9c88551e0daafb10bba1a51",
-      "localPath": "public/textures/thubm_PeknieciaSensu.jpg",
+      "localPath": ".tmp-pinata-vectai/thubm_PeknieciaSensu.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -317,19 +323,21 @@
       "id": "manual_pl_pdf",
       "kind": "document",
       "sourceUri": "/pdfs/pekniecia_sensu.pdf",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmdcYmBVk8ZWSjJwtUSsbGMoVoDS2uied1ZWR4PYSQYvqR",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/pekniecia_sensu.pdf"
+      ],
       "mimeType": "application/pdf",
       "byteSize": 7147232,
       "sha256": "1d2bbf3316dc07ef106d3d17fea215b38c708b7de6a70a9f4fd36c8ce998003f",
-      "localPath": "public/pdfs/pekniecia_sensu.pdf",
+      "localPath": ".tmp-pinata-vectai/pekniecia_sensu.pdf",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -341,19 +349,21 @@
       "id": "manual_en_pdf",
       "kind": "document",
       "sourceUri": "/pdfs/CRACKS OF MEANING_ENG.pdf",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmShfdiRk8LRcAFXQJULeJZbUs3SRZ9sBexx1s8zEuuDeS",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/CRACKS%20OF%20MEANING_ENG.pdf"
+      ],
       "mimeType": "application/pdf",
       "byteSize": 267930,
       "sha256": "edf634d638711b5969685dc74da6578726974ede9fbd599856d1cdb40d7bf3da",
-      "localPath": "public/pdfs/CRACKS OF MEANING_ENG.pdf",
+      "localPath": ".tmp-pinata-vectai/CRACKS OF MEANING_ENG.pdf",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -365,19 +375,21 @@
       "id": "poster_obowiazki",
       "kind": "image",
       "sourceUri": "/textures/vectai/cracks_title.png",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmUEjaAM22FyGmYv2TNGbM2G9PTpahgSWbCSCWgJV6oB89",
       "arweaveUri": null,
-      "fallbackUris": [],
-      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/cracks_title.png"
+      ],
+      "mimeType": "image/png",
       "byteSize": 404815,
       "sha256": "c0f8cf88dc492cf952280633845e49fed2101336bec97363a03a74ffca723644",
-      "localPath": "public/textures/vectai/cracks_title.png",
+      "localPath": ".tmp-pinata-vectai/cracks_title.png",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -389,19 +401,21 @@
       "id": "scanning01_image",
       "kind": "image",
       "sourceUri": "/textures/vectai/skanowanie01.jpeg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmYrfmqKmAYBf4gQGKm24nH3iNBVsXi6FnUXjMjbRYEtmi",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/skanowanie01.jpeg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 273447,
       "sha256": "c8e428d3057cbc3fe1bbbe69b343fb6d0643215da3f2ca18420278c4f7d9f48d",
-      "localPath": "public/textures/vectai/skanowanie01.jpeg",
+      "localPath": ".tmp-pinata-vectai/skanowanie01.jpeg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -413,19 +427,21 @@
       "id": "second_day_image",
       "kind": "image",
       "sourceUri": "/textures/vectai/2dzien.jpeg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmdxrHoPsRmSHhcwWjG4yfWtFk5n7GKn5R8QYJhjSSv28z",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/2dzien.jpeg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 171591,
       "sha256": "474e3e3db174a1b4e6d9124bb21d096dabf444d5b8f4c65febb3f5d7c9f2fcbf",
-      "localPath": "public/textures/vectai/2dzien.jpeg",
+      "localPath": ".tmp-pinata-vectai/2dzien.jpeg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -437,19 +453,21 @@
       "id": "zajac_image",
       "kind": "image",
       "sourceUri": "/textures/vectai/zajac_g4.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmSwUY7jqc3h6HeFiPzp3FEgJJDKgUyNpTPeRNFpb2JqjX",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/zajac_g4.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 58630,
       "sha256": "20882d7b663f71dbbc75d310b9d19205fcb4b62dcda1554f51f0c56c6c005aaf",
-      "localPath": "public/textures/vectai/zajac_g4.jpg",
+      "localPath": ".tmp-pinata-vectai/zajac_g4.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -461,19 +479,21 @@
       "id": "parasol_image",
       "kind": "image",
       "sourceUri": "/textures/vectai/parasol.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmXMWA8tcLU5NkKcxczgheu7AMbFkhMVn6ADRg5g4wYLof",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/parasol.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 67447,
       "sha256": "291eb20eeb0c9ff2d05579ccd796387ed4690b6960f5750bffd614b3cac4aed1",
-      "localPath": "public/textures/vectai/parasol.jpg",
+      "localPath": ".tmp-pinata-vectai/parasol.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -485,19 +505,21 @@
       "id": "snake_image",
       "kind": "image",
       "sourceUri": "/textures/vectai/waz.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmUKr8vLCAv3orinjgqVZd2y7HwQKMcdjpT95EKpNENgKJ",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/waz.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 39584,
       "sha256": "3c49783457a874e8d279dec6fe3ae6b380f410d32d659e16a1bcbdb2c91f0d0a",
-      "localPath": "public/textures/vectai/waz.jpg",
+      "localPath": ".tmp-pinata-vectai/waz.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -509,19 +531,21 @@
       "id": "baletnica_image",
       "kind": "image",
       "sourceUri": "/textures/vectai/baletnica.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmU1ssJd75oDvxXgtHtATjFDWAmcsGosCSb8KQxnxVZfeW",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/baletnica.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 40473,
       "sha256": "1015e128caee054e4e632ccac609a4f0d395120878d34cfcad4ef0d7f6456cb8",
-      "localPath": "public/textures/vectai/baletnica.jpg",
+      "localPath": ".tmp-pinata-vectai/baletnica.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -533,19 +557,21 @@
       "id": "text_layer_01",
       "kind": "image",
       "sourceUri": "/textures/vectai/kartka01.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmfADBD9Uu2bgfG9sv9nkUV4dpjSXCwMys4PAeTpDTjkNm",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/kartka01.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 218488,
       "sha256": "a3d346a0342d0018a302f58982009ae22f18215be863357bccae36c50e450924",
-      "localPath": "public/textures/vectai/kartka01.jpg",
+      "localPath": ".tmp-pinata-vectai/kartka01.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -557,19 +583,21 @@
       "id": "text_layer_02",
       "kind": "image",
       "sourceUri": "/textures/vectai/kartka02.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmcAYhWh22vib4m6QU3GKrgy4UsTHcbBfBERit8eJRo7UC",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/kartka02.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 211942,
       "sha256": "0da796118b85ff59a284ef6d942107f227f3bdde75f02c2a3180c7f51ed46462",
-      "localPath": "public/textures/vectai/kartka02.jpg",
+      "localPath": ".tmp-pinata-vectai/kartka02.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -581,19 +609,21 @@
       "id": "text_layer_03",
       "kind": "image",
       "sourceUri": "/textures/vectai/kartka03.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://Qmf5FYzk3ynM7jbmTWhJ2ty59mHkqY8XPpRWBqXiarsc78",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/kartka03.jpg"
+      ],
       "mimeType": "image/jpeg",
       "byteSize": 286459,
       "sha256": "b90b06c869091dad68b408129e52b9ffec4501e90c998d5e20297bb009fb3ac2",
-      "localPath": "public/textures/vectai/kartka03.jpg",
+      "localPath": ".tmp-pinata-vectai/kartka03.jpg",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -605,16 +635,18 @@
       "id": "left_screen_poster",
       "kind": "image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmYY15ayKrmHZdB62youDpnEmYSv6fQ6yyZpMmZtqd8rAT",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy.jpg"
+      ],
       "mimeType": "image/jpeg",
-      "availableLocal": false,
+      "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -622,22 +654,25 @@
         "credit": "TBD"
       },
       "byteSize": 151582,
-      "sha256": "412a75daff11434c8b4a128e25a099fbd6b749043c29b5c22e3d23960322564c"
+      "sha256": "412a75daff11434c8b4a128e25a099fbd6b749043c29b5c22e3d23960322564c",
+      "localPath": ".tmp-pinata-vectai/lewy.jpg"
     },
     "middle_screen_poster": {
       "id": "middle_screen_poster",
       "kind": "image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmVHQmzJhmt3XUY7Ht4cJPS3guD6gxWf4BxakiFGbzU7bw",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek.jpg"
+      ],
       "mimeType": "image/jpeg",
-      "availableLocal": false,
+      "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -645,22 +680,25 @@
         "credit": "TBD"
       },
       "byteSize": 92972,
-      "sha256": "c24358ae834d0208b44c680f635278b78d51b09a5dcb5d7b64c0daa5c9341972"
+      "sha256": "c24358ae834d0208b44c680f635278b78d51b09a5dcb5d7b64c0daa5c9341972",
+      "localPath": ".tmp-pinata-vectai/srodek.jpg"
     },
     "right_screen_poster": {
       "id": "right_screen_poster",
       "kind": "image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://Qmdb1ZW2WtMFaa3g5ZTPuWEGTBLTTYqWRPY74SHnZmBGRb",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy.jpg"
+      ],
       "mimeType": "image/jpeg",
-      "availableLocal": false,
+      "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -668,22 +706,25 @@
         "credit": "TBD"
       },
       "byteSize": 60396,
-      "sha256": "ca4ce8c5c2d80fe37e47204be77563006660baaf2cd2704a57fa77c3af45fc1d"
+      "sha256": "ca4ce8c5c2d80fe37e47204be77563006660baaf2cd2704a57fa77c3af45fc1d",
+      "localPath": ".tmp-pinata-vectai/prawy.jpg"
     },
     "left_screen_video": {
       "id": "left_screen_video",
       "kind": "video",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmQQ1vM71HNcwyfVkjtRE1KEss8uR17RLNkZa1eSH91etD",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/lewy_ekran.mp4"
+      ],
       "mimeType": "video/mp4",
-      "availableLocal": false,
+      "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -691,22 +732,25 @@
         "credit": "TBD"
       },
       "byteSize": 8929359,
-      "sha256": "280d2097506cf5d0fa65956b60d3b07b024a6f0e513a8ffd8fb2dd01ef75db34"
+      "sha256": "280d2097506cf5d0fa65956b60d3b07b024a6f0e513a8ffd8fb2dd01ef75db34",
+      "localPath": ".tmp-pinata-vectai/lewy_ekran.mp4"
     },
     "middle_screen_video": {
       "id": "middle_screen_video",
       "kind": "video",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmVJn5zUuuYdtSrUg8ZSQzKrv8cCCgWAq6CVwu4agwtLz9",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/srodek_ekran.mp4"
+      ],
       "mimeType": "video/mp4",
-      "availableLocal": false,
+      "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -714,22 +758,25 @@
         "credit": "TBD"
       },
       "byteSize": 9090163,
-      "sha256": "8ec8afa8d07682c8815cc642a96ea9811d1dce41a21d99e0247a4f94b41c72e7"
+      "sha256": "8ec8afa8d07682c8815cc642a96ea9811d1dce41a21d99e0247a4f94b41c72e7",
+      "localPath": ".tmp-pinata-vectai/srodek_ekran.mp4"
     },
     "right_screen_video": {
       "id": "right_screen_video",
       "kind": "video",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmbwTo2yzKK6qqvn1vGcdHjGY5a3D7Db7dWNtmTiG8gysn",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/prawy_ekran.mp4"
+      ],
       "mimeType": "video/mp4",
-      "availableLocal": false,
+      "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -737,71 +784,80 @@
         "credit": "TBD"
       },
       "byteSize": 9113674,
-      "sha256": "b574d73afcef9084c89285415367448f14d819fe06fd8ff3ee265c001ad7673e"
+      "sha256": "b574d73afcef9084c89285415367448f14d819fe06fd8ff3ee265c001ad7673e",
+      "localPath": ".tmp-pinata-vectai/prawy_ekran.mp4"
     },
     "audio_left_mp3": {
       "id": "audio_left_mp3",
       "kind": "audio",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/left_audio.mp3",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmaFH3RTNZYF9ZjCRbe3yHjifYNtXuEsixAs6wkc5KAsiX",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/left_audio.mp3"
+      ],
       "mimeType": "audio/mpeg",
-      "availableLocal": false,
-      "preservation": {
-        "uploadToIpfs": true,
-        "cidRequired": true,
-        "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
-      },
-      "rights": {
-        "license": "TBD",
-        "creator": "TBD",
-        "credit": "TBD"
-      },
-      "byteSize": 4900711,
-      "sha256": "579076e97e0422f001d22df5b0f056f66f6432c29da289addd71b86213ceb558"
-    },
-    "audio_right_mp3": {
-      "id": "audio_right_mp3",
-      "kind": "audio",
-      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3",
-      "ipfsUri": null,
-      "arweaveUri": null,
-      "fallbackUris": [],
-      "mimeType": "audio/mpeg",
-      "availableLocal": false,
-      "preservation": {
-        "uploadToIpfs": true,
-        "cidRequired": true,
-        "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
-      },
-      "rights": {
-        "license": "TBD",
-        "creator": "TBD",
-        "credit": "TBD"
-      },
-      "byteSize": 4900711,
-      "sha256": "2525e2c6905ba1ce8f56f8f258a6fdcce70bb61613f18939d2ce92090eeb05e6"
-    },
-    "audio_intro_mp3": {
-      "id": "audio_intro_mp3",
-      "kind": "audio",
-      "sourceUri": "/audio/introduction_Cracks of Meaning.mp3",
-      "ipfsUri": null,
-      "arweaveUri": null,
-      "fallbackUris": [],
-      "mimeType": "audio/mpeg",
-      "byteSize": 929375,
-      "sha256": "94c1945577f42ca72c694b630941f288e629da9105afde9de8a2828669a6f2f7",
-      "localPath": "public/audio/introduction_Cracks of Meaning.mp3",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      },
+      "byteSize": 4900711,
+      "sha256": "579076e97e0422f001d22df5b0f056f66f6432c29da289addd71b86213ceb558",
+      "localPath": ".tmp-pinata-vectai/left_audio.mp3"
+    },
+    "audio_right_mp3": {
+      "id": "audio_right_mp3",
+      "kind": "audio",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3",
+      "ipfsUri": "ipfs://QmQ4ZsLhFWcWr4nd6YPr2kgADwLtiyDtW5z38RxJGBiBjS",
+      "arweaveUri": null,
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/right_audio.mp3"
+      ],
+      "mimeType": "audio/mpeg",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "uploaded_to_ipfs"
+      },
+      "rights": {
+        "license": "TBD",
+        "creator": "TBD",
+        "credit": "TBD"
+      },
+      "byteSize": 4900711,
+      "sha256": "2525e2c6905ba1ce8f56f8f258a6fdcce70bb61613f18939d2ce92090eeb05e6",
+      "localPath": ".tmp-pinata-vectai/right_audio.mp3"
+    },
+    "audio_intro_mp3": {
+      "id": "audio_intro_mp3",
+      "kind": "audio",
+      "sourceUri": "/audio/introduction_Cracks of Meaning.mp3",
+      "ipfsUri": "ipfs://QmXJ3aCN1TqEvgkRtuNQMzRALK1ZM3P8cHNkjn2dxHwrm8",
+      "arweaveUri": null,
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/introduction_Cracks%20of%20Meaning.mp3"
+      ],
+      "mimeType": "audio/mpeg",
+      "byteSize": 929375,
+      "sha256": "94c1945577f42ca72c694b630941f288e629da9105afde9de8a2828669a6f2f7",
+      "localPath": ".tmp-pinata-vectai/introduction_Cracks of Meaning.mp3",
+      "availableLocal": true,
+      "preservation": {
+        "uploadToIpfs": true,
+        "cidRequired": true,
+        "integrityAlgorithm": "sha256",
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -813,19 +869,21 @@
       "id": "audio_intro_subtitles",
       "kind": "subtitle",
       "sourceUri": "/audio/vectai_intro_subtitles.json",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmSupdU37w51QUT8BHMrm5ZR8nAzgrpKkK2yXDUxCD3SbQ",
       "arweaveUri": null,
-      "fallbackUris": [],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/vectai/o/vectai_intro_subtitles.json"
+      ],
       "mimeType": "application/json",
       "byteSize": 6584,
       "sha256": "b6e2d09c1f58e9c4f211c5fa3db33ecd1df536ed50087b2e2d3c4844763e82ec",
-      "localPath": "public/audio/vectai_intro_subtitles.json",
+      "localPath": ".tmp-pinata-vectai/vectai_intro_subtitles.json",
       "availableLocal": true,
       "preservation": {
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "ready_for_arweave_upload"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
@@ -838,7 +896,7 @@
       "kind": "manifest",
       "role": "canonical_manifest",
       "sourceUri": "/configs/vectai_krakow_032026_config_v3.json",
-      "ipfsUri": null,
+      "ipfsUri": "ipfs://QmQRZWYNzh2rAapMXjMRNdNNbg8JAXCvtRkcfPm2x6F7ha",
       "arweaveUri": null,
       "fallbackUris": [],
       "mimeType": "application/json",
@@ -848,13 +906,15 @@
         "uploadToIpfs": true,
         "cidRequired": true,
         "integrityAlgorithm": "sha256",
-        "status": "needs_ipfs_uri_after_final_manifest_is_frozen"
+        "status": "uploaded_to_ipfs"
       },
       "rights": {
         "license": "TBD",
         "creator": "TBD",
         "credit": "TBD"
-      }
+      },
+      "byteSize": 68872,
+      "sha256": "19b9af6380a49e7d9e7e4a2e96889941a292ce2799b02326e8b3eb6eebf04bc3"
     }
   },
   "content": {
@@ -1441,12 +1501,12 @@
       "r3fCurrent": {
         "status": "reference_implementation_profile",
         "params": {
-          "exposure": 1,
-          "autoExposure": true,
+          "exposure": 1.4,
+          "autoExposure": false,
           "toneMapping": "neutral",
-          "exposureTarget": 0.68,
-          "exposureMin": 0.5,
-          "exposureMax": 1.65,
+          "exposureTarget": 1.0,
+          "exposureMin": 0.75,
+          "exposureMax": 1.9,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1,
@@ -1531,17 +1591,17 @@
               "toneMapping": "aces"
             },
             "lights": {
-              "ambientIntensity": 0.65,
+              "ambientIntensity": 1.15,
               "hemisphereIntensity": 0,
               "directionalIntensity": 0,
               "spotIntensity": 0
             },
             "exposure": {
               "autoExposure": false,
-              "value": 1.08,
-              "target": 0.72,
-              "min": 0.5,
-              "max": 1.65
+              "value": 1.4,
+              "target": 1.0,
+              "min": 0.75,
+              "max": 1.9
             }
           }
         ]
@@ -2020,8 +2080,9 @@
   },
   "exports": {
     "nftMetadata": {
-      "status": "draft_requires_ipfs_cids",
-      "outputPathSuggestion": "dist/nft/vectai_krakow_032026_metadata.json"
+      "status": "uploaded_to_ipfs",
+      "outputPath": "/configs/vectai_krakow_032026_nft_metadata.json",
+      "ipfsUri": "ipfs://QmRE926P7h6ZqTAHXDSMbgrHQsqSsiPEoJaaDDfefFNTX3"
     },
     "runtimeAdapters": {
       "currentR3F": "Can be compiled to the current ExhibitConfig runtime shape by a v3-to-runtime adapter."

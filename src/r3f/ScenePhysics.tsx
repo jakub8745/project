@@ -25,6 +25,8 @@ export function ScenePhysics({
   }) => void;
 }) {
   const physicsSystemRef = useRef<PhysicsSystem | null>(null);
+  const actorsRef = useRef<PhysicsRuntimeActor[]>([]);
+  const actorCacheRef = useRef<Map<string, PhysicsRuntimeActor>>(new Map());
 
   if (!physicsSystemRef.current) {
     physicsSystemRef.current = new PhysicsSystem();
@@ -36,16 +38,31 @@ export function ScenePhysics({
 
   useFrame(() => {
     if (!physicsSystemRef.current || config?.enabled === false) return;
-    const actors: PhysicsRuntimeActor[] = [];
+    const actors = actorsRef.current;
+    actors.length = 0;
     if (visitor) {
-      actors.push({ id: 'visitor', object: visitor, radius: 0.55 });
+      let visitorActor = actorCacheRef.current.get('visitor');
+      if (!visitorActor) {
+        visitorActor = { id: 'visitor', object: visitor, radius: 0.55 };
+        actorCacheRef.current.set('visitor', visitorActor);
+      } else {
+        visitorActor.object = visitor;
+      }
+      actors.push(visitorActor);
     }
     for (const [id, entry] of actorRefs.current.entries()) {
-      actors.push({
-        id,
-        object: entry.object,
-        radius: entry.radius
-      });
+      let actor = actorCacheRef.current.get(id);
+      if (!actor) {
+        actor = { id, object: entry.object, radius: entry.radius };
+        actorCacheRef.current.set(id, actor);
+      } else {
+        actor.object = entry.object;
+        actor.radius = entry.radius;
+      }
+      actors.push(actor);
+    }
+    for (const id of actorCacheRef.current.keys()) {
+      if (id !== 'visitor' && !actorRefs.current.has(id)) actorCacheRef.current.delete(id);
     }
     const collisions = physicsSystemRef.current.step(config, actors);
     if (onCollision && collisions.length > 0) {

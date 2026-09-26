@@ -1,0 +1,7 @@
+[DEFAULT]
+user=ocid1.user.oc1..aaaaaaaadeosfca4ig26on3c2wskaxb5yz5ncfwrsitytd2hvb537g6dzc5a
+fingerprint=eb:0e:9d:5f:90:64:73:d3:9e:1d:03:2a:21:56:ca:61
+key_file=/Users/dystopiaimitation/Documents/Oracle/oracle-b.pem
+tenancy=ocid1.tenancy.oc1..aaaaaaaa2dntiimvv2p5uy6pxtkx2ejqr6ercxj4xt3fulr3bqak6zvkupsq
+region=uk-london-1
+pass_phrase=l4)%I?r|`<%1PQTj}OWg58|?

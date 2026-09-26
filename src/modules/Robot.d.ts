@@ -1,10 +1,10 @@
 import { Mesh, Object3D, Vector3 } from 'three';
 import type Visitor from './Visitor';
 
-export interface RobotObstacle {
-  position: Vector3;
-  radius?: number;
-}
+export type RobotObstacle =
+  | { position: Vector3; radius?: number }
+  | { mesh: Object3D; radius?: number }
+  | Object3D;
 
 export interface RobotRoomBounds {
   minX: number;
@@ -16,7 +16,9 @@ export interface RobotRoomBounds {
 export interface RobotUpdateContext {
   collider?: Mesh | null;
   visitor?: Visitor | null;
-  obstacles?: RobotObstacle[];
+  obstacles?: Iterable<RobotObstacle>;
+  ignoreObstacle?: Object3D | null;
+  obstacleRadius?: number;
   roomBounds?: RobotRoomBounds | null;
 }
 

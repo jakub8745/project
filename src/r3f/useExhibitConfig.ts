@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { fetchManifest, invalidateManifest } from '../config/manifestRepository';
+import { normalizeConfigUrl } from '../utils/url';
 import { loadExhibitConfig } from '../config/loaders/loadExhibitConfig';
 import type { ExhibitConfig } from '../config/runtimeTypes';
 
@@ -14,6 +16,7 @@ interface UseExhibitConfigResult {
 }
 
 export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResult {
+  configUrl = configUrl ? normalizeConfigUrl(configUrl) : null;
   const [config, setConfig] = useState<ExhibitConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -49,19 +52,15 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     setConfig(null);
     setResolvedUrl(null);
 
-    fetch(configUrl, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load config ${response.status}: ${response.statusText}`);
-        }
-        const raw = await response.json();
+    fetchManifest(configUrl, controller.signal)
+      .then(async (raw) => {
         const normalised = await loadExhibitConfig(raw, controller.signal, (updated) => {
           if (controller.signal.aborted) return;
           configCache.set(configUrl, updated);
           setConfig(updated);
         });
-        configCache.set(configUrl, normalised);
         if (!controller.signal.aborted) {
+          configCache.set(configUrl, normalised);
           setConfig(normalised);
           setResolvedUrl(configUrl);
           setLoading(false);
@@ -93,7 +92,10 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     loading,
     error,
     retry: () => {
-      if (configUrl) configCache.delete(configUrl);
+      if (configUrl) {
+        configCache.delete(configUrl);
+        invalidateManifest(configUrl);
+      }
       setAttempt((value) => value + 1);
     }
   };

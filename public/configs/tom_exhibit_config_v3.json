@@ -1,0 +1,425 @@
+{
+  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json",
+  "schemaVersion": "3.0.0-draft",
+  "manifestType": "future-proof-exhibit-archive",
+  "profile": "portable-exhibit",
+  "id": "proposedlayout",
+  "slug": "videopoetry",
+  "sourceManifest": {
+    "schemaVersion": "2.0.0",
+    "path": "public/configs/tom_exhibit_config.json",
+    "sha256": "0d314e149876f9925ca33d65e77092e7d76884b03288cf2093a3b0b7ca37e8af",
+    "migration": "v2-to-v3-structural-1",
+    "id": "proposedlayout"
+  },
+  "metadata": {
+    "title": "A Proposed Layout for the Tom Konyves Exhibition",
+    "description": "A virtual exhibition layout proposal for Tom Konyves, including manifesto material, video projection surfaces, an information screen, and sculpture metadata.",
+    "language": "en"
+  },
+  "provenance": {
+    "sourceKind": "exhibit",
+    "legacyNft": {
+      "mintable": true,
+      "canonicalSceneAsset": "scene_model"
+    }
+  },
+  "rights": {
+    "status": "review_required"
+  },
+  "nft": {
+    "mintable": false
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "mimeType": "model/gltf-binary",
+      "id": "scene_model",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/tom/o/wystawaTom_ktx.glb",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "background_texture": {
+      "kind": "texture",
+      "mimeType": "image/ktx2",
+      "id": "background_texture",
+      "sourceUri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+      "ipfsUri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "Manifesto_image": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "Manifesto_image",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/tom/o/manifesto_TomKonyves.jpg",
+      "ipfsUri": null,
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "Video_source_1": {
+      "kind": "video",
+      "mimeType": "video/mp4",
+      "id": "Video_source_1",
+      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
+      "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "Screen_source_1": {
+      "kind": "video",
+      "mimeType": "video/mp4",
+      "id": "Screen_source_1",
+      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
+      "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    }
+  },
+  "content": {
+    "media": {
+      "Manifesto": {
+        "kind": "image",
+        "title": "Manifesto, huge printed poster",
+        "description": "Videopoetry: A Manifesto, published on Sept. 6, 2011",
+        "author": "by Tom Konyves",
+        "image": {
+          "asset": "Manifesto_image"
+        }
+      },
+      "Video": {
+        "kind": "video",
+        "title": "video projection",
+        "description": "Selection of videopoems - video projection, approximately 90 minutes.",
+        "author": "",
+        "sources": [
+          {
+            "asset": "Video_source_1",
+            "label": "video/mp4"
+          }
+        ]
+      },
+      "Screen": {
+        "kind": "video",
+        "title": "Screen",
+        "description": "~15 inch screen with info about currently seen videopoem.",
+        "author": "",
+        "sources": [
+          {
+            "asset": "Screen_source_1",
+            "label": "video/mp4"
+          }
+        ]
+      },
+      "info_text": {
+        "kind": "text",
+        "text": "You are viewing a proposed layout for the Tom Konyves exhibition space. Below is a list of the required equipment:"
+      },
+      "Bench": {
+        "kind": "sculpture",
+        "title": "Bench",
+        "description": "something to sit on",
+        "author": "",
+        "interactionDescription": "The Bench node is treated as sculpture metadata from config."
+      }
+    },
+    "sidebar": {
+      "logoText": "a proposed layout for the Tom Konyves exhibition",
+      "items": [
+        {
+          "id": "info-icon",
+          "label": "proposed layout",
+          "target": "info_text",
+          "content": "You are viewing a proposed layout for the Tom Konyves exhibition space. Below is a list of the required equipment:"
+        }
+      ]
+    }
+  },
+  "sceneGraph": {
+    "sourceScene": {
+      "model": {
+        "asset": "scene_model"
+      },
+      "background": {
+        "backgroundAsset": "background_texture"
+      },
+      "spawn": {
+        "position": [
+          1,
+          2,
+          8
+        ]
+      },
+      "camera": {
+        "mode": "first_person"
+      },
+      "renderer": {
+        "toneMapping": "neutral",
+        "autoExposure": true,
+        "exposure": 1,
+        "exposureTarget": 0.68,
+        "exposureMin": 0.5,
+        "exposureMax": 1.65,
+        "exposureSampleInterval": 30
+      }
+    },
+    "nodes": {
+      "Manifesto": {
+        "kind": "image_anchor",
+        "media": "Manifesto",
+        "metadata": {
+          "interactionDescription": "Click Manifesto to open the image metadata panel."
+        }
+      },
+      "Video": {
+        "kind": "video_surface",
+        "media": "Video",
+        "metadata": {
+          "interactionDescription": "The Video mesh is a video surface. Playback mode, loop, mute, fullscreen, and source selection are declared by the video module instance."
+        }
+      },
+      "Screen": {
+        "kind": "video_surface",
+        "media": "Screen",
+        "metadata": {
+          "interactionDescription": "The Screen mesh is a video surface. Playback mode, loop, mute, fullscreen, and source selection are declared by the video module instance."
+        }
+      },
+      "Bench": {
+        "kind": "sculpture",
+        "metadata": {
+          "title": "Bench",
+          "description": "something to sit on",
+          "author": "",
+          "interactionDescription": "The Bench node is treated as sculpture metadata from config."
+        }
+      }
+    },
+    "modules": {
+      "video": {
+        "instances": [
+          {
+            "id": "Video_video",
+            "targetNode": "Video",
+            "media": "Video",
+            "playbackMode": "spatial_video",
+            "loop": true,
+            "muted": true
+          },
+          {
+            "id": "Screen_video",
+            "targetNode": "Screen",
+            "media": "Screen",
+            "playbackMode": "spatial_video",
+            "loop": true,
+            "muted": true
+          }
+        ]
+      }
+    },
+    "viewerProfiles": {
+      "r3fCurrent": {
+        "params": {
+          "performanceMode": false,
+          "maxDpr": 2,
+          "antialias": true,
+          "shadows": false,
+          "logarithmicDepthBuffer": false,
+          "exposure": 1,
+          "autoExposure": true,
+          "toneMapping": "neutral",
+          "exposureTarget": 0.68,
+          "exposureMin": 0.5,
+          "exposureMax": 1.65,
+          "exposureSampleInterval": 30,
+          "colorGrade": {
+            "brightness": 1,
+            "contrast": 0.9,
+            "saturate": 0.68
+          },
+          "lightIntensity": 1.5,
+          "gravity": -8,
+          "visitorSpeed": 2,
+          "heightOffset": {
+            "x": 0,
+            "y": 1.5,
+            "z": 0
+          },
+          "visitorEnter": {
+            "x": 1,
+            "y": 2,
+            "z": 8
+          },
+          "rotateOrbit": 10
+        }
+      }
+    }
+  },
+  "interactions": [
+    {
+      "id": "Manifesto_open_image",
+      "targetNode": "Manifesto",
+      "trigger": "click",
+      "action": {
+        "type": "open_image",
+        "media": "Manifesto"
+      },
+      "ui": {
+        "title": "Manifesto, huge printed poster",
+        "description": "Clicking Manifesto opens the image entry \"Manifesto, huge printed poster\" with title, description, author, and source asset from the config."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Manifesto opens the image entry \"Manifesto, huge printed poster\" with title, description, author, and source asset from the config."
+      },
+      "type": "open_image",
+      "targets": [
+        "Manifesto"
+      ],
+      "behavior": {
+        "type": "open_image",
+        "media": "Manifesto"
+      },
+      "description": "Clicking Manifesto opens the image entry \"Manifesto, huge printed poster\" with title, description, author, and source asset from the config."
+    },
+    {
+      "id": "Video_video_surface",
+      "targetNode": "Video",
+      "trigger": "click",
+      "action": {
+        "type": "open_video_modal",
+        "media": "Video"
+      },
+      "ui": {
+        "title": "video projection",
+        "description": "Clicking Video uses the configured video behavior. The surface is backed by \"video projection\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Video uses the configured video behavior. The surface is backed by \"video projection\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      },
+      "type": "open_video_modal",
+      "targets": [
+        "Video"
+      ],
+      "behavior": {
+        "type": "open_video_modal",
+        "media": "Video"
+      },
+      "description": "Clicking Video uses the configured video behavior. The surface is backed by \"video projection\", with playback mode \"spatial_video\", loop=true, and muted=true."
+    },
+    {
+      "id": "Screen_video_surface",
+      "targetNode": "Screen",
+      "trigger": "click",
+      "action": {
+        "type": "open_video_modal",
+        "media": "Screen"
+      },
+      "ui": {
+        "title": "Screen",
+        "description": "Clicking Screen uses the configured video behavior. The surface is backed by \"Screen\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      },
+      "metadata": {
+        "interactionDescription": "Clicking Screen uses the configured video behavior. The surface is backed by \"Screen\", with playback mode \"spatial_video\", loop=true, and muted=true."
+      },
+      "type": "open_video_modal",
+      "targets": [
+        "Screen"
+      ],
+      "behavior": {
+        "type": "open_video_modal",
+        "media": "Screen"
+      },
+      "description": "Clicking Screen uses the configured video behavior. The surface is backed by \"Screen\", with playback mode \"spatial_video\", loop=true, and muted=true."
+    },
+    {
+      "id": "Bench_inspect_sculpture",
+      "targetNode": "Bench",
+      "trigger": "hover",
+      "action": {
+        "type": "show_text",
+        "media": "Bench"
+      },
+      "ui": {
+        "title": "Bench",
+        "description": "Hovering Bench exposes the configured sculpture title, description, and author metadata."
+      },
+      "metadata": {
+        "interactionDescription": "Hovering Bench exposes the configured sculpture title, description, and author metadata."
+      },
+      "type": "show_text",
+      "targets": [
+        "Bench"
+      ],
+      "behavior": {
+        "type": "show_text",
+        "media": "Bench"
+      },
+      "description": "Hovering Bench exposes the configured sculpture title, description, and author metadata."
+    },
+    {
+      "id": "module_video_Video_video",
+      "type": "video_playback",
+      "targets": [
+        "Video"
+      ],
+      "media": "Video",
+      "behavior": {
+        "id": "Video_video",
+        "targetNode": "Video",
+        "media": "Video",
+        "playbackMode": "spatial_video",
+        "loop": true,
+        "muted": true
+      }
+    },
+    {
+      "id": "module_video_Screen_video",
+      "type": "video_playback",
+      "targets": [
+        "Screen"
+      ],
+      "media": "Screen",
+      "behavior": {
+        "id": "Screen_video",
+        "targetNode": "Screen",
+        "media": "Screen",
+        "playbackMode": "spatial_video",
+        "loop": true,
+        "muted": true
+      }
+    }
+  ],
+  "previews": {},
+  "viewerBrief": {
+    "purpose": "A virtual exhibition layout proposal for Tom Konyves, including manifesto material, video projection surfaces, an information screen, and sculpture metadata.",
+    "requiredCapabilities": [
+      "spatial navigation",
+      "named scene nodes",
+      "sidebar and media panels",
+      "load glTF/GLB scene asset",
+      "video surfaces and configured synchronization"
+    ],
+    "reconstructionPrompt": "Preserve the source scene, stable node identities, media relationships and configured behavior. The r3fCurrent profile records the working implementation, including overrides. Reconstruct equivalent behavior and document unavailable external services.",
+    "visualTone": "Preserve this exhibit’s configured materials, lighting, exposure and presentation."
+  },
+  "preservation": {
+    "futureProofDefinition": "Preserve assets, scene relationships, behavior, provenance and the information needed to reconstruct the exhibit independently of the original viewer.",
+    "requiredBeforeMinting": [
+      "Verify asset availability and integrity.",
+      "Record verified immutable asset URIs and rights.",
+      "Publish the manifest and keep its final CID/hash in an external receipt."
+    ],
+    "status": "runtime_migration_complete_archival_review_pending"
+  }
+}

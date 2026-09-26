@@ -43,7 +43,7 @@
   "assets": {
     "scene_model": {
       "kind": "model",
-      "uri": "/models/exhibition_cipriani_merged.glb",
+      "uri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/exhibition_cipriani.glb",
       "mimeType": "model/gltf-binary"
     },
     "background_texture": {
@@ -275,16 +275,16 @@
       "mode": "first_person"
     },
     "renderer": {
-      "toneMapping": "neutral",
-      "autoExposure": true,
-      "exposure": 1,
-      "exposureTarget": 0.68,
-      "exposureMin": 0.5,
-      "exposureMax": 1.65,
+      "toneMapping": "reinhard",
+      "autoExposure": false,
+      "exposure": 1.7,
+      "exposureTarget": 1,
+      "exposureMin": 0.8,
+      "exposureMax": 2.2,
       "exposureSampleInterval": 30,
-      "antialias": false,
+      "antialias": true,
       "shadows": false,
-      "maxDpr": 1
+      "maxDpr": 2
     }
   },
   "nodes": {
@@ -1841,7 +1841,7 @@
             90,
             0.3
           ],
-          "volume": 10
+          "volume": 1
         }
       ]
     }
@@ -1863,20 +1863,24 @@
     ]
   },
   "viewer": {
+    "lights": {
+      "ambientColor": "#fff4e6",
+      "ambientIntensity": 4.5
+    },
     "params": {
-      "exposure": 1,
-      "autoExposure": true,
-      "toneMapping": "neutral",
-      "exposureTarget": 0.68,
-      "exposureMin": 0.5,
-      "exposureMax": 1.65,
+      "exposure": 1.7,
+      "autoExposure": false,
+      "toneMapping": "reinhard",
+      "exposureTarget": 1,
+      "exposureMin": 0.8,
+      "exposureMax": 2.2,
       "exposureSampleInterval": 30,
       "colorGrade": {
         "brightness": 1,
-        "contrast": 0.9,
-        "saturate": 0.68
+        "contrast": 1.1,
+        "saturate": 0.85
       },
-      "lightIntensity": 2.3,
+      "lightIntensity": 4.5,
       "gravity": -8,
       "visitorSpeed": 5,
       "heightOffset": {
@@ -1890,9 +1894,9 @@
         "z": 3
       },
       "rotateOrbit": -55,
-      "performanceMode": true,
-      "maxDpr": 1,
-      "antialias": false,
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
       "shadows": false,
       "logarithmicDepthBuffer": false
     }

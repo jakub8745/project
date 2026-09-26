@@ -128,9 +128,13 @@ async function uploadFileToPinata({ jwt, filePath, pinName, metadata = {} }) {
 }
 
 async function downloadRemoteAsset(asset, tempDir) {
-  const response = await fetch(asset.sourceUri);
+  const remoteUri = asset.remoteUri || asset.fallbackUris?.[0] || asset.sourceUri;
+  if (!remoteUri || !/^https?:\/\//i.test(remoteUri)) {
+    throw new Error(`No downloadable source is available for ${asset.id}.`);
+  }
+  const response = await fetch(remoteUri);
   if (!response.ok) {
-    throw new Error(`Failed to download ${asset.id} from ${asset.sourceUri}: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to download ${asset.id} from ${remoteUri}: ${response.status} ${response.statusText}`);
   }
   const arrayBuffer = await response.arrayBuffer();
   const filename = filenameForAsset(asset);
@@ -158,6 +162,9 @@ async function main() {
 
   for (const asset of uploadManifest.assets) {
     if (asset.id === 'manifest_v3_json') continue;
+    const configAsset = config.assets[asset.id];
+    asset.fallbackUris = configAsset?.fallbackUris || asset.fallbackUris || [];
+    asset.remoteUri = asset.fallbackUris[0] || asset.remoteUri;
     const localPath = resolveLocalPath(asset.sourceUri, asset.localPath);
     let filePath = localPath && await fileExists(localPath) ? localPath : null;
     if (!filePath) {

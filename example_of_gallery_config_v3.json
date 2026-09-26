@@ -1,0 +1,286 @@
+{
+  "$schema": "/configs/schemas/exhibit_manifest_v3.schema.json",
+  "schemaVersion": "3.0.0-draft",
+  "manifestType": "future-proof-exhibit-archive",
+  "profile": "portable-exhibit",
+  "id": "example_exhibit",
+  "slug": "example_exhibit",
+  "sourceManifest": {
+    "schemaVersion": "2.0.0",
+    "path": "example_of_gallery_config_v2.json",
+    "sha256": "96393f7913b5f33ccdb1397e7dffc0d0f01b8456c79c0f86f9f8ce22bfbc6a38",
+    "migration": "v2-to-v3-structural-1",
+    "id": "example_exhibit"
+  },
+  "metadata": {
+    "title": "Example Exhibit",
+    "description": "A normalized v2 manifest example.",
+    "language": "en",
+    "authors": [
+      {
+        "name": "Blue Point Art",
+        "role": "publisher"
+      }
+    ],
+    "tags": [
+      "example",
+      "archive"
+    ],
+    "ogImage": {
+      "asset": "og_image"
+    }
+  },
+  "provenance": {
+    "sourceKind": "exhibit",
+    "legacyNft": {
+      "mintable": true,
+      "tokenStandard": "ERC-721",
+      "canonicalConfigUri": "ipfs://bafy.../example_config.json",
+      "canonicalPreviewAsset": "og_image",
+      "canonicalSceneAsset": "scene_model",
+      "assetBundleCid": "bafy..."
+    }
+  },
+  "rights": {
+    "status": "review_required"
+  },
+  "nft": {
+    "mintable": false
+  },
+  "assets": {
+    "scene_model": {
+      "kind": "model",
+      "fallbackUris": [
+        "/models/scene.glb"
+      ],
+      "mimeType": "model/gltf-binary",
+      "id": "scene_model",
+      "sourceUri": "ipfs://bafy.../scene.glb",
+      "ipfsUri": "ipfs://bafy.../scene.glb",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "og_image": {
+      "kind": "image",
+      "fallbackUris": [
+        "/textures/og.jpg"
+      ],
+      "mimeType": "image/jpeg",
+      "id": "og_image",
+      "sourceUri": "ipfs://bafy.../og.jpg",
+      "ipfsUri": "ipfs://bafy.../og.jpg",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "manual_thumb": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "manual_thumb",
+      "sourceUri": "ipfs://bafy.../manual_thumb.jpg",
+      "ipfsUri": "ipfs://bafy.../manual_thumb.jpg",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "manual_pdf": {
+      "kind": "document",
+      "mimeType": "application/pdf",
+      "id": "manual_pdf",
+      "sourceUri": "ipfs://bafy.../manual.pdf",
+      "ipfsUri": "ipfs://bafy.../manual.pdf",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "screen_poster": {
+      "kind": "image",
+      "mimeType": "image/jpeg",
+      "id": "screen_poster",
+      "sourceUri": "ipfs://bafy.../screen.jpg",
+      "ipfsUri": "ipfs://bafy.../screen.jpg",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    },
+    "screen_video_mp4": {
+      "kind": "video",
+      "mimeType": "video/mp4",
+      "id": "screen_video_mp4",
+      "sourceUri": "ipfs://bafy.../screen.mp4",
+      "ipfsUri": "ipfs://bafy.../screen.mp4",
+      "preservation": {
+        "status": "verification_pending",
+        "integrityAlgorithm": "sha256"
+      }
+    }
+  },
+  "content": {
+    "media": {
+      "manual_en": {
+        "kind": "document",
+        "title": "Exhibit Manual",
+        "description": "Companion PDF.",
+        "previewImage": {
+          "asset": "manual_thumb"
+        },
+        "document": {
+          "asset": "manual_pdf"
+        }
+      },
+      "screen_video": {
+        "kind": "video",
+        "title": "Main Screen",
+        "poster": {
+          "asset": "screen_poster"
+        },
+        "sources": [
+          {
+            "asset": "screen_video_mp4"
+          }
+        ]
+      }
+    },
+    "sidebar": {
+      "logoText": "Example Exhibit",
+      "items": [
+        {
+          "id": "about-item",
+          "label": "About",
+          "content": "This is a compact example of the exhibit config v2 structure."
+        }
+      ]
+    }
+  },
+  "sceneGraph": {
+    "sourceScene": {
+      "model": {
+        "asset": "scene_model"
+      },
+      "background": {
+        "color": "#000000"
+      },
+      "spawn": {
+        "node": "Visitor_enter",
+        "direction": "west"
+      },
+      "camera": {
+        "mode": "first_person"
+      },
+      "renderer": {
+        "toneMapping": "neutral",
+        "autoExposure": false
+      }
+    },
+    "nodes": {
+      "Visitor_enter": {
+        "kind": "spawn_anchor",
+        "spawnDirection": "west"
+      },
+      "main_floor": {
+        "kind": "floor"
+      },
+      "left_screen": {
+        "kind": "video_surface"
+      },
+      "manual_panel": {
+        "kind": "document_anchor"
+      }
+    },
+    "modules": {
+      "video": {
+        "instances": [
+          {
+            "id": "main_screen_runtime",
+            "targetNode": "left_screen",
+            "media": "screen_video",
+            "playbackMode": "synced_silent",
+            "autoplayOnEnter": true,
+            "syncGroup": "main_screen_group",
+            "interactive": false,
+            "controls": false
+          }
+        ],
+        "syncGroups": [
+          {
+            "id": "main_screen_group",
+            "startPolicy": "all_ready"
+          }
+        ]
+      }
+    },
+    "viewerProfiles": {
+      "r3fCurrent": {}
+    }
+  },
+  "interactions": [
+    {
+      "id": "open_manual_panel",
+      "targetNode": "manual_panel",
+      "trigger": "click",
+      "action": {
+        "type": "open_document",
+        "media": "manual_en"
+      },
+      "ui": {
+        "title": "Open manual",
+        "description": "Open the exhibit companion PDF."
+      },
+      "type": "open_document",
+      "targets": [
+        "manual_panel"
+      ],
+      "behavior": {
+        "type": "open_document",
+        "media": "manual_en"
+      },
+      "description": "Open the exhibit companion PDF."
+    },
+    {
+      "id": "module_video_main_screen_runtime",
+      "type": "video_playback",
+      "targets": [
+        "left_screen"
+      ],
+      "media": "screen_video",
+      "behavior": {
+        "id": "main_screen_runtime",
+        "targetNode": "left_screen",
+        "media": "screen_video",
+        "playbackMode": "synced_silent",
+        "autoplayOnEnter": true,
+        "syncGroup": "main_screen_group",
+        "interactive": false,
+        "controls": false
+      }
+    }
+  ],
+  "previews": {},
+  "viewerBrief": {
+    "purpose": "A normalized v2 manifest example.",
+    "requiredCapabilities": [
+      "spatial navigation",
+      "named scene nodes",
+      "sidebar and media panels",
+      "load glTF/GLB scene asset",
+      "video surfaces and configured synchronization"
+    ],
+    "reconstructionPrompt": "Preserve the source scene, stable node identities, media relationships and configured behavior. The r3fCurrent profile records the working implementation, including overrides. Reconstruct equivalent behavior and document unavailable external services.",
+    "visualTone": "Preserve this exhibit’s configured materials, lighting, exposure and presentation."
+  },
+  "preservation": {
+    "futureProofDefinition": "Preserve assets, scene relationships, behavior, provenance and the information needed to reconstruct the exhibit independently of the original viewer.",
+    "requiredBeforeMinting": [
+      "Verify asset availability and integrity.",
+      "Record verified immutable asset URIs and rights.",
+      "Publish the manifest and keep its final CID/hash in an external receipt."
+    ],
+    "status": "runtime_migration_complete_archival_review_pending"
+  }
+}

@@ -1,5 +1,7 @@
 # Exhibit Config v2
 
+V2 remains supported for compatibility. For new exhibits and migrations, use [the v3 authoring guide](exhibit-config-v3.md). Existing v2 files and URLs are retained.
+
 This document defines the target `v2` exhibit manifest for the archive viewer.
 
 ## Goals

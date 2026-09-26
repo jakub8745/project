@@ -231,6 +231,11 @@
   },
   "viewer": {
     "params": {
+      "performanceMode": false,
+      "maxDpr": 2,
+      "antialias": true,
+      "shadows": false,
+      "logarithmicDepthBuffer": false,
       "exposure": 1,
       "autoExposure": true,
       "toneMapping": "neutral",

@@ -1,13 +1,12 @@
 import type {
   AudioModuleInstance,
-  ExhibitAsset,
   ExhibitConfigV2,
   MediaDescriptor,
   SceneNodeDefinition,
   SculptureControlInstance,
   VideoModuleInstance
 } from '../../types/exhibitSchemaV2';
-import { isIpfsUri, resolveOracleUrl } from '../../utils/ipfs';
+import { resolveRuntimeAsset } from '../assetResolution';
 import type { ExhibitConfig, UnknownRecord } from '../runtimeTypes';
 import { normalizeConfig } from './shared';
 
@@ -17,19 +16,8 @@ type SubtitleTrack = {
   cues: Array<{ start: number; end: number; text: string }>;
 };
 
-function getFallbackUri(asset: ExhibitAsset | undefined): string | undefined {
-  if (!asset) return undefined;
-  return asset.fallbackUris?.find((candidate) => typeof candidate === 'string' && candidate.trim())?.trim();
-}
-
 function resolveAssetRuntimeUri(assetId: string | undefined, manifest: ExhibitConfigV2): string | undefined {
-  if (!assetId) return undefined;
-  const asset = manifest.assets[assetId];
-  if (!asset) return undefined;
-  if (isIpfsUri(asset.uri)) {
-    return getFallbackUri(asset) || resolveOracleUrl(asset.uri, manifest.id);
-  }
-  return asset.uri || getFallbackUri(asset);
+  return resolveRuntimeAsset(assetId ? manifest.assets[assetId] : undefined, manifest.id);
 }
 
 function categoryForNode(node: SceneNodeDefinition): string | undefined {
@@ -453,7 +441,7 @@ export async function loadExhibitConfigV2(
       );
       if (target) {
         target.subtitleTracks = tracks;
-        onOptionalUpdate?.({ ...runtime, audio: [...(runtime.audio || [])] });
+        onOptionalUpdate?.(normalizeConfig({ ...runtime, audio: [...(runtime.audio || [])] }));
       }
     })
   ).catch(() => undefined);

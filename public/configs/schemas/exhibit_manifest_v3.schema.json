@@ -9,7 +9,6 @@
     "profile",
     "id",
     "metadata",
-    "nft",
     "assets",
     "content",
     "sceneGraph",
@@ -26,7 +25,10 @@
       "const": "future-proof-exhibit-archive"
     },
     "profile": {
-      "type": "string"
+      "enum": [
+        "portable-exhibit",
+        "portable-exhibit-nft"
+      ]
     },
     "id": {
       "type": "string",
@@ -36,16 +38,44 @@
       "type": "string"
     },
     "sourceManifest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "path"
+      ],
+      "additionalProperties": true
     },
     "metadata": {
       "type": "object",
-      "required": ["title", "description"],
+      "required": [
+        "title",
+        "description"
+      ],
       "properties": {
-        "title": { "type": "string" },
-        "description": { "type": "string" },
-        "archiveDescription": { "type": "string" },
-        "language": { "type": "string" }
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "archiveDescription": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
@@ -57,13 +87,25 @@
     },
     "nft": {
       "type": "object",
-      "required": ["mintable", "canonicalManifestAsset", "canonicalSceneAsset", "canonicalPreviewAsset", "tokenMetadataTemplate"],
+      "required": [
+        "mintable"
+      ],
       "properties": {
-        "mintable": { "type": "boolean" },
-        "canonicalManifestAsset": { "type": "string" },
-        "canonicalSceneAsset": { "type": "string" },
-        "canonicalPreviewAsset": { "type": "string" },
-        "tokenMetadataTemplate": { "type": "object" }
+        "mintable": {
+          "type": "boolean"
+        },
+        "canonicalManifestAsset": {
+          "type": "string"
+        },
+        "canonicalSceneAsset": {
+          "type": "string"
+        },
+        "canonicalPreviewAsset": {
+          "type": "string"
+        },
+        "tokenMetadataTemplate": {
+          "type": "object"
+        }
       },
       "additionalProperties": true
     },
@@ -72,55 +114,310 @@
       "minProperties": 1,
       "additionalProperties": {
         "type": "object",
-        "required": ["id", "kind", "sourceUri", "ipfsUri", "mimeType", "preservation"],
+        "required": [
+          "id",
+          "kind",
+          "sourceUri",
+          "ipfsUri",
+          "mimeType",
+          "preservation"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "kind": { "type": "string" },
-          "role": { "type": "string" },
-          "sourceUri": { "type": "string" },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "sourceUri": {
+            "type": "string",
+            "minLength": 1
+          },
           "ipfsUri": {
             "anyOf": [
-              { "type": "string", "pattern": "^ipfs://" },
-              { "type": "null" }
+              {
+                "type": "string",
+                "pattern": "^ipfs://"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
           "arweaveUri": {
             "anyOf": [
-              { "type": "string" },
-              { "type": "null" }
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
           "fallbackUris": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "mimeType": { "type": "string" },
-          "byteSize": { "type": ["integer", "null"] },
+          "mimeType": {
+            "type": "string"
+          },
+          "byteSize": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
           "sha256": {
             "anyOf": [
-              { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
-              { "type": "null" }
+              {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
-          "availableLocal": { "type": "boolean" },
-          "preservation": { "type": "object" },
-          "rights": { "type": "object" }
+          "availableLocal": {
+            "type": "boolean"
+          },
+          "preservation": {
+            "type": "object"
+          },
+          "rights": {
+            "type": "object"
+          }
         },
         "additionalProperties": true
       }
     },
     "content": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "media": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/assetRef"
+                }
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "sidebar": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "label": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "label"
+                ],
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "sceneGraph": {
       "type": "object",
-      "required": ["sourceScene", "nodes"],
+      "required": [
+        "sourceScene",
+        "nodes"
+      ],
       "properties": {
-        "coordinateSystem": { "type": "object" },
-        "sourceScene": { "type": "object" },
-        "nodes": { "type": "object" },
-        "modules": { "type": "object" },
-        "viewerProfiles": { "type": "object" }
+        "coordinateSystem": {
+          "type": "object"
+        },
+        "sourceScene": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "object",
+              "properties": {
+                "asset": {
+                  "type": "string"
+                },
+                "position": {
+                  "$ref": "#/$defs/vector3"
+                },
+                "rotation": {
+                  "$ref": "#/$defs/vector3"
+                },
+                "scale": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "asset"
+              ],
+              "additionalProperties": true
+            },
+            "renderer": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "background": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "spawn": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "camera": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "nodes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "media": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "modules": {
+          "type": "object"
+        },
+        "viewerProfiles": {
+          "type": "object",
+          "properties": {
+            "r3fCurrent": {
+              "type": "object",
+              "properties": {
+                "params": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                },
+                "proceduralRoom": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                },
+                "models": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                },
+                "proceduralObjects": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                },
+                "physics": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                },
+                "chat": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "proceduralRecipe": {
+          "type": "object",
+          "properties": {
+            "room": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            },
+            "objects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            },
+            "physics": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            "services": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "room"
+          ],
+          "additionalProperties": true
+        }
       },
       "additionalProperties": true
     },
@@ -128,42 +425,137 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "type"],
+        "required": [
+          "id",
+          "type"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "type": { "type": "string" },
-          "description": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "targets": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "behavior": { "type": "object" }
+          "behavior": {
+            "type": "object"
+          }
         },
         "additionalProperties": true
       }
     },
     "viewerBrief": {
       "type": "object",
-      "required": ["purpose", "requiredCapabilities", "reconstructionPrompt"],
+      "required": [
+        "purpose",
+        "requiredCapabilities",
+        "reconstructionPrompt"
+      ],
       "properties": {
-        "purpose": { "type": "string" },
+        "purpose": {
+          "type": "string"
+        },
         "requiredCapabilities": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        "reconstructionPrompt": { "type": "string" },
-        "visualTone": { "type": "string" }
+        "reconstructionPrompt": {
+          "type": "string"
+        },
+        "visualTone": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "preservation": {
       "type": "object",
-      "required": ["futureProofDefinition", "requiredBeforeMinting"],
+      "required": [
+        "futureProofDefinition",
+        "requiredBeforeMinting"
+      ],
       "additionalProperties": true
     },
     "exports": {
       "type": "object"
+    },
+    "previews": {
+      "type": "object",
+      "properties": {
+        "capture": {
+          "type": "object",
+          "properties": {
+            "r3fCurrent": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     }
   },
-  "additionalProperties": true
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "profile": {
+            "const": "portable-exhibit-nft"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "nft"
+        ],
+        "properties": {
+          "nft": {
+            "required": [
+              "mintable",
+              "canonicalManifestAsset",
+              "canonicalSceneAsset",
+              "canonicalPreviewAsset",
+              "tokenMetadataTemplate"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number"
+      }
+    },
+    "assetRef": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "asset"
+      ],
+      "additionalProperties": true
+    }
+  }
 }
