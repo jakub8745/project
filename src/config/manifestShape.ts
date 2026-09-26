@@ -31,6 +31,10 @@ export function normalizeManifestShape(raw: unknown): ExhibitConfigV2 {
   const content = record(source.content, 'content');
   const profiles = graph.viewerProfiles ? record(graph.viewerProfiles, 'sceneGraph.viewerProfiles') : {};
   const viewer = profiles.r3fCurrent ? record(profiles.r3fCurrent, 'sceneGraph.viewerProfiles.r3fCurrent') : {};
+  // Procedural exhibits keep their runtime recipe in sceneGraph.profile. Feed
+  // that recipe into the legacy runtime shape, while letting the explicit
+  // r3fCurrent profile win when both define the same setting.
+  const profile = graph.profile ? record(graph.profile, 'sceneGraph.profile') : {};
   const previews = source.previews ? record(source.previews, 'previews') : {};
   const capture = previews.capture ? record(previews.capture, 'previews.capture') : {};
   const provenance = source.provenance ? record(source.provenance, 'provenance') : {};
@@ -53,7 +57,7 @@ export function normalizeManifestShape(raw: unknown): ExhibitConfigV2 {
     media: content.media,
     sidebar: content.sidebar,
     modules: graph.modules,
-    viewer,
+    viewer: { ...profile, ...viewer },
     interactions: source.interactions,
     thumbnailCapture: capture.r3fCurrent,
     metadataExtras: provenance.legacyMetadataExtras,

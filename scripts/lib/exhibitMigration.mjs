@@ -81,7 +81,7 @@ export function convertV2ToV3(source, { sourcePath, sourceHash, id = source.id, 
   if (id !== source.id) warnings.push(`Identity repaired: ${source.id} -> ${id}; original storage locations retained explicitly.`);
   if (unmappedFields.length) warnings.push(`Unmapped top-level fields retained in extensions.legacy: ${unmappedFields.join(', ')}`);
   const manifest = {
-    $schema: '/configs/schemas/exhibit_manifest_v3.schema.json',
+    $schema: './schemas/exhibit_manifest_v3.schema.json',
     schemaVersion: '3.0.0-draft', manifestType: 'future-proof-exhibit-archive', profile: 'portable-exhibit', id, slug,
     sourceManifest: { schemaVersion: source.schemaVersion, path: sourcePath, sha256: sourceHash, migration: MIGRATION, id: source.id },
     metadata: { ...source.metadata },
