@@ -82,6 +82,7 @@ jobs:
           fi
           WEB3_UPDATED=0
           if [ -n "${CF_WEB3_HOSTNAME_ID}" ]; then
+            echo "Cloudflare Web3 hostname ID: ${CF_WEB3_HOSTNAME_ID}"
             set +e
             node -e '
             const token = process.env.CF_API_TOKEN;
@@ -111,8 +112,9 @@ jobs:
             exit 0
           fi
           if [ -z "${DNSLINK_RECORD_NAME}" ]; then
-            echo "DNSLINK_RECORD_NAME is empty; skipping DNSLink update."
-            exit 0
+            echo "Cloudflare Web3 update failed and DNSLINK_RECORD_NAME is empty; refusing to report a successful deployment."
+            echo "Check CF_ZONE_ID and CF_WEB3_HOSTNAME_ID. CF_WEB3_HOSTNAME_ID must be the Web3 hostname ID, not the domain name."
+            exit 1
           fi
           node -e '
           const fetch = globalThis.fetch;
