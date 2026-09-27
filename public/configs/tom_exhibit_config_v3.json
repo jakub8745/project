@@ -152,7 +152,9 @@
         "asset": "scene_model"
       },
       "background": {
-        "backgroundAsset": "background_texture"
+        "backgroundAsset": "background_texture",
+        "color": "#e2ddd1",
+        "intensity": 1.15
       },
       "spawn": {
         "position": [
@@ -167,10 +169,10 @@
       "renderer": {
         "toneMapping": "neutral",
         "autoExposure": true,
-        "exposure": 1,
-        "exposureTarget": 0.68,
-        "exposureMin": 0.5,
-        "exposureMax": 1.65,
+        "exposure": 1.15,
+        "exposureTarget": 0.78,
+        "exposureMin": 0.57,
+        "exposureMax": 1.9,
         "exposureSampleInterval": 30
       }
     },
@@ -236,12 +238,12 @@
           "antialias": true,
           "shadows": false,
           "logarithmicDepthBuffer": false,
-          "exposure": 1,
+          "exposure": 1.15,
           "autoExposure": true,
           "toneMapping": "neutral",
-          "exposureTarget": 0.68,
-          "exposureMin": 0.5,
-          "exposureMax": 1.65,
+          "exposureTarget": 0.78,
+          "exposureMin": 0.57,
+          "exposureMax": 1.9,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1,

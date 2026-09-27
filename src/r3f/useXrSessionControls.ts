@@ -45,10 +45,10 @@ function temporarilyDisableXRWebGLBinding(session: XRSession | null) {
 
 export function useXrSessionControls({
   renderer,
-  introAudioIds
+  autoplayAudioIds
 }: {
   renderer: WebGLRenderer | null;
-  introAudioIds: string[];
+  autoplayAudioIds: string[];
 }) {
   const [xrSupported, setXrSupported] = useState(false);
   const [xrSessionActive, setXrSessionActive] = useState(false);
@@ -108,8 +108,8 @@ export function useXrSessionControls({
       setXrError(null);
       const session = xrSessionRef.current;
       activeIntroTimer = window.setTimeout(() => {
-        if (xrSessionRef.current === session && introAudioIds.length > 0) {
-          void playAudioByIds(introAudioIds);
+        if (xrSessionRef.current === session && autoplayAudioIds.length > 0) {
+          void playAudioByIds(autoplayAudioIds);
         }
         activeIntroTimer = null;
       }, XR_INTRO_DELAY_MS);
@@ -135,7 +135,7 @@ export function useXrSessionControls({
         window.clearTimeout(activeIntroTimer);
       }
     };
-  }, [renderer, introAudioIds]);
+  }, [renderer, autoplayAudioIds]);
 
   useEffect(() => {
     if (!renderer) return;

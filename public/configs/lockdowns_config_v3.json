@@ -55,7 +55,7 @@
       "kind": "texture",
       "mimeType": "image/ktx2",
       "id": "background_texture",
-      "sourceUri": "ipfs://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda/bg_lockdowns.ktx2",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/bg_lockdowns.ktx2",
       "ipfsUri": "ipfs://bafybeicgzmw5fd4lwv2eoeudvlx4i5g6dd5jlxc2mkptkfho4nn6wktmda/bg_lockdowns.ktx2",
       "preservation": {
         "status": "verification_pending",
@@ -414,7 +414,8 @@
       "background": {
         "backgroundAsset": "background_texture",
         "blurriness": 0.1,
-        "intensity": 0.5
+        "intensity": 1.25,
+        "color": "#e2ddd1"
       },
       "spawn": {
         "position": [
@@ -429,10 +430,10 @@
       "renderer": {
         "toneMapping": "neutral",
         "autoExposure": true,
-        "exposure": 1,
-        "exposureTarget": 0.68,
-        "exposureMin": 0.5,
-        "exposureMax": 1.65,
+        "exposure": 1.25,
+        "exposureTarget": 0.84,
+        "exposureMin": 0.62,
+        "exposureMax": 2.05,
         "exposureSampleInterval": 30,
         "antialias": true,
         "shadows": false,
@@ -629,19 +630,19 @@
     "viewerProfiles": {
       "r3fCurrent": {
         "params": {
-          "exposure": 1,
+          "exposure": 1.25,
           "autoExposure": true,
           "toneMapping": "neutral",
-          "exposureTarget": 0.68,
-          "exposureMin": 0.5,
-          "exposureMax": 1.65,
+          "exposureTarget": 0.84,
+          "exposureMin": 0.62,
+          "exposureMax": 2.05,
           "exposureSampleInterval": 30,
           "colorGrade": {
-            "brightness": 1,
+            "brightness": 1.05,
             "contrast": 0.9,
             "saturate": 0.68
           },
-          "lightIntensity": 1.5,
+          "lightIntensity": 1.65,
           "gravity": -8,
           "visitorSpeed": 2,
           "heightOffset": {
@@ -656,7 +657,7 @@
           },
           "rotateOrbit": 30,
           "backgroundBlurriness": 0.1,
-          "backgroundIntensity": 0.5,
+          "backgroundIntensity": 1.25,
           "performanceMode": false,
           "maxDpr": 2,
           "antialias": true,

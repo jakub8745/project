@@ -17,16 +17,7 @@ import {
 } from 'three';
 import { resolveVideoPlaybackMode } from './videoPlaybackMode.js';
 import { resolveObjectRuntimeData } from './objectRegistry.js';
-
-const PLAY_ICON_PATH =
-  'https://bafybeieawhqdesjes54to4u6gmqwzvpzlp2o5ncumaqw3nfiv2mui6i6q4.ipfs.w3s.link/ButtonPlay.png';
-
-const IPFS_GATEWAYS = [
-  "https://cloudflare-ipfs.com/ipfs/",
-  "https://ipfs.io/ipfs/",
-  "https://gateway.pinata.cloud/ipfs/",
-  "https://dweb.link/ipfs/"
-];
+import { resolveIpfsUriCandidates } from '../config/assetResolution';
 
 const DEFAULT_VOLUME = 0.66;
 const VIDEO_SOURCE_TIMEOUT_MS = 20_000;
@@ -95,11 +86,9 @@ function loadVideoSource(video, cfg) {
 
   setVideoResource(cfg.id, { sourceLoading: true });
 
-  const expandedCandidates = candidates.flatMap((candidate) => {
-    if (!candidate.startsWith('ipfs://')) return [candidate];
-    const cid = candidate.slice('ipfs://'.length);
-    return IPFS_GATEWAYS.map((gateway) => `${gateway}${cid}`);
-  });
+  const expandedCandidates = candidates.flatMap((candidate) => (
+    candidate.startsWith('ipfs://') ? resolveIpfsUriCandidates(candidate) : [candidate]
+  ));
   let candidateIndex = 0;
   let candidateTimer = null;
   let sourceAttempt = 0;
@@ -160,9 +149,111 @@ function loadVideoSource(video, cfg) {
   return true;
 }
 
+function clearPendingUserVideoPlay(videoId) {
+  const resource = getVideoResource(videoId);
+  resource?.playRetryCleanup?.();
+  setVideoResource(videoId, { pendingUserPlay: false, playRetryCleanup: null });
+}
+
+function cancelPendingUserVideoPlay(videoId) {
+  const resource = getVideoResource(videoId);
+  resource?.playRetryCleanup?.();
+  setVideoResource(videoId, {
+    pendingUserPlay: false,
+    playRetryCleanup: null,
+    playRequestGeneration: (resource?.playRequestGeneration || 0) + 1
+  });
+}
+
+function requestVideoPlayback(videoId, video, cfg) {
+  if (!videoId || !(video instanceof HTMLVideoElement)) return false;
+  const previous = getVideoResource(videoId);
+  previous?.playRetryCleanup?.();
+  const generation = (previous?.playRequestGeneration || 0) + 1;
+  setVideoResource(videoId, {
+    pendingUserPlay: true,
+    playRetryCleanup: null,
+    playRequestGeneration: generation
+  });
+
+  const sourceAvailable = loadVideoSource(video, cfg);
+  if (!sourceAvailable && !video.currentSrc && !video.src) {
+    clearPendingUserVideoPlay(videoId);
+    console.warn(`[VideoMesh] Play requested without a configured source: ${videoId}`);
+    return false;
+  }
+
+  let readinessRetries = 0;
+  const attemptPlayback = () => {
+    const resource = getVideoResource(videoId);
+    if (resource.playRequestGeneration !== generation || resource.pendingUserPlay !== true) return;
+
+    let playPromise;
+    try {
+      playPromise = video.play();
+    } catch (error) {
+      playPromise = Promise.reject(error);
+    }
+
+    Promise.resolve(playPromise)
+      .then(() => {
+        const latest = getVideoResource(videoId);
+        if (latest.playRequestGeneration === generation) {
+          clearPendingUserVideoPlay(videoId);
+        }
+      })
+      .catch((error) => {
+        const latest = getVideoResource(videoId);
+        if (latest.playRequestGeneration !== generation || latest.pendingUserPlay !== true) return;
+
+        if (!video.error && video.readyState < 2 && readinessRetries < 2) {
+          readinessRetries += 1;
+          let cleanup = () => {};
+          const retryPlayback = () => {
+            cleanup();
+            const current = getVideoResource(videoId);
+            if (current.playRequestGeneration === generation && current.pendingUserPlay === true) {
+              attemptPlayback();
+            }
+          };
+          cleanup = () => {
+            video.removeEventListener('canplay', retryPlayback);
+            video.removeEventListener('loadeddata', retryPlayback);
+            const current = getVideoResource(videoId);
+            if (current.playRetryCleanup === cleanup) {
+              setVideoResource(videoId, { playRetryCleanup: null });
+            }
+          };
+          video.addEventListener('canplay', retryPlayback, { once: true });
+          video.addEventListener('loadeddata', retryPlayback, { once: true });
+          setVideoResource(videoId, { playRetryCleanup: cleanup });
+          return;
+        }
+
+        clearPendingUserVideoPlay(videoId);
+        console.warn(`[VideoMesh] Playback request failed: ${videoId}`, error);
+      });
+  };
+
+  // Start synchronously from the visitor's click. If media data is not ready,
+  // retain that intent and retry on the first usable frame instead of requiring
+  // a second click.
+  attemptPlayback();
+  return true;
+}
+
+export function playVideoById(videoId) {
+  if (!_videoScenePlaybackEnabled || !videoId) return false;
+  const resource = getVideoResource(videoId);
+  const video = resource?.video;
+  if (!(video instanceof HTMLVideoElement)) return false;
+  return requestVideoPlayback(videoId, video, resource.cfg || { id: videoId });
+}
+
 function disposeVideoResource(id) {
   const res = _videoResourceCache.get(id);
   if (!res) return;
+  res.playRetryCleanup?.();
   if (res.texture) res.texture.dispose(); // free GPU memory
   if (res.posterTexture) res.posterTexture.dispose();
   if (res.positionalAudio) {
@@ -485,6 +576,8 @@ function createSyncPlaybackGroups(videos) {
         videos: new Map(),
         readyIds: new Set(),
         started: false,
+        starting: false,
+        startAttempts: 0,
         tryStart: null
       });
     }
@@ -504,14 +597,13 @@ function queueSyncedPlayback(cfg, video, syncGroups) {
 
   const tryStart = () => {
     if (!_videoScenePlaybackEnabled) return;
-    if (group.started) return;
+    if (group.started || group.starting || _syncPlaybackGroups.get(groupId) !== group) return;
     if (group.videos.size < group.expectedIds.size) return;
     for (const id of group.expectedIds) {
       if (!group.videos.has(id) || !group.readyIds.has(id)) {
         return;
       }
     }
-    group.started = true;
     const targets = [];
     for (const id of group.expectedIds) {
       const target = group.videos.get(id);
@@ -519,6 +611,9 @@ function queueSyncedPlayback(cfg, video, syncGroups) {
         targets.push(target);
       }
     }
+    if (group.startAttempts >= 3) return;
+    group.starting = true;
+    group.startAttempts += 1;
     targets.forEach((targetVideo) => {
       try {
         targetVideo.currentTime = 0;
@@ -527,9 +622,20 @@ function queueSyncedPlayback(cfg, video, syncGroups) {
       }
     });
     requestAnimationFrame(() => {
-      targets.forEach((targetVideo) => {
-        targetVideo.play().catch(() => {});
-      });
+      Promise.all(targets.map((targetVideo) => targetVideo.play()))
+        .then(() => {
+          group.starting = false;
+          group.started = true;
+        })
+        .catch((error) => {
+          group.starting = false;
+          if (!_videoScenePlaybackEnabled || _syncPlaybackGroups.get(groupId) !== group) return;
+          if (group.startAttempts < 3) {
+            setTimeout(tryStart, 200);
+            return;
+          }
+          console.warn(`[VideoMesh] Synchronized autoplay failed for group ${groupId}`, error);
+        });
     });
   };
   group.tryStart = tryStart;
@@ -705,10 +811,12 @@ export function invokeVideoControlById(videoId, action, value) {
   if (action === 'play_pause') {
     if (video.paused || video.ended) {
       setVideoResource(videoId, { userMuted: false });
-      loadVideoSource(video, getVideoResource(videoId)?.cfg);
+      const cfg = getVideoResource(videoId)?.cfg || { id: videoId };
+      loadVideoSource(video, cfg);
       resumeVideoAudio(getVideoResource(videoId));
-      video.play().catch(() => {});
+      requestVideoPlayback(videoId, video, cfg);
     } else {
+      cancelPendingUserVideoPlay(videoId);
       video.pause();
     }
     return true;
@@ -1266,7 +1374,7 @@ function addPlayIcon(mesh, video, camera) {
     }
   };
 
-  loader.load(PLAY_ICON_PATH, iconTex => {
+  loader.load(PLAY_ICON_URL, iconTex => {
     if (disposed) {
       iconTex.dispose();
       return;
@@ -1820,9 +1928,9 @@ function addHtmlOverlay(mesh, video, camera, cfg, scene) {
       resumeVideoAudio(getVideoResource(cfg.id));
     }
     if (video.paused) {
-      loadVideoSource(video, cfg);
-      video.play().catch(() => {});
+      requestVideoPlayback(cfg.id, video, cfg);
     } else {
+      cancelPendingUserVideoPlay(cfg.id);
       video.pause();
     }
   };

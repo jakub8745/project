@@ -49,7 +49,7 @@ export function validateManifest(manifest) {
   for (const route of viewer.lightZones || []) {
     const interaction = manifest.interactions.find((entry) => entry.id === route.id && entry.type === 'location_light_profile');
     if (interaction && ['params','lights','exposure'].some((key) => JSON.stringify(interaction.behavior?.[key]) !== JSON.stringify(route[key]))) {
-      warnings.push(`interactions.${route.id}: portable lighting differs from r3fCurrent; retain active viewer behavior pending archival reconciliation`);
+      warnings.push(`interactions.${route.id}: portable lighting differs from r3fCurrent; BPA runtime follows portable behavior while the manifest discrepancy remains for archival reconciliation`);
     }
   }
   return { errors, warnings };

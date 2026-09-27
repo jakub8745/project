@@ -1,9 +1,10 @@
-import { AudioLoader, MathUtils, PositionalAudio, type AudioListener, type Camera, type Scene, type WebGLRenderer } from 'three';
+import { MathUtils, PositionalAudio, type AudioListener, type Camera, type Scene, type WebGLRenderer } from 'three';
 import { PositionalAudioHelper } from 'three/examples/jsm/helpers/PositionalAudioHelper.js';
 import type { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { applyPitcherControls } from './applyPitcherControls.js';
 import { applyObjectTransformControls, type ObjectTransformControlOptions } from './applyObjectTransformControls.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from './objectRegistry.js';
+import { resolveIpfsUriCandidates } from '../config/assetResolution';
 
 type AudioDistanceModel = 'linear' | 'inverse' | 'exponential';
 
@@ -26,6 +27,7 @@ export interface AudioMeshConfig {
   ipfsUrl?: string;
   fallbackUrls?: string[];
   autoplayOnEnter?: boolean;
+  autoplayOnXrSessionStart?: boolean;
   labelPlaying?: string;
   labelPaused?: string;
   loop?: boolean;
@@ -60,14 +62,18 @@ export interface AudioMeshContext {
   enableHelpers?: boolean;
 }
 
-const loader = new AudioLoader();
-const ipfsGateways = [
-  'https://cloudflare-ipfs.com/ipfs/',
-  'https://ipfs.io/ipfs/',
-  'https://gateway.pinata.cloud/ipfs/',
-  'https://dweb.link/ipfs/'
-];
+const AUDIO_SOURCE_TIMEOUT_MS = 20_000;
 const audioBufferCache = new Map<string, Promise<AudioBuffer>>();
+const configuredAudioIds = new Set<string>();
+const audioContextsRef = new Set<AudioContext>();
+
+export function resolveAudioControlIds(
+  configuredIds: ReadonlySet<string>,
+  targetIds: ReadonlySet<string> | null
+): string[] {
+  if (targetIds === null) return Array.from(configuredIds);
+  return Array.from(targetIds).filter((id) => configuredIds.has(id));
+}
 
 type ManagedAudio = PositionalAudio & {
   userData: PositionalAudio['userData'] & {
@@ -219,6 +225,10 @@ function getControlAudioObjects(): ManagedAudio[] {
   });
 }
 
+function getConfiguredControlAudioIds(): string[] {
+  return resolveAudioControlIds(configuredAudioIds, controlTargetIds);
+}
+
 function normalizeIds(ids: string[]): string[] {
   return ids.filter((id) => typeof id === 'string' && id.trim()).map((id) => id.trim());
 }
@@ -236,8 +246,12 @@ function getAudioObjectsByIds(ids: string[]): ManagedAudio[] {
 
 function syncPlaybackState(): void {
   const controlObjects = getControlAudioObjects();
-  const available = controlTargetIds === null ? audioObjectsRef.length > 0 : controlTargetIds.size > 0;
-  const isPlaying = controlObjects.some((audio) => audio.isPlaying);
+  const controlIds = new Set(getConfiguredControlAudioIds());
+  const available = controlIds.size > 0;
+  const isPlaying = controlObjects.some((audio) => {
+    const audioId = audio.userData.__audioId || audio.name;
+    return audio.isPlaying && Boolean(audioId && controlIds.has(audioId));
+  });
   if (audioState.available === available && audioState.isPlaying === isPlaying) return;
   audioState = { ...audioState, available, isPlaying: available ? isPlaying : false };
   notifyState();
@@ -265,6 +279,8 @@ export function disposeAudioMeshes(options: DisposeOptions = {}): void {
   pendingPlayIds = new Set<string>();
   canceledAutoplayIds = new Set<string>();
   clearAutoplayTimers();
+  configuredAudioIds.clear();
+  audioContextsRef.clear();
   audioObjectsRef.splice(0).forEach((sound) => {
     if (sound.isPlaying) sound.stop();
     sound.disconnect();
@@ -293,11 +309,10 @@ export function subscribeToAudioState(listener: AudioStateListener): () => void 
 export async function setAudioPlaying(shouldPlay: boolean): Promise<void> {
   desiredPlayback = shouldPlay;
   const controlObjects = getControlAudioObjects();
+  const controlIds = getConfiguredControlAudioIds();
   if (shouldPlay) {
-    if (controlTargetIds && controlTargetIds.size > 0) {
-      controlTargetIds.forEach((id) => pendingPlayIds.add(id));
-    }
-    const ctx = audioObjectsRef[0]?.context;
+    controlIds.forEach((id) => pendingPlayIds.add(id));
+    const ctx = controlObjects[0]?.context ?? audioContextsRef.values().next().value;
     if (ctx && ctx.state === 'suspended') {
       await ctx.resume();
     }
@@ -310,9 +325,7 @@ export async function setAudioPlaying(shouldPlay: boolean): Promise<void> {
     });
     syncPlaybackState();
   } else {
-    if (controlTargetIds) {
-      controlTargetIds.forEach((id) => pendingPlayIds.delete(id));
-    }
+    controlIds.forEach((id) => pendingPlayIds.delete(id));
     controlObjects.forEach((audio) => {
       if (audio.isPlaying) {
         audio.pause();
@@ -333,7 +346,7 @@ export async function playAudioByIds(ids: string[]): Promise<void> {
   const normalizedIds = normalizeIds(ids);
   normalizedIds.forEach((id) => pendingPlayIds.add(id));
   const audioObjects = getAudioObjectsByIds(ids);
-  const ctx = audioObjects[0]?.context ?? audioObjectsRef[0]?.context;
+  const ctx = audioObjects[0]?.context ?? audioObjectsRef[0]?.context ?? audioContextsRef.values().next().value;
   if (ctx && ctx.state === 'suspended') {
     await ctx.resume();
   }
@@ -488,6 +501,7 @@ function scheduleAutoplay(sound: ManagedAudio, generation: number): void {
 
 function loadAudioWithFallback(
   cfg: AudioMeshConfig,
+  audioContext: AudioContext,
   onSuccess: (buffer: AudioBuffer) => void
 ) {
   const primary = cfg?.url ?? '';
@@ -499,9 +513,23 @@ function loadAudioWithFallback(
   const loadAudioBuffer = (url: string): Promise<AudioBuffer> => {
     const cached = audioBufferCache.get(url);
     if (cached) return cached;
-    const pending = new Promise<AudioBuffer>((resolve, reject) => {
-      loader.load(url, (buffer) => resolve(buffer), undefined, reject);
-    });
+    const pending = (async () => {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), AUDIO_SOURCE_TIMEOUT_MS);
+      try {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Audio source returned HTTP ${response.status}: ${url}`);
+        const encodedAudio = await response.arrayBuffer();
+        return await audioContext.decodeAudioData(encodedAudio.slice(0));
+      } catch (error) {
+        if (controller.signal.aborted) {
+          throw new Error(`Audio source timed out after ${AUDIO_SOURCE_TIMEOUT_MS / 1000}s: ${url}`);
+        }
+        throw error;
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    })();
     audioBufferCache.set(url, pending);
     pending.catch(() => {
       audioBufferCache.delete(url);
@@ -514,14 +542,14 @@ function loadAudioWithFallback(
       console.error(`[AudioMesh] Primary failed and no IPFS fallback for ${cfg?.id || cfg?.name}`);
       return Promise.reject(new Error('No IPFS fallback configured'));
     }
-    if (gwIndex >= ipfsGateways.length) {
-      console.error(`[AudioMesh] Failed to load audio from all gateways: ${ipfsUrl}`);
+    const gateways = resolveIpfsUriCandidates(ipfsUrl);
+    if (gwIndex >= gateways.length) {
+      console.error(`[AudioMesh] Failed to load audio from all configured gateways: ${ipfsUrl}`);
       return Promise.reject(new Error(`Failed to load audio from all gateways: ${ipfsUrl}`));
     }
-    const cid = ipfsUrl.replace('ipfs://', '');
-    const url = ipfsGateways[gwIndex] + cid;
+    const url = gateways[gwIndex];
     return loadAudioBuffer(url).catch(() => {
-        console.warn(`[AudioMesh] IPFS gateway failed (${gwIndex + 1}/${ipfsGateways.length}), retrying...`);
+        console.warn(`[AudioMesh] IPFS gateway failed (${gwIndex + 1}/${gateways.length}), retrying...`, { url });
         return tryIpfs(gwIndex + 1);
       });
   };
@@ -546,7 +574,14 @@ function loadAudioWithFallback(
 
   void tryPrimary()
     .then((buffer) => onSuccess(buffer))
-    .catch(() => undefined);
+    .catch((error) => {
+      console.error('[AssetLoader]', {
+        event: 'optional_audio_asset_failed',
+        assetId: cfg?.id || cfg?.name,
+        source: primary,
+        message: error instanceof Error ? error.message : String(error)
+      });
+    });
 }
 
 function reverseAudioBuffer(buffer: AudioBuffer, context: BaseAudioContext): AudioBuffer {
@@ -615,12 +650,16 @@ export function applyAudioMeshes(context: AudioMeshContext): void {
       } else {
 
         foundAny = true;
+        if (typeof audioId === 'string' && audioId.trim()) {
+          configuredAudioIds.add(audioId);
+        }
 
         const sound = new PositionalAudio(listener) as ManagedAudio;
         sound.name = cfg.name || audioId || obj.name;
         sound.userData.__audioId = audioId;
+        audioContextsRef.add(sound.context);
 
-        loadAudioWithFallback(cfg, (buffer) => {
+        loadAudioWithFallback(cfg, sound.context, (buffer) => {
           if (generation !== audioLoadGeneration) return;
           const playbackBuffer = cfg.reverse ? reverseAudioBuffer(buffer, sound.context) : buffer;
           const baseOnEnded = sound.onEnded.bind(sound);

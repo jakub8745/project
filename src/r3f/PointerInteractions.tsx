@@ -20,7 +20,7 @@ import {
 import { createTooltip } from '../modules/Tooltip.js';
 import type Visitor from '../modules/Visitor';
 import { toSafeExternalUrl } from '../utils/url';
-import { invokeVideoControlById, openVideoPlayerById, resumeVideoAudioById } from '../modules/applyVideoMeshes.js';
+import { invokeVideoControlById, openVideoPlayerById, playVideoById, resumeVideoAudioById } from '../modules/applyVideoMeshes.js';
 import type { VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from '../modules/objectRegistry.js';
 
@@ -721,7 +721,7 @@ export function PointerInteractions({
 
         if (videoElement instanceof HTMLVideoElement) {
           resumeVideoAudioById(videoKey);
-          videoElement.play().catch((err) => console.warn("Couldn't autoplay:", err));
+          playVideoById(videoKey);
         }
         return;
       }

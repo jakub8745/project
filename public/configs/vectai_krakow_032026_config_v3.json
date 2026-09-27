@@ -1141,7 +1141,7 @@
         "asset": "scene_model"
       },
       "background": {
-        "color": "#000000"
+        "color": "#e2ddd1"
       },
       "spawn": {
         "node": "Visitor_enter",
@@ -1501,12 +1501,12 @@
       "r3fCurrent": {
         "status": "reference_implementation_profile",
         "params": {
-          "exposure": 1.4,
+          "exposure": 1.61,
           "autoExposure": false,
           "toneMapping": "neutral",
-          "exposureTarget": 1.0,
-          "exposureMin": 0.75,
-          "exposureMax": 1.9,
+          "exposureTarget": 1.15,
+          "exposureMin": 0.86,
+          "exposureMax": 2.18,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1,
@@ -1573,10 +1573,10 @@
             },
             "exposure": {
               "autoExposure": false,
-              "value": 0.72,
-              "target": 0.58,
-              "min": 0.45,
-              "max": 1.35
+              "value": 0.83,
+              "target": 0.67,
+              "min": 0.52,
+              "max": 1.55
             }
           },
           {
@@ -1598,10 +1598,10 @@
             },
             "exposure": {
               "autoExposure": false,
-              "value": 1.4,
-              "target": 1.0,
-              "min": 0.75,
-              "max": 1.9
+              "value": 1.61,
+              "target": 1.15,
+              "min": 0.86,
+              "max": 2.18
             }
           }
         ]
@@ -1983,10 +1983,10 @@
         },
         "exposure": {
           "autoExposure": false,
-          "value": 0.72,
-          "target": 0.58,
-          "min": 0.45,
-          "max": 1.35
+          "value": 0.83,
+          "target": 0.67,
+          "min": 0.52,
+          "max": 1.55
         }
       }
     },
@@ -2011,10 +2011,10 @@
         },
         "exposure": {
           "autoExposure": false,
-          "value": 1.08,
-          "target": 0.72,
-          "min": 0.5,
-          "max": 1.65
+          "value": 1.24,
+          "target": 0.83,
+          "min": 0.57,
+          "max": 1.9
         }
       }
     }

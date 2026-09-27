@@ -6,7 +6,7 @@ import type {
   SculptureControlInstance,
   VideoModuleInstance
 } from '../../types/exhibitSchemaV2';
-import { resolveRuntimeAsset } from '../assetResolution';
+import { resolveRuntimeAsset, resolveRuntimeAssetCandidates } from '../assetResolution';
 import type { ExhibitConfig, UnknownRecord } from '../runtimeTypes';
 import { normalizeConfig } from './shared';
 
@@ -16,8 +16,24 @@ type SubtitleTrack = {
   cues: Array<{ start: number; end: number; text: string }>;
 };
 
+const OPTIONAL_ASSET_SOURCE_TIMEOUT_MS = 20_000;
+
 function resolveAssetRuntimeUri(assetId: string | undefined, manifest: ExhibitConfigV2): string | undefined {
-  return resolveRuntimeAsset(assetId ? manifest.assets[assetId] : undefined, manifest.id);
+  return resolveRuntimeAsset(assetId ? manifest.assets[assetId] : undefined);
+}
+
+function resolveAssetRuntimeUris(assetId: string | undefined, manifest: ExhibitConfigV2): string[] {
+  return resolveRuntimeAssetCandidates(assetId ? manifest.assets[assetId] : undefined);
+}
+
+function candidatesForDeclaredUri(uri: string, manifest: ExhibitConfigV2): string[] {
+  const declaredAsset = Object.values(manifest.assets).find((asset) => {
+    const record = asset as unknown as UnknownRecord;
+    return record.sourceUri === uri || record.ipfsUri === uri || record.uri === uri;
+  });
+  return declaredAsset
+    ? resolveRuntimeAssetCandidates(declaredAsset as unknown as Parameters<typeof resolveRuntimeAssetCandidates>[0])
+    : resolveRuntimeAssetCandidates({ sourceUri: uri });
 }
 
 function categoryForNode(node: SceneNodeDefinition): string | undefined {
@@ -130,20 +146,28 @@ function sidebarContentFromMedia(media?: MediaDescriptor): string | undefined {
 
 function toImageRecord(media: MediaDescriptor, manifest: ExhibitConfigV2): UnknownRecord | null {
   if (media.kind === 'image') {
+    const sources = resolveAssetRuntimeUris(media.image.asset, manifest);
     return {
       title: media.title,
       tooltipLabel: media.tooltipLabel,
       description: media.description,
-      imagePath: resolveAssetRuntimeUri(media.image.asset, manifest)
+      imagePath: sources[0],
+      imageFallbackPaths: sources.slice(1)
     } satisfies UnknownRecord;
   }
   if (media.kind === 'document') {
+    const document = 'asset' in media.document
+      ? resolveAssetRuntimeUris(media.document.asset, manifest)
+      : resolveRuntimeAssetCandidates({ sourceUri: media.document.uri });
+    const preview = media.previewImage ? resolveAssetRuntimeUris(media.previewImage.asset, manifest) : [];
     return {
       title: media.title,
       tooltipLabel: media.tooltipLabel,
       description: media.description,
-      imagePath: media.previewImage ? resolveAssetRuntimeUri(media.previewImage.asset, manifest) : undefined,
-      pdfPath: 'asset' in media.document ? resolveAssetRuntimeUri(media.document.asset, manifest) : media.document.uri,
+      imagePath: preview[0],
+      imageFallbackPaths: preview.slice(1),
+      pdfPath: document[0],
+      pdfFallbackPaths: document.slice(1),
       pdfOpenPath: media.openUri,
       pdfOpenLabel: media.openLabel
     } satisfies UnknownRecord;
@@ -205,11 +229,10 @@ function mapVideoInstance(instance: VideoModuleInstance, manifest: ExhibitConfig
     poster: media.poster ? resolveAssetRuntimeUri(media.poster.asset, manifest) : undefined,
     sources: media.sources.map((source) => {
       const asset = manifest.assets[source.asset];
+      const candidates = resolveRuntimeAssetCandidates(asset);
       return {
-        src: resolveAssetRuntimeUri(source.asset, manifest),
-        fallbackSrcs: asset?.fallbackUris?.filter(
-          (candidate): candidate is string => typeof candidate === 'string' && candidate.trim().length > 0
-        ),
+        src: candidates[0],
+        fallbackSrcs: candidates.slice(1),
         type: asset?.mimeType
       } satisfies UnknownRecord;
     }),
@@ -233,22 +256,50 @@ async function loadSubtitleTracks(
   signal?: AbortSignal
 ): Promise<SubtitleTrack[] | undefined> {
   const asset = assetId ? manifest.assets[assetId] : undefined;
-  const url = resolveAssetRuntimeUri(assetId, manifest);
-  if (!asset || !url) return undefined;
-  try {
-    const response = await fetch(url, { signal });
-    if (!response.ok) {
-      throw new Error(`Failed to load subtitle asset ${assetId}: ${response.status}`);
+  const candidates = resolveRuntimeAssetCandidates(asset);
+  if (!asset || candidates.length === 0) return undefined;
+
+  let lastError: unknown;
+  for (const [index, url] of candidates.entries()) {
+    if (signal?.aborted) return undefined;
+    const controller = new AbortController();
+    const abortFromCaller = () => controller.abort();
+    signal?.addEventListener('abort', abortFromCaller, { once: true });
+    const timer = setTimeout(() => controller.abort(), OPTIONAL_ASSET_SOURCE_TIMEOUT_MS);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) {
+        throw new Error(`Subtitle source returned HTTP ${response.status}: ${url}`);
+      }
+      const text = await response.text();
+      if (!text.trim()) return undefined;
+      if (asset.mimeType?.includes('json') || url.toLowerCase().endsWith('.json')) {
+        return parseSubtitleTracks(JSON.parse(text));
+      }
+      return undefined;
+    } catch (error) {
+      if (signal?.aborted) return undefined;
+      lastError = controller.signal.aborted
+        ? new Error(`Subtitle source timed out after ${OPTIONAL_ASSET_SOURCE_TIMEOUT_MS / 1000}s: ${url}`)
+        : error;
+      if (index < candidates.length - 1 && typeof window !== 'undefined') {
+        console.warn('[AssetLoader] Subtitle source failed; trying the next configured source.', {
+          assetId,
+          url,
+          error: lastError
+        });
+      }
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', abortFromCaller);
     }
-    const text = await response.text();
-    if (!text.trim()) return undefined;
-    if (asset.mimeType?.includes('json') || url.toLowerCase().endsWith('.json')) {
-      return parseSubtitleTracks(JSON.parse(text));
-    }
-  } catch (error) {
-    if (typeof window !== 'undefined') {
-      console.warn(`Skipping subtitle asset ${assetId}:`, error);
-    }
+  }
+
+  if (typeof window !== 'undefined') {
+    console.warn('[AssetLoader] Optional subtitle asset could not be loaded from any configured source.', {
+      assetId,
+      error: lastError
+    });
   }
   return undefined;
 }
@@ -257,14 +308,14 @@ function mapAudioInstance(instance: AudioModuleInstance, manifest: ExhibitConfig
   const media = mediaById(manifest, instance.media);
   if (!media || media.kind !== 'audio') return null;
   const sourceAsset = manifest.assets[media.sources[0]?.asset];
+  const sourceCandidates = resolveRuntimeAssetCandidates(sourceAsset);
   return {
     id: instance.targetNode,
     name: instance.targetNode,
-    url: resolveAssetRuntimeUri(media.sources[0]?.asset, manifest),
-    fallbackUrls: sourceAsset?.fallbackUris?.filter(
-      (candidate): candidate is string => typeof candidate === 'string' && candidate.trim().length > 0
-    ),
+    url: sourceCandidates[0],
+    fallbackUrls: sourceCandidates.slice(1),
     autoplayOnEnter: instance.autoplayOnEnter,
+    autoplayOnXrSessionStart: instance.autoplayOnXrSessionStart,
     autoplayDelayMs: instance.autoplayDelayMs,
     labelPlaying: instance.labelPlaying,
     labelPaused: instance.labelPaused,
@@ -340,8 +391,20 @@ function mapSceneTransforms(manifest: ExhibitConfigV2): Pick<ExhibitConfig, 'pos
 
 function mapViewerExtensions(manifest: ExhibitConfigV2): UnknownRecord {
   const viewer = manifest.viewer && typeof manifest.viewer === 'object' ? manifest.viewer : {};
+  const viewerRecord = viewer as unknown as UnknownRecord;
+  const rawModels = viewerRecord.models;
+  const models = Array.isArray(rawModels)
+    ? rawModels.map((entry) => {
+        if (!entry || typeof entry !== 'object') return entry;
+        const model = entry as UnknownRecord;
+        if (typeof model.path !== 'string') return model;
+        const candidates = candidatesForDeclaredUri(model.path, manifest);
+        return { ...model, path: candidates[0] || model.path, pathCandidates: candidates };
+      })
+    : rawModels;
   return {
-    ...(viewer as UnknownRecord)
+    ...(viewer as UnknownRecord),
+    ...(models ? { models } : {})
   };
 }
 
@@ -388,6 +451,15 @@ function mapSceneSpawnParams(manifest: ExhibitConfigV2): UnknownRecord {
   };
 }
 
+function mapSceneBackgroundParams(manifest: ExhibitConfigV2): UnknownRecord {
+  const background = manifest.scene.background;
+  if (!background) return {};
+  return {
+    ...(typeof background.blurriness === 'number' ? { backgroundBlurriness: background.blurriness } : {}),
+    ...(typeof background.intensity === 'number' ? { backgroundIntensity: background.intensity } : {})
+  };
+}
+
 export async function loadExhibitConfigV2(
   raw: unknown,
   signal?: AbortSignal,
@@ -411,11 +483,18 @@ export async function loadExhibitConfigV2(
     id: manifest.id,
     metadata: mapMetadata(manifest),
     modelPath: manifest.scene.model?.asset ? resolveAssetRuntimeUri(manifest.scene.model.asset, manifest) : undefined,
+    modelPathCandidates: manifest.scene.model?.asset ? resolveAssetRuntimeUris(manifest.scene.model.asset, manifest) : undefined,
     backgroundTexture: manifest.scene.background?.backgroundAsset
       ? resolveAssetRuntimeUri(manifest.scene.background.backgroundAsset, manifest)
       : undefined,
+    backgroundTextureCandidates: manifest.scene.background?.backgroundAsset
+      ? resolveAssetRuntimeUris(manifest.scene.background.backgroundAsset, manifest)
+      : undefined,
     environmentTexture: manifest.scene.background?.environmentAsset
       ? resolveAssetRuntimeUri(manifest.scene.background.environmentAsset, manifest)
+      : undefined,
+    environmentTextureCandidates: manifest.scene.background?.environmentAsset
+      ? resolveAssetRuntimeUris(manifest.scene.background.environmentAsset, manifest)
       : undefined,
     backgroundColor: manifest.scene.background?.color,
     sidebar: mapSidebar(manifest),
@@ -455,11 +534,15 @@ export async function loadExhibitConfigV2(
 
   const spawnParams = mapSceneSpawnParams(manifest);
   const existingParams = runtime.params && typeof runtime.params === 'object' ? runtime.params : {};
-  if (Object.keys(spawnParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.scene.renderer) {
+  const backgroundParams = mapSceneBackgroundParams(manifest);
+  const adaptedFromV3 = manifest.schemaVersion === '2.0.0-adapted-from-v3';
+  if (Object.keys(spawnParams).length > 0 || Object.keys(backgroundParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.scene.renderer) {
     runtime.params = {
+      ...(adaptedFromV3 ? existingParams : {}),
       ...manifest.scene.renderer,
-      ...spawnParams,
-      ...existingParams
+      ...backgroundParams,
+      ...(adaptedFromV3 ? spawnParams : {}),
+      ...(!adaptedFromV3 ? { ...spawnParams, ...existingParams } : {})
     };
   }
 

@@ -347,6 +347,7 @@ export interface AudioModuleInstance {
   targetNode: NodeId;
   media: MediaId;
   autoplayOnEnter?: boolean;
+  autoplayOnXrSessionStart?: boolean;
   autoplayDelayMs?: number;
   loop?: boolean;
   refDistance?: number;

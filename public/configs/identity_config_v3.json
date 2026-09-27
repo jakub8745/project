@@ -59,7 +59,7 @@
       "kind": "texture",
       "mimeType": "image/ktx2",
       "id": "background_texture",
-      "sourceUri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/bg_puno85.ktx2",
       "ipfsUri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
       "preservation": {
         "status": "verification_pending",
@@ -70,7 +70,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "WielekEibejzyt_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekEibejzyt.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/WielekEibejzyt.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekEibejzyt.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -81,7 +81,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "WielekPalec_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekPalec.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/WielekPalec.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WielekPalec.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -92,7 +92,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "WilekSchizofrenia_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WilekSchizofrenia.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/WilekSchizofrenia.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/WilekSchizofrenia.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -103,7 +103,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "DreamerStarman_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerStarman.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerStarman.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerStarman.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -114,7 +114,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "DreamerPiotr_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerPiotr.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerPiotr.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerPiotr.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -125,7 +125,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "DreamerSpaceman_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerSpaceman.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerSpaceman.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerSpaceman.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -136,7 +136,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "DreamerAura_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerAura.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerAura.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerAura.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -147,7 +147,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "DreamerFlowerman_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerFlowerman.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/DreamerFlowerman.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/DreamerFlowerman.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -158,7 +158,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "Hidden_image",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/Hidden.jpg",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/Hidden.jpg",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/Hidden.jpg",
       "preservation": {
         "status": "verification_pending",
@@ -169,7 +169,7 @@
       "kind": "video",
       "mimeType": "video/mp4",
       "id": "Unreal_video",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/UnrealPlaces.mp4",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/UnrealPlaces.mp4",
       "preservation": {
         "status": "verification_pending",
@@ -180,7 +180,7 @@
       "kind": "video",
       "mimeType": "video/mp4",
       "id": "Heritage_video",
-      "sourceUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/identity/o/MurzynHeritage.mp4",
       "ipfsUri": "ipfs://bafybeifphj2mogo3gxz7k5klcxp3fn6i3ffzrpupn65qtkamodygclhane/MurzynHeritage.mp4",
       "preservation": {
         "status": "verification_pending",
@@ -322,7 +322,9 @@
         "asset": "scene_model"
       },
       "background": {
-        "backgroundAsset": "background_texture"
+        "backgroundAsset": "background_texture",
+        "color": "#e2ddd1",
+        "intensity": 1.15
       },
       "spawn": {
         "position": [
@@ -337,10 +339,10 @@
       "renderer": {
         "toneMapping": "neutral",
         "autoExposure": true,
-        "exposure": 1,
-        "exposureTarget": 0.68,
-        "exposureMin": 0.5,
-        "exposureMax": 1.65,
+        "exposure": 1.15,
+        "exposureTarget": 0.78,
+        "exposureMin": 0.57,
+        "exposureMax": 1.9,
         "exposureSampleInterval": 30,
         "antialias": true,
         "shadows": false,
@@ -541,12 +543,12 @@
     "viewerProfiles": {
       "r3fCurrent": {
         "params": {
-          "exposure": 1,
+          "exposure": 1.15,
           "autoExposure": true,
           "toneMapping": "neutral",
-          "exposureTarget": 0.68,
-          "exposureMin": 0.5,
-          "exposureMax": 1.65,
+          "exposureTarget": 0.78,
+          "exposureMin": 0.57,
+          "exposureMax": 1.9,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1,

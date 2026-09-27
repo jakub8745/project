@@ -19,7 +19,6 @@ export type ThumbnailCaptureConfig = {
   mimeType: string;
   bitsPerSecond: number;
   filename: string;
-  preset?: string;
 };
 
 export function ThumbnailRecorderMode({
@@ -37,27 +36,15 @@ export function ThumbnailRecorderMode({
   const [isRecording, setIsRecording] = useState(false);
 
   const applyCameraPose = useCallback(() => {
-    let pose = {
-      cameraPosition: config.cameraPosition,
-      target: config.target,
-      fov: config.fov
-    };
-    if (config.preset === 'lockdownsPoster') {
-      pose = {
-        cameraPosition: [-12.5, 11.5, 10.2],
-        target: [0.6, 1.1, -1.4],
-        fov: 34
-      };
-    }
-    camera.position.set(...pose.cameraPosition);
-    camera.fov = pose.fov;
+    camera.position.set(...config.cameraPosition);
+    camera.fov = config.fov;
     camera.updateProjectionMatrix();
     if (controls) {
-      controls.target.set(...pose.target);
+      controls.target.set(...config.target);
       controls.enabled = config.allowOrbit;
       controls.update();
     }
-  }, [camera, config.allowOrbit, config.cameraPosition, config.fov, config.preset, config.target, controls]);
+  }, [camera, config.allowOrbit, config.cameraPosition, config.fov, config.target, controls]);
 
   const stopRecording = useCallback(() => {
     const recorder = recorderRef.current;

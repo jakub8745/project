@@ -7,6 +7,13 @@ import type { ExhibitConfig } from '../config/runtimeTypes';
 const configCache = new Map<string, ExhibitConfig>();
 const CONFIG_LOAD_TIMEOUT_MS = 20_000;
 
+function isLoadingDiagnosticsEnabled(): boolean {
+  return typeof window !== 'undefined' && ['debugLoading', 'loadingDebug'].some((key) => {
+    const value = new URLSearchParams(window.location.search).get(key);
+    return value === '1' || value === 'true';
+  });
+}
+
 interface UseExhibitConfigResult {
   config: ExhibitConfig | null;
   resolvedUrl: string | null;
@@ -34,6 +41,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
 
     const cached = configCache.get(configUrl);
     if (cached) {
+      if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'manifest_cache_hit', configUrl });
       setConfig(cached);
       setResolvedUrl(configUrl);
       setLoading(false);
@@ -42,6 +50,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     }
 
     const controller = new AbortController();
+    if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'scene_requested', configUrl });
     let didTimeOut = false;
     const timeout = window.setTimeout(() => {
       didTimeOut = true;
@@ -54,6 +63,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
 
     fetchManifest(configUrl, controller.signal)
       .then(async (raw) => {
+        if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'manifest_loaded', configUrl });
         const normalised = await loadExhibitConfig(raw, controller.signal, (updated) => {
           if (controller.signal.aborted) return;
           configCache.set(configUrl, updated);
@@ -64,6 +74,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
           setConfig(normalised);
           setResolvedUrl(configUrl);
           setLoading(false);
+          if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'scene_config_ready', configUrl, exhibitId: normalised.id });
         }
       })
       .catch((err: unknown) => {
@@ -71,6 +82,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
         const errorObject = didTimeOut
           ? new Error(`The exhibit configuration did not respond within ${CONFIG_LOAD_TIMEOUT_MS / 1000} seconds.`)
           : err instanceof Error ? err : new Error(String(err));
+        console.error('[SceneLoader]', { event: 'scene_config_failed', configUrl, message: errorObject.message });
         setError(errorObject);
         setConfig(null);
         setResolvedUrl(null);

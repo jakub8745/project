@@ -89,7 +89,7 @@ Runtime controls:
 
 Config block:
 
-- `previews.capture.r3fCurrent` (with viewer profile override support) in `public/configs/prompt_procedural_room_config_v3.json`
+- `previews.capture.r3fCurrent` in `public/configs/prompt_procedural_room_config_v3.json`
   - camera pose: `cameraPosition`, `target`, `fov`
   - recording: `fps`, `mimeType`, `bitsPerSecond`, `filename`
   - behavior: `allowOrbit`, `autoRotate`, `autoRotateSpeed`, `backgroundColor`, `showHint`

@@ -40,6 +40,7 @@ export type ProceduralModelAnimationSpec = {
 export type ProceduralModelSpec = {
   id?: string;
   path: string;
+  pathCandidates?: string[];
   position: Vector3Tuple;
   rotation: Vector3Tuple;
   scale: number;

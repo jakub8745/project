@@ -35,6 +35,10 @@ function coerceStringList(source: unknown): string[] {
   return typeof source === 'string' && source.trim() ? [source.trim()] : [];
 }
 
+export function getXrAutoplayAudioIds(audioConfig: AudioMeshConfig[] | undefined): string[] {
+  return audioConfig?.filter((entry) => entry.autoplayOnXrSessionStart === true).map((entry) => entry.id) || [];
+}
+
 function sanitizeSubtitleCues(source: unknown): AudioSubtitleCue[] | undefined {
   if (!Array.isArray(source)) {
     return undefined;
@@ -131,6 +135,9 @@ export function parseAudioConfig(config: ExhibitConfig | null): AudioMeshConfig[
         url,
         ipfsUrl,
         autoplayOnEnter: typeof record.autoplayOnEnter === 'boolean' ? record.autoplayOnEnter : undefined,
+        autoplayOnXrSessionStart: typeof record.autoplayOnXrSessionStart === 'boolean'
+          ? record.autoplayOnXrSessionStart
+          : undefined,
         autoplayDelayMs: typeof record.autoplayDelayMs === 'number'
           ? record.autoplayDelayMs
           : typeof record.autoplayDelaySeconds === 'number'
@@ -224,25 +231,7 @@ export function useSceneAudioRouting(config: ExhibitConfig | null) {
     };
   }, [audioConfig]);
 
-  const xrIntroAudioIds = useMemo(() => {
-    if (!Array.isArray(audioConfig) || audioConfig.length === 0) {
-      return [];
-    }
-    return audioConfig
-      .filter((entry) => {
-        const searchable = [
-          entry.id,
-          entry.name,
-          entry.labelPlaying,
-          entry.labelPaused
-        ]
-          .filter((value): value is string => typeof value === 'string')
-          .join(' ')
-          .toLowerCase();
-        return searchable.includes('intro');
-      })
-      .map((entry) => entry.id);
-  }, [audioConfig]);
+  const xrAutoplayAudioIds = useMemo(() => getXrAutoplayAudioIds(audioConfig), [audioConfig]);
 
   const subtitleLanguageOptions = useMemo<AudioSubtitleLanguageOption[]>(() => {
     const options = new Map<string, AudioSubtitleLanguageOption>();
@@ -292,7 +281,7 @@ export function useSceneAudioRouting(config: ExhibitConfig | null) {
   return {
     audioConfig,
     audioControlLabels,
-    xrIntroAudioIds,
+    xrAutoplayAudioIds,
     subtitleLanguageOptions,
     subtitleLanguage,
     setSubtitleLanguage,

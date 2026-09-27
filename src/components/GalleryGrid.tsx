@@ -1,6 +1,8 @@
 // src/components/GalleryGrid.tsx
-import { FC, useRef, useEffect } from 'react';
-import { GALLERIES, GalleryItem } from '../data/galleryConfig';
+import { FC, useEffect, useRef, useState } from 'react';
+import { GALLERIES, GalleryItem, resolveGalleryConfigUrl } from '../data/galleryConfig';
+import { fetchManifest } from '../config/manifestRepository';
+import { useInViewport } from '../hooks/useInViewport';
 import Tile from './Tile.tsx';
 
 export interface GalleryGridProps {
@@ -9,6 +11,47 @@ export interface GalleryGridProps {
   // Keep these optional if other parts of the app still pass them
   sidebarOpen?: boolean;
   onToggleSidebar?: () => void;
+}
+
+function GalleryTileContent({ item, activePreview }: { item: GalleryItem; activePreview: boolean }) {
+  const [metadataRef, inViewport] = useInViewport<HTMLDivElement>(0.1);
+  const [metadata, setMetadata] = useState<{ title: string; description: string }>({
+    title: item.slug,
+    description: ''
+  });
+  const configUrl = typeof window !== 'undefined'
+    ? resolveGalleryConfigUrl(item, window.location.search)
+    : item.configUrl;
+
+  useEffect(() => {
+    if (!inViewport) return undefined;
+    const controller = new AbortController();
+    fetchManifest(configUrl, controller.signal)
+      .then((raw) => {
+        if (!raw || typeof raw !== 'object' || !('metadata' in raw)) return;
+        const info = (raw as { metadata?: unknown }).metadata;
+        if (!info || typeof info !== 'object') return;
+        const record = info as Record<string, unknown>;
+        setMetadata({
+          title: typeof record.title === 'string' && record.title.trim() ? record.title : item.slug,
+          description: typeof record.description === 'string' ? record.description : ''
+        });
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [configUrl, inViewport, item.slug]);
+
+  return (
+    <div ref={metadataRef}>
+      <Tile
+        thumbnailVideo={item.thumbnailVideo}
+        thumbnailPoster={item.thumbnailPoster}
+        title={metadata.title}
+        description={metadata.description}
+        activePreview={activePreview}
+      />
+    </div>
+  );
 }
 
 const GalleryGrid: FC<GalleryGridProps> = ({
@@ -47,13 +90,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
               if (e.key === 'Enter' || e.key === ' ') onSelect(item);
             }}
           >
-            <Tile
-              thumbnailVideo={item.thumbnailVideo}
-              thumbnailPoster={item.thumbnailPoster}
-              title={item.title}
-              description={item.description}
-              activePreview={isSelected}
-            />
+            <GalleryTileContent item={item} activePreview={isSelected} />
           </div>
         );
       })}

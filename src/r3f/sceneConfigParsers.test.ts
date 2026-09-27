@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { ExhibitConfig } from './useExhibitConfig';
-import { parseAudioConfig, parseAudioFloorRoutes } from './useSceneAudioRouting';
+import { getXrAutoplayAudioIds, parseAudioConfig, parseAudioFloorRoutes } from './useSceneAudioRouting';
 import { parseLightZoneRoutes } from './useSceneLightZones';
 import { parseSceneVideoConfig } from './useSceneVideoConfig';
+import { parseProceduralModels } from './proceduralRoom/config';
 
 describe('scene config parser hooks', () => {
   it('normalizes audio entries, subtitle tracks, and floor routes', () => {
@@ -55,6 +56,17 @@ describe('scene config parser hooks', () => {
         controlAudioIds: ['intro_audio']
       }
     ]);
+  });
+
+  it('uses an explicit audio capability declaration for XR session playback', () => {
+    const audio = parseAudioConfig({
+      audio: [
+        { id: 'intro_track', url: '/intro.mp3' },
+        { id: 'configured_track', url: '/configured.mp3', autoplayOnXrSessionStart: true }
+      ]
+    } as ExhibitConfig);
+
+    expect(getXrAutoplayAudioIds(audio)).toEqual(['configured_track']);
   });
 
   it('normalizes light zones and exposure params', () => {
@@ -121,5 +133,14 @@ describe('scene config parser hooks', () => {
       playbackMode: 'direct_modal',
       poster: '/poster.jpg'
     });
+  });
+
+  it('does not load procedural models that the manifest disables', () => {
+    const models = parseProceduralModels([
+      { id: 'temporarily-disabled-robot', path: '/robot.glb', enabled: false },
+      { id: 'active-model', path: '/model.glb' }
+    ]);
+
+    expect(models?.map((model) => model.id)).toEqual(['active-model']);
   });
 });

@@ -34,42 +34,42 @@
     },
     "ARtourPhoto01_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto01.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto01.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto02_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto02.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto02.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto03_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto03.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto03.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto04_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto04.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto04.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto05_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto05.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto05.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto06_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto06.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto06.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto07_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto07.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto07.JPG",
       "mimeType": "image/jpeg"
     },
     "ARtourPhoto08_image": {
       "kind": "image",
-      "uri": "/textures/bednarczyk/ARtourPhoto08.JPG",
+      "uri": "/textures/bednarczyk/modal_ARtourPhoto08.JPG",
       "mimeType": "image/jpeg"
     }
   },
@@ -230,56 +230,56 @@
       "kind": "image",
       "title": "ARtourPhoto01",
       "image": {
-        "asset": "ARtourPhoto03_image"
+        "asset": "ARtourPhoto01_image"
       }
     },
     "ARtourPhoto02": {
       "kind": "image",
       "title": "ARtourPhoto02",
       "image": {
-        "asset": "ARtourPhoto08_image"
+        "asset": "ARtourPhoto02_image"
       }
     },
     "ARtourPhoto03": {
       "kind": "image",
       "title": "ARtourPhoto03",
       "image": {
-        "asset": "ARtourPhoto02_image"
+        "asset": "ARtourPhoto03_image"
       }
     },
     "ARtourPhoto04": {
       "kind": "image",
       "title": "ARtourPhoto04",
       "image": {
-        "asset": "ARtourPhoto01_image"
+        "asset": "ARtourPhoto04_image"
       }
     },
     "ARtourPhoto05": {
       "kind": "image",
       "title": "ARtourPhoto05",
       "image": {
-        "asset": "ARtourPhoto07_image"
+        "asset": "ARtourPhoto05_image"
       }
     },
     "ARtourPhoto06": {
       "kind": "image",
       "title": "ARtourPhoto06",
       "image": {
-        "asset": "ARtourPhoto04_image"
+        "asset": "ARtourPhoto06_image"
       }
     },
     "ARtourPhoto07": {
       "kind": "image",
       "title": "ARtourPhoto07",
       "image": {
-        "asset": "ARtourPhoto05_image"
+        "asset": "ARtourPhoto07_image"
       }
     },
     "ARtourPhoto08": {
       "kind": "image",
       "title": "ARtourPhoto08",
       "image": {
-        "asset": "ARtourPhoto06_image"
+        "asset": "ARtourPhoto08_image"
       }
     }
   },

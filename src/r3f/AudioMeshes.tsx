@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import type { AudioListener } from 'three';
 import type { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
@@ -29,16 +29,26 @@ export function AudioMeshes({
   objectRegistry
 }: AudioMeshesProps) {
   const { scene, gl, camera } = useThree();
+  const audioConfigRef = useRef(audioConfig);
+  audioConfigRef.current = audioConfig;
+  const audioApplyKey = useMemo(() => JSON.stringify(
+    audioConfig?.map((entry) => {
+      const playbackConfig = { ...entry };
+      delete playbackConfig.subtitleTracks;
+      return playbackConfig;
+    }) || []
+  ), [audioConfig]);
 
   useEffect(() => {
-    if (!ready || !audioConfig || audioConfig.length === 0) {
+    const currentAudioConfig = audioConfigRef.current;
+    if (!ready || !currentAudioConfig || currentAudioConfig.length === 0) {
       disposeAudioMeshes();
       return;
     }
 
     applyAudioMeshesToScene({
       scene,
-      galleryConfig: { audio: audioConfig, objectRegistry },
+      galleryConfig: { audio: currentAudioConfig, objectRegistry },
       listener,
       renderer: gl,
       camera,
@@ -49,7 +59,7 @@ export function AudioMeshes({
     return () => {
       disposeAudioMeshes();
     };
-  }, [audioConfig, ready, scene, listener, gl, camera, transform, enableHelpers, objectRegistry, sceneVersion]);
+  }, [audioApplyKey, ready, scene, listener, gl, camera, transform, enableHelpers, objectRegistry, sceneVersion]);
 
   return null;
 }

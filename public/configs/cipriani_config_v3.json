@@ -85,7 +85,7 @@
       "kind": "texture",
       "mimeType": "image/ktx2",
       "id": "background_texture",
-      "sourceUri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/bg_puno85.ktx2",
       "ipfsUri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
       "preservation": {
         "status": "verification_pending",
@@ -536,7 +536,7 @@
       "kind": "audio",
       "mimeType": "audio/mpeg",
       "id": "ciprianiAudio_audio",
-      "sourceUri": "ipfs://bafybeihl4nwhv7xrazifyr7j4qoa66bjykvwlbavxxoozjehvmg7cjhn7a/KapelaCzeremosz_Kolomyjka2.mp3",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/KapelaCzeremosz_Kolomyjka2.mp3",
       "ipfsUri": "ipfs://bafybeihl4nwhv7xrazifyr7j4qoa66bjykvwlbavxxoozjehvmg7cjhn7a/KapelaCzeremosz_Kolomyjka2.mp3",
       "preservation": {
         "status": "verification_pending",
@@ -945,7 +945,9 @@
         "asset": "scene_model"
       },
       "background": {
-        "backgroundAsset": "background_texture"
+        "backgroundAsset": "background_texture",
+        "color": "#e2ddd1",
+        "intensity": 1.15
       },
       "spawn": {
         "position": [
@@ -960,10 +962,10 @@
       "renderer": {
         "toneMapping": "reinhard",
         "autoExposure": false,
-        "exposure": 1.7,
-        "exposureTarget": 1,
-        "exposureMin": 0.8,
-        "exposureMax": 2.2,
+        "exposure": 1.95,
+        "exposureTarget": 1.15,
+        "exposureMin": 0.92,
+        "exposureMax": 2.53,
         "exposureSampleInterval": 30,
         "antialias": true,
         "shadows": false,
@@ -1428,7 +1430,7 @@
         "visible": false,
         "metadata": {
           "description": "Spatial music anchor for the Cipriani exhibition.",
-          "interactionDescription": "Approaching ciprianiAudio places the visitor inside the configured spatial audio field. The runtime audio module uses loop=true, refDistance=2, rolloff=0.8, maxDistance=50, distanceModel=linear, directionalCone=[45,90,0.3], and volume=10."
+          "interactionDescription": "Approaching ciprianiAudio places the visitor inside the configured spatial audio field. The runtime audio module uses loop=true, refDistance=2, rolloff=0.8, maxDistance=50, distanceModel=linear, directionalCone=[45,90,0.3], and volume=0.7."
         }
       }
     },
@@ -1450,7 +1452,7 @@
               90,
               0.3
             ],
-            "volume": 1
+            "volume": 0.7
           }
         ]
       }
@@ -1462,12 +1464,12 @@
           "ambientIntensity": 4.5
         },
         "params": {
-          "exposure": 1.7,
+          "exposure": 1.95,
           "autoExposure": false,
           "toneMapping": "reinhard",
-          "exposureTarget": 1,
-          "exposureMin": 0.8,
-          "exposureMax": 2.2,
+          "exposureTarget": 1.15,
+          "exposureMin": 0.92,
+          "exposureMax": 2.53,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1,
@@ -2591,7 +2593,7 @@
           90,
           0.3
         ],
-        "volume": 1
+        "volume": 0.7
       }
     }
   ],

@@ -338,6 +338,7 @@ function isColliderMeshIncluded(object: Mesh, objectRegistry?: ObjectRegistry): 
 
 function ExhibitModel({
   modelPath,
+  modelPathCandidates,
   position,
   rotation,
   scale,
@@ -348,6 +349,7 @@ function ExhibitModel({
   lifecycleId
 }: {
   modelPath: string;
+  modelPathCandidates?: string[];
   position: Vector3Tuple;
   rotation: Vector3Tuple;
   scale: number;
@@ -358,7 +360,7 @@ function ExhibitModel({
   lifecycleId: string;
 }) {
   const loadTargets = useMemo(() => [modelPath], [modelPath]);
-  const gltfResults = useConfiguredGLTFs(loadTargets);
+  const gltfResults = useConfiguredGLTFs(loadTargets, [modelPathCandidates || []]);
   const mainGltf = gltfResults[0] as GLTF | undefined;
   const camera = useThree((state) => state.camera);
   const [buildError, setBuildError] = useState<Error | null>(null);
@@ -571,6 +573,9 @@ function R3FViewerInner({
   onPhysicsCollision
 }: R3FViewerProps & { transitionId: string; onRetry: () => void }) {
   const modelPath = config?.modelPath;
+  const modelPathCandidates = Array.isArray(config?.modelPathCandidates)
+    ? config.modelPathCandidates.filter((value): value is string => typeof value === 'string')
+    : modelPath ? [modelPath] : [];
   const proceduralRoom = config?.proceduralRoom as Record<string, unknown> | undefined;
   const useProceduralRoom = !modelPath && Boolean(proceduralRoom);
   const objectRegistry = useMemo(
@@ -695,8 +700,7 @@ function R3FViewerInner({
       bitsPerSecond:
         typeof thumbnailCaptureRecord?.bitsPerSecond === 'number' ? thumbnailCaptureRecord.bitsPerSecond : 6_000_000,
       filename:
-        typeof thumbnailCaptureRecord?.filename === 'string' ? thumbnailCaptureRecord.filename : 'thumbnail_capture.webm',
-      preset: typeof thumbnailCaptureRecord?.preset === 'string' ? thumbnailCaptureRecord.preset : undefined
+        typeof thumbnailCaptureRecord?.filename === 'string' ? thumbnailCaptureRecord.filename : 'thumbnail_capture.webm'
     };
   }, [thumbnailCaptureRecord]);
   const thumbnailModeActive = getBooleanFromQuery('thumbnailMode') || getBooleanFromQuery('recordThumb');
@@ -819,7 +823,7 @@ function R3FViewerInner({
   const {
     audioConfig,
     audioControlLabels,
-    xrIntroAudioIds,
+    xrAutoplayAudioIds,
     subtitleLanguageOptions,
     subtitleLanguage,
     setSubtitleLanguage,
@@ -834,7 +838,7 @@ function R3FViewerInner({
     exitVrSession
   } = useXrSessionControls({
     renderer,
-    introAudioIds: xrIntroAudioIds
+    autoplayAudioIds: xrAutoplayAudioIds
   });
 
   const lightDefaults = useMemo<Omit<SceneLightSettings, 'transitionSeconds'>>(() => ({
@@ -930,11 +934,16 @@ function R3FViewerInner({
         <RendererTuning highQualityMode={highQualityMode} maxDpr={effectiveMaxDpr} params={activeRendererParams} />
         <SceneBackground
           textureUrl={config?.backgroundTexture}
+          sourceCandidates={Array.isArray(config?.backgroundTextureCandidates) ? config.backgroundTextureCandidates as string[] : undefined}
           blurriness={backgroundBlurriness}
           intensity={backgroundIntensity}
           fallbackColorHex={thumbnailBackgroundColor}
         />
-        <SceneEnvironment textureUrl={environmentTexture} intensity={environmentIntensity} />
+        <SceneEnvironment
+          textureUrl={environmentTexture}
+          sourceCandidates={Array.isArray(config?.environmentTextureCandidates) ? config.environmentTextureCandidates as string[] : undefined}
+          intensity={environmentIntensity}
+        />
         <SceneLightRig settings={lightRigSettings} />
 
 
@@ -942,6 +951,7 @@ function R3FViewerInner({
           {!sceneLoadArmed ? null : modelPath ? (
             <ExhibitModel
               modelPath={modelPath}
+              modelPathCandidates={modelPathCandidates}
               position={position}
               rotation={rotation}
               scale={scale}
@@ -1115,6 +1125,15 @@ export function R3FViewer(props: R3FViewerProps) {
   );
   const retryModelPath = props.config?.modelPath;
   const retryConfig = props.onRetryConfig;
+  const handleSceneError = useCallback((error: Error) => {
+    console.error('[SceneLoader]', {
+      event: 'scene_failed_permanently',
+      exhibitId: props.config?.id,
+      configUrl: props.configUrl,
+      message: error.message
+    });
+    setSceneError(error);
+  }, [props.config?.id, props.configUrl]);
   const retry = useCallback(() => {
     if (retryModelPath) clearConfiguredGLTF(retryModelPath);
     setSceneError(null);
@@ -1129,7 +1148,7 @@ export function R3FViewer(props: R3FViewerProps) {
 
   return (
     <MaterialModalProvider>
-      <SceneErrorBoundary key={transitionId} onError={setSceneError}>
+      <SceneErrorBoundary key={transitionId} onError={handleSceneError}>
         <R3FViewerInner key={transitionId} {...props} transitionId={transitionId} onRetry={retry} />
       </SceneErrorBoundary>
       {(sceneError || failurePreview) && (

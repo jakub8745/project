@@ -68,9 +68,15 @@ export function useSceneInteractionMetadata(config: ExhibitConfig | null) {
       const author = typeof record.author === 'string' ? record.author : undefined;
       const description = typeof record.description === 'string' ? record.description : undefined;
       const imagePath = typeof record.imagePath === 'string' ? record.imagePath : undefined;
+      const imageFallbackPaths = Array.isArray(record.imageFallbackPaths)
+        ? record.imageFallbackPaths.filter((path): path is string => typeof path === 'string')
+        : undefined;
       const oracleImagePath = typeof record.oracleImagePath === 'string' ? record.oracleImagePath : undefined;
       const ipfsImagePath = typeof record.ipfsImagePath === 'string' ? record.ipfsImagePath : undefined;
       const pdfPath = typeof record.pdfPath === 'string' ? record.pdfPath : undefined;
+      const pdfFallbackPaths = Array.isArray(record.pdfFallbackPaths)
+        ? record.pdfFallbackPaths.filter((path): path is string => typeof path === 'string')
+        : undefined;
       const pdfOpenPath = typeof record.pdfOpenPath === 'string' ? record.pdfOpenPath : undefined;
       const pdfOpenLabel = typeof record.pdfOpenLabel === 'string' ? record.pdfOpenLabel : undefined;
       const pdfExternalUrl = typeof record.pdfExternalUrl === 'string' ? record.pdfExternalUrl : undefined;
@@ -88,9 +94,11 @@ export function useSceneInteractionMetadata(config: ExhibitConfig | null) {
         ...(author ? { author } : {}),
         ...(description ? { description } : {}),
         ...(imagePath ? { imagePath } : {}),
+        ...(imageFallbackPaths ? { imageFallbackPaths } : {}),
         ...(oracleImagePath ? { oracleImagePath } : {}),
         ...(ipfsImagePath ? { ipfsImagePath } : {}),
         ...(pdfPath ? { pdfPath } : {}),
+        ...(pdfFallbackPaths ? { pdfFallbackPaths } : {}),
         ...(pdfOpenPath ? { pdfOpenPath } : {}),
         ...(pdfOpenLabel ? { pdfOpenLabel } : {}),
         ...(pdfExternalUrl ? { pdfExternalUrl } : {}),

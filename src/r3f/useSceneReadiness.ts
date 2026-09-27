@@ -51,9 +51,12 @@ export function useSceneReadiness({
 
   useEffect(() => {
     if (!sceneLoadArmed || sceneAssetsReady || loading || error) return undefined;
-    const timeout = window.setTimeout(() => setTimedOut(true), 30_000);
+    const timeout = window.setTimeout(() => {
+      console.error('[SceneLoader]', { event: 'scene_initialization_timeout', configUrl, transitionId, timeoutMs: 30_000 });
+      setTimedOut(true);
+    }, 30_000);
     return () => window.clearTimeout(timeout);
-  }, [error, loading, sceneAssetsReady, sceneLoadArmed, transitionId]);
+  }, [configUrl, error, loading, sceneAssetsReady, sceneLoadArmed, transitionId]);
 
   useEffect(() => {
     if (!debugLoading) return;
@@ -61,13 +64,15 @@ export function useSceneReadiness({
     if (lastLoadingLogRef.current === loadingKey) return;
     lastLoadingLogRef.current = loadingKey;
     console.info('[SceneLoader]', {
+      event: 'scene_initialization_state',
       transitionId,
+      configUrl,
       armed: sceneLoadArmed,
       essentialAssetsReady: sceneAssetsReady,
       colliderReady: Boolean(collider),
       visitorReady: Boolean(visitor)
     });
-  }, [collider, debugLoading, sceneAssetsReady, sceneLoadArmed, transitionId, visitor]);
+  }, [collider, configUrl, debugLoading, sceneAssetsReady, sceneLoadArmed, transitionId, visitor]);
 
   const handleSceneReady = useCallback(() => {
     setSceneAssetsReady(true);

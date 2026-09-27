@@ -13,21 +13,21 @@ Start with `example_of_gallery_config_v3.json`. The schema is `public/configs/sc
 | `content.media`, `content.sidebar` | Media catalog and sidebar presentation |
 | `sceneGraph.sourceScene` | Whole scene definition, including model transforms, spawn, camera, background and renderer |
 | `sceneGraph.nodes`, `sceneGraph.modules` | Scene semantics and runtime module settings |
-| `sceneGraph.viewerProfiles.r3fCurrent` | Existing implementation settings and overrides |
+| `sceneGraph.viewerProfiles.r3fCurrent` | Settings required by the current viewer implementation |
 | `sceneGraph.proceduralRecipe` | Generated room, actors, physics and external service requirements, where applicable |
 | `interactions` | Portable behavior descriptions; retained legacy actions remain available for archival reconstruction |
-| `previews.capture.r3fCurrent` | Thumbnail/recording settings; viewer thumbnail settings retain their existing precedence |
+| `previews.capture.r3fCurrent` | Thumbnail/recording settings consumed by viewers that support capture |
 | `viewerBrief`, `preservation` | Reconstruction guidance and outstanding archival work |
 
 `portable-exhibit` supports ordinary and procedural exhibits without requiring a single canonical GLB or NFT token metadata. `portable-exhibit-nft` additionally requires the publishing fields used by the existing VectAI archive. Conversion does not certify rights or minting readiness: original NFT declarations are preserved under `provenance.legacyNft`, and newly migrated archives start with `nft.mintable: false`.
 
 ## Runtime compatibility
 
-V3 is converted to the existing runtime compiler's manifest shape. The complete source scene and all viewer extensions are retained. Explicit viewer parameters continue to override scene renderer and spawn defaults. The implementation does not start executing portable interaction records a second time; nodes, modules and the viewer profile retain their existing responsibilities.
+The manifest is the authority for exhibit identity, asset locations, scene semantics, media relationships, interactions, and preservation metadata. The viewer adapts these declarations into its current rendering and input systems. `viewerProfiles.r3fCurrent` carries implementation-specific settings; portable interaction declarations take precedence when both sections describe the same audio or lighting zone. Other viewers can interpret the portable records without reproducing the R3F profile.
 
-Both the scene and sidebar use `normalizeManifestShape` and `resolveRuntimeAsset`. They share one raw manifest request without waiting for optional subtitle/media loading. Aborting one reader does not cancel another reader's request. The selected manifest URL identifies each version's cache entry.
+Both the scene and sidebar use `normalizeManifestShape` and the shared asset resolver. They share one raw manifest request without waiting for optional subtitle/media loading. Aborting one reader does not cancel another reader's request. The selected manifest URL identifies each version's cache entry.
 
-For an IPFS asset, the first explicit fallback URL is used at runtime; absent a fallback, the old Oracle bucket convention remains available. An asset without IPFS uses its `sourceUri` first, then its fallback. Canonical IPFS references are preserved in the archival JSON. Keep fallback order deliberate. Do not rename an exhibit ID without reviewing any bucket-derived URLs.
+The global production source policy is Oracle Object Storage → canonical IPFS through the ordered BPA gateway list → other configured immutable/archive URLs → local/development paths. The manifest must declare Oracle locations in `sourceUri` or `fallbackUris`; the viewer does not derive an Oracle bucket from the exhibit ID or guess a filename. Canonical IPFS references remain intact in the archive JSON. The shared resolver supplies browser gateway URLs and per-asset loaders try those sources in order with bounded waits. Model failure produces a retryable scene error; optional background, environment, image, audio, subtitle, and video failures do not prevent scene navigation.
 
 ## Conversion and validation
 
@@ -86,6 +86,6 @@ Current implementation evidence and remaining acceptance work are recorded in [m
 
 - Bednarczyk's v3 ID is `bednarczyk`; its v2 ID remains `dystopia`. Its IPFS-backed image/audio assets explicitly retain their existing Dystopia storage locations.
 - Tom's exhibit retains manifest ID `proposedlayout` and gallery slug `videopoetry`.
-- The existing VectAI v3 portable `main_room_light` description differs from its active viewer profile. Migration retains the curated file and the current viewer behavior; the validator reports the discrepancy for archival review.
+- VECT_AI's portable `main_room_light` values still differ from its `r3fCurrent` profile. The runtime now follows the portable interaction values; the validator continues to report the manifest-level discrepancy for archival review.
 - The generated room's live chat and persisted prints depend on the configured API. Browser smoke checks do not send messages or create prints. Optional service failures must not prevent room entry.
 - Retiring v2 requires a separate decision after deployment observation, hardware checks and verification of external consumers. This migration does not remove it.

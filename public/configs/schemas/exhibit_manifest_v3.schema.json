@@ -135,7 +135,8 @@
           },
           "sourceUri": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "Manifest-declared source URI. It may identify a local development file, Oracle object, or other archive source. The viewer never derives an object location from the exhibit ID or filename."
           },
           "ipfsUri": {
             "anyOf": [
@@ -160,6 +161,7 @@
           },
           "fallbackUris": {
             "type": "array",
+            "description": "Additional manifest-declared source URIs. BPA production resolution prioritizes configured Oracle Object Storage, then the canonical IPFS CID through the shared gateway list, then other configured immutable/archive sources, then local development paths.",
             "items": {
               "type": "string"
             }
@@ -328,7 +330,29 @@
           }
         },
         "modules": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "audio": {
+              "type": "object",
+              "properties": {
+                "instances": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "autoplayOnXrSessionStart": {
+                        "type": "boolean",
+                        "description": "Whether the viewer should start this audio instance when an immersive XR session begins."
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
         },
         "viewerProfiles": {
           "type": "object",

@@ -87,7 +87,9 @@
       "id": "ARtourPhoto01_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto01.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto01.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto01.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto01.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -99,7 +101,9 @@
       "id": "ARtourPhoto02_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto02.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto02.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto02.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto02.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -111,7 +115,9 @@
       "id": "ARtourPhoto03_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto03.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto03.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto03.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto03.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -123,7 +129,9 @@
       "id": "ARtourPhoto04_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto04.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto04.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto04.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto04.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -135,7 +143,9 @@
       "id": "ARtourPhoto05_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto05.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto05.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto05.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto05.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -147,7 +157,9 @@
       "id": "ARtourPhoto06_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto06.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto06.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto06.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto06.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -159,7 +171,9 @@
       "id": "ARtourPhoto07_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto07.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto07.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto07.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto07.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -171,7 +185,9 @@
       "id": "ARtourPhoto08_image",
       "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto08.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto08.JPG",
-      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto08.JPG"],
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto08.JPG"
+      ],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -281,7 +297,9 @@
         "asset": "scene_model"
       },
       "background": {
-        "backgroundAsset": "background_texture"
+        "backgroundAsset": "background_texture",
+        "color": "#e2ddd1",
+        "intensity": 1.15
       },
       "spawn": {
         "position": [
@@ -296,10 +314,10 @@
       "renderer": {
         "toneMapping": "neutral",
         "autoExposure": false,
-        "exposure": 1.35,
-        "exposureTarget": 1.2,
-        "exposureMin": 1,
-        "exposureMax": 1.6,
+        "exposure": 1.55,
+        "exposureTarget": 1.38,
+        "exposureMin": 1.15,
+        "exposureMax": 1.84,
         "exposureSampleInterval": 30
       }
     },
@@ -434,12 +452,12 @@
           "antialias": true,
           "shadows": false,
           "logarithmicDepthBuffer": false,
-          "exposure": 1.35,
+          "exposure": 1.55,
           "autoExposure": false,
           "toneMapping": "neutral",
-          "exposureTarget": 1.2,
-          "exposureMin": 1,
-          "exposureMax": 1.6,
+          "exposureTarget": 1.38,
+          "exposureMin": 1.15,
+          "exposureMax": 1.84,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1.2,

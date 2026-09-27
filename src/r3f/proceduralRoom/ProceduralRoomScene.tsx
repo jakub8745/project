@@ -729,6 +729,7 @@ type ProceduralModelAnimationSpec = {
 type ProceduralModelSpec = {
   id?: string;
   path: string;
+  pathCandidates?: string[];
   position: Vector3Tuple;
   rotation: Vector3Tuple;
   scale: number;
@@ -942,7 +943,8 @@ export function ProceduralRoomModels({
   objectRegistry?: ObjectRegistry;
 }) {
   const modelPaths = useMemo(() => models.map((item) => item.path), [models]);
-  const gltfs = useConfiguredGLTFs(modelPaths);
+  const modelPathCandidates = useMemo(() => models.map((item) => item.pathCandidates || [item.path]), [models]);
+  const gltfs = useConfiguredGLTFs(modelPaths, modelPathCandidates);
   const modelRefs = useRef<Map<number, Group>>(new Map());
   const sceneClones = useMemo(() => gltfs.map((gltf, index) => {
     if (!gltf?.scene) return null;

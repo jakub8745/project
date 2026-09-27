@@ -38,6 +38,18 @@ export function normalizeManifestShape(raw: unknown): ExhibitConfigV2 {
   const previews = source.previews ? record(source.previews, 'previews') : {};
   const capture = previews.capture ? record(previews.capture, 'previews.capture') : {};
   const provenance = source.provenance ? record(source.provenance, 'provenance') : {};
+  const portableInteractions = Array.isArray(source.interactions) ? source.interactions : [];
+  const portableRoutes = (type: string) => portableInteractions
+    .filter((entry): entry is ManifestRecord => Boolean(entry && typeof entry === 'object' && !Array.isArray(entry)))
+    .filter((entry) => entry.type === type && entry.behavior && typeof entry.behavior === 'object')
+    .map((entry) => ({
+      id: entry.id,
+      description: entry.description,
+      surfaces: Array.isArray(entry.targets) ? entry.targets : [],
+      ...(entry.behavior as ManifestRecord)
+    }));
+  const portableAudioZones = portableRoutes('location_audio_route');
+  const portableLightZones = portableRoutes('location_light_profile');
   const runtimeAssets = Object.fromEntries(Object.entries(assets).map(([id, value]) => {
     const asset = record(value, `assets.${id}`);
     const fallbacks = Array.isArray(asset.fallbackUris)
@@ -57,7 +69,15 @@ export function normalizeManifestShape(raw: unknown): ExhibitConfigV2 {
     media: content.media,
     sidebar: content.sidebar,
     modules: graph.modules,
-    viewer: { ...profile, ...viewer },
+    // Portable route declarations describe exhibit behavior. Keep the current
+    // viewer profile as a compatibility fallback for manifests without them.
+    // Rendering/controller implementation parameters remain viewer-profile data.
+    viewer: {
+      ...profile,
+      ...viewer,
+      ...(portableAudioZones.length ? { audioZones: portableAudioZones } : {}),
+      ...(portableLightZones.length ? { lightZones: portableLightZones } : {})
+    },
     interactions: source.interactions,
     thumbnailCapture: capture.r3fCurrent,
     metadataExtras: provenance.legacyMetadataExtras,

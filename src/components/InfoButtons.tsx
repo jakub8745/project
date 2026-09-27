@@ -1,9 +1,9 @@
 import { fetchManifest } from '../config/manifestRepository';
 import { normalizeManifestShape } from '../config/manifestShape';
-import { resolveRuntimeAsset } from '../config/assetResolution';
+import { resolveRuntimeAssetCandidates } from '../config/assetResolution';
 import { useState, useEffect, FC } from 'react';
 import { createPortal } from 'react-dom';
-import { isIpfsUri, resolveOracleUrl, getFilename } from '../utils/ipfs';
+import { isIpfsUri, getFilename } from '../utils/ipfs';
 import { COMMON_ICONS } from '../data/galleryConfig';
 import { normalizeConfigUrl, toSafeExternalUrl } from '../utils/url';
 import { sanitizeSidebarHtml } from '../utils/sanitizeHtml';
@@ -73,16 +73,14 @@ function normalizePublicAssetUrl(rawUrl: string | undefined): string | undefined
   if (trimmed.startsWith('public/')) {
     return `/${trimmed.slice('public/'.length)}`;
   }
+  if (isIpfsUri(trimmed)) return resolveRuntimeAssetCandidates({ sourceUri: trimmed })[0];
   return normalizeConfigUrl(trimmed);
 }
 
 function resolveConfigAsset(cfg: ExhibitConfigResponse, assetId: string | undefined): string | undefined {
   if (!assetId) return undefined;
   const asset = cfg.assets?.[assetId];
-  const rawUrl = resolveRuntimeAsset(asset, cfg.id);
-  if (!rawUrl) return undefined;
-  if (isIpfsUri(rawUrl) && cfg.id) return resolveOracleUrl(rawUrl, cfg.id);
-  return normalizePublicAssetUrl(rawUrl);
+  return normalizePublicAssetUrl(resolveRuntimeAssetCandidates(asset)[0]);
 }
 
 function resolveSidebarMediaContent(cfg: ExhibitConfigResponse, mediaId: string | undefined): string | undefined {
@@ -157,7 +155,6 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
         if (!cfg.sidebar?.items) {
           throw new Error(`No sidebar.items in ${fetchUrl}`);
         }
-        const bucket = cfg.id;
         const sidebarItems = cfg.sidebar.items;
         // Keep gallery-specific sidebar items, excluding the global help item
         // because help content is shown in the startup modal.
@@ -202,7 +199,8 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
           let overrideIcon: string | undefined;
           if (item.id === 'info-icon') overrideIcon = COMMON_ICONS.info;
           // Also map by filename for shared assets regardless of id
-          const base = baseIcon ? getFilename(baseIcon) : '';
+          const resolvedBaseIcon = normalizePublicAssetUrl(baseIcon);
+          const base = resolvedBaseIcon ? getFilename(resolvedBaseIcon) : '';
           if (!overrideIcon) {
             if (base === 'logo_BPA_256px.gif') overrideIcon = COMMON_ICONS.logoBpa;
             else if (base === 'info.png') overrideIcon = COMMON_ICONS.info;
@@ -212,11 +210,7 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
             overrideIcon = COMMON_ICONS.logoBpa;
           }
 
-          const resolvedIcon = overrideIcon
-            ? overrideIcon
-            : baseIcon && isIpfsUri(baseIcon) && bucket
-            ? resolveOracleUrl(baseIcon, bucket)
-            : baseIcon;
+          const resolvedIcon = overrideIcon || resolvedBaseIcon;
 
           return {
             id: item.id,

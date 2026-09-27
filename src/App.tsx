@@ -33,12 +33,6 @@ const BlobChatWindow = lazy(async () => {
   return { default: module.default };
 });
 
-interface Gallery {
-  slug: string;
-  configUrl: string;
-  title: string;
-}
-
 interface PageMetadata {
   title: string;
   description: string;
@@ -104,9 +98,8 @@ function applyPageMetadata(metadata: PageMetadata) {
 function metadataFromGallery(gallery: GalleryItem | null | undefined): PageMetadata {
   if (!gallery) return DEFAULT_PAGE_METADATA;
   return {
-    title: gallery.title || DEFAULT_PAGE_METADATA.title,
-    description: gallery.description || DEFAULT_PAGE_METADATA.description,
-    ogImage: gallery.ogImage || gallery.thumbnailPoster || DEFAULT_PAGE_METADATA.ogImage,
+    ...DEFAULT_PAGE_METADATA,
+    ogImage: gallery.thumbnailPoster || DEFAULT_PAGE_METADATA.ogImage,
     ogImageWidth: DEFAULT_PAGE_METADATA.ogImageWidth,
     ogImageHeight: DEFAULT_PAGE_METADATA.ogImageHeight
   };
@@ -235,7 +228,7 @@ export default function App() {
   }, [findGalleryBySlug]);
 
   // On gallery click, update hash and close sidebar
-  const handleGallerySelect = useCallback((gallery: Gallery) => {
+  const handleGallerySelect = useCallback((gallery: GalleryItem) => {
     window.location.hash = gallery.slug;
   }, []);
 

@@ -2,13 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, typ
 import { createPortal } from 'react-dom';
 import { MaterialModalContext, type MaterialModalContextValue } from './materialModalContext';
 import { InlineFormattedText } from '../components/InlineFormattedText';
+import { resolveIpfsUriCandidates } from '../config/assetResolution';
 
-const ipfsGateways = [
-  'https://ipfs.io/ipfs/',
-  'https://cloudflare-ipfs.com/ipfs/',
-  'https://gateway.pinata.cloud/ipfs/',
-  'https://dweb.link/ipfs/'
-];
+const IMAGE_SOURCE_TIMEOUT_MS = 10_000;
 
 export type ModalImageMeta = {
   title: string;
@@ -16,9 +12,11 @@ export type ModalImageMeta = {
   author?: string;
   img?: { src: string };
   imagePath?: string;
+  imageFallbackPaths?: string[];
   oracleImagePath?: string;
   ipfsImagePath?: string;
   pdfPath?: string;
+  pdfFallbackPaths?: string[];
   pdfOpenPath?: string;
   pdfOpenLabel?: string;
   pdfExternalUrl?: string;
@@ -71,12 +69,6 @@ const defaultState = (): ModalState => ({
   message: null
 });
 
-function ipfsToGateway(ipfsUrl: string, gatewayIndex: number) {
-  const cid = ipfsUrl.replace(/^ipfs:\/\//, '');
-  const gateway = ipfsGateways[gatewayIndex] ?? ipfsGateways[0];
-  return `${gateway}${cid}`;
-}
-
 function isZenodoUrl(url: string) {
   try {
     return new URL(url, window.location.origin).hostname === 'zenodo.org';
@@ -101,6 +93,8 @@ function dispatchMaterialModalState(open: boolean) {
 export function MaterialModalProvider({ children, initialImages }: MaterialModalProviderProps) {
   const [images, setImagesState] = useState<ModalImageMap | undefined>(initialImages);
   const [state, setState] = useState<ModalState>(() => defaultState());
+  const modalStateRef = useRef(state);
+  modalStateRef.current = state;
   const imageCache = useRef(new Map<string, string>());
   const activeNameRef = useRef<string | null>(null);
   const imageWidthsRef = useRef(new Map<string, number>());
@@ -108,6 +102,44 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
   const contentRef = useRef<HTMLDivElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const pdfLoadTimeoutRef = useRef<number | null>(null);
+
+  const advanceImageSource = useCallback((source: string, reason: 'load_error' | 'timeout') => {
+    const current = modalStateRef.current;
+    if (
+      !current.isOpen ||
+      current.mediaType !== 'image' ||
+      current.status !== 'loading' ||
+      current.imageSrc !== source
+    ) return;
+
+    console.warn('[AssetLoader] Image source failed; trying the next configured source.', {
+      assetId: current.name,
+      reason,
+      source
+    });
+    setState((prev) => {
+      if (
+        !prev.isOpen ||
+        prev.mediaType !== 'image' ||
+        prev.status !== 'loading' ||
+        prev.imageSrc !== source
+      ) return prev;
+      if (prev.pendingSources.length > 0) {
+        const [nextSource, ...rest] = prev.pendingSources;
+        return {
+          ...prev,
+          imageSrc: nextSource,
+          pendingSources: rest,
+          message: 'Loading image…'
+        };
+      }
+      return {
+        ...prev,
+        status: 'error',
+        message: '⚠️ Could not load image.'
+      };
+    });
+  }, []);
 
   const setImages = useCallback((map: ModalImageMap | undefined) => {
     setImagesState(map);
@@ -229,6 +261,22 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     };
   }, [state.isOpen, state.mediaType, state.pdfSrc, state.pdfEmbedBlocked]);
 
+  useEffect(() => {
+    if (
+      !state.isOpen ||
+      state.mediaType !== 'image' ||
+      state.status !== 'loading' ||
+      !state.imageSrc
+    ) return undefined;
+
+    const source = state.imageSrc;
+    const timeout = window.setTimeout(
+      () => advanceImageSource(source, 'timeout'),
+      IMAGE_SOURCE_TIMEOUT_MS
+    );
+    return () => window.clearTimeout(timeout);
+  }, [advanceImageSource, state.imageSrc, state.isOpen, state.mediaType, state.status]);
+
   const showModal = useCallback((payload: ModalOpenPayload) => {
     const name = typeof payload?.name === 'string' ? payload.name : undefined;
     if (!name) return;
@@ -256,8 +304,10 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     const sources: string[] = [];
     const addSource = (src?: string | null) => {
       if (!src) return;
-      if (sources.includes(src)) return;
-      sources.push(src);
+      const resolved = src.startsWith('ipfs://') ? resolveIpfsUriCandidates(src) : [src];
+      resolved.forEach((candidate) => {
+        if (!sources.includes(candidate)) sources.push(candidate);
+      });
     };
 
     if (hasPdf) {
@@ -269,15 +319,13 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
         addSource(meta.oraclePdfPath);
       }
 
+      meta.pdfFallbackPaths?.forEach(addSource);
+
       if (pdfIpfsUrl) {
-        for (let i = 0; i < ipfsGateways.length; i += 1) {
-          addSource(ipfsToGateway(pdfIpfsUrl, i));
-        }
+        addSource(pdfIpfsUrl);
       }
 
-      if (pdfDirectUrl && pdfDirectUrl.startsWith('ipfs://')) {
-        addSource(pdfDirectUrl);
-      }
+      if (pdfDirectUrl && pdfDirectUrl.startsWith('ipfs://')) addSource(pdfDirectUrl);
     } else {
       addSource(cachedSrc);
 
@@ -290,17 +338,14 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
         addSource(meta.oracleImagePath);
       }
 
+      meta.imageFallbackPaths?.forEach(addSource);
+
       const ipfsUrl = meta.ipfsImagePath ?? (directUrl?.startsWith('ipfs://') ? directUrl : undefined);
       if (ipfsUrl) {
-        for (let i = 0; i < ipfsGateways.length; i += 1) {
-          addSource(ipfsToGateway(ipfsUrl, i));
-        }
+        addSource(ipfsUrl);
       }
 
-      if (directUrl && directUrl.startsWith('ipfs://')) {
-        // Ensure we try the raw ipfs URI last in case a gateway handler exists
-        addSource(directUrl);
-      }
+      if (directUrl && directUrl.startsWith('ipfs://')) addSource(directUrl);
     }
 
     const [initialSource, ...nextSources] = sources;
@@ -405,29 +450,13 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     [setImagesState, syncModalWidth]
   );
 
-  const handleImageError = useCallback(() => {
-    const currentName = activeNameRef.current;
-    if (!currentName) return;
-    setState((prev) => {
-      if (prev.name !== currentName) return prev;
-      if (prev.pendingSources.length > 0) {
-        const [nextSource, ...rest] = prev.pendingSources;
-        return {
-          ...prev,
-          imageSrc: prev.mediaType === 'image' ? nextSource : prev.imageSrc,
-          pdfSrc: prev.mediaType === 'pdf' ? nextSource : prev.pdfSrc,
-          pendingSources: rest,
-          status: prev.mediaType === 'pdf' ? 'ready' : 'loading',
-          message: prev.mediaType === 'pdf' ? null : 'Loading image…'
-        };
-      }
-      return {
-        ...prev,
-        status: 'error',
-        message: `⚠️ Could not load ${prev.mediaType === 'pdf' ? 'PDF' : 'image'}.`
-      };
-    });
-  }, []);
+  const handleImageError = useCallback((event: SyntheticEvent<HTMLImageElement>) => {
+    const failedSource =
+      event.currentTarget.getAttribute('src') ||
+      event.currentTarget.currentSrc ||
+      event.currentTarget.src;
+    if (failedSource) advanceImageSource(failedSource, 'load_error');
+  }, [advanceImageSource]);
 
   const handlePdfLoad = useCallback(() => {
     if (pdfLoadTimeoutRef.current !== null) {

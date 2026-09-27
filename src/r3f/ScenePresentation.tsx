@@ -11,7 +11,6 @@ import {
   SpotLight,
   SRGBColorSpace,
   Texture,
-  TextureLoader,
   Vector3,
   type Vector3Tuple,
   type WebGLRenderer
@@ -20,6 +19,7 @@ import {
 import { getKtx2Loader } from '../loaders/ktx2Loader';
 
 const DEFAULT_BACKGROUND = '#111827';
+const BACKGROUND_SOURCE_TIMEOUT_MS = 8_000;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
 
 export type SceneLightSettings = {
@@ -61,25 +61,59 @@ function ensureKtx2Support(renderer: WebGLRenderer) {
   }
 }
 
-async function loadEquirectTexture(textureUrl: string, gl: WebGLRenderer): Promise<Texture> {
-  let texture: Texture;
-  const isKtx2 = textureUrl.toLowerCase().endsWith('.ktx2');
-  if (isKtx2) {
-    ensureKtx2Support(gl);
-    texture = await getKtx2Loader(gl).loadAsync(textureUrl);
-  } else {
-    const loader = new TextureLoader();
-    texture = await loader.loadAsync(textureUrl);
+async function loadEquirectTexture(textureUrls: string[], gl: WebGLRenderer): Promise<Texture> {
+  let lastError: unknown;
+  for (let index = 0; index < textureUrls.length; index += 1) {
+    const textureUrl = textureUrls[index];
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), BACKGROUND_SOURCE_TIMEOUT_MS);
+    try {
+      const isKtx2 = textureUrl.toLowerCase().split(/[?#]/, 1)[0].endsWith('.ktx2');
+      const response = await fetch(textureUrl, { signal: controller.signal });
+      if (!response.ok) {
+        throw new Error(`Background source returned HTTP ${response.status}: ${textureUrl}`);
+      }
+
+      let texture: Texture;
+      if (isKtx2) {
+        ensureKtx2Support(gl);
+        const buffer = await response.arrayBuffer();
+        clearTimeout(timeout);
+        texture = await new Promise<Texture>((resolve, reject) => {
+          getKtx2Loader(gl).parse(buffer, resolve, reject);
+        });
+      } else {
+        const blob = await response.blob();
+        clearTimeout(timeout);
+        const bitmap = await createImageBitmap(blob);
+        texture = new Texture(bitmap);
+        texture.needsUpdate = true;
+        texture.addEventListener('dispose', () => bitmap.close());
+      }
+      texture.colorSpace = SRGBColorSpace;
+      texture.mapping = EquirectangularReflectionMapping;
+      if (!(texture as Texture & { isCompressedTexture?: boolean }).isCompressedTexture) {
+        texture.magFilter = LinearFilter;
+        texture.minFilter = LinearMipmapLinearFilter;
+        texture.generateMipmaps = true;
+      }
+      texture.needsUpdate = true;
+      if (index > 0) {
+        console.info('[AssetLoader] Background/environment fallback source loaded.', { requestedSource: textureUrls[0], selectedSource: textureUrl });
+      }
+      return texture;
+    } catch (error) {
+      lastError = controller.signal.aborted
+        ? new Error(`Background source timed out after ${BACKGROUND_SOURCE_TIMEOUT_MS / 1000}s: ${textureUrl}`)
+        : error;
+      if (index < textureUrls.length - 1) {
+        console.warn('[AssetLoader] Background/environment source failed; trying the next configured source.', { requestedSource: textureUrls[0], failedSource: textureUrl, error: lastError });
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
   }
-  texture.colorSpace = SRGBColorSpace;
-  texture.mapping = EquirectangularReflectionMapping;
-  if (!(texture as Texture & { isCompressedTexture?: boolean }).isCompressedTexture) {
-    texture.magFilter = LinearFilter;
-    texture.minFilter = LinearMipmapLinearFilter;
-    texture.generateMipmaps = true;
-  }
-  texture.needsUpdate = true;
-  return texture;
+  throw lastError instanceof Error ? lastError : new Error('All configured background/environment sources failed.');
 }
 
 type SharedEquirectTextureEntry = {
@@ -99,7 +133,7 @@ function getSharedEquirectTextureMap(gl: WebGLRenderer): Map<string, SharedEquir
   return cache;
 }
 
-async function acquireSharedEquirectTexture(textureUrl: string, gl: WebGLRenderer): Promise<Texture> {
+async function acquireSharedEquirectTexture(textureUrl: string, gl: WebGLRenderer, sourceCandidates: string[] = []): Promise<Texture> {
   const cache = getSharedEquirectTextureMap(gl);
   let entry = cache.get(textureUrl);
   if (!entry) {
@@ -117,7 +151,8 @@ async function acquireSharedEquirectTexture(textureUrl: string, gl: WebGLRendere
   }
 
   if (!entry.promise) {
-    entry.promise = loadEquirectTexture(textureUrl, gl)
+    const candidates = [...new Set([textureUrl, ...sourceCandidates])];
+    entry.promise = loadEquirectTexture(candidates, gl)
       .then((texture) => {
         entry!.texture = texture;
         entry!.promise = null;
@@ -162,11 +197,13 @@ function releaseSharedEquirectTexture(textureUrl: string, gl: WebGLRenderer) {
 
 export function SceneBackground({
   textureUrl,
+  sourceCandidates = [],
   blurriness,
   intensity,
   fallbackColorHex
 }: {
   textureUrl?: string | null;
+  sourceCandidates?: string[];
   blurriness?: number;
   intensity?: number;
   fallbackColorHex?: string;
@@ -203,7 +240,7 @@ export function SceneBackground({
 
     const loadBackground = async () => {
       try {
-        const texture = await acquireSharedEquirectTexture(textureUrl, gl);
+        const texture = await acquireSharedEquirectTexture(textureUrl, gl, sourceCandidates);
         if (disposed) {
           releaseSharedEquirectTexture(textureUrl, gl);
           return;
@@ -238,16 +275,18 @@ export function SceneBackground({
       scene.backgroundBlurriness = previousBlurriness;
       scene.backgroundIntensity = previousIntensity;
     };
-  }, [textureUrl, blurriness, intensity, scene, gl, fallbackColor]);
+  }, [textureUrl, sourceCandidates, blurriness, intensity, scene, gl, fallbackColor]);
 
   return null;
 }
 
 export function SceneEnvironment({
   textureUrl,
+  sourceCandidates = [],
   intensity
 }: {
   textureUrl?: string | null;
+  sourceCandidates?: string[];
   intensity?: number;
 }) {
   const { scene, gl } = useThree();
@@ -264,7 +303,7 @@ export function SceneEnvironment({
 
     const loadEnvironment = async () => {
       try {
-        const texture = await acquireSharedEquirectTexture(textureUrl, gl);
+        const texture = await acquireSharedEquirectTexture(textureUrl, gl, sourceCandidates);
         if (disposed) {
           releaseSharedEquirectTexture(textureUrl, gl);
           return;
@@ -296,7 +335,7 @@ export function SceneEnvironment({
       }
       scene.environmentIntensity = previousIntensity;
     };
-  }, [textureUrl, intensity, scene, gl]);
+  }, [textureUrl, sourceCandidates, intensity, scene, gl]);
 
   return null;
 }

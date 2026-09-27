@@ -51,11 +51,16 @@ export function parseProceduralModels(models: unknown): ProceduralModelSpec[] | 
     .map((entry) => {
       if (!entry || typeof entry !== 'object') return null;
       const record = entry as Record<string, unknown>;
+      if (record.enabled === false) return null;
       const path = typeof record.path === 'string' ? record.path : undefined;
       if (!path) return null;
+      const pathCandidates = Array.isArray(record.pathCandidates)
+        ? record.pathCandidates.filter((candidate): candidate is string => typeof candidate === 'string' && Boolean(candidate.trim()))
+        : [path];
       return {
         id: typeof record.id === 'string' ? record.id : undefined,
         path,
+        pathCandidates,
         position: coerceVector(record.position),
         rotation: coerceVector(record.rotation),
         scale: typeof record.scale === 'number' && Number.isFinite(record.scale) ? record.scale : 1,

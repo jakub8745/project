@@ -18,6 +18,6 @@ Repair by restoring these objects to their existing Oracle locations, or by addi
 
 The Bednarczyk GLB does not contain the declared nodes `Milkmaid` and `dzbanDystopia` (including checked `extras.name` aliases). Both declarations already exist in v2. These are missing scene anchors, not missing asset files. Its `logo_oficyny` link anchor matches. Keep the source declarations until the intended artwork/audio anchors are identified.
 
-The existing VectAI portable `main_room_light` description differs from its active viewer profile. That is an archival semantics discrepancy, not a missing asset.
+The VECT_AI portable `main_room_light` behavior differs from its `r3fCurrent` profile. The runtime uses the portable values; this remains an archival metadata discrepancy, not a missing asset.
 
 See `v3-asset-audit.json`, `missing-asset-ipfs-check.json` and `v3-model-audit.json` for the recorded checks and timestamps.

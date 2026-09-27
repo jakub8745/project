@@ -31,7 +31,7 @@ These checks establish conversion parity and basic browser readiness. They do no
 2. **Bednarczyk:** the model lacks the declared `Milkmaid` and `dzbanDystopia` scene anchors. The declarations are inherited from v2 and have been retained pending identification of their intended targets. See [model audit](v3-model-audit.json).
    The v3 candidate also has an intentional brighter presentation profile: fixed exposure 1.35, auto exposure disabled, higher ambient/background intensity and a lighter color grade. The original v2 profile remains available for rollback.
 3. **VectAI:** both v2 and the existing v3 hit the application's geometry initialization timeout in headless Chromium. Follow-up v3 attempts also timed out. The model URL was available; the cause has not been established. Its existing v3 default was retained.
-4. **VectAI archival semantics:** portable `main_room_light` behavior differs from the active viewer profile. Migration preserves current viewer behavior and leaves the curated description for review.
+4. **VectAI archival semantics:** portable `main_room_light` behavior still differs from the `r3fCurrent` profile. The runtime adapter now follows the portable interaction values; the manifest discrepancy remains flagged for archival reconciliation.
 5. **Acceptance:** physical XR and exhaustive media/interaction checks remain pending. V3 defaults are local implementation changes, not a claim that every acceptance gate in the original plan has passed.
 
 No v2 retirement date is set. Before retirement, complete these checks, observe a deployed rollout, identify external users of v2 URLs and approve a separate removal change. Keep both manifest families available until then.
