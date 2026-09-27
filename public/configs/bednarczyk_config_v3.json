@@ -85,7 +85,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto01_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto01.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto01.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto01.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto01.JPG"],
       "preservation": {
@@ -97,7 +97,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto02_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto02.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto02.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto02.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto02.JPG"],
       "preservation": {
@@ -109,7 +109,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto03_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto03.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto03.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto03.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto03.JPG"],
       "preservation": {
@@ -121,7 +121,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto04_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto04.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto04.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto04.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto04.JPG"],
       "preservation": {
@@ -133,7 +133,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto05_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto05.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto05.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto05.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto05.JPG"],
       "preservation": {
@@ -145,7 +145,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto06_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto06.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto06.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto06.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto06.JPG"],
       "preservation": {
@@ -157,7 +157,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto07_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto07.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto07.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto07.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto07.JPG"],
       "preservation": {
@@ -169,7 +169,7 @@
       "kind": "image",
       "mimeType": "image/jpeg",
       "id": "ARtourPhoto08_image",
-      "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto08.JPG",
+      "sourceUri": "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto08.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto08.JPG",
       "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto08.JPG"],
       "preservation": {
