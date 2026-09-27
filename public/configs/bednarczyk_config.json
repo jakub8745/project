@@ -111,8 +111,8 @@
     "logo_oficyny": {
       "kind": "link_anchor",
       "metadata": {
-        "url": "https://krystynabednarczyk.bluepointart.uk/",
-        "interactionDescription": "Click logo_oficyny to open https://krystynabednarczyk.bluepointart.uk/ in a new browser tab."
+        "url": "https://archive.bluepointart.uk/",
+        "interactionDescription": "Click logo_oficyny to open https://archive.bluepointart.uk/ in a new browser tab."
       }
     },
     "dzbanDystopia": {
@@ -125,22 +125,22 @@
     "pano_bake.000": {
       "kind": "link_anchor",
       "metadata": {
-        "url": "https://krystynabednarczyk.bluepointart.uk/",
-        "interactionDescription": "Click pano_bake.000 to open https://krystynabednarczyk.bluepointart.uk/ in a new browser tab."
+        "url": "https://archive.bluepointart.uk/",
+        "interactionDescription": "Click pano_bake.000 to open https://archive.bluepointart.uk/ in a new browser tab."
       }
     },
     "pano_bako.001": {
       "kind": "link_anchor",
       "metadata": {
-        "url": "https://krystynabednarczyk.bluepointart.uk/map/",
-        "interactionDescription": "Click pano_bako.001 to open https://krystynabednarczyk.bluepointart.uk/map/ in a new browser tab."
+        "url": "https://archive.bluepointart.uk/map/",
+        "interactionDescription": "Click pano_bako.001 to open https://archive.bluepointart.uk/map/ in a new browser tab."
       }
     },
     "pano_bake.002": {
       "kind": "link_anchor",
       "metadata": {
-        "url": "https://krystynabednarczyk.bluepointart.uk/outcomes/",
-        "interactionDescription": "Click pano_bake.002 to open https://krystynabednarczyk.bluepointart.uk/outcomes/ in a new browser tab."
+        "url": "https://archive.bluepointart.uk/outcomes/",
+        "interactionDescription": "Click pano_bake.002 to open https://archive.bluepointart.uk/outcomes/ in a new browser tab."
       }
     },
     "ARtourPhoto01": {
@@ -434,14 +434,14 @@
       "trigger": "click",
       "action": {
         "type": "open_link",
-        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+        "uri": "https://archive.bluepointart.uk/"
       },
       "ui": {
         "title": "logo_oficyny",
-        "description": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+        "description": "Clicking logo_oficyny opens the external link https://archive.bluepointart.uk/."
       },
       "metadata": {
-        "interactionDescription": "Clicking logo_oficyny opens the external link https://krystynabednarczyk.bluepointart.uk/."
+        "interactionDescription": "Clicking logo_oficyny opens the external link https://archive.bluepointart.uk/."
       }
     },
     {
@@ -450,14 +450,14 @@
       "trigger": "click",
       "action": {
         "type": "open_link",
-        "uri": "https://krystynabednarczyk.bluepointart.uk/"
+        "uri": "https://archive.bluepointart.uk/"
       },
       "ui": {
         "title": "pano_bake.000",
-        "description": "Clicking pano_bake.000 opens the external link https://krystynabednarczyk.bluepointart.uk/."
+        "description": "Clicking pano_bake.000 opens the external link https://archive.bluepointart.uk/."
       },
       "metadata": {
-        "interactionDescription": "Clicking pano_bake.000 opens the external link https://krystynabednarczyk.bluepointart.uk/."
+        "interactionDescription": "Clicking pano_bake.000 opens the external link https://archive.bluepointart.uk/."
       }
     },
     {
@@ -466,14 +466,14 @@
       "trigger": "click",
       "action": {
         "type": "open_link",
-        "uri": "https://krystynabednarczyk.bluepointart.uk/map/"
+        "uri": "https://archive.bluepointart.uk/map/"
       },
       "ui": {
         "title": "pano_bako.001",
-        "description": "Clicking pano_bako.001 opens the external link https://krystynabednarczyk.bluepointart.uk/map/."
+        "description": "Clicking pano_bako.001 opens the external link https://archive.bluepointart.uk/map/."
       },
       "metadata": {
-        "interactionDescription": "Clicking pano_bako.001 opens the external link https://krystynabednarczyk.bluepointart.uk/map/."
+        "interactionDescription": "Clicking pano_bako.001 opens the external link https://archive.bluepointart.uk/map/."
       }
     },
     {
@@ -482,14 +482,14 @@
       "trigger": "click",
       "action": {
         "type": "open_link",
-        "uri": "https://krystynabednarczyk.bluepointart.uk/outcomes/"
+        "uri": "https://archive.bluepointart.uk/outcomes/"
       },
       "ui": {
         "title": "pano_bake.002",
-        "description": "Clicking pano_bake.002 opens the external link https://krystynabednarczyk.bluepointart.uk/outcomes/."
+        "description": "Clicking pano_bake.002 opens the external link https://archive.bluepointart.uk/outcomes/."
       },
       "metadata": {
-        "interactionDescription": "Clicking pano_bake.002 opens the external link https://krystynabednarczyk.bluepointart.uk/outcomes/."
+        "interactionDescription": "Clicking pano_bake.002 opens the external link https://archive.bluepointart.uk/outcomes/."
       }
     },
     {
@@ -577,10 +577,10 @@
       "backgroundIntensity": 0.3
     },
     "links": {
-      "logo_oficyny": "https://krystynabednarczyk.bluepointart.uk/",
-      "pano_bake.000": "https://krystynabednarczyk.bluepointart.uk/",
-      "pano_bako.001": "https://krystynabednarczyk.bluepointart.uk/map/",
-      "pano_bake.002": "https://krystynabednarczyk.bluepointart.uk/outcomes/"
+      "logo_oficyny": "https://archive.bluepointart.uk/",
+      "pano_bake.000": "https://archive.bluepointart.uk/",
+      "pano_bako.001": "https://archive.bluepointart.uk/map/",
+      "pano_bake.002": "https://archive.bluepointart.uk/outcomes/"
     }
   }
 }
