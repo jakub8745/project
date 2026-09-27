@@ -87,7 +87,7 @@
       "id": "ARtourPhoto01_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto01.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto01.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto01.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -99,7 +99,7 @@
       "id": "ARtourPhoto02_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto02.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto02.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto02.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -111,7 +111,7 @@
       "id": "ARtourPhoto03_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto03.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto03.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto03.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -123,7 +123,7 @@
       "id": "ARtourPhoto04_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto04.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto04.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto04.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -135,7 +135,7 @@
       "id": "ARtourPhoto05_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto05.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto05.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto05.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -147,7 +147,7 @@
       "id": "ARtourPhoto06_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto06.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto06.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto06.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -159,7 +159,7 @@
       "id": "ARtourPhoto07_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto07.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto07.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto07.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
@@ -171,7 +171,7 @@
       "id": "ARtourPhoto08_image",
       "sourceUri": "/textures/bednarczyk/modal_ARtourPhoto08.JPG",
       "ipfsUri": "ipfs://QmQkJKGLAyvqUKWGbi6tghhDkBu8ABGyotrRFmAJZi62db/bednarczyk/modal_ARtourPhoto08.JPG",
-      "ipfsUri": null,
+      "fallbackUris": ["https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/bednarczyk/o/modal_ARtourPhoto08.JPG"],
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"

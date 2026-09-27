@@ -11,3 +11,11 @@ it('preserves a non-IPFS primary URL before its fallbacks', () => {
   const manifest=normalizeManifestShape(raw);
   expect(resolveRuntimeAsset(manifest.assets.model,manifest.id)).toBe('https://primary.example/model.glb');
 });
+it('prefers an Oracle fallback over a local v3 source path', () => {
+  const asset={sourceUri:'/textures/vectai/poster.png',ipfsUri:'ipfs://canonical/poster.png',fallbackUris:['https://objectstorage.example/poster.png']};
+  expect(resolveRuntimeAsset(asset,'vectai')).toBe('https://objectstorage.example/poster.png');
+});
+it('derives Oracle from the canonical IPFS URI when no remote URL is configured', () => {
+  const asset={ipfsUri:'ipfs://canonical/poster.png'};
+  expect(resolveRuntimeAsset(asset,'bednarczyk')).toContain('/b/bednarczyk/o/poster.png');
+});
