@@ -4,11 +4,12 @@ export interface SidebarProps {
   open: boolean;
   onToggle: () => void;
   logoText: string;
+  contextTitle?: string;
   children: ReactNode;
   // remove configUrl completely
 }
 
-const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, children }) => (
+const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, contextTitle, children }) => (
   <>
     <button
       type="button"
@@ -33,18 +34,19 @@ const Sidebar: FC<SidebarProps> = ({ open, onToggle, logoText, children }) => (
     <aside
       id="app-sidebar"
       className={`
-        fixed inset-y-0 left-0 transform bg-slate-600/65 text-white overflow-y-auto
+        fixed inset-y-0 left-0 flex flex-col transform bg-slate-600/65 text-white overflow-hidden
         transition-transform duration-300 ease-in-out z-30
         ${open ? 'translate-x-0' : '-translate-x-full'}
         w-[90vw] md:w-[32rem] border-r border-slate-200 backdrop-blur
       `}
       style={{ fontFamily: '"Encode Sans Condensed", sans-serif' }}
     >
-      <div className="logo-details p-4 border-b border-slate-200 bg-white/80">
+      <div className="logo-details shrink-0 p-3 md:p-4 border-b border-slate-200 bg-white/80">
         <h1 className="text-lg md:text-2xl font-bold logo_name text-slate-800">{logoText}</h1>
+        {contextTitle && <p className="mt-0.5 truncate text-sm md:text-base font-semibold text-slate-700" title={contextTitle}>{contextTitle}</p>}
       </div>
 
-      <div className="nav-list text-white h-full">
+      <div className="nav-list text-white flex min-h-0 flex-1 flex-col">
         {children} {/* ✅ Only ever shows what you pass in */}
       </div>
     </aside>

@@ -28,6 +28,8 @@ export interface InfoItem {
 
 interface InfoButtonsProps {
   configUrl?: string | null;
+  compact?: boolean;
+  viewerToolbar?: boolean;
 }
 
 interface SidebarItemConfig {
@@ -144,7 +146,7 @@ const FallbackImage: FC<{ sources: string[]; alt: string; className: string }> =
   />;
 };
 
-export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
+export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl, compact = false, viewerToolbar = false }) => {
   // ✅ Always declare hooks first
   const [items, setItems] = useState<InfoItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -419,18 +421,26 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
       : null;
 
   return (
-    <div className="flex flex-col items-center space-y-4 mt-4">
+    <div className={compact
+      ? 'flex flex-wrap items-center justify-center gap-2'
+      : 'flex flex-col items-center space-y-4 mt-4'}>
       {items.map(item => (
-        <div key={item.id || `${item.label}-${item.icon}`} className="w-[95%]">
+        <div key={item.id || `${item.label}-${item.icon}`} className={compact ? 'pointer-events-auto min-w-0 max-w-full' : 'w-[95%]'}>
           {item.link ? (
             <a
               href={item.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition no-underline"
+              aria-label={item.label}
+              className={compact
+                ? 'flex max-w-full items-center gap-2 rounded-full border border-white/30 px-3 py-1.5 text-sm transition hover:bg-white/10 no-underline'
+                : 'w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition no-underline'}
+              title={item.label}
             >
-              <FallbackImage sources={item.iconCandidates ?? [item.icon]} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
-              <span className="text-white text-xl">{item.label}</span>
+              <FallbackImage sources={item.iconCandidates ?? [item.icon]} alt="" className={compact ? 'h-4 w-4 flex-shrink-0' : 'h-6 w-6 mr-3 flex-shrink-0'} />
+              <span className={compact
+                ? `${viewerToolbar ? 'hidden sm:inline' : 'inline'} max-w-40 truncate text-white`
+                : 'text-white text-xl'}>{item.label}</span>
             </a>
           ) : (
             <div>
@@ -452,14 +462,20 @@ export const InfoButtons: FC<InfoButtonsProps> = ({ configUrl }) => {
                   }
                   setOpenId(openId === item.id ? null : item.id);
                 }}
-                className="w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition"
+                aria-label={compact && item.id === 'info-icon' ? 'About' : item.label}
+                className={compact
+                  ? 'flex max-w-full items-center gap-2 rounded-full border border-white/30 px-3 py-1.5 text-sm transition hover:bg-white/10'
+                  : 'w-full flex items-center p-3 rounded-full bg-transparent hover:bg-white/10 border border-white/30 transition'}
+                title={item.label}
               >
-                <FallbackImage sources={item.iconCandidates ?? [item.icon]} alt="" className="h-6 w-6 mr-3 flex-shrink-0" />
-                <span className="text-white text-xl">{item.label}</span>
+                <FallbackImage sources={item.iconCandidates ?? [item.icon]} alt="" className={compact ? 'h-4 w-4 flex-shrink-0' : 'h-6 w-6 mr-3 flex-shrink-0'} />
+                <span className={compact
+                  ? `${viewerToolbar ? 'hidden sm:inline' : 'inline'} max-w-40 truncate text-white`
+                  : 'text-white text-xl'}>{compact && item.id === 'info-icon' ? 'About' : item.label}</span>
               </button>
               {openId === item.id && item.content && (
                 <div
-                  className="mt-2 p-4 bg-white/10 border border-white/20 rounded-lg text-white text-lg font-light shadow-sm [&_a]:text-cyan-100 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-cyan-200/80 hover:[&_a]:text-white"
+                  className={`mt-2 p-4 bg-white/10 border border-white/20 rounded-lg text-white ${compact ? 'w-[min(24rem,calc(100vw-5rem))] max-h-[35vh] overflow-y-auto text-sm' : 'text-lg'} font-light shadow-sm [&_a]:text-cyan-100 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-cyan-200/80 hover:[&_a]:text-white`}
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
               )}

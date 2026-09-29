@@ -185,6 +185,7 @@ export default function App() {
   } = useExhibitConfig(selectedConfigUrl);
   const activeExhibitConfig = exhibitConfigUrl === selectedConfigUrl ? exhibitConfig : null;
   const AUTO_HIDE_DELAY_MS = 5000;
+  const HOW_TO_MODAL_DURATION_MS = 30_000;
   // ✅ memoized toggle
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(o => !o);
@@ -242,6 +243,12 @@ export default function App() {
     setHowToModalShownForConfig(selectedConfigUrl);
     setShowHowToModal(true);
   }, [howToModalShownForConfig, selectedConfigUrl]);
+
+  useEffect(() => {
+    if (!showHowToModal) return undefined;
+    const timeout = window.setTimeout(() => setShowHowToModal(false), HOW_TO_MODAL_DURATION_MS);
+    return () => window.clearTimeout(timeout);
+  }, [showHowToModal]);
 
   useEffect(() => {
     const selectedGallery =
@@ -670,15 +677,18 @@ export default function App() {
           open={sidebarOpen}
           onToggle={toggleSidebar}   // ✅ stable reference
           logoText="Blue Point Art Gallery [Archive]"
+          contextTitle={typeof activeExhibitConfig?.metadata?.title === 'string'
+            ? activeExhibitConfig.metadata.title
+            : selectedSlug ?? 'Choose a gallery'}
         >
-          <section className="p-4 bg-slate-700/70 border-b border-slate-300/40 text-white">
+          <section className="shrink-0 border-b border-slate-300/40 bg-slate-700/95 px-3 py-2 text-white backdrop-blur">
             {/* Exhibit info section (expandable items) */}
-            {selectedConfigUrl && (
-              <InfoButtons configUrl={selectedConfigUrl} />
+            {selectedConfigUrl && sidebarOpen && (
+              <InfoButtons configUrl={selectedConfigUrl} compact />
             )}
           </section>
 
-          <section className="p-4 bg-slate-700/70 text-white">
+          <section className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 bg-slate-700/70 text-white">
             <h2 className="text-xl font-bold mb-4">Choose an exhibit</h2>
             <GalleryGrid
               onSelect={handleGallerySelect} // ✅ memoized
@@ -691,6 +701,13 @@ export default function App() {
       ) : null}
 
       <main ref={mainRef} className="flex-1 relative">
+        {!sidebarOpen && selectedConfigUrl && (
+          <div className="pointer-events-none absolute left-16 top-4 z-20 max-w-[calc(100vw-5rem)] sm:max-w-[calc(100vw-6rem)]">
+            <div className="pointer-events-none rounded-full border border-white/20 bg-slate-900/55 p-1.5 text-white shadow-lg backdrop-blur-sm">
+              <InfoButtons configUrl={selectedConfigUrl} compact viewerToolbar />
+            </div>
+          </div>
+        )}
         <div className="h-full">
           {selectedConfigUrl ? (
             <Suspense
@@ -734,7 +751,7 @@ export default function App() {
             role="dialog"
             aria-modal="true"
             aria-label="How to move instructions"
-            className="pointer-events-auto relative w-full max-w-2xl h-auto max-h-[70dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100 text-slate-900 shadow-2xl"
+            className="pointer-events-auto relative w-full max-w-2xl h-auto max-h-[70dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100/15 text-slate-900 shadow-2xl"
           >
             <button
               type="button"
@@ -748,7 +765,7 @@ export default function App() {
               <img
                 src="/icons/archive_how_to_move_icons.jpg"
                 alt="How to move in the gallery instructions"
-                className="w-full h-auto max-h-[calc(70dvh-4rem)] object-contain"
+                className="w-full h-auto max-h-[calc(70dvh-4rem)] object-contain mix-blend-multiply"
               />
             </div>
           </div>
