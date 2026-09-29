@@ -8,6 +8,19 @@ export interface RuntimeAssetSource {
   arweaveUri?: string | null;
 }
 
+/** The sole runtime delivery contract. Candidates are already ordered by the shared policy. */
+export interface RuntimeAsset {
+  candidates: string[];
+}
+
+export function compileRuntimeAsset(source: RuntimeAssetSource | undefined): RuntimeAsset {
+  return { candidates: resolveRuntimeAssetCandidates(source) };
+}
+
+export function runtimeAssetCandidates(asset: RuntimeAsset | undefined): string[] {
+  return asset?.candidates ?? [];
+}
+
 /** BPA-wide ordered IPFS gateways. Asset identity and canonical CIDs remain in each manifest. */
 export const BPA_IPFS_GATEWAYS = [
   'https://ipfs.io/ipfs/',

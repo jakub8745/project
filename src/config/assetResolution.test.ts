@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadRuntimeAssetWithFallback, resolveRuntimeAsset, resolveRuntimeAssetCandidates } from './assetResolution';
-import { normalizeManifestShape } from './manifestShape';
 import ciprianiManifest from '../../public/configs/cipriani_config_v3.json';
-import ciprianiLegacy from '../../public/configs/cipriani_config.json';
+import ciprianiLegacy from '../../archive/v2/cipriani_config.json';
 import dystopiaManifest from '../../public/configs/dystopia_config_v3.json';
 import wakeupManifest from '../../public/configs/wakeup_config_v3.json';
 import lockdownsManifest from '../../public/configs/lockdowns_config_v3.json';
@@ -55,7 +54,7 @@ describe('manifest-backed asset resolution', () => {
     }
   });
 
-  it('keeps the same Cipriani Oracle-first sources in the v2 rollback config', () => {
+  it('preserves Oracle-first declarations in the archived Cipriani V2 source', () => {
     const assets = ciprianiLegacy.assets as unknown as Record<string, { uri?: string; fallbackUris?: string[] }>;
     const photographIds = ['cipriani_opis_image', ...Array.from({ length: 39 }, (_, i) => `cipriani_pic_${i + 5}_image`)];
     for (const id of photographIds) {
@@ -162,19 +161,4 @@ describe('manifest-backed asset resolution', () => {
     }
   );
 
-  it('preserves the archive source declarations when adapting v3 assets', () => {
-    const raw = {
-      schemaVersion: '3.0.0',
-      id: 'fixture',
-      metadata: { title: 'Fixture', description: '' },
-      assets: { model: { sourceUri: '/model.glb', ipfsUri: ipfs, fallbackUris: [oracle] } },
-      content: {},
-      sceneGraph: { sourceScene: {}, nodes: {} }
-    };
-    const manifest = normalizeManifestShape(raw);
-    const modelAsset = manifest.assets.model as unknown as Record<string, unknown>;
-    expect(resolveRuntimeAssetCandidates(modelAsset as Parameters<typeof resolveRuntimeAssetCandidates>[0])[0]).toBe(oracle);
-    expect(modelAsset.sourceUri).toBe('/model.glb');
-    expect(modelAsset.ipfsUri).toBe(ipfs);
-  });
 });

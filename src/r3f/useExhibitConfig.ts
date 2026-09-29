@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { fetchManifest, invalidateManifest } from '../config/manifestRepository';
 import { normalizeConfigUrl } from '../utils/url';
-import { loadExhibitConfig } from '../config/loaders/loadExhibitConfig';
+import { compileExhibitSnapshot, type CompiledExhibitSnapshot } from '../config/compiledExhibitSnapshot';
 import type { ExhibitConfig } from '../config/runtimeTypes';
 
-const configCache = new Map<string, ExhibitConfig>();
+const configCache = new Map<string, CompiledExhibitSnapshot>();
 const CONFIG_LOAD_TIMEOUT_MS = 20_000;
 
 function isLoadingDiagnosticsEnabled(): boolean {
@@ -16,6 +16,7 @@ function isLoadingDiagnosticsEnabled(): boolean {
 
 interface UseExhibitConfigResult {
   config: ExhibitConfig | null;
+  snapshot: CompiledExhibitSnapshot | null;
   resolvedUrl: string | null;
   loading: boolean;
   error: Error | null;
@@ -24,7 +25,7 @@ interface UseExhibitConfigResult {
 
 export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResult {
   configUrl = configUrl ? normalizeConfigUrl(configUrl) : null;
-  const [config, setConfig] = useState<ExhibitConfig | null>(null);
+  const [snapshot, setSnapshot] = useState<CompiledExhibitSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
 
   useEffect(() => {
     if (!configUrl) {
-      setConfig(null);
+      setSnapshot(null);
       setResolvedUrl(null);
       setLoading(false);
       setError(null);
@@ -42,7 +43,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     const cached = configCache.get(configUrl);
     if (cached) {
       if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'manifest_cache_hit', configUrl });
-      setConfig(cached);
+      setSnapshot(cached);
       setResolvedUrl(configUrl);
       setLoading(false);
       setError(null);
@@ -58,23 +59,26 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
     }, CONFIG_LOAD_TIMEOUT_MS);
     setLoading(true);
     setError(null);
-    setConfig(null);
+    setSnapshot(null);
     setResolvedUrl(null);
 
+    let latestOptionalSnapshot: CompiledExhibitSnapshot | null = null;
     fetchManifest(configUrl, controller.signal)
       .then(async (raw) => {
         if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'manifest_loaded', configUrl });
-        const normalised = await loadExhibitConfig(raw, controller.signal, (updated) => {
+        const normalised = await compileExhibitSnapshot(raw, configUrl, controller.signal, (updated) => {
           if (controller.signal.aborted) return;
+          latestOptionalSnapshot = updated;
           configCache.set(configUrl, updated);
-          setConfig(updated);
+          setSnapshot(updated);
         });
         if (!controller.signal.aborted) {
-          configCache.set(configUrl, normalised);
-          setConfig(normalised);
+          const current = latestOptionalSnapshot ?? normalised;
+          configCache.set(configUrl, current);
+          setSnapshot(current);
           setResolvedUrl(configUrl);
           setLoading(false);
-          if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'scene_config_ready', configUrl, exhibitId: normalised.id });
+          if (isLoadingDiagnosticsEnabled()) console.info('[SceneLoader]', { event: 'scene_config_ready', configUrl, exhibitId: current.scene.id });
         }
       })
       .catch((err: unknown) => {
@@ -84,7 +88,7 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
           : err instanceof Error ? err : new Error(String(err));
         console.error('[SceneLoader]', { event: 'scene_config_failed', configUrl, message: errorObject.message });
         setError(errorObject);
-        setConfig(null);
+        setSnapshot(null);
         setResolvedUrl(null);
         setLoading(false);
       })
@@ -99,7 +103,8 @@ export function useExhibitConfig(configUrl: string | null): UseExhibitConfigResu
   }, [configUrl, attempt]);
 
   return {
-    config,
+    config: snapshot?.scene ?? null,
+    snapshot,
     resolvedUrl,
     loading,
     error,

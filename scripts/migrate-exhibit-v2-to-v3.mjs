@@ -12,8 +12,8 @@ const { values } = parseArgs({ options: {
 } });
 if (!values.all && (!values.input || !values.output)) throw new Error('Use --all or --input <v2.json> --output <v3.json>. Default: dry run. Add --write to save.');
 const inventory = JSON.parse(await fs.readFile(path.join(root, 'scripts/exhibit-migrations.json'), 'utf8'));
-const jobs = values.all ? inventory.map((job) => ({ ...job, input:`public/configs/${job.v2}`, output:`public/configs/${job.v3}` })) : [{ input:values.input, output:values.output, id:values.id, slug:values.slug }];
-if (values.all) jobs.push({ input:'example_of_gallery_config_v2.json',output:'example_of_gallery_config_v3.json',slug:'example_exhibit',wave:'documentation' });
+const jobs = values.all ? inventory.map((job) => ({ ...job, input:`archive/v2/${job.v2}`, sourcePath:`public/configs/${job.v2}`, output:`public/configs/${job.v3}` })) : [{ input:values.input, output:values.output, id:values.id, slug:values.slug }];
+if (values.all) jobs.push({ input:'archive/v2/example_of_gallery_config_v2.json',sourcePath:'example_of_gallery_config_v2.json',output:'example_of_gallery_config_v3.json',slug:'example_exhibit',wave:'documentation' });
 const report = [];
 const outputs = [];
 for (const job of jobs) {
@@ -25,7 +25,7 @@ for (const job of jobs) {
     report.push({ ...baseline, status:'curated_v3_retained', outputSha256:sha256(existing), warnings:['Compare portable lighting descriptions with active viewer profiles; current runtime is authoritative for rollout.'] });
     continue;
   }
-  const result = convertV2ToV3(source,{ sourcePath:job.input, sourceHash:sha256(text), id:job.id || source.id, slug:job.slug || source.id });
+  const result = convertV2ToV3(source,{ sourcePath:job.sourcePath || job.input, sourceHash:sha256(text), id:job.id || source.id, slug:job.slug || source.id });
   const validation = validateManifest(result.manifest);
   if (validation.errors.length) throw new Error(`${job.input}: ${validation.errors.join('; ')}`);
   const output = JSON.stringify(result.manifest,null,2)+'\n';

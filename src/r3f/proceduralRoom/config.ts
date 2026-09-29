@@ -1,4 +1,5 @@
 import type { Vector3Tuple } from 'three';
+import { runtimeAssetCandidates, type RuntimeAsset } from '../../config/assetResolution';
 import type {
   ProceduralModelAnimationSpec,
   ProceduralModelSpec,
@@ -54,9 +55,7 @@ export function parseProceduralModels(models: unknown): ProceduralModelSpec[] | 
       if (record.enabled === false) return null;
       const path = typeof record.path === 'string' ? record.path : undefined;
       if (!path) return null;
-      const pathCandidates = Array.isArray(record.pathCandidates)
-        ? record.pathCandidates.filter((candidate): candidate is string => typeof candidate === 'string' && Boolean(candidate.trim()))
-        : [path];
+      const pathCandidates = runtimeAssetCandidates(record.asset as RuntimeAsset | undefined);
       return {
         id: typeof record.id === 'string' ? record.id : undefined,
         path,

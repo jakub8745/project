@@ -4,7 +4,7 @@ import type { TransformControls } from 'three/examples/jsm/controls/TransformCon
 import { applyPitcherControls } from './applyPitcherControls.js';
 import { applyObjectTransformControls, type ObjectTransformControlOptions } from './applyObjectTransformControls.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from './objectRegistry.js';
-import { loadRuntimeAssetWithFallback, resolveIpfsUriCandidates } from '../config/assetResolution';
+import { loadRuntimeAssetWithFallback, runtimeAssetCandidates, type RuntimeAsset } from '../config/assetResolution';
 
 type AudioDistanceModel = 'linear' | 'inverse' | 'exponential';
 
@@ -24,8 +24,7 @@ export interface AudioMeshConfig {
   id: string;
   name?: string;
   url?: string;
-  ipfsUrl?: string;
-  fallbackUrls?: string[];
+  asset?: RuntimeAsset;
   autoplayOnEnter?: boolean;
   autoplayOnXrSessionStart?: boolean;
   labelPlaying?: string;
@@ -505,10 +504,6 @@ function loadAudioWithFallback(
   onSuccess: (buffer: AudioBuffer) => void
 ) {
   const primary = cfg?.url ?? '';
-  const ipfsUrl = cfg?.ipfsUrl || (typeof primary === 'string' && primary.startsWith('ipfs://') ? primary : null);
-  const fallbackUrls = Array.isArray(cfg?.fallbackUrls)
-    ? cfg.fallbackUrls.filter((url) => typeof url === 'string' && url.trim())
-    : [];
 
   const loadAudioBuffer = (url: string): Promise<AudioBuffer> => {
     const cached = audioBufferCache.get(url);
@@ -537,12 +532,7 @@ function loadAudioWithFallback(
     return pending;
   };
 
-  const candidates = [
-    ...(primary && !primary.startsWith('ipfs://') ? [primary] : []),
-    ...fallbackUrls,
-    ...(primary?.startsWith('ipfs://') ? resolveIpfsUriCandidates(primary) : []),
-    ...(ipfsUrl ? resolveIpfsUriCandidates(ipfsUrl) : [])
-  ];
+  const candidates = runtimeAssetCandidates(cfg.asset);
 
   void loadRuntimeAssetWithFallback(
     candidates,

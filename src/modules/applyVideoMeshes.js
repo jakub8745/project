@@ -17,7 +17,7 @@ import {
 } from 'three';
 import { resolveVideoPlaybackMode } from './videoPlaybackMode.js';
 import { resolveObjectRuntimeData } from './objectRegistry.js';
-import { resolveIpfsUriCandidates } from '../config/assetResolution';
+import { loadRuntimeAssetWithFallback, runtimeAssetCandidates } from '../config/assetResolution';
 
 const DEFAULT_VOLUME = 0.66;
 const VIDEO_SOURCE_TIMEOUT_MS = 20_000;
@@ -58,15 +58,7 @@ function setVideoResource(id, data) {
 
 function getVideoSourceCandidates(cfg) {
   const srcObj = Array.isArray(cfg?.sources) ? cfg.sources[0] : null;
-  const primary = typeof srcObj?.src === 'string' ? srcObj.src : '';
-  const candidates = [
-    primary,
-    ...(Array.isArray(srcObj?.fallbackSrcs) ? srcObj.fallbackSrcs : []),
-    typeof srcObj?.ipfsSrc === 'string' ? srcObj.ipfsSrc : ''
-  ].filter((candidate, index, all) => (
-    typeof candidate === 'string' && candidate.trim() && all.indexOf(candidate) === index
-  ));
-  return { srcObj, candidates };
+  return { srcObj, candidates: runtimeAssetCandidates(srcObj?.asset) };
 }
 
 function shouldDeferVideoLoad(cfg) {
@@ -86,9 +78,7 @@ function loadVideoSource(video, cfg) {
 
   setVideoResource(cfg.id, { sourceLoading: true });
 
-  const expandedCandidates = candidates.flatMap((candidate) => (
-    candidate.startsWith('ipfs://') ? resolveIpfsUriCandidates(candidate) : [candidate]
-  ));
+  const expandedCandidates = candidates;
   let candidateIndex = 0;
   let candidateTimer = null;
   let sourceAttempt = 0;
@@ -413,7 +403,7 @@ function openVideoPlayer(cfg, video) {
   modalVideo.playsInline = true;
   modalVideo.muted = false;
   modalVideo.volume = Math.min(Math.max(video.volume ?? DEFAULT_VOLUME, 0), 1);
-  const poster = resolvePosterUrl(cfg);
+  const poster = resolvedPosterUrl(cfg);
   if (poster) modalVideo.poster = poster;
 
   const primarySource =
@@ -659,18 +649,13 @@ function queueSyncedPlayback(cfg, video, syncGroups) {
   };
 }
 
-function resolvePosterUrl(cfg) {
-  if (!cfg) return null;
-  const poster = typeof cfg.poster === 'string' ? cfg.poster : undefined;
-  const oraclePoster = typeof cfg.oraclePoster === 'string' ? cfg.oraclePoster : undefined;
-  const ipfsPoster = typeof cfg.ipfsPoster === 'string' ? cfg.ipfsPoster : undefined;
-  const candidate = poster || oraclePoster || ipfsPoster;
-  if (!candidate) return null;
-  if (candidate.startsWith('ipfs://')) {
-    const cid = candidate.replace('ipfs://', '');
-    return `${IPFS_GATEWAYS[0]}${cid}`;
-  }
-  return candidate;
+export function loadVideoPoster(asset, loadCandidate) {
+  return loadRuntimeAssetWithFallback(runtimeAssetCandidates(asset), loadCandidate, 'video poster');
+}
+
+function resolvedPosterUrl(cfg) {
+  const url = getVideoResource(cfg?.id).posterUrl;
+  return runtimeAssetCandidates(cfg?.posterAsset).includes(url) ? url : null;
 }
 
 function ensureListener(camera) {
@@ -895,7 +880,7 @@ function ensureVideoElement(cfg) {
       video.removeAttribute('muted');
     }
     video.volume = desiredVolume;
-    const resolvedPoster = resolvePosterUrl(cfg);
+    const resolvedPoster = resolvedPosterUrl(cfg);
     if (resolvedPoster && video.poster !== resolvedPoster) {
       video.poster = resolvedPoster;
     }
@@ -934,7 +919,7 @@ function ensureVideoElement(cfg) {
         : DEFAULT_VOLUME;
   video.volume = desiredVolume;
 
-  const resolvedPoster = resolvePosterUrl(cfg);
+  const resolvedPoster = resolvedPosterUrl(cfg);
   if (resolvedPoster) {
     video.poster = resolvedPoster;
   }
@@ -1520,17 +1505,26 @@ export function applyVideoMeshes(scene, camera, galleryConfig) {
     if (!video) return;
     setVideoResource(cfg.id, { cfg, playbackMode });
 
-    const resolvedPoster = resolvePosterUrl(cfg);
+    const posterAsset = cfg.posterAsset;
     let { posterTexture, texture: cachedTexture } = getVideoResource(cfg.id);
     const baseMaterial = obj.material.clone();
-    if (!posterTexture && resolvedPoster) {
+    if (!posterTexture && runtimeAssetCandidates(posterAsset).length) {
       const loader = new TextureLoader();
-      posterTexture = loader.load(resolvedPoster, tex => {
-        tex.colorSpace = SRGBColorSpace;
-        tex.flipY = false;
-        baseMaterial.needsUpdate = true;
-      });
-      setVideoResource(cfg.id, { posterTexture });
+      void loadVideoPoster(posterAsset, async (url) => ({ url, texture: await loader.loadAsync(url) }))
+        .then(({ url, texture }) => {
+          if (cfg.__lifecycleId !== _activeVideoLifecycleId) {
+            texture.dispose();
+            return;
+          }
+          posterTexture = texture;
+          texture.colorSpace = SRGBColorSpace;
+          texture.flipY = false;
+          setVideoResource(cfg.id, { posterTexture: texture, posterUrl: url });
+          video.poster = url;
+          if (video.paused) baseMaterial.map = texture;
+          baseMaterial.needsUpdate = true;
+        })
+        .catch((error) => console.warn('[AssetLoader] Video poster failed from all configured sources.', { id: cfg.id, error }));
     }
 
     const deferVideoTexture = shouldDeferVideoLoad(cfg);

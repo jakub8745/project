@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { resolveVideoPlaybackMode, type VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import type { ExhibitConfig } from './useExhibitConfig';
 import { useLegacyModal, type LegacyImageMap } from './useLegacyModal';
+import type { RuntimeAsset } from '../config/assetResolution';
 
 export function useSceneInteractionMetadata(config: ExhibitConfig | null) {
   const linkMap = useMemo(() => {
@@ -67,44 +68,20 @@ export function useSceneInteractionMetadata(config: ExhibitConfig | null) {
       if (!title) continue;
       const author = typeof record.author === 'string' ? record.author : undefined;
       const description = typeof record.description === 'string' ? record.description : undefined;
-      const imagePath = typeof record.imagePath === 'string' ? record.imagePath : undefined;
-      const imageFallbackPaths = Array.isArray(record.imageFallbackPaths)
-        ? record.imageFallbackPaths.filter((path): path is string => typeof path === 'string')
-        : undefined;
-      const oracleImagePath = typeof record.oracleImagePath === 'string' ? record.oracleImagePath : undefined;
-      const ipfsImagePath = typeof record.ipfsImagePath === 'string' ? record.ipfsImagePath : undefined;
-      const pdfPath = typeof record.pdfPath === 'string' ? record.pdfPath : undefined;
-      const pdfFallbackPaths = Array.isArray(record.pdfFallbackPaths)
-        ? record.pdfFallbackPaths.filter((path): path is string => typeof path === 'string')
-        : undefined;
+      const imageAsset = record.imageAsset as RuntimeAsset | undefined;
+      const pdfAsset = record.pdfAsset as RuntimeAsset | undefined;
       const pdfOpenPath = typeof record.pdfOpenPath === 'string' ? record.pdfOpenPath : undefined;
       const pdfOpenLabel = typeof record.pdfOpenLabel === 'string' ? record.pdfOpenLabel : undefined;
       const pdfExternalUrl = typeof record.pdfExternalUrl === 'string' ? record.pdfExternalUrl : undefined;
-      const oraclePdfPath = typeof record.oraclePdfPath === 'string' ? record.oraclePdfPath : undefined;
-      const ipfsPdfPath = typeof record.ipfsPdfPath === 'string' ? record.ipfsPdfPath : undefined;
-      let img;
-      if (record.img && typeof record.img === 'object') {
-        const src = (record.img as Record<string, unknown>).src;
-        if (typeof src === 'string') {
-          img = { src };
-        }
-      }
       result[key] = {
         title,
         ...(author ? { author } : {}),
         ...(description ? { description } : {}),
-        ...(imagePath ? { imagePath } : {}),
-        ...(imageFallbackPaths ? { imageFallbackPaths } : {}),
-        ...(oracleImagePath ? { oracleImagePath } : {}),
-        ...(ipfsImagePath ? { ipfsImagePath } : {}),
-        ...(pdfPath ? { pdfPath } : {}),
-        ...(pdfFallbackPaths ? { pdfFallbackPaths } : {}),
+        ...(imageAsset ? { imageAsset } : {}),
+        ...(pdfAsset ? { pdfAsset } : {}),
         ...(pdfOpenPath ? { pdfOpenPath } : {}),
         ...(pdfOpenLabel ? { pdfOpenLabel } : {}),
         ...(pdfExternalUrl ? { pdfExternalUrl } : {}),
-        ...(oraclePdfPath ? { oraclePdfPath } : {}),
-        ...(ipfsPdfPath ? { ipfsPdfPath } : {}),
-        ...(img ? { img } : {})
       };
     }
     return Object.keys(result).length > 0 ? result : undefined;

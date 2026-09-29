@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, typ
 import { createPortal } from 'react-dom';
 import { MaterialModalContext, type MaterialModalContextValue } from './materialModalContext';
 import { InlineFormattedText } from '../components/InlineFormattedText';
-import { resolveIpfsUriCandidates } from '../config/assetResolution';
+import type { RuntimeAsset } from '../config/assetResolution';
+import { materialModalCandidates } from './materialModalSources';
 
 const IMAGE_SOURCE_TIMEOUT_MS = 10_000;
 
@@ -10,18 +11,11 @@ export type ModalImageMeta = {
   title: string;
   description?: string;
   author?: string;
-  img?: { src: string };
-  imagePath?: string;
-  imageFallbackPaths?: string[];
-  oracleImagePath?: string;
-  ipfsImagePath?: string;
-  pdfPath?: string;
-  pdfFallbackPaths?: string[];
+  imageAsset?: RuntimeAsset;
+  pdfAsset?: RuntimeAsset;
   pdfOpenPath?: string;
   pdfOpenLabel?: string;
   pdfExternalUrl?: string;
-  oraclePdfPath?: string;
-  ipfsPdfPath?: string;
 };
 
 export type ModalImageMap = Record<string, ModalImageMeta>;
@@ -95,7 +89,6 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
   const [state, setState] = useState<ModalState>(() => defaultState());
   const modalStateRef = useRef(state);
   modalStateRef.current = state;
-  const imageCache = useRef(new Map<string, string>());
   const activeNameRef = useRef<string | null>(null);
   const imageWidthsRef = useRef(new Map<string, number>());
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -143,16 +136,6 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
 
   const setImages = useCallback((map: ModalImageMap | undefined) => {
     setImagesState(map);
-    if (!map) {
-      imageCache.current.clear();
-      return;
-    }
-    const valid = new Set(Object.keys(map));
-    for (const key of imageCache.current.keys()) {
-      if (!valid.has(key)) {
-        imageCache.current.delete(key);
-      }
-    }
   }, []);
 
   useEffect(() => {
@@ -244,6 +227,17 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     pdfLoadTimeoutRef.current = window.setTimeout(() => {
       setState((prev) => {
         if (!prev.isOpen || prev.mediaType !== 'pdf' || prev.pdfEmbedBlocked) return prev;
+        if (prev.pendingSources.length) {
+          const [nextSource, ...rest] = prev.pendingSources;
+          return {
+            ...prev,
+            pdfSrc: nextSource,
+            pdfOpenSrc: prev.pdfOpenSrc === prev.pdfSrc ? nextSource : prev.pdfOpenSrc,
+            pdfEmbedBlocked: isZenodoUrl(nextSource),
+            pendingSources: rest,
+            message: null
+          };
+        }
         return {
           ...prev,
           pdfEmbedBlocked: true,
@@ -285,73 +279,17 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
 
     activeNameRef.current = name;
 
-    const pdfDirectUrl = meta.pdfPath ?? meta.oraclePdfPath ?? undefined;
+    const { type: mediaType, candidates: sources } = materialModalCandidates(meta);
     const pdfOpenUrl = meta.pdfOpenPath ?? meta.pdfExternalUrl ?? undefined;
     const pdfOpenLabel = typeof meta.pdfOpenLabel === 'string' && meta.pdfOpenLabel.trim() ? meta.pdfOpenLabel.trim() : null;
-    const pdfIpfsUrl = meta.ipfsPdfPath ?? (pdfDirectUrl?.startsWith('ipfs://') ? pdfDirectUrl : undefined);
-    const hasPdf = Boolean(pdfDirectUrl || pdfIpfsUrl);
-
-    const cachedSrc = hasPdf ? null : (imageCache.current.get(name) ?? meta.img?.src ?? null);
-    if (cachedSrc) {
-      imageCache.current.set(name, cachedSrc);
-    }
 
     const storedWidth = imageWidthsRef.current.get(name) ?? null;
     const fallbackWidth = typeof window !== 'undefined'
       ? Math.round(Math.min(window.innerWidth * 0.6, window.innerHeight * 0.6, 480))
       : 480;
     const initialWidth = storedWidth ?? fallbackWidth;
-    const sources: string[] = [];
-    const addSource = (src?: string | null) => {
-      if (!src) return;
-      const resolved = src.startsWith('ipfs://') ? resolveIpfsUriCandidates(src) : [src];
-      resolved.forEach((candidate) => {
-        if (!sources.includes(candidate)) sources.push(candidate);
-      });
-    };
-
-    if (hasPdf) {
-      if (pdfDirectUrl && !pdfDirectUrl.startsWith('ipfs://')) {
-        addSource(pdfDirectUrl);
-      }
-
-      if (meta.oraclePdfPath && !meta.oraclePdfPath.startsWith('ipfs://')) {
-        addSource(meta.oraclePdfPath);
-      }
-
-      meta.pdfFallbackPaths?.forEach(addSource);
-
-      if (pdfIpfsUrl) {
-        addSource(pdfIpfsUrl);
-      }
-
-      if (pdfDirectUrl && pdfDirectUrl.startsWith('ipfs://')) addSource(pdfDirectUrl);
-    } else {
-      addSource(cachedSrc);
-
-      const directUrl = meta.imagePath ?? meta.oracleImagePath ?? undefined;
-      if (directUrl && !directUrl.startsWith('ipfs://')) {
-        addSource(directUrl);
-      }
-
-      if (meta.oracleImagePath && !meta.oracleImagePath.startsWith('ipfs://')) {
-        addSource(meta.oracleImagePath);
-      }
-
-      meta.imageFallbackPaths?.forEach(addSource);
-
-      const ipfsUrl = meta.ipfsImagePath ?? (directUrl?.startsWith('ipfs://') ? directUrl : undefined);
-      if (ipfsUrl) {
-        addSource(ipfsUrl);
-      }
-
-      if (directUrl && directUrl.startsWith('ipfs://')) addSource(directUrl);
-    }
-
     const [initialSource, ...nextSources] = sources;
-    const isCached = Boolean(cachedSrc && cachedSrc === initialSource);
     const hasSource = Boolean(initialSource);
-    const mediaType = hasPdf ? 'pdf' : 'image';
     const isZenodoPdf = mediaType === 'pdf' && Boolean(initialSource && isZenodoUrl(initialSource));
     const pdfWidth = typeof window !== 'undefined'
       ? Math.round(Math.min(window.innerWidth - 20, 960))
@@ -371,12 +309,12 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       pdfEmbedBlocked: isZenodoPdf,
       pendingSources: nextSources,
       contentWidth: mediaType === 'pdf' ? pdfWidth : initialWidth,
-      status: mediaType === 'pdf' ? (hasSource ? 'ready' : 'error') : (isCached ? 'ready' : hasSource ? 'loading' : 'error'),
+      status: mediaType === 'pdf' ? (hasSource ? 'ready' : 'error') : (hasSource ? 'loading' : 'error'),
       message: !hasSource
         ? `⚠️ Could not load ${mediaType === 'pdf' ? 'PDF' : 'image'}.`
         : isZenodoPdf
           ? 'This Zenodo PDF cannot be embedded here. Open it in a new tab.'
-          : isCached || mediaType === 'pdf'
+          : mediaType === 'pdf'
             ? null
             : 'Loading image…'
     });
@@ -415,7 +353,6 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       if (!currentName) return;
       const currentSrc = event.currentTarget.currentSrc || event.currentTarget.src;
       if (!currentSrc) return;
-      imageCache.current.set(currentName, currentSrc);
       const rawWidth = Math.round(event.currentTarget.getBoundingClientRect().width || event.currentTarget.naturalWidth || 0);
       const paddedWidth = rawWidth > 0 ? rawWidth + 20 : 0;
       if (paddedWidth > 0) {
@@ -432,22 +369,9 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
           message: null
         };
       });
-      setImagesState((prev) => {
-        if (!prev) return prev;
-        const existing = prev[currentName];
-        if (!existing) return prev;
-        if (existing.img?.src === currentSrc) return prev;
-        return {
-          ...prev,
-          [currentName]: {
-            ...existing,
-            img: { src: currentSrc }
-          }
-        };
-      });
       window.requestAnimationFrame(() => syncModalWidth());
     },
-    [setImagesState, syncModalWidth]
+    [syncModalWidth]
   );
 
   const handleImageError = useCallback((event: SyntheticEvent<HTMLImageElement>) => {

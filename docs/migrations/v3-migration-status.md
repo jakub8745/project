@@ -1,5 +1,7 @@
 # V3 migration status
 
+> Historical migration status: the V2 rollback route described below was subsequently retired. The active application is V3-only, with V2 sources retained in `archive/v2/`. Browser acceptance of the V3-only application remains outstanding.
+
 The local implementation covers all nine previously v2-selected galleries and a neutral v3 authoring example. VectAI's existing curated v3 manifest remains the structural reference. All ten gallery entries select v3 by default; each original v2 file and loader remains available through `?configVersion=2#<gallery-slug>`. Nothing has been deployed or uploaded by this migration.
 
 ## Implementation stages

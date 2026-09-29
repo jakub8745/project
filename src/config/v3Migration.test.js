@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { convertV2ToV3, sha256 } from '../../scripts/lib/exhibitMigration.mjs';
 import { validateManifest } from '../../scripts/lib/validateManifest.mjs';
-import { loadExhibitConfig } from './loaders/loadExhibitConfig';
-import { normalizeManifestShape } from './manifestShape';
+import { compileExhibitConfigV3, validateRuntimeV3 } from './loaders/compileExhibitConfigV3';
+import { compileContextualActions } from './contextualActions';
 import { BPA_IPFS_GATEWAYS, resolveRuntimeAssetCandidates } from './assetResolution';
 const read = (name) => JSON.parse(readFileSync(new URL(`../../${name}`, import.meta.url), 'utf8'));
 const inventory = read('scripts/exhibit-migrations.json');
@@ -109,8 +109,14 @@ describe('v3 migration parity', () => {
     const raw = read(`public/configs/${job.v3}`);
     expect(validateManifest(raw).errors).toEqual([]);
     if (!job.curated) {
-      const text = readFileSync(new URL(`../../public/configs/${job.v2}`, import.meta.url),'utf8');
-      expect(raw.sourceManifest.sha256).toBe(sha256(text));
+      const text = readFileSync(new URL(`../../archive/v2/${job.v2}`, import.meta.url),'utf8');
+      if (job.slug === 'bednarczyk') {
+        // Migration input at df0abb0; the mutable V2 file later changed its links.
+        expect(raw.sourceManifest.sha256).toBe('94c40369edf44377a5cd71f21d5626783f2db2c890c5f66758a23a92ce3435f1');
+        expect(raw.sceneGraph.viewerProfiles.r3fCurrent.links).toEqual(JSON.parse(text).viewer.links);
+      } else {
+        expect(raw.sourceManifest.sha256).toBe(sha256(text));
+      }
       const result = convertV2ToV3(JSON.parse(text), {sourcePath:`public/configs/${job.v2}`,sourceHash:sha256(text),id:job.id || JSON.parse(text).id,slug:job.slug});
       if (job.slug === 'bednarczyk') {
         // The v3 candidate intentionally applies a brighter presentation profile;
@@ -123,18 +129,26 @@ describe('v3 migration parity', () => {
           backgroundIntensity:0.5
         });
       } else {
-        expect(migrationComparableManifest(result.manifest)).toEqual(migrationComparableManifest(raw));
+        const converted = migrationComparableManifest(result.manifest);
+        const current = migrationComparableManifest(raw);
+        if (job.slug === 'cipriani') {
+          // The V3 level is intentionally 30% lower; V2's volume=10 prose is stale.
+          expect(JSON.parse(text).modules.audio.instances.find((instance) => instance.targetNode === 'ciprianiAudio').volume).toBe(1);
+          expect(raw.sceneGraph.modules.audio.instances.find((instance) => instance.targetNode === 'ciprianiAudio').volume).toBe(0.7);
+          expect(converted.sceneGraph.nodes.ciprianiAudio.metadata.interactionDescription).toContain('volume=10.');
+          expect(current.sceneGraph.nodes.ciprianiAudio.metadata.interactionDescription).toContain('volume=0.7.');
+          delete converted.sceneGraph.nodes.ciprianiAudio.metadata.interactionDescription;
+          delete current.sceneGraph.nodes.ciprianiAudio.metadata.interactionDescription;
+        }
+        expect(converted).toEqual(current);
       }
       expect(result.unmappedFields).toEqual([]);
     }
   });
-  it.each(inventory)('$slug keeps its v2 rollback and v3 archive scene compilable', async (job) => {
+  it.each(inventory)('$slug keeps its authoritative V3 scene compilable', async (job) => {
     mockSubtitles();
-    const legacy = await loadExhibitConfig(read(`public/configs/${job.v2}`));
     const raw = read(`public/configs/${job.v3}`);
-    const current = await loadExhibitConfig(raw);
-
-    expect(legacy.id).toBeTruthy();
+    const current = await compileExhibitConfigV3(raw);
     expect(current.id).toBe(raw.id);
     expect(current.metadata.title).toBe(raw.metadata.title);
     expect(current.modelPath ? current.modelPath.length > 0 : Boolean(current.proceduralRoom)).toBe(true);
@@ -203,15 +217,13 @@ describe('v3 migration parity', () => {
   });
   it.each(inventory.filter((entry) => !entry.curated))('$slug compiles the declared v3 scene semantics', async (job) => {
     mockSubtitles();
-    const v2 = await loadExhibitConfig(read(`public/configs/${job.v2}`));
     const raw = read(`public/configs/${job.v3}`);
-    const next = await loadExhibitConfig(raw);
+    const next = await compileExhibitConfigV3(raw);
     const scene = raw.sceneGraph.sourceScene;
 
     expect(next.id).toBe(raw.id);
     expect(next.metadata.title).toBe(raw.metadata.title);
     expect(next.modelPath ? next.modelPath.length > 0 : Boolean(next.proceduralRoom)).toBe(true);
-    expect(v2.id).toBeTruthy(); // Retained v2 rollback config still compiles.
     for (const [key, value] of Object.entries(scene.renderer || {})) {
       expect(next.params[key], `${job.slug} sourceScene.renderer.${key}`).toEqual(value);
     }
@@ -239,10 +251,10 @@ describe('v3 migration parity', () => {
       thumbnailCapture:{enabled:true,fps:24},viewer:{params:{exposure:1.2},thumbnailCapture:{enabled:true,fps:30}}
     };
     const {manifest} = convertV2ToV3(raw,{sourcePath:'fixture.json'});
-    const result = await loadExhibitConfig(manifest);
+    const result = await compileExhibitConfigV3(manifest);
     expect(result).toMatchObject({modelPath:'/scene.glb',scale:2,position:[1,2,3],params:{toneMapping:'cineon',maxDpr:1,exposure:0.7},thumbnailCapture:{fps:30}});
     delete manifest.sceneGraph.viewerProfiles.r3fCurrent.thumbnailCapture;
-    expect((await loadExhibitConfig(manifest)).thumbnailCapture).toEqual({enabled:true,fps:24});
+    expect((await compileExhibitConfigV3(manifest)).thumbnailCapture).toEqual({enabled:true,fps:24});
   });
   it('keeps optional subtitles asynchronous and normalizes subsequent updates', async () => {
     const requestedUrls = [];
@@ -257,7 +269,7 @@ describe('v3 migration parity', () => {
     }));
     const update = vi.fn();
     const source = read('public/configs/vectai_krakow_032026_config_v3.json');
-    const initial = await loadExhibitConfig(source,undefined,update);
+    const initial = await compileExhibitConfigV3(source,undefined,update);
     expect(initial.modelPath).toContain('/b/vectai/');
     expect(update).not.toHaveBeenCalled();
     await vi.waitFor(() => expect(update).toHaveBeenCalled());
@@ -266,15 +278,16 @@ describe('v3 migration parity', () => {
     expect(update.mock.lastCall[0].params).toEqual(initial.params);
     expect(update.mock.lastCall[0].audio.some((audio) => audio.subtitleTracks?.[0]?.language==='en')).toBe(true);
   });
-  it('exposes VectAI sidebar without compiling or fetching optional media', () => {
+  it('compiles VectAI contextual actions without fetching optional media', () => {
     const fetch = vi.fn(); vi.stubGlobal('fetch',fetch);
-    const manifest = normalizeManifestShape(read('public/configs/vectai_krakow_032026_config_v3.json'));
-    expect(manifest.sidebar.items.length).toBeGreaterThan(0);
-    expect(Object.keys(manifest.media).length).toBeGreaterThan(0);
+    const manifest = validateRuntimeV3(read('public/configs/vectai_krakow_032026_config_v3.json'));
+    const context = compileContextualActions({ metadata: manifest.metadata, assets: manifest.assets, media: manifest.content.media, sidebar: manifest.content.sidebar });
+    expect(context.length).toBeGreaterThan(0);
+    expect(Object.keys(manifest.content.media).length).toBeGreaterThan(0);
     expect(fetch).not.toHaveBeenCalled();
   });
   it('retains unknown extensions and reports them', () => {
-    const raw = read('public/configs/lockdowns_config.json'); raw.customExtension={foo:'bar'};
+    const raw = read('archive/v2/lockdowns_config.json'); raw.customExtension={foo:'bar'};
     const result = convertV2ToV3(raw);
     expect(result.unmappedFields).toEqual(['customExtension']);
     expect(result.manifest.extensions.legacy.customExtension).toEqual({foo:'bar'});

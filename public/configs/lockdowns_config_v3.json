@@ -479,7 +479,7 @@
       "renderer": {
         "toneMapping": "neutral",
         "autoExposure": true,
-        "exposure": 1.25,
+        "exposure": 1.4,
         "exposureTarget": 0.84,
         "exposureMin": 0.62,
         "exposureMax": 2.05,
@@ -679,7 +679,7 @@
     "viewerProfiles": {
       "r3fCurrent": {
         "params": {
-          "exposure": 1.25,
+          "exposure": 1.4,
           "autoExposure": true,
           "toneMapping": "neutral",
           "exposureTarget": 0.84,

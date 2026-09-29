@@ -1,14 +1,19 @@
+import type { RuntimeAsset } from './assetResolution';
+
 export type UnknownRecord = Record<string, unknown>;
 
 export interface ExhibitConfig extends UnknownRecord {
   id?: string;
   metadata?: UnknownRecord;
   modelPath?: string;
+  modelAsset?: RuntimeAsset;
   scale?: number;
   position?: [number, number, number];
   rotation?: [number, number, number];
   backgroundTexture?: string;
+  backgroundAsset?: RuntimeAsset;
   environmentTexture?: string;
+  environmentAsset?: RuntimeAsset;
   backgroundColor?: string;
   images?: Record<string, UnknownRecord>;
   videos?: UnknownRecord[];

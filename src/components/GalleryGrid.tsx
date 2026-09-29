@@ -1,6 +1,6 @@
 // src/components/GalleryGrid.tsx
 import { FC, useEffect, useRef, useState } from 'react';
-import { GALLERIES, GalleryItem, resolveGalleryConfigUrl } from '../data/galleryConfig';
+import { GALLERIES, GalleryItem } from '../data/galleryConfig';
 import { fetchManifest } from '../config/manifestRepository';
 import { useInViewport } from '../hooks/useInViewport';
 import Tile from './Tile.tsx';
@@ -19,9 +19,7 @@ function GalleryTileContent({ item, activePreview }: { item: GalleryItem; active
     title: item.slug,
     tileDescription: ''
   });
-  const configUrl = typeof window !== 'undefined'
-    ? resolveGalleryConfigUrl(item, window.location.search)
-    : item.configUrl;
+  const configUrl = item.configUrl;
 
   useEffect(() => {
     if (!inViewport) return undefined;

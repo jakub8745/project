@@ -8,6 +8,7 @@ import {
   type AudioSubtitleTrack
 } from '../modules/audioMeshManager.ts';
 import type { ExhibitConfig } from './useExhibitConfig';
+import { runtimeAssetCandidates, type RuntimeAsset } from '../config/assetResolution';
 import type { AudioSubtitleLanguageOption } from './AudioPlayerControls';
 
 export type AudioFloorRoute = {
@@ -106,8 +107,8 @@ export function parseAudioConfig(config: ExhibitConfig | null): AudioMeshConfig[
           : undefined;
       if (!id) return null;
       const url = typeof record.url === 'string' ? record.url : undefined;
-      const ipfsUrl = typeof record.ipfsUrl === 'string' ? record.ipfsUrl : undefined;
-      if (!url && !ipfsUrl) return null;
+      const asset = record.asset as RuntimeAsset | undefined;
+      if (!runtimeAssetCandidates(asset).length) return null;
       const subtitleTracks = sanitizeAudioSubtitleTracks(record);
       let directionalCone: [number, number, number] | undefined;
       if (Array.isArray(record.directionalCone)) {
@@ -133,7 +134,7 @@ export function parseAudioConfig(config: ExhibitConfig | null): AudioMeshConfig[
         id,
         name: typeof record.name === 'string' ? record.name : undefined,
         url,
-        ipfsUrl,
+        asset,
         autoplayOnEnter: typeof record.autoplayOnEnter === 'boolean' ? record.autoplayOnEnter : undefined,
         autoplayOnXrSessionStart: typeof record.autoplayOnXrSessionStart === 'boolean'
           ? record.autoplayOnXrSessionStart

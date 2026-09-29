@@ -1,5 +1,7 @@
 # Full exhibit migration from v2 to v3
 
+> Historical plan: its V2 runtime retention instructions describe the migration phase and are superseded by the current V3-only runtime. V2 source manifests remain in `archive/v2/` for provenance and offline tooling.
+
 Status: implementation is present locally, including v3 gallery defaults and retained v2 access. Full acceptance remains pending for the issues in [the migration status report](migrations/v3-migration-status.md). The inventory and stages below record the original plan and baseline.
 
 ## Objective and boundaries

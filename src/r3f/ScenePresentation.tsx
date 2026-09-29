@@ -151,7 +151,7 @@ async function acquireSharedEquirectTexture(textureUrl: string, gl: WebGLRendere
   }
 
   if (!entry.promise) {
-    const candidates = [...new Set([textureUrl, ...sourceCandidates])];
+    const candidates = sourceCandidates.length ? sourceCandidates : [textureUrl];
     entry.promise = loadEquirectTexture(candidates, gl)
       .then((texture) => {
         entry!.texture = texture;

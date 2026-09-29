@@ -1502,7 +1502,7 @@
       "r3fCurrent": {
         "status": "reference_implementation_profile",
         "params": {
-          "exposure": 1.61,
+          "exposure": 1.75,
           "autoExposure": false,
           "toneMapping": "neutral",
           "exposureTarget": 1.15,
@@ -1574,7 +1574,7 @@
             },
             "exposure": {
               "autoExposure": false,
-              "value": 0.83,
+              "value": 0.95,
               "target": 0.67,
               "min": 0.52,
               "max": 1.55
@@ -1599,7 +1599,7 @@
             },
             "exposure": {
               "autoExposure": false,
-              "value": 1.61,
+              "value": 1.75,
               "target": 1.15,
               "min": 0.86,
               "max": 2.18
@@ -1984,7 +1984,7 @@
         },
         "exposure": {
           "autoExposure": false,
-          "value": 0.83,
+          "value": 0.95,
           "target": 0.67,
           "min": 0.52,
           "max": 1.55
@@ -2005,14 +2005,14 @@
           "toneMapping": "aces"
         },
         "lights": {
-          "ambientIntensity": 0.65,
+          "ambientIntensity": 1.15,
           "hemisphereIntensity": 0,
           "directionalIntensity": 0,
           "spotIntensity": 0
         },
         "exposure": {
           "autoExposure": false,
-          "value": 1.24,
+          "value": 1.75,
           "target": 0.83,
           "min": 0.57,
           "max": 1.9

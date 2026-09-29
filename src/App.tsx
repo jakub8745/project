@@ -18,7 +18,7 @@ import {
   resolveBlobFromVisitorText,
   resolveBlobPromptsFromPaths
 } from './chat/config';
-import { GALLERIES, resolveGalleryConfigUrl, type GalleryItem } from './data/galleryConfig';
+import { GALLERIES, type GalleryItem } from './data/galleryConfig';
 import { useBlobChatBridge } from './hooks/useBlobChatBridge';
 import { unlockAudioPlayback } from './modules/audioMeshManager';
 import { useExhibitConfig } from './r3f/useExhibitConfig';
@@ -178,12 +178,14 @@ export default function App() {
   } = useBlobChatBridge({ enabled: blobChatSettings.enabled });
   const {
     config: exhibitConfig,
+    snapshot: exhibitSnapshot,
     resolvedUrl: exhibitConfigUrl,
     loading: exhibitConfigLoading,
     error: exhibitConfigError,
     retry: retryExhibitConfig
   } = useExhibitConfig(selectedConfigUrl);
   const activeExhibitConfig = exhibitConfigUrl === selectedConfigUrl ? exhibitConfig : null;
+  const activeExhibitSnapshot = exhibitConfigUrl === selectedConfigUrl ? exhibitSnapshot : null;
   const AUTO_HIDE_DELAY_MS = 5000;
   const HOW_TO_MODAL_DURATION_MS = 30_000;
   // ✅ memoized toggle
@@ -215,7 +217,7 @@ export default function App() {
         return;
       }
 
-      setSelectedConfigUrl(resolveGalleryConfigUrl(gallery, window.location.search));
+      setSelectedConfigUrl(gallery.configUrl);
       setSelectedSlug(gallery.slug);
     }
 
@@ -253,7 +255,7 @@ export default function App() {
   useEffect(() => {
     const selectedGallery =
       (selectedSlug ? GALLERIES.find((gallery) => gallery.slug === selectedSlug) : null) ??
-      GALLERIES.find((gallery) => Object.values(gallery.configUrls).includes(selectedConfigUrl || ''));
+      GALLERIES.find((gallery) => gallery.configUrl === selectedConfigUrl);
     const fallbackMetadata = metadataFromGallery(selectedGallery);
     applyPageMetadata(metadataFromConfig(activeExhibitConfig, fallbackMetadata));
   }, [activeExhibitConfig, selectedConfigUrl, selectedSlug]);
@@ -683,8 +685,8 @@ export default function App() {
         >
           <section className="shrink-0 border-b border-slate-300/40 bg-slate-700/95 px-3 py-2 text-white backdrop-blur">
             {/* Exhibit info section (expandable items) */}
-            {selectedConfigUrl && sidebarOpen && (
-              <InfoButtons configUrl={selectedConfigUrl} compact />
+            {activeExhibitSnapshot && sidebarOpen && (
+              <InfoButtons items={activeExhibitSnapshot.context} compact />
             )}
           </section>
 
@@ -701,10 +703,10 @@ export default function App() {
       ) : null}
 
       <main ref={mainRef} className="flex-1 relative">
-        {!sidebarOpen && selectedConfigUrl && (
+        {!sidebarOpen && activeExhibitSnapshot && (
           <div className="pointer-events-none absolute left-16 top-4 z-20 max-w-[calc(100vw-5rem)] sm:max-w-[calc(100vw-6rem)]">
-            <div className="pointer-events-none rounded-full border border-white/20 bg-slate-900/55 p-1.5 text-white shadow-lg backdrop-blur-sm">
-              <InfoButtons configUrl={selectedConfigUrl} compact viewerToolbar />
+            <div className="pointer-events-none rounded-lg border border-white/20 bg-slate-900/55 p-1.5 text-white shadow-lg backdrop-blur-sm">
+              <InfoButtons items={activeExhibitSnapshot.context} compact viewerToolbar />
             </div>
           </div>
         )}
@@ -751,7 +753,7 @@ export default function App() {
             role="dialog"
             aria-modal="true"
             aria-label="How to move instructions"
-            className="pointer-events-auto relative w-full max-w-2xl h-auto max-h-[70dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100/15 text-slate-900 shadow-2xl"
+            className="pointer-events-auto relative w-full max-w-2xl h-auto max-h-[70dvh] overflow-hidden rounded-xl border border-slate-300 bg-slate-100/90 text-slate-900 shadow-2xl"
           >
             <button
               type="button"
@@ -765,7 +767,7 @@ export default function App() {
               <img
                 src="/icons/archive_how_to_move_icons.jpg"
                 alt="How to move in the gallery instructions"
-                className="w-full h-auto max-h-[calc(70dvh-4rem)] object-contain mix-blend-multiply"
+                className="w-full h-auto max-h-[calc(70dvh-4rem)] object-contain opacity-90 mix-blend-multiply"
               />
             </div>
           </div>

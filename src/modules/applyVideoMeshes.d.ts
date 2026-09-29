@@ -1,6 +1,7 @@
 import type { Scene, Camera, Group } from 'three';
 import type { VideoPlaybackMode } from './videoPlaybackMode.js';
 import type { ObjectRegistry } from './objectRegistry.js';
+import type { RuntimeAsset } from '../config/assetResolution';
 
 export interface VideoMeshConfig {
   id: string;
@@ -15,15 +16,12 @@ export interface VideoMeshConfig {
   sources: Array<{
     src: string;
     type?: string;
-    ipfsSrc?: string;
-    fallbackSrcs?: string[];
+    asset?: RuntimeAsset;
   }>;
   loop?: boolean;
   muted?: boolean;
   preload?: string;
-  poster?: string;
-  ipfsPoster?: string;
-  oraclePoster?: string;
+  posterAsset?: RuntimeAsset;
   autoplayOnEnter?: boolean;
   syncStartGroup?: string;
   controls?: boolean;
@@ -52,3 +50,4 @@ export function invokeVideoControlById(videoId: string, action: string, value?: 
 export function applyVideoMeshes(scene: Scene | Group, camera: Camera, galleryConfig: GalleryVideoConfig): void;
 export function disposeAllVideoMeshes(): void;
 export function disposeVideoMeshesForLifecycle(lifecycleId: string): void;
+export function loadVideoPoster<T>(asset: RuntimeAsset, loadCandidate: (url: string) => Promise<T>): Promise<T>;

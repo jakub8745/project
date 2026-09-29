@@ -1,6 +1,6 @@
 # V3 runtime delivery audit
 
-Audit scope: every asset entry in each v3 manifest selected by a registered gallery in `src/data/galleryConfig.ts`. These are the v3 `configUrls`, not every archived or unregistered config.
+Audit scope: every asset entry in each v3 manifest selected by a registered gallery in `src/data/galleryConfig.ts`. These are the registered `configUrl` values, not every archived or unregistered config.
 
 Runtime order after the resolver change: declared Oracle Object Storage URLs, other declared HTTP delivery URLs, IPFS gateways, Arweave, then local/development paths. IPFS remains the canonical reference when `ipfsUri` is present; an IPFS-valued `sourceUri` is also treated as canonical for this inventory. `fallbackUris` remains an alternate-location field; the shared resolver applies production delivery priority by URL type. No v3 schema change was needed.
 

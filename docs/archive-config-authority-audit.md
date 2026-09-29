@@ -1,5 +1,7 @@
 # BPA archive config authority and loader audit
 
+> Historical audit: V2 loader and `?configVersion=2` statements below describe the repository at the time of this audit. The active application is now V3-only; unchanged V2 source manifests are in `archive/v2/`. See [the current runtime guide](exhibit-config-v3.md).
+
 Audit date: 2026-09-27. This records the checked-in runtime inventory and the adapter/source policy now used by the browser viewer.
 
 ## Runtime scene inventory

@@ -1083,7 +1083,7 @@
       "renderer": {
         "toneMapping": "reinhard",
         "autoExposure": false,
-        "exposure": 1.95,
+        "exposure": 2.05,
         "exposureTarget": 1.15,
         "exposureMin": 0.92,
         "exposureMax": 2.53,
@@ -1585,7 +1585,7 @@
           "ambientIntensity": 4.5
         },
         "params": {
-          "exposure": 1.95,
+          "exposure": 2.05,
           "autoExposure": false,
           "toneMapping": "reinhard",
           "exposureTarget": 1.15,

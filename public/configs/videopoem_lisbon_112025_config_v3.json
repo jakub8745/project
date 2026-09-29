@@ -301,7 +301,7 @@
       },
       "renderer": {
         "toneMapping": "cineon",
-        "exposure": 1.15,
+        "exposure": 1.35,
         "antialias": true,
         "shadows": false,
         "maxDpr": 2,
@@ -402,7 +402,7 @@
           "antialias": true,
           "shadows": false,
           "logarithmicDepthBuffer": false,
-          "exposure": 1.15,
+          "exposure": 1.35,
           "autoExposure": true,
           "toneMapping": "aces",
           "exposureTarget": 0.81,

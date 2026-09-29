@@ -40,6 +40,7 @@ import {
   type ObjectRuntimeData
 } from '../modules/objectRegistry.js';
 import { MaterialModalProvider } from './Modal';
+import { runtimeAssetCandidates } from '../config/assetResolution';
 import type { AudioMeshConfig } from '../modules/audioMeshManager.ts';
 import { AudioMeshes } from './AudioMeshes';
 import { AudioPlayerControls } from './AudioPlayerControls';
@@ -573,9 +574,7 @@ function R3FViewerInner({
   onPhysicsCollision
 }: R3FViewerProps & { transitionId: string; onRetry: () => void }) {
   const modelPath = config?.modelPath;
-  const modelPathCandidates = Array.isArray(config?.modelPathCandidates)
-    ? config.modelPathCandidates.filter((value): value is string => typeof value === 'string')
-    : modelPath ? [modelPath] : [];
+  const modelPathCandidates = runtimeAssetCandidates(config?.modelAsset);
   const proceduralRoom = config?.proceduralRoom as Record<string, unknown> | undefined;
   const useProceduralRoom = !modelPath && Boolean(proceduralRoom);
   const objectRegistry = useMemo(
@@ -644,6 +643,11 @@ function R3FViewerInner({
     ? config.environmentTexture
     : rawParams?.environmentFromBackground === true
       ? config?.backgroundTexture
+      : undefined;
+  const environmentAsset = config?.environmentTexture
+    ? config.environmentAsset
+    : rawParams?.environmentFromBackground === true
+      ? config?.backgroundAsset
       : undefined;
   const environmentIntensity = typeof rawParams?.environmentIntensity === 'number' ? rawParams.environmentIntensity : 1;
   const lightIntensity = typeof rawParams?.lightIntensity === 'number' && Number.isFinite(rawParams.lightIntensity) ? rawParams.lightIntensity : 1;
@@ -934,14 +938,14 @@ function R3FViewerInner({
         <RendererTuning highQualityMode={highQualityMode} maxDpr={effectiveMaxDpr} params={activeRendererParams} />
         <SceneBackground
           textureUrl={config?.backgroundTexture}
-          sourceCandidates={Array.isArray(config?.backgroundTextureCandidates) ? config.backgroundTextureCandidates as string[] : undefined}
+          sourceCandidates={runtimeAssetCandidates(config?.backgroundAsset)}
           blurriness={backgroundBlurriness}
           intensity={backgroundIntensity}
           fallbackColorHex={thumbnailBackgroundColor}
         />
         <SceneEnvironment
           textureUrl={environmentTexture}
-          sourceCandidates={Array.isArray(config?.environmentTextureCandidates) ? config.environmentTextureCandidates as string[] : undefined}
+          sourceCandidates={runtimeAssetCandidates(environmentAsset)}
           intensity={environmentIntensity}
         />
         <SceneLightRig settings={lightRigSettings} />

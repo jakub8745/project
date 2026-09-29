@@ -1,4 +1,4 @@
-import type { ExhibitConfigV2, SceneManifest, SceneNodeDefinition, RuntimeModulesConfig, ViewerCompatConfig } from './exhibitSchemaV2';
+import type { ExhibitMetadata, MediaDescriptor, SceneManifest, SceneNodeDefinition, RuntimeModulesConfig, ViewerCompatConfig, SidebarDefinition, ThumbnailCaptureDefinition } from './exhibitSceneTypes';
 
 export interface ExhibitAssetV3 {
   id: string;
@@ -20,9 +20,9 @@ export interface ExhibitConfigV3 {
   id: string;
   slug?: string;
   sourceManifest?: { path: string; schemaVersion: string; sha256?: string; [key: string]: unknown };
-  metadata: ExhibitConfigV2['metadata'];
+  metadata: ExhibitMetadata;
   assets: Record<string, ExhibitAssetV3>;
-  content: { media?: ExhibitConfigV2['media']; sidebar?: ExhibitConfigV2['sidebar'] };
+  content: { media?: Record<string, MediaDescriptor>; sidebar?: SidebarDefinition };
   sceneGraph: {
     sourceScene: SceneManifest;
     nodes: Record<string, SceneNodeDefinition>;
@@ -32,7 +32,7 @@ export interface ExhibitConfigV3 {
     [key: string]: unknown;
   };
   interactions: unknown[];
-  previews?: { capture?: { r3fCurrent?: ExhibitConfigV2['thumbnailCapture'] }; [key: string]: unknown };
+  previews?: { capture?: { r3fCurrent?: ThumbnailCaptureDefinition }; [key: string]: unknown };
   viewerBrief: { purpose: string; requiredCapabilities: string[]; reconstructionPrompt: string; [key: string]: unknown };
   preservation: { futureProofDefinition: string; requiredBeforeMinting: string[]; [key: string]: unknown };
   [key: string]: unknown;

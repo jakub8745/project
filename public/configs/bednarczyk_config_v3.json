@@ -315,7 +315,7 @@
       "renderer": {
         "toneMapping": "neutral",
         "autoExposure": false,
-        "exposure": 1.55,
+        "exposure": 1.65,
         "exposureTarget": 1.38,
         "exposureMin": 1.15,
         "exposureMax": 1.84,
@@ -453,7 +453,7 @@
           "antialias": true,
           "shadows": false,
           "logarithmicDepthBuffer": false,
-          "exposure": 1.55,
+          "exposure": 1.65,
           "autoExposure": false,
           "toneMapping": "neutral",
           "exposureTarget": 1.38,

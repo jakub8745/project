@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { type VideoMeshConfig } from '../modules/applyVideoMeshes.js';
 import { resolveVideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import type { ExhibitConfig } from './useExhibitConfig';
+import { runtimeAssetCandidates, type RuntimeAsset } from '../config/assetResolution';
 
 export function parseSceneVideoConfig(config: ExhibitConfig | null): VideoMeshConfig[] | undefined {
     if (!Array.isArray(config?.videos)) {
@@ -18,11 +19,12 @@ export function parseSceneVideoConfig(config: ExhibitConfig | null): VideoMeshCo
         if (!srcEntry || typeof srcEntry !== 'object') continue;
         const record = srcEntry as Record<string, unknown>;
         const srcUrl = typeof record.src === 'string' ? record.src : undefined;
-        if (!srcUrl) continue;
+        const asset = record.asset as RuntimeAsset | undefined;
+        if (!srcUrl || !runtimeAssetCandidates(asset).length) continue;
         const mapped = {
           src: srcUrl,
           type: typeof record.type === 'string' ? record.type : undefined,
-          ipfsSrc: typeof record.ipfsSrc === 'string' ? record.ipfsSrc : undefined
+          asset
         };
         mappedSources.push(mapped);
       }
@@ -61,13 +63,7 @@ export function parseSceneVideoConfig(config: ExhibitConfig | null): VideoMeshCo
         playbackMode: resolveVideoPlaybackMode(entry),
         volume: typeof entry.volume === 'number' ? entry.volume : undefined,
         preload: typeof entry.preload === 'string' ? entry.preload : undefined,
-        poster:
-          typeof entry.poster === 'string'
-            ? entry.poster
-            : typeof entry.oraclePoster === 'string'
-              ? entry.oraclePoster
-              : undefined,
-        ipfsPoster: typeof entry.ipfsPoster === 'string' ? entry.ipfsPoster : undefined
+        posterAsset: entry.posterAsset as RuntimeAsset | undefined
       });
     }
     return filtered.length > 0 ? filtered : undefined;

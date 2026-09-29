@@ -33,6 +33,7 @@ import Robot from '../../modules/Robot.js';
 import { applyObjectRuntimeData, type ObjectRegistry } from '../../modules/objectRegistry.js';
 import { chatApiUrl } from '../../utils/chatApi';
 import { useConfiguredGLTFs } from '../useConfiguredGLTFs';
+import { loadRuntimeAssetWithFallback, runtimeAssetCandidates, type RuntimeAsset } from '../../config/assetResolution';
 import { coercePositiveNumber } from './config';
 
 const DEBUG_COLLIDER = false;
@@ -1267,6 +1268,7 @@ export function ProceduralRoomModel({
     const wallPatternScale = coercePositiveNumber(roomSpec?.wallPatternScale, 4);
     const floorPatternScale = coercePositiveNumber(roomSpec?.floorPatternScale, 6);
     const wallTextureUrl = typeof roomSpec?.wallTexture === 'string' ? roomSpec.wallTexture : null;
+    const wallTextureCandidates = runtimeAssetCandidates(roomSpec?.wallTextureAsset as RuntimeAsset | undefined);
     const wallTextureRepeatX = coercePositiveNumber(roomSpec?.wallTextureRepeatX, wallPatternScale);
     const wallTextureRepeatY = coercePositiveNumber(roomSpec?.wallTextureRepeatY, wallPatternScale * Math.max(0.5, height / 4));
     // Global performance guard: keep wall systems static on all devices.
@@ -1424,11 +1426,13 @@ export function ProceduralRoomModel({
       };
     }
 
-    if (wallTextureUrl) {
+    if (wallTextureCandidates.length) {
       const loader = new TextureLoader();
-      loader.load(
-        wallTextureUrl,
-        (loaded) => {
+      void loadRuntimeAssetWithFallback(
+        wallTextureCandidates,
+        (url) => loader.loadAsync(url),
+        'procedural wall texture'
+      ).then((loaded) => {
           loaded.colorSpace = SRGBColorSpace;
           loaded.wrapS = RepeatWrapping;
           loaded.wrapT = RepeatWrapping;
@@ -1443,12 +1447,9 @@ export function ProceduralRoomModel({
             material.map = loaded;
             material.needsUpdate = true;
           });
-        },
-        undefined,
-        (err) => {
+        }).catch((err) => {
           console.warn('Failed to load wall texture:', wallTextureUrl, err);
-        }
-      );
+        });
     }
 
     if (animatedWallOverlay && typeof document !== 'undefined') {

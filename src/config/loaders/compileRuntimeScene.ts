@@ -1,14 +1,32 @@
 import type {
   AudioModuleInstance,
-  ExhibitConfigV2,
+  ExhibitMetadata,
+  SceneManifest,
+  SidebarDefinition,
+  RuntimeModulesConfig,
+  ThumbnailCaptureDefinition,
+  ViewerCompatConfig,
   MediaDescriptor,
   SceneNodeDefinition,
   SculptureControlInstance,
   VideoModuleInstance
-} from '../../types/exhibitSchemaV2';
-import { resolveRuntimeAsset, resolveRuntimeAssetCandidates } from '../assetResolution';
+} from '../../types/exhibitSceneTypes';
+import { compileRuntimeAsset, runtimeAssetCandidates, type RuntimeAssetSource } from '../assetResolution';
 import type { ExhibitConfig, UnknownRecord } from '../runtimeTypes';
 import { normalizeConfig } from './shared';
+
+export interface SceneRuntimeSources {
+  id: string;
+  metadata: ExhibitMetadata;
+  assets: Record<string, RuntimeAssetSource & { mimeType?: string; width?: number; height?: number }>;
+  sourceScene: SceneManifest;
+  nodes?: Record<string, SceneNodeDefinition>;
+  media?: Record<string, MediaDescriptor>;
+  modules?: RuntimeModulesConfig;
+  viewer?: ViewerCompatConfig | Record<string, unknown>;
+  sidebar?: SidebarDefinition;
+  thumbnailCapture?: ThumbnailCaptureDefinition;
+}
 
 type SubtitleTrack = {
   language: string;
@@ -18,22 +36,16 @@ type SubtitleTrack = {
 
 const OPTIONAL_ASSET_SOURCE_TIMEOUT_MS = 20_000;
 
-function resolveAssetRuntimeUri(assetId: string | undefined, manifest: ExhibitConfigV2): string | undefined {
-  return resolveRuntimeAsset(assetId ? manifest.assets[assetId] : undefined);
+function resolveAssetRuntimeUri(assetId: string | undefined, manifest: SceneRuntimeSources): string | undefined {
+  return compileRuntimeAsset(assetId ? manifest.assets[assetId] : undefined).candidates[0];
 }
 
-function resolveAssetRuntimeUris(assetId: string | undefined, manifest: ExhibitConfigV2): string[] {
-  return resolveRuntimeAssetCandidates(assetId ? manifest.assets[assetId] : undefined);
-}
-
-function candidatesForDeclaredUri(uri: string, manifest: ExhibitConfigV2): string[] {
+function assetForDeclaredUri(uri: string, manifest: SceneRuntimeSources) {
   const declaredAsset = Object.values(manifest.assets).find((asset) => {
     const record = asset as unknown as UnknownRecord;
-    return record.sourceUri === uri || record.ipfsUri === uri || record.uri === uri;
+    return record.sourceUri === uri || record.ipfsUri === uri;
   });
-  return declaredAsset
-    ? resolveRuntimeAssetCandidates(declaredAsset as unknown as Parameters<typeof resolveRuntimeAssetCandidates>[0])
-    : resolveRuntimeAssetCandidates({ sourceUri: uri });
+  return compileRuntimeAsset(declaredAsset || { sourceUri: uri });
 }
 
 function categoryForNode(node: SceneNodeDefinition): string | undefined {
@@ -65,9 +77,9 @@ function categoryForNode(node: SceneNodeDefinition): string | undefined {
   }
 }
 
-function buildObjectRegistry(manifest: ExhibitConfigV2): Record<string, UnknownRecord> {
+function buildObjectRegistry(manifest: SceneRuntimeSources): Record<string, UnknownRecord> {
   const nodes = manifest.nodes || {};
-  const spawnNodeId = manifest.scene.spawn?.node;
+  const spawnNodeId = manifest.sourceScene.spawn?.node;
   const sculptureControls = new Map<string, SculptureControlInstance>();
   for (const instance of manifest.modules?.sculptureControls?.instances || []) {
     sculptureControls.set(instance.targetNode, instance);
@@ -77,7 +89,7 @@ function buildObjectRegistry(manifest: ExhibitConfigV2): Record<string, UnknownR
     Object.entries(nodes).map(([nodeId, node]) => {
       const category = nodeId === spawnNodeId ? 'enter' : categoryForNode(node);
       const sculpt = sculptureControls.get(nodeId);
-      const spawnDirection = node.spawnDirection ?? (nodeId === spawnNodeId ? manifest.scene.spawn?.direction : undefined);
+      const spawnDirection = node.spawnDirection ?? (nodeId === spawnNodeId ? manifest.sourceScene.spawn?.direction : undefined);
       return [
         nodeId,
         {
@@ -106,7 +118,7 @@ function buildObjectRegistry(manifest: ExhibitConfigV2): Record<string, UnknownR
   );
 }
 
-function mediaById(manifest: ExhibitConfigV2, mediaId: string | undefined): MediaDescriptor | undefined {
+function mediaById(manifest: SceneRuntimeSources, mediaId: string | undefined): MediaDescriptor | undefined {
   if (!mediaId) return undefined;
   return manifest.media?.[mediaId];
 }
@@ -133,7 +145,7 @@ function mediaMetadata(media?: MediaDescriptor): UnknownRecord {
   };
 }
 
-function nodeMediaMetadata(node: SceneNodeDefinition, manifest: ExhibitConfigV2): UnknownRecord {
+function nodeMediaMetadata(node: SceneNodeDefinition, manifest: SceneRuntimeSources): UnknownRecord {
   const mediaId = typeof node.media === 'string' && node.media.trim() ? node.media.trim() : undefined;
   return mediaMetadata(mediaById(manifest, mediaId));
 }
@@ -144,30 +156,30 @@ function sidebarContentFromMedia(media?: MediaDescriptor): string | undefined {
   return media.description;
 }
 
-function toImageRecord(media: MediaDescriptor, manifest: ExhibitConfigV2): UnknownRecord | null {
+function toImageRecord(media: MediaDescriptor, manifest: SceneRuntimeSources): UnknownRecord | null {
   if (media.kind === 'image') {
-    const sources = resolveAssetRuntimeUris(media.image.asset, manifest);
+    const imageAsset = compileRuntimeAsset(manifest.assets[media.image.asset]);
     return {
       title: media.title,
       tooltipLabel: media.tooltipLabel,
       description: media.description,
-      imagePath: sources[0],
-      imageFallbackPaths: sources.slice(1)
+      imageAsset,
+      imagePath: imageAsset.candidates[0]
     } satisfies UnknownRecord;
   }
   if (media.kind === 'document') {
-    const document = 'asset' in media.document
-      ? resolveAssetRuntimeUris(media.document.asset, manifest)
-      : resolveRuntimeAssetCandidates({ sourceUri: media.document.uri });
-    const preview = media.previewImage ? resolveAssetRuntimeUris(media.previewImage.asset, manifest) : [];
+    const pdfAsset = 'asset' in media.document
+      ? compileRuntimeAsset(manifest.assets[media.document.asset])
+      : compileRuntimeAsset({ sourceUri: media.document.uri });
+    const imageAsset = media.previewImage ? compileRuntimeAsset(manifest.assets[media.previewImage.asset]) : undefined;
     return {
       title: media.title,
       tooltipLabel: media.tooltipLabel,
       description: media.description,
-      imagePath: preview[0],
-      imageFallbackPaths: preview.slice(1),
-      pdfPath: document[0],
-      pdfFallbackPaths: document.slice(1),
+      imageAsset,
+      imagePath: imageAsset?.candidates[0],
+      pdfAsset,
+      pdfPath: pdfAsset.candidates[0],
       pdfOpenPath: media.openUri,
       pdfOpenLabel: media.openLabel
     } satisfies UnknownRecord;
@@ -175,7 +187,7 @@ function toImageRecord(media: MediaDescriptor, manifest: ExhibitConfigV2): Unkno
   return null;
 }
 
-function mapImages(manifest: ExhibitConfigV2): Record<string, UnknownRecord> | undefined {
+function mapImages(manifest: SceneRuntimeSources): Record<string, UnknownRecord> | undefined {
   const result: Record<string, UnknownRecord> = {};
   const mediaEntries = manifest.media ? Object.entries(manifest.media) : [];
   for (const [id, media] of mediaEntries) {
@@ -202,7 +214,7 @@ function mapImages(manifest: ExhibitConfigV2): Record<string, UnknownRecord> | u
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
-function mapVideoInstance(instance: VideoModuleInstance, manifest: ExhibitConfigV2): UnknownRecord | null {
+function mapVideoInstance(instance: VideoModuleInstance, manifest: SceneRuntimeSources): UnknownRecord | null {
   const media = mediaById(manifest, instance.media);
   if (!media || media.kind !== 'video') return null;
   const extra = instance as unknown as UnknownRecord;
@@ -226,13 +238,13 @@ function mapVideoInstance(instance: VideoModuleInstance, manifest: ExhibitConfig
     title: mediaTitle(media),
     description: mediaDescription(media),
     author: mediaAuthor(media),
-    poster: media.poster ? resolveAssetRuntimeUri(media.poster.asset, manifest) : undefined,
+    posterAsset: media.poster ? compileRuntimeAsset(manifest.assets[media.poster.asset]) : undefined,
     sources: media.sources.map((source) => {
       const asset = manifest.assets[source.asset];
-      const candidates = resolveRuntimeAssetCandidates(asset);
+      const runtimeAsset = compileRuntimeAsset(asset);
       return {
-        src: candidates[0],
-        fallbackSrcs: candidates.slice(1),
+        asset: runtimeAsset,
+        src: runtimeAsset.candidates[0],
         type: asset?.mimeType
       } satisfies UnknownRecord;
     }),
@@ -252,11 +264,11 @@ function parseSubtitleTracks(raw: unknown): SubtitleTrack[] | undefined {
 
 async function loadSubtitleTracks(
   assetId: string | undefined,
-  manifest: ExhibitConfigV2,
+  manifest: SceneRuntimeSources,
   signal?: AbortSignal
 ): Promise<SubtitleTrack[] | undefined> {
   const asset = assetId ? manifest.assets[assetId] : undefined;
-  const candidates = resolveRuntimeAssetCandidates(asset);
+  const candidates = runtimeAssetCandidates(compileRuntimeAsset(asset));
   if (!asset || candidates.length === 0) return undefined;
 
   let lastError: unknown;
@@ -304,16 +316,16 @@ async function loadSubtitleTracks(
   return undefined;
 }
 
-function mapAudioInstance(instance: AudioModuleInstance, manifest: ExhibitConfigV2): UnknownRecord | null {
+function mapAudioInstance(instance: AudioModuleInstance, manifest: SceneRuntimeSources): UnknownRecord | null {
   const media = mediaById(manifest, instance.media);
   if (!media || media.kind !== 'audio') return null;
   const sourceAsset = manifest.assets[media.sources[0]?.asset];
-  const sourceCandidates = resolveRuntimeAssetCandidates(sourceAsset);
+  const asset = compileRuntimeAsset(sourceAsset);
   return {
     id: instance.targetNode,
     name: instance.targetNode,
-    url: sourceCandidates[0],
-    fallbackUrls: sourceCandidates.slice(1),
+    asset,
+    url: asset.candidates[0],
     autoplayOnEnter: instance.autoplayOnEnter,
     autoplayOnXrSessionStart: instance.autoplayOnXrSessionStart,
     autoplayDelayMs: instance.autoplayDelayMs,
@@ -336,7 +348,7 @@ function mapAudioInstance(instance: AudioModuleInstance, manifest: ExhibitConfig
   } satisfies UnknownRecord;
 }
 
-function mapSculptures(manifest: ExhibitConfigV2): Record<string, UnknownRecord> | undefined {
+function mapSculptures(manifest: SceneRuntimeSources): Record<string, UnknownRecord> | undefined {
   const nodes = manifest.nodes || {};
   const sculptures = Object.entries(nodes)
     .filter(([, node]) => node.kind === 'sculpture')
@@ -347,7 +359,7 @@ function mapSculptures(manifest: ExhibitConfigV2): Record<string, UnknownRecord>
   return sculptures.length > 0 ? Object.fromEntries(sculptures) : undefined;
 }
 
-function mapMetadata(manifest: ExhibitConfigV2): UnknownRecord {
+function mapMetadata(manifest: SceneRuntimeSources): UnknownRecord {
   const ogAssetId = manifest.metadata.ogImage?.asset;
   const ogAsset = ogAssetId ? manifest.assets[ogAssetId] : undefined;
   return {
@@ -359,7 +371,7 @@ function mapMetadata(manifest: ExhibitConfigV2): UnknownRecord {
   };
 }
 
-function mapSidebar(manifest: ExhibitConfigV2): UnknownRecord | undefined {
+function mapSidebar(manifest: SceneRuntimeSources): UnknownRecord | undefined {
   if (!manifest.sidebar) return undefined;
   return {
     logo: manifest.sidebar.logoText ? { text: manifest.sidebar.logoText } : undefined,
@@ -379,8 +391,8 @@ function mapSidebar(manifest: ExhibitConfigV2): UnknownRecord | undefined {
   };
 }
 
-function mapSceneTransforms(manifest: ExhibitConfigV2): Pick<ExhibitConfig, 'position' | 'rotation' | 'scale'> {
-  const model = manifest.scene.model;
+function mapSceneTransforms(manifest: SceneRuntimeSources): Pick<ExhibitConfig, 'position' | 'rotation' | 'scale'> {
+  const model = manifest.sourceScene.model;
   const scale = typeof model?.scale === 'number' ? model.scale : undefined;
   return {
     position: model?.position,
@@ -389,22 +401,32 @@ function mapSceneTransforms(manifest: ExhibitConfigV2): Pick<ExhibitConfig, 'pos
   };
 }
 
-function mapViewerExtensions(manifest: ExhibitConfigV2): UnknownRecord {
+function mapViewerExtensions(manifest: SceneRuntimeSources): UnknownRecord {
   const viewer = manifest.viewer && typeof manifest.viewer === 'object' ? manifest.viewer : {};
   const viewerRecord = viewer as unknown as UnknownRecord;
   const rawModels = viewerRecord.models;
+  const rawRoom = viewerRecord.proceduralRoom;
+  const room = rawRoom && typeof rawRoom === 'object' && !Array.isArray(rawRoom)
+    ? rawRoom as UnknownRecord : undefined;
+  const wallTexture = typeof room?.wallTexture === 'string' ? room.wallTexture : undefined;
+  const wallTextureAsset = wallTexture
+    ? assetForDeclaredUri(wallTexture, manifest)
+    : undefined;
   const models = Array.isArray(rawModels)
     ? rawModels.map((entry) => {
         if (!entry || typeof entry !== 'object') return entry;
         const model = entry as UnknownRecord;
         if (typeof model.path !== 'string') return model;
-        const candidates = candidatesForDeclaredUri(model.path, manifest);
-        return { ...model, path: candidates[0] || model.path, pathCandidates: candidates };
+        const asset = assetForDeclaredUri(model.path, manifest);
+        return { ...model, path: asset.candidates[0] || model.path, asset };
       })
     : rawModels;
   return {
     ...(viewer as UnknownRecord),
-    ...(models ? { models } : {})
+    ...(models ? { models } : {}),
+    ...(room && wallTextureAsset ? {
+      proceduralRoom: { ...room, wallTexture: wallTextureAsset.candidates[0] || wallTexture, wallTextureAsset }
+    } : {})
   };
 }
 
@@ -442,8 +464,8 @@ function mergeAudioEntries(generatedAudio: UnknownRecord[], viewerAudio: unknown
   return [...merged, ...generatedByKey.values()];
 }
 
-function mapSceneSpawnParams(manifest: ExhibitConfigV2): UnknownRecord {
-  const spawn = manifest.scene.spawn;
+function mapSceneSpawnParams(manifest: SceneRuntimeSources): UnknownRecord {
+  const spawn = manifest.sourceScene.spawn;
   if (!spawn) return {};
   return {
     ...(Array.isArray(spawn.position) ? { visitorEnter: spawn.position } : {}),
@@ -451,8 +473,8 @@ function mapSceneSpawnParams(manifest: ExhibitConfigV2): UnknownRecord {
   };
 }
 
-function mapSceneBackgroundParams(manifest: ExhibitConfigV2): UnknownRecord {
-  const background = manifest.scene.background;
+function mapSceneBackgroundParams(manifest: SceneRuntimeSources): UnknownRecord {
+  const background = manifest.sourceScene.background;
   if (!background) return {};
   return {
     ...(typeof background.blurriness === 'number' ? { backgroundBlurriness: background.blurriness } : {}),
@@ -460,12 +482,11 @@ function mapSceneBackgroundParams(manifest: ExhibitConfigV2): UnknownRecord {
   };
 }
 
-export async function loadExhibitConfigV2(
-  raw: unknown,
+export async function compileRuntimeScene(
+  manifest: SceneRuntimeSources,
   signal?: AbortSignal,
   onOptionalUpdate?: (config: ExhibitConfig) => void
 ): Promise<ExhibitConfig> {
-  const manifest = raw as ExhibitConfigV2;
   const videoInstances = manifest.modules?.video?.instances || [];
   const audioInstances = manifest.modules?.audio?.instances || [];
 
@@ -482,21 +503,19 @@ export async function loadExhibitConfigV2(
   const runtime: ExhibitConfig = {
     id: manifest.id,
     metadata: mapMetadata(manifest),
-    modelPath: manifest.scene.model?.asset ? resolveAssetRuntimeUri(manifest.scene.model.asset, manifest) : undefined,
-    modelPathCandidates: manifest.scene.model?.asset ? resolveAssetRuntimeUris(manifest.scene.model.asset, manifest) : undefined,
-    backgroundTexture: manifest.scene.background?.backgroundAsset
-      ? resolveAssetRuntimeUri(manifest.scene.background.backgroundAsset, manifest)
+    modelAsset: manifest.sourceScene.model?.asset ? compileRuntimeAsset(manifest.assets[manifest.sourceScene.model.asset]) : undefined,
+    modelPath: manifest.sourceScene.model?.asset ? resolveAssetRuntimeUri(manifest.sourceScene.model.asset, manifest) : undefined,
+    backgroundAsset: manifest.sourceScene.background?.backgroundAsset
+      ? compileRuntimeAsset(manifest.assets[manifest.sourceScene.background.backgroundAsset]) : undefined,
+    backgroundTexture: manifest.sourceScene.background?.backgroundAsset
+      ? resolveAssetRuntimeUri(manifest.sourceScene.background.backgroundAsset, manifest)
       : undefined,
-    backgroundTextureCandidates: manifest.scene.background?.backgroundAsset
-      ? resolveAssetRuntimeUris(manifest.scene.background.backgroundAsset, manifest)
+    environmentAsset: manifest.sourceScene.background?.environmentAsset
+      ? compileRuntimeAsset(manifest.assets[manifest.sourceScene.background.environmentAsset]) : undefined,
+    environmentTexture: manifest.sourceScene.background?.environmentAsset
+      ? resolveAssetRuntimeUri(manifest.sourceScene.background.environmentAsset, manifest)
       : undefined,
-    environmentTexture: manifest.scene.background?.environmentAsset
-      ? resolveAssetRuntimeUri(manifest.scene.background.environmentAsset, manifest)
-      : undefined,
-    environmentTextureCandidates: manifest.scene.background?.environmentAsset
-      ? resolveAssetRuntimeUris(manifest.scene.background.environmentAsset, manifest)
-      : undefined,
-    backgroundColor: manifest.scene.background?.color,
+    backgroundColor: manifest.sourceScene.background?.color,
     sidebar: mapSidebar(manifest),
     objects: buildObjectRegistry(manifest),
     images: mapImages(manifest),
@@ -535,14 +554,12 @@ export async function loadExhibitConfigV2(
   const spawnParams = mapSceneSpawnParams(manifest);
   const existingParams = runtime.params && typeof runtime.params === 'object' ? runtime.params : {};
   const backgroundParams = mapSceneBackgroundParams(manifest);
-  const adaptedFromV3 = manifest.schemaVersion === '2.0.0-adapted-from-v3';
-  if (Object.keys(spawnParams).length > 0 || Object.keys(backgroundParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.scene.renderer) {
+  if (Object.keys(spawnParams).length > 0 || Object.keys(backgroundParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.sourceScene.renderer) {
     runtime.params = {
-      ...(adaptedFromV3 ? existingParams : {}),
-      ...manifest.scene.renderer,
+      ...existingParams,
+      ...manifest.sourceScene.renderer,
       ...backgroundParams,
-      ...(adaptedFromV3 ? spawnParams : {}),
-      ...(!adaptedFromV3 ? { ...spawnParams, ...existingParams } : {})
+      ...spawnParams
     };
   }
 

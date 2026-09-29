@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import vectaiV2 from '../../public/configs/vectai_krakow_032026_config_v2.json';
+import vectaiV2 from '../../archive/v2/vectai_krakow_032026_config_v2.json';
 import vectaiV3 from '../../public/configs/vectai_krakow_032026_config_v3.json';
 import uploadManifest from '../../public/configs/vectai_krakow_032026_ipfs_upload_manifest.json';
 

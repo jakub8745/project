@@ -92,7 +92,7 @@ export function useConfiguredGLTFs(paths: string[], candidatesByPath: string[][]
     const result = new Map<string, string[]>();
     paths.forEach((path, index) => {
       const candidates = candidatesByPath[index] || [];
-      result.set(path, [...new Set([path, ...candidates].filter((value) => typeof value === 'string' && value.trim()))]);
+      result.set(path, candidates.length ? candidates : [path]);
     });
     return result;
   }, [candidatesByPath, paths]);

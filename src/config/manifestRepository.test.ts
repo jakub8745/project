@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { fetchManifest, invalidateManifest } from './manifestRepository';
-import { normalizeManifestShape } from './manifestShape';
+import { validateRuntimeV3 } from './loaders/compileExhibitConfigV3';
 afterEach(() => vi.unstubAllGlobals());
 it('shares a raw request and lets one reader abort without cancelling another', async () => {
   let respond!: (response: Response) => void;
@@ -19,14 +19,14 @@ it('shares a raw request and lets one reader abort without cancelling another', 
   expect(fetch).toHaveBeenCalledTimes(1);
   invalidateManifest('/configs/shared-fixture.json');
 });
-it('cancels an abandoned request and separates v2/v3 caches', async () => {
+it('cancels abandoned requests and separates manifest URL caches', async () => {
   const signals: AbortSignal[] = [];
   vi.stubGlobal('fetch', vi.fn((_url, options) => {
     signals.push(options.signal);
     return new Promise(() => {});
   }));
   const a = new AbortController(); const b = new AbortController();
-  const requests = [fetchManifest('/v2-fixture.json',a.signal),fetchManifest('/v3-fixture.json',b.signal)];
+  const requests = [fetchManifest('/gallery-a.json',a.signal),fetchManifest('/gallery-b.json',b.signal)];
   const result = Promise.allSettled(requests);
   a.abort(); b.abort();
   expect(signals.every((signal) => signal.aborted)).toBe(true);
@@ -40,5 +40,5 @@ it('retries failed manifests rather than caching the failure', async () => {
   invalidateManifest('/retry-fixture.json');
 });
 it('rejects malformed v3 scene graphs with a useful error', () => {
-  expect(() => normalizeManifestShape({schemaVersion:'3.0.0',id:'invalid',assets:{}})).toThrow('sceneGraph');
+  expect(() => validateRuntimeV3({schemaVersion:'3.0.0',id:'invalid',assets:{},metadata:{}})).toThrow('sceneGraph');
 });

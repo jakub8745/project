@@ -4,6 +4,7 @@ import { getXrAutoplayAudioIds, parseAudioConfig, parseAudioFloorRoutes } from '
 import { parseLightZoneRoutes } from './useSceneLightZones';
 import { parseSceneVideoConfig } from './useSceneVideoConfig';
 import { parseProceduralModels } from './proceduralRoom/config';
+import { normalizeConfig } from '../config/loaders/shared';
 
 describe('scene config parser hooks', () => {
   it('normalizes audio entries, subtitle tracks, and floor routes', () => {
@@ -33,7 +34,7 @@ describe('scene config parser hooks', () => {
       ]
     } as ExhibitConfig;
 
-    const audio = parseAudioConfig(config);
+    const audio = parseAudioConfig(normalizeConfig(config));
     expect(audio).toHaveLength(1);
     expect(audio?.[0]).toMatchObject({
       id: 'intro_audio',
@@ -59,12 +60,12 @@ describe('scene config parser hooks', () => {
   });
 
   it('uses an explicit audio capability declaration for XR session playback', () => {
-    const audio = parseAudioConfig({
+    const audio = parseAudioConfig(normalizeConfig({
       audio: [
         { id: 'intro_track', url: '/intro.mp3' },
         { id: 'configured_track', url: '/configured.mp3', autoplayOnXrSessionStart: true }
       ]
-    } as ExhibitConfig);
+    } as ExhibitConfig));
 
     expect(getXrAutoplayAudioIds(audio)).toEqual(['configured_track']);
   });
@@ -99,7 +100,7 @@ describe('scene config parser hooks', () => {
   });
 
   it('normalizes video mesh config and ignores invalid entries', () => {
-    const videos = parseSceneVideoConfig({
+    const videos = parseSceneVideoConfig(normalizeConfig({
       videos: [
         {
           id: 'video_a',
@@ -118,12 +119,12 @@ describe('scene config parser hooks', () => {
         },
         { id: 'missing_sources' }
       ]
-    } as ExhibitConfig);
+    } as ExhibitConfig));
 
     expect(videos).toHaveLength(1);
     expect(videos?.[0]).toMatchObject({
       id: 'video_a',
-      sources: [{ src: '/videos/a.mp4', type: 'video/mp4', ipfsSrc: 'ipfs://a' }],
+      sources: [expect.objectContaining({ src: expect.stringContaining('https://ipfs.io/ipfs/a'), type: 'video/mp4' })],
       videoSurface: {
         roughness: 0.25,
         projection: true,
@@ -131,14 +132,14 @@ describe('scene config parser hooks', () => {
       },
       autoplayOnEnter: true,
       playbackMode: 'direct_modal',
-      poster: '/poster.jpg'
+      posterAsset: expect.objectContaining({ candidates: ['/poster.jpg'] })
     });
   });
 
   it('does not load procedural models that the manifest disables', () => {
     const models = parseProceduralModels([
       { id: 'temporarily-disabled-robot', path: '/robot.glb', enabled: false },
-      { id: 'active-model', path: '/model.glb' }
+      { id: 'active-model', path: '/model.glb', asset: { candidates: ['/model.glb'] } }
     ]);
 
     expect(models?.map((model) => model.id)).toEqual(['active-model']);
