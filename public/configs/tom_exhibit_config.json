@@ -20,7 +20,10 @@
     "background_texture": {
       "kind": "texture",
       "uri": "ipfs://bafybeidd6t3cnbazishz43pvu4snhlr523fdbplzqnifvoqq7gmpapleoa/bg_puno85.ktx2",
-      "mimeType": "image/ktx2"
+      "mimeType": "image/ktx2",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/bg_puno85.ktx2"
+      ]
     },
     "Manifesto_image": {
       "kind": "image",

@@ -8,13 +8,14 @@
   "sourceManifest": {
     "schemaVersion": "2.0.0",
     "path": "public/configs/tom_exhibit_config.json",
-    "sha256": "0d314e149876f9925ca33d65e77092e7d76884b03288cf2093a3b0b7ca37e8af",
+    "sha256": "8ac91d085b5234f0cad406adb68fe08fae3ebb82b3410b9d43bc18c56ccb2974",
     "migration": "v2-to-v3-structural-1",
     "id": "proposedlayout"
   },
   "metadata": {
     "title": "A Proposed Layout for the Tom Konyves Exhibition",
     "description": "A virtual exhibition layout proposal for Tom Konyves, including manifesto material, video projection surfaces, an information screen, and sculpture metadata.",
+    "tileDescription": "A proposed exhibition of Tom Konyves’s videopoetry and writing.",
     "language": "en"
   },
   "provenance": {
@@ -51,7 +52,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/cipriani/o/bg_puno85.ktx2"
+      ]
     },
     "Manifesto_image": {
       "kind": "image",

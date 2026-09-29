@@ -8,13 +8,14 @@
   "sourceManifest": {
     "schemaVersion": "2.0.0",
     "path": "public/configs/dystopia_config.json",
-    "sha256": "b69af37156659e374cdecfd99bd564371b98a127f8566b035b632ede6bd1d24c",
+    "sha256": "9b06ae1af8065ef31497dfa8efc3671748a3e260a243e54019adeda75a1deb26",
     "migration": "v2-to-v3-structural-1",
     "id": "dystopia"
   },
   "metadata": {
     "title": "Dystopia of Imitation",
     "description": "A v2 migration of the Dystopia exhibit. The pitcher/audio object and its transform-control interaction are declared in config, while the scene model stays the only GLB.",
+    "tileDescription": "An interactive 3D exploration of the material and process of sculpture.",
     "language": "en"
   },
   "provenance": {
@@ -40,7 +41,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/exhibition_dystopia.glb"
+      ]
     },
     "background_texture": {
       "kind": "texture",
@@ -51,7 +55,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/bg_dystopia.ktx2"
+      ]
     },
     "Milkmaid_image": {
       "kind": "image",
@@ -62,7 +69,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/milkmaid.jpg"
+      ]
     },
     "dzbanDystopia_audio": {
       "kind": "audio",
@@ -139,11 +149,11 @@
       },
       "renderer": {
         "toneMapping": "neutral",
-        "autoExposure": true,
-        "exposure": 1.25,
-        "exposureTarget": 0.85,
-        "exposureMin": 0.62,
-        "exposureMax": 2.05,
+        "autoExposure": false,
+        "exposure": 1.4,
+        "exposureTarget": 1.4,
+        "exposureMin": 1.1,
+        "exposureMax": 1.7,
         "exposureSampleInterval": 30
       }
     },
@@ -238,12 +248,12 @@
           "antialias": true,
           "shadows": false,
           "logarithmicDepthBuffer": false,
-          "exposure": 1.25,
-          "autoExposure": true,
+          "exposure": 1.4,
+          "autoExposure": false,
           "toneMapping": "neutral",
-          "exposureTarget": 0.85,
-          "exposureMin": 0.62,
-          "exposureMax": 2.05,
+          "exposureTarget": 1.4,
+          "exposureMin": 1.1,
+          "exposureMax": 1.7,
           "exposureSampleInterval": 30,
           "colorGrade": {
             "brightness": 1.05,

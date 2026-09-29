@@ -15,9 +15,9 @@ export interface GalleryGridProps {
 
 function GalleryTileContent({ item, activePreview }: { item: GalleryItem; activePreview: boolean }) {
   const [metadataRef, inViewport] = useInViewport<HTMLDivElement>(0.1);
-  const [metadata, setMetadata] = useState<{ title: string; description: string }>({
+  const [metadata, setMetadata] = useState<{ title: string; tileDescription: string }>({
     title: item.slug,
-    description: ''
+    tileDescription: ''
   });
   const configUrl = typeof window !== 'undefined'
     ? resolveGalleryConfigUrl(item, window.location.search)
@@ -34,7 +34,7 @@ function GalleryTileContent({ item, activePreview }: { item: GalleryItem; active
         const record = info as Record<string, unknown>;
         setMetadata({
           title: typeof record.title === 'string' && record.title.trim() ? record.title : item.slug,
-          description: typeof record.description === 'string' ? record.description : ''
+          tileDescription: typeof record.tileDescription === 'string' ? record.tileDescription : ''
         });
       })
       .catch(() => undefined);
@@ -47,7 +47,7 @@ function GalleryTileContent({ item, activePreview }: { item: GalleryItem; active
         thumbnailVideo={item.thumbnailVideo}
         thumbnailPoster={item.thumbnailPoster}
         title={metadata.title}
-        description={metadata.description}
+        description={metadata.tileDescription}
         activePreview={activePreview}
       />
     </div>

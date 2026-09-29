@@ -4,7 +4,7 @@ import type { TransformControls } from 'three/examples/jsm/controls/TransformCon
 import { applyPitcherControls } from './applyPitcherControls.js';
 import { applyObjectTransformControls, type ObjectTransformControlOptions } from './applyObjectTransformControls.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from './objectRegistry.js';
-import { resolveIpfsUriCandidates } from '../config/assetResolution';
+import { loadRuntimeAssetWithFallback, resolveIpfsUriCandidates } from '../config/assetResolution';
 
 type AudioDistanceModel = 'linear' | 'inverse' | 'exponential';
 
@@ -537,42 +537,18 @@ function loadAudioWithFallback(
     return pending;
   };
 
-  const tryIpfs = (gwIndex = 0): Promise<AudioBuffer> => {
-    if (!ipfsUrl) {
-      console.error(`[AudioMesh] Primary failed and no IPFS fallback for ${cfg?.id || cfg?.name}`);
-      return Promise.reject(new Error('No IPFS fallback configured'));
-    }
-    const gateways = resolveIpfsUriCandidates(ipfsUrl);
-    if (gwIndex >= gateways.length) {
-      console.error(`[AudioMesh] Failed to load audio from all configured gateways: ${ipfsUrl}`);
-      return Promise.reject(new Error(`Failed to load audio from all gateways: ${ipfsUrl}`));
-    }
-    const url = gateways[gwIndex];
-    return loadAudioBuffer(url).catch(() => {
-        console.warn(`[AudioMesh] IPFS gateway failed (${gwIndex + 1}/${gateways.length}), retrying...`, { url });
-        return tryIpfs(gwIndex + 1);
-      });
-  };
+  const candidates = [
+    ...(primary && !primary.startsWith('ipfs://') ? [primary] : []),
+    ...fallbackUrls,
+    ...(primary?.startsWith('ipfs://') ? resolveIpfsUriCandidates(primary) : []),
+    ...(ipfsUrl ? resolveIpfsUriCandidates(ipfsUrl) : [])
+  ];
 
-  const tryFallback = (index = 0): Promise<AudioBuffer> => {
-    if (index >= fallbackUrls.length) return tryIpfs(0);
-    return loadAudioBuffer(fallbackUrls[index]).catch(() => tryFallback(index + 1));
-  };
-
-  const tryPrimary = (): Promise<AudioBuffer> => {
-    if (typeof primary === 'string' && primary.startsWith('ipfs://')) {
-      return tryIpfs(0);
-    }
-    if (!primary) {
-      return tryFallback(0);
-    }
-    return loadAudioBuffer(primary).catch(() => {
-        console.warn(`[AudioMesh] Primary failed, trying configured fallbacks: ${primary}`);
-        return tryFallback(0);
-      });
-  };
-
-  void tryPrimary()
+  void loadRuntimeAssetWithFallback(
+    candidates,
+    loadAudioBuffer,
+    `audio ${cfg?.id || cfg?.name || 'asset'}`
+  )
     .then((buffer) => onSuccess(buffer))
     .catch((error) => {
       console.error('[AssetLoader]', {

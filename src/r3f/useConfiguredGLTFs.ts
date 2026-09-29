@@ -7,6 +7,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import type { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { getKtx2Loader } from '../loaders/ktx2Loader';
+import { loadRuntimeAssetWithFallback } from '../config/assetResolution';
 
 let sharedDracoLoader: DRACOLoader | null = null;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
@@ -16,14 +17,7 @@ const MODEL_SOURCE_TIMEOUT_MS = 20_000;
 function installAssetFallbacks(loader: GLTFLoader, sourceMap: Map<string, string[]>) {
   loader.load = ((url, onLoad, onProgress, onError) => {
     const candidates = sourceMap.get(url) || [url];
-    let candidateIndex = 0;
-    let lastError: unknown;
-    const startNext = async (): Promise<void> => {
-      if (candidateIndex >= candidates.length) {
-        onError?.(lastError instanceof Error ? lastError : new Error(`All configured model sources failed for ${url}`));
-        return;
-      }
-      const candidate = candidates[candidateIndex++];
+    const loadCandidate = async (candidate: string): Promise<GLTF> => {
       const controller = new AbortController();
       const timer = window.setTimeout(() => controller.abort(), MODEL_SOURCE_TIMEOUT_MS);
       try {
@@ -32,29 +26,23 @@ function installAssetFallbacks(loader: GLTFLoader, sourceMap: Map<string, string
         const buffer = await response.arrayBuffer();
         const contentLength = Number(response.headers.get('content-length')) || buffer.byteLength;
         onProgress?.({ lengthComputable: true, loaded: buffer.byteLength, total: contentLength } as ProgressEvent);
-        window.clearTimeout(timer);
         const resourcePath = new URL('.', new URL(candidate, window.location.href)).href;
-        loader.parse(buffer, resourcePath, (value) => {
-          if (candidate !== url) {
-            console.info('[AssetLoader] Model fallback source loaded.', { url, selectedSource: candidate });
-          }
-          onLoad(value);
-        }, (error) => {
-          lastError = error;
-          console.warn('[AssetLoader] Model source could not be decoded; trying the next configured source.', { url, candidate, error });
-          void startNext();
+        return await new Promise<GLTF>((resolve, reject) => {
+          loader.parse(buffer, resourcePath, resolve, reject);
         });
       } catch (error) {
-        window.clearTimeout(timer);
-        lastError = controller.signal.aborted
+        const cause = controller.signal.aborted
           ? new Error(`Model source timed out after ${MODEL_SOURCE_TIMEOUT_MS / 1000}s: ${candidate}`)
           : error;
-        console.warn('[AssetLoader] Model source failed; trying the next configured source.', { url, candidate, error: lastError });
-        await startNext();
+        console.warn('[AssetLoader] Model source failed; trying the next configured source.', { url, candidate, error: cause });
+        throw cause;
+      } finally {
+        window.clearTimeout(timer);
       }
-      window.clearTimeout(timer);
     };
-    void startNext();
+    void loadRuntimeAssetWithFallback(candidates, loadCandidate, `model ${url}`)
+      .then(onLoad)
+      .catch((error) => onError?.(error instanceof Error ? error : new Error(String(error))));
   }) as GLTFLoader['load'];
 }
 

@@ -15,6 +15,7 @@
   "metadata": {
     "title": "Unveiling the Heritage of Krystyna Bednarczyk",
     "description": "A 3D exhibit configuration migrated to v2 with media, audio, links, and spawn behavior declared in config instead of an empty interactives GLB.",
+    "tileDescription": "A 3D exhibition exploring the art and legacy of Krystyna Bednarczyk.",
     "language": "en"
   },
   "provenance": {

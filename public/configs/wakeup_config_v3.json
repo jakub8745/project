@@ -8,12 +8,13 @@
   "sourceManifest": {
     "schemaVersion": "2.0.0",
     "path": "public/configs/wakeup_config.json",
-    "sha256": "b52ed8bcc83f6978ca80f9bc46752798800b6909c31752e194d670269ef2dffb",
+    "sha256": "165bd2a3439523d4d8066205dee969620e6a43451072582fd732d43e93665de3",
     "migration": "v2-to-v3-structural-1",
     "id": "wakeupcall"
   },
   "metadata": {
     "title": "Wake-Up Call",
+    "tileDescription": "A poster exhibition about social issues, media, and the search for harmony.",
     "description": "<strong>VIRTUAL BIENNALE PRAGUE:</strong><br /><br />The Virtual Biennale Prague, held in the Czech Republic since 2007, is an international event focused on a unique theme each edition. The 11th Biennale, titled <strong>Wake-Up Call</strong>, is accompanied by an exhibition at the 3D Blue Point Art Gallery (Polish University Abroad, London). This show is part of a series promoting the 2020 poster competition.<br /><br /><strong>COMPETITION FOCUS:</strong><br /><br />Artists address social issues such as discrimination and fake news, considering both global and local contexts. Black-and-white posters, a hallmark of the Biennale, offer a critical lens on contemporary life.<br /><br /><strong>THEME AND IMPACT:</strong><br /><br />This year’s Biennale is shaped by the Covid-19 pandemic and events like Black Lives Matter. The posters explore these themes and universal concerns about society, media, and the quest for harmony. Artists highlight openness, resistance to injustice, freedom, and optimism. The <strong>Wake-Up Call</strong> theme brings these ideas together, showing how art can inspire positive change.<br /><br />",
     "language": "en"
   },
@@ -54,7 +55,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/bg_white.ktx2"
+      ]
     },
     "NADIA_image": {
       "kind": "image",
@@ -65,7 +69,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/NADIA.jpg"
+      ]
     },
     "QUENTIN_image": {
       "kind": "image",
@@ -76,7 +83,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/QUENTIN.jpg"
+      ]
     },
     "SZYMON_image": {
       "kind": "image",
@@ -87,7 +97,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SZYMON.jpg"
+      ]
     },
     "TEIJA_image": {
       "kind": "image",
@@ -98,7 +111,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/TEIJA.jpg"
+      ]
     },
     "LEX_image": {
       "kind": "image",
@@ -109,7 +125,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/LEX.jpg"
+      ]
     },
     "BARTOSZ_image": {
       "kind": "image",
@@ -120,7 +139,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/BARTOSZ.jpg"
+      ]
     },
     "VICTOR_image": {
       "kind": "image",
@@ -131,7 +153,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/VICTOR.jpg"
+      ]
     },
     "XU_image": {
       "kind": "image",
@@ -142,7 +167,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/XU.jpg"
+      ]
     },
     "SIQING_image": {
       "kind": "image",
@@ -153,7 +181,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SIQING.jpg"
+      ]
     },
     "BARBORA_image": {
       "kind": "image",
@@ -164,7 +195,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/BARBORA.jpg"
+      ]
     },
     "HAN_image": {
       "kind": "image",
@@ -175,7 +209,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/HAN.jpg"
+      ]
     },
     "SALOMON_image": {
       "kind": "image",
@@ -186,7 +223,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SALOMON.jpg"
+      ]
     },
     "JULIANA_image": {
       "kind": "image",
@@ -197,7 +237,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/JULIANA.jpg"
+      ]
     }
   },
   "content": {

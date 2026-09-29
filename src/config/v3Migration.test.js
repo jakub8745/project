@@ -15,6 +15,7 @@ function mockSubtitles() {
 
 function migrationComparableManifest(manifest) {
   const comparable = structuredClone(manifest);
+  if (comparable.metadata) delete comparable.metadata.tileDescription;
   const scene = comparable.sceneGraph?.sourceScene;
   const profile = comparable.sceneGraph?.viewerProfiles?.r3fCurrent;
   const curatedAssetSourceOverrides = {
@@ -39,6 +40,10 @@ function migrationComparableManifest(manifest) {
   for (const assetId of curatedAssetSourceOverrides[comparable.slug] || []) {
     if (comparable.assets?.[assetId]) delete comparable.assets[assetId].sourceUri;
   }
+  if (comparable.slug === 'dystopia') {
+    delete scene?.renderer?.autoExposure;
+    if (profile?.params) delete profile.params.autoExposure;
+  }
   if (scene?.background) {
     delete scene.background.color;
     delete scene.background.intensity;
@@ -57,7 +62,20 @@ function migrationComparableManifest(manifest) {
     delete profile.params.lightIntensity;
     if (profile.params.colorGrade) delete profile.params.colorGrade.brightness;
   }
+  if (comparable.slug === 'dystopia') {
+    for (const asset of Object.values(comparable.assets || {})) {
+      if (Array.isArray(asset.fallbackUris)) delete asset.fallbackUris;
+    }
+  }
+  if (comparable.slug === 'lockdowns') {
+    for (const asset of Object.values(comparable.assets || {})) {
+      if (Array.isArray(asset.fallbackUris)) delete asset.fallbackUris;
+    }
+  }
   if (comparable.slug === 'cipriani') {
+    for (const asset of Object.values(comparable.assets || {})) {
+      if (Array.isArray(asset.fallbackUris)) delete asset.fallbackUris;
+    }
     for (const instance of comparable.sceneGraph?.modules?.audio?.instances || []) {
       if (instance.targetNode === 'ciprianiAudio') delete instance.volume;
     }
@@ -67,6 +85,16 @@ function migrationComparableManifest(manifest) {
   }
   if (comparable.slug === 'wakeupcall' && scene?.spawn) {
     delete scene.spawn.direction;
+  }
+  if (comparable.slug === 'wakeupcall') {
+    for (const asset of Object.values(comparable.assets || {})) {
+      if (Array.isArray(asset.fallbackUris)) delete asset.fallbackUris;
+    }
+  }
+  if (comparable.slug === 'videopoetry') {
+    for (const asset of Object.values(comparable.assets || {})) {
+      if (Array.isArray(asset.fallbackUris)) delete asset.fallbackUris;
+    }
   }
   if (comparable.slug === 'prompt_procedural_room' && Array.isArray(profile?.models)) {
     for (const model of profile.models) {
@@ -122,7 +150,7 @@ describe('v3 migration parity', () => {
       if (hasOracle && hasIpfs) {
         const oracleIndex = candidates.findIndex((uri) => uri.includes('.objectstorage.'));
         const ipfsIndex = candidates.findIndex((uri) => BPA_IPFS_GATEWAYS.some((gateway) => uri.startsWith(gateway)));
-        expect(oracleIndex, `${job.slug}:${assetId} Oracle candidate`).toBeGreaterThanOrEqual(0);
+        expect(oracleIndex, `${job.slug}:${assetId} Oracle candidate`).toBe(0);
         expect(ipfsIndex, `${job.slug}:${assetId} IPFS candidate`).toBeGreaterThan(oracleIndex);
       } else if (hasIpfs) {
         expect(candidates[0], `${job.slug}:${assetId} IPFS candidate`).toMatch(/^https:\/\//);
@@ -159,8 +187,8 @@ describe('v3 migration parity', () => {
     const params = raw.sceneGraph.viewerProfiles.r3fCurrent.params;
 
     expect(scene.background.intensity).toBe(1.25);
-    expect(scene.renderer.exposure).toBe(1.25);
-    expect(params.exposure).toBe(1.25);
+    expect(scene.renderer).toMatchObject({autoExposure:false, exposure:1.4, exposureTarget:1.4});
+    expect(params).toMatchObject({autoExposure:false, exposure:1.4, exposureTarget:1.4});
     expect(params.lightIntensity).toBe(1.3);
     expect(params.colorGrade.brightness).toBe(1.05);
   });

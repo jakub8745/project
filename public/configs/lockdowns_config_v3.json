@@ -8,13 +8,14 @@
   "sourceManifest": {
     "schemaVersion": "2.0.0",
     "path": "public/configs/lockdowns_config.json",
-    "sha256": "c4351ddd8fedb0f081388fe6e10ef33b266f79a6e9cec5925e0e87905e1e2b08",
+    "sha256": "6aff1c7d2f793e398557e0f6b9c9e191a060d5a68977a90c003d76bc65c1a6b5",
     "migration": "v2-to-v3-structural-1",
     "id": "lockdowns"
   },
   "metadata": {
     "title": "Joanna Ciechanowska: Lockdowns",
     "description": "Joanna Ciechanowska's works presented at the Lockdowns exhibition offer a specific understanding of isolation. They are anchored in multi-dimensional references to social and historical time, but above all - to personal time. Despite revealing fears related to participating in an unknown situation, they steer clear of catastrophism. They become the artist's inner painting and poetic journey. They are a flash of rediscovery of those few simple images in the presence of which the human heart is closedand opened for the first time.",
+    "tileDescription": "Works by Joanna Ciechanowska reflect on life during lockdown.",
     "language": "en",
     "authors": [
       {
@@ -71,7 +72,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/78.jpg"
+      ]
     },
     "LobsterPyjamas_image": {
       "kind": "image",
@@ -82,7 +86,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/LobsterPyjamas.jpg"
+      ]
     },
     "IndigoBlue_image": {
       "kind": "image",
@@ -93,7 +100,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/IndigoBlue.jpg"
+      ]
     },
     "1000years_image": {
       "kind": "image",
@@ -104,7 +114,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/1000years.jpg"
+      ]
     },
     "BlueRain_image": {
       "kind": "image",
@@ -115,7 +128,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/BlueRain.jpg"
+      ]
     },
     "LastEvening_image": {
       "kind": "image",
@@ -126,7 +142,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/LastEvening.jpg"
+      ]
     },
     "Touch_image": {
       "kind": "image",
@@ -137,7 +156,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Touch.jpg"
+      ]
     },
     "TheMan_image": {
       "kind": "image",
@@ -148,7 +170,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/TheMan.jpg"
+      ]
     },
     "Svalbard_image": {
       "kind": "image",
@@ -159,7 +184,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Svalbard.jpg"
+      ]
     },
     "AncientFears_image": {
       "kind": "image",
@@ -170,7 +198,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/AncientFears.jpg"
+      ]
     },
     "LastFlight_image": {
       "kind": "image",
@@ -181,7 +212,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/LastFlight.jpg"
+      ]
     },
     "City_image": {
       "kind": "image",
@@ -192,7 +226,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/City.jpg"
+      ]
     },
     "Cauchemar_image": {
       "kind": "image",
@@ -203,7 +240,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Cauchemar.jpg"
+      ]
     },
     "Shadow_image": {
       "kind": "image",
@@ -214,7 +254,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Shadow.jpg"
+      ]
     },
     "Waves_image": {
       "kind": "image",
@@ -225,7 +268,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Waves.jpg"
+      ]
     },
     "Boat_image": {
       "kind": "image",
@@ -236,7 +282,10 @@
       "preservation": {
         "status": "verification_pending",
         "integrityAlgorithm": "sha256"
-      }
+      },
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/lockdowns/o/Boat.jpg"
+      ]
     }
   },
   "content": {

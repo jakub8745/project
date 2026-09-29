@@ -16,72 +16,114 @@
     "background_texture": {
       "kind": "texture",
       "uri": "ipfs://bafybeieo4nytbfj4fgzxqcn2ihhvoetkoy74hjqltqasvpu5n5dndd4rmi/bg_white.ktx2",
-      "mimeType": "image/ktx2"
+      "mimeType": "image/ktx2",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/bg_white.ktx2"
+      ]
     },
     "NADIA_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/NADIA.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/NADIA.jpg"
+      ]
     },
     "QUENTIN_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/QUENTIN.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/QUENTIN.jpg"
+      ]
     },
     "SZYMON_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SZYMON.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SZYMON.jpg"
+      ]
     },
     "TEIJA_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/TEIJA.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/TEIJA.jpg"
+      ]
     },
     "LEX_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/LEX.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/LEX.jpg"
+      ]
     },
     "BARTOSZ_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARTOSZ.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/BARTOSZ.jpg"
+      ]
     },
     "VICTOR_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/VICTOR.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/VICTOR.jpg"
+      ]
     },
     "XU_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/XU.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/XU.jpg"
+      ]
     },
     "SIQING_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SIQING.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SIQING.jpg"
+      ]
     },
     "BARBORA_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/BARBORA.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/BARBORA.jpg"
+      ]
     },
     "HAN_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/HAN.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/HAN.jpg"
+      ]
     },
     "SALOMON_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/SALOMON.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/SALOMON.jpg"
+      ]
     },
     "JULIANA_image": {
       "kind": "image",
       "uri": "ipfs://bafybeieuuvxw3ko7b37vxalv7etosgcwyg6cpxv277kza5sst73dy2vofi/JULIANA.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/wakeupcall/o/JULIANA.jpg"
+      ]
     }
   },
   "scene": {

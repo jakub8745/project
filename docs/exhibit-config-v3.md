@@ -9,7 +9,7 @@ Start with `example_of_gallery_config_v3.json`. The schema is `public/configs/sc
 | Section | Purpose |
 | --- | --- |
 | `metadata`, `provenance`, `rights` | Description, source history and rights review |
-| `assets` | Stable asset IDs, `sourceUri`, optional canonical `ipfsUri`, ordered fallback URLs, MIME type and integrity |
+| `assets` | Stable asset IDs, delivery `sourceUri`, optional canonical `ipfsUri`, alternate `fallbackUris`, MIME type and integrity |
 | `content.media`, `content.sidebar` | Media catalog and sidebar presentation |
 | `sceneGraph.sourceScene` | Whole scene definition, including model transforms, spawn, camera, background and renderer |
 | `sceneGraph.nodes`, `sceneGraph.modules` | Scene semantics and runtime module settings |
@@ -27,7 +27,7 @@ The manifest is the authority for exhibit identity, asset locations, scene seman
 
 Both the scene and sidebar use `normalizeManifestShape` and the shared asset resolver. They share one raw manifest request without waiting for optional subtitle/media loading. Aborting one reader does not cancel another reader's request. The selected manifest URL identifies each version's cache entry.
 
-The global production source policy is Oracle Object Storage → canonical IPFS through the ordered BPA gateway list → other configured immutable/archive URLs → local/development paths. The manifest must declare Oracle locations in `sourceUri` or `fallbackUris`; the viewer does not derive an Oracle bucket from the exhibit ID or guess a filename. Canonical IPFS references remain intact in the archive JSON. The shared resolver supplies browser gateway URLs and per-asset loaders try those sources in order with bounded waits. Model failure produces a retryable scene error; optional background, environment, image, audio, subtitle, and video failures do not prevent scene navigation.
+The global production delivery policy is declared Oracle Object Storage URLs first, other declared HTTP delivery URLs next, canonical IPFS through the BPA gateway list after that, followed by Arweave and local/development paths. This policy applies regardless of whether the HTTP delivery URL is in `sourceUri` or `fallbackUris`. The viewer does not derive an Oracle bucket from the exhibit ID or guess a filename. Canonical IPFS references remain intact in the archive JSON for provenance and reconstruction. The shared resolver supplies the ordered browser URLs; format-specific loaders consume that order and try later candidates after failure. Model failure produces a retryable scene error; optional background, environment, image, audio, subtitle, and video failures do not prevent scene navigation.
 
 ## Conversion and validation
 

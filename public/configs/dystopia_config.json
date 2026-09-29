@@ -15,17 +15,26 @@
     "scene_model": {
       "kind": "model",
       "uri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/exhibition_dystopia.glb",
-      "mimeType": "model/gltf-binary"
+      "mimeType": "model/gltf-binary",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/exhibition_dystopia.glb"
+      ]
     },
     "background_texture": {
       "kind": "texture",
       "uri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/bg_dystopia.ktx2",
-      "mimeType": "image/ktx2"
+      "mimeType": "image/ktx2",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/bg_dystopia.ktx2"
+      ]
     },
     "Milkmaid_image": {
       "kind": "image",
       "uri": "ipfs://bafybeia6mqydunmuxezitdzr4mo2xejehjm6wiyswuvx73r56nu5g5sypq/milkmaid.jpg",
-      "mimeType": "image/jpeg"
+      "mimeType": "image/jpeg",
+      "fallbackUris": [
+        "https://lrbcisjgkyhb.objectstorage.uk-london-1.oci.customer-oci.com/n/lrbcisjgkyhb/b/dystopia/o/milkmaid.jpg"
+      ]
     },
     "dzbanDystopia_audio": {
       "kind": "audio",

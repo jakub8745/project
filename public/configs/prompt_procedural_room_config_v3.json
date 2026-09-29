@@ -15,6 +15,7 @@
   "metadata": {
     "title": "Collision Salon",
     "description": "A fully generated procedural room where robots and translucent blobs move, collide, and turn physical contact into short art-focused chat exchanges. No scene GLB is used for the room; geometry, actors, physics, wall prints, and chat behavior are declared by config.",
+    "tileDescription": "A procedural gallery where visitors, robots, and art interact.",
     "language": "en",
     "tags": [
       "procedural room",
