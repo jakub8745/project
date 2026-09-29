@@ -567,8 +567,8 @@
           "exposureMax": 1.9,
           "exposureSampleInterval": 30,
           "colorGrade": {
-            "brightness": 1,
-            "contrast": 0.9,
+            "brightness": 1.05,
+            "contrast": 0.85,
             "saturate": 0.68
           },
           "lightIntensity": 1,
