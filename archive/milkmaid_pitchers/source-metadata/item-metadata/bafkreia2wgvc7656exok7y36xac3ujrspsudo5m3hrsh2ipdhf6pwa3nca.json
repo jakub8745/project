@@ -1,0 +1,66 @@
+{
+  "name": "Milkmaid's Pitcher Snapshot (673ff06d)",
+  "description": "A digital sherd of Milkmaid's Pitcher, an interactive sculpture from the Dystopia of Imitation art project. Created through a WebGL/WebXR installation, each sherd captures a unique state of an animated virtual pitcher as it is manipulated by a participant.\nLike an archaeological fragment, the resulting 3D model preserves only a momentary part of a larger, mutable object—a record of interaction, transformation, and place within the digital sculpture.\nThis sherd was captured in Katowice at 50.258556, 19.021146.",
+  "image": "ipfs://bafkreib66ccpnsqxjmhzkomsul3y7kdv7vfpy2357j2spspvybidbgwitq",
+  "animation_url": "ipfs://bafkreia2wgvc7656exok7y36xac3ujrspsudo5m3hrsh2ipdhf6pwa3nca",
+  "external_url": "https://pitcher.bluepointart.uk/",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Jarek Solecki @ Dystopia of imitation"
+    },
+    {
+      "trait_type": "Asset CID",
+      "value": "bafkreia2wgvc7656exok7y36xac3ujrspsudo5m3hrsh2ipdhf6pwa3nca"
+    },
+    {
+      "trait_type": "Asset Filename",
+      "value": "bafkreia2wgvc7656exok7y36xac3ujrspsudo5m3hrsh2ipdhf6pwa3nca.glb"
+    },
+    {
+      "trait_type": "Latitude",
+      "value": 50.258556
+    },
+    {
+      "trait_type": "Longitude",
+      "value": 19.021146
+    },
+    {
+      "trait_type": "Capture City",
+      "value": "Katowice"
+    },
+    {
+      "trait_type": "Capture Timestamp",
+      "value": "2025-12-01T11:18:19+01:00"
+    }
+  ],
+  "properties": {
+    "category": "3d",
+    "files": [
+      {
+        "uri": "ipfs://bafkreib66ccpnsqxjmhzkomsul3y7kdv7vfpy2357j2spspvybidbgwitq",
+        "type": "image/png",
+        "name": "bafkreib66ccpnsqxjmhzkomsul3y7kdv7vfpy2357j2spspvybidbgwitq.png",
+        "role": "thumbnail"
+      },
+      {
+        "uri": "ipfs://bafkreia2wgvc7656exok7y36xac3ujrspsudo5m3hrsh2ipdhf6pwa3nca",
+        "type": "model/gltf-binary",
+        "name": "bafkreia2wgvc7656exok7y36xac3ujrspsudo5m3hrsh2ipdhf6pwa3nca.glb",
+        "role": "3d-model"
+      }
+    ],
+    "location": {
+      "city": "Katowice",
+      "latitude": 50.258556,
+      "longitude": 19.021146
+    },
+    "captured_at": "2025-12-01T11:18:19+01:00"
+  },
+  "external_links": [
+    {
+      "name": "Milkmaid's Pitchers Archive",
+      "url": "https://archive.bluepointart.uk/#milkmaid_pitchers"
+    }
+  ]
+}

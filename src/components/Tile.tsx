@@ -1,10 +1,9 @@
 // src/components/Tile.tsx
 import React from 'react';
-import { Loader2 } from 'lucide-react';
 import { useInViewport } from '../hooks/useInViewport';
 
 export interface TileProps {
-  thumbnailVideo: string;
+  thumbnailVideo?: string;
   thumbnailPoster?: string;
   title?: string;
   description?: string;
@@ -19,7 +18,7 @@ const Tile: React.FC<TileProps> = ({
   activePreview = false,
 }) => {
   const [tileRef, inViewport] = useInViewport<HTMLDivElement>(0.35);
-  const shouldRenderVideo = inViewport && activePreview;
+  const shouldRenderVideo = Boolean(thumbnailVideo) && inViewport && activePreview;
 
   return (
     <div
@@ -48,8 +47,7 @@ const Tile: React.FC<TileProps> = ({
               loading="lazy"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 text-slate-200">
-              <Loader2 className="w-8 h-8 animate-spin" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950" aria-hidden="true">
             </div>
           )
         )}

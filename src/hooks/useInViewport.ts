@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, type RefObject } from 'react';
 
 /**
  * Lightweight IntersectionObserver hook to know when an element enters the viewport.
  */
 export function useInViewport<T extends HTMLElement>(
   threshold: number | number[] = 0.25
-): [React.RefObject<T>, boolean] {
+): [RefObject<T | null>, boolean] {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
 

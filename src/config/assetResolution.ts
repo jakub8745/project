@@ -95,3 +95,27 @@ export async function loadRuntimeAssetWithFallback<T>(
   Object.assign(error, { failures });
   throw error;
 }
+
+/** Retry one complete source sweep after a delay for transient gateway failures. */
+export async function loadRuntimeAssetWithRetries<T>(
+  candidates: string[],
+  loadCandidate: (url: string) => Promise<T>,
+  assetLabel = 'asset',
+  options: { maxRetries?: number; retryDelayMs?: number } = {}
+): Promise<T> {
+  const maxRetries = Math.max(0, Math.floor(options.maxRetries ?? 1));
+  const retryDelayMs = Math.max(0, options.retryDelayMs ?? 10_000);
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    try {
+      return await loadRuntimeAssetWithFallback(candidates, loadCandidate, assetLabel);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= maxRetries) break;
+      await new Promise<void>((resolve) => setTimeout(resolve, retryDelayMs));
+    }
+  }
+
+  throw lastError;
+}

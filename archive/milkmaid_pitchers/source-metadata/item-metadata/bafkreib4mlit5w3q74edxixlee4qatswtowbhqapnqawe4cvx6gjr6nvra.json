@@ -1,0 +1,66 @@
+{
+  "name": "Milkmaid's Pitcher Snapshot (95e1997e)",
+  "description": "A digital sherd of Milkmaid's Pitcher, an interactive sculpture from the Dystopia of Imitation art project. Created through a WebGL/WebXR installation, each sherd captures a unique state of an animated virtual pitcher as it is manipulated by a participant.\nLike an archaeological fragment, the resulting 3D model preserves only a momentary part of a larger, mutable object—a record of interaction, transformation, and place within the digital sculpture.\nThis sherd was captured in Northampton at 52.238386, -0.900073.",
+  "image": "ipfs://bafkreiaz7dh37ppw4za4ubivbumoahxcka6a7ttxwt3r7sc6h6qjdgur4y",
+  "animation_url": "ipfs://bafkreib4mlit5w3q74edxixlee4qatswtowbhqapnqawe4cvx6gjr6nvra",
+  "external_url": "https://pitcher.bluepointart.uk/",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Jarek Solecki @ Dystopia of imitation"
+    },
+    {
+      "trait_type": "Asset CID",
+      "value": "bafkreib4mlit5w3q74edxixlee4qatswtowbhqapnqawe4cvx6gjr6nvra"
+    },
+    {
+      "trait_type": "Asset Filename",
+      "value": "bafkreib4mlit5w3q74edxixlee4qatswtowbhqapnqawe4cvx6gjr6nvra.glb"
+    },
+    {
+      "trait_type": "Latitude",
+      "value": 52.238386
+    },
+    {
+      "trait_type": "Longitude",
+      "value": -0.900073
+    },
+    {
+      "trait_type": "Capture City",
+      "value": "Northampton"
+    },
+    {
+      "trait_type": "Capture Timestamp",
+      "value": "2024-03-10T22:07:53+00:00"
+    }
+  ],
+  "properties": {
+    "category": "3d",
+    "files": [
+      {
+        "uri": "ipfs://bafkreiaz7dh37ppw4za4ubivbumoahxcka6a7ttxwt3r7sc6h6qjdgur4y",
+        "type": "image/png",
+        "name": "bafkreiaz7dh37ppw4za4ubivbumoahxcka6a7ttxwt3r7sc6h6qjdgur4y.png",
+        "role": "thumbnail"
+      },
+      {
+        "uri": "ipfs://bafkreib4mlit5w3q74edxixlee4qatswtowbhqapnqawe4cvx6gjr6nvra",
+        "type": "model/gltf-binary",
+        "name": "bafkreib4mlit5w3q74edxixlee4qatswtowbhqapnqawe4cvx6gjr6nvra.glb",
+        "role": "3d-model"
+      }
+    ],
+    "location": {
+      "city": "Northampton",
+      "latitude": 52.238386,
+      "longitude": -0.900073
+    },
+    "captured_at": "2024-03-10T22:07:53+00:00"
+  },
+  "external_links": [
+    {
+      "name": "Milkmaid's Pitchers Archive",
+      "url": "https://archive.bluepointart.uk/#milkmaid_pitchers"
+    }
+  ]
+}

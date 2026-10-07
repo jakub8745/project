@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadRuntimeAssetWithFallback, resolveRuntimeAsset, resolveRuntimeAssetCandidates } from './assetResolution';
+import { loadRuntimeAssetWithFallback, loadRuntimeAssetWithRetries, resolveRuntimeAsset, resolveRuntimeAssetCandidates } from './assetResolution';
 import ciprianiManifest from '../../public/configs/cipriani_config_v3.json';
 import ciprianiLegacy from '../../archive/v2/cipriani_config.json';
 import dystopiaManifest from '../../public/configs/dystopia_config_v3.json';
@@ -150,6 +150,27 @@ describe('manifest-backed asset resolution', () => {
     expect(attempted).toEqual([candidates[0]]);
     expect(candidates[0]).toContain('https://ipfs.io/ipfs/');
     expect(candidates.some((url) => url.includes('.objectstorage.'))).toBe(false);
+  });
+
+  it('retries a complete candidate sweep once after a transient model failure', async () => {
+    let calls = 0;
+    const value = await loadRuntimeAssetWithRetries(['gateway-a', 'gateway-b'], async () => {
+      calls += 1;
+      if (calls <= 2) throw new Error('temporary gateway failure');
+      return 'loaded';
+    }, 'model', { maxRetries: 1, retryDelayMs: 0 });
+    expect(value).toBe('loaded');
+    expect(calls).toBe(3);
+  });
+
+  it('stops after the configured number of complete retries', async () => {
+    let calls = 0;
+    await expect(loadRuntimeAssetWithRetries(['gateway'], async () => {
+      calls += 1;
+      throw new Error('offline');
+    }, 'model', { maxRetries: 1, retryDelayMs: 0 }))
+      .rejects.toThrow('Unable to load model from any configured source');
+    expect(calls).toBe(2);
   });
 
   it.each(['model', 'image', 'video', 'audio', 'document'] as const)(

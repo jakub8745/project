@@ -23,12 +23,14 @@ export interface ExhibitConfig extends UnknownRecord {
   sculptures?: Record<string, UnknownRecord>;
   sidebar?: UnknownRecord;
   params?: UnknownRecord;
+  camera?: UnknownRecord;
   lights?: UnknownRecord;
   lightZones?: UnknownRecord[];
   audioZones?: UnknownRecord[];
   interactions?: UnknownRecord;
   links?: UnknownRecord;
   proceduralRoom?: UnknownRecord;
+  infiniteWorld?: UnknownRecord;
   models?: UnknownRecord[];
   thumbnailCapture?: UnknownRecord;
   physics?: UnknownRecord;

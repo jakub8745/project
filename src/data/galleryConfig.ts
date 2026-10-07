@@ -2,7 +2,7 @@ import { oracleStaticUrl } from '../utils/ipfs';
 
 export interface GalleryItem {
   slug: string;
-  thumbnailVideo: string;
+  thumbnailVideo?: string;
   thumbnailPoster?: string;
   configUrl: string;
 }
@@ -13,6 +13,12 @@ export const COMMON_ICONS = {
 };
 
 export const GALLERIES: GalleryItem[] = [
+  {
+    slug: 'milkmaid_pitchers',
+    thumbnailVideo: '/sidebar_thumbnails/thumb_milkmaid.mp4',
+    thumbnailPoster: '/sidebar_thumbnails/poster_milkmaid.jpg',
+    configUrl: '/configs/milkmaid_pitchers_config_v3.json',
+  },
   {
     slug: 'vectai_krakow_032026',
     thumbnailVideo: '/sidebar_thumbnails/thumb_vectai_cracks.mp4',

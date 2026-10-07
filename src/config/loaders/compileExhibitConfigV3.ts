@@ -39,6 +39,45 @@ export function validateRuntimeV3(raw: unknown): ExhibitConfigV3 {
       if (background[key] != null) requireAsset(background[key], `sceneGraph.sourceScene.background.${key}`);
     }
   }
+  const proceduralRecipe = graph.proceduralRecipe && typeof graph.proceduralRecipe === 'object'
+    ? graph.proceduralRecipe as UnknownRecord : {};
+  const infiniteWorld = proceduralRecipe.infiniteWorld && typeof proceduralRecipe.infiniteWorld === 'object'
+    ? proceduralRecipe.infiniteWorld as UnknownRecord : undefined;
+  if (infiniteWorld && Array.isArray(infiniteWorld.models)) {
+    infiniteWorld.models.forEach((entry, index) => {
+      const model = object(entry, `sceneGraph.proceduralRecipe.infiniteWorld.models[${index}]`);
+      requireAsset(model.asset, `sceneGraph.proceduralRecipe.infiniteWorld.models[${index}].asset`);
+    });
+  }
+  if (infiniteWorld) {
+    for (const key of ['visitor', 'floor', 'fog', 'distribution', 'scale', 'orientation', 'recycling', 'background']) {
+      object(infiniteWorld[key], `sceneGraph.proceduralRecipe.infiniteWorld.${key}`);
+    }
+    if (!Array.isArray(infiniteWorld.models) || infiniteWorld.models.length === 0) {
+      throw new Error('Invalid exhibit config: sceneGraph.proceduralRecipe.infiniteWorld.models must be a non-empty array.');
+    }
+    const models = infiniteWorld.models;
+    const ids = models.map((entry, index) => object(entry, `sceneGraph.proceduralRecipe.infiniteWorld.models[${index}]`).id);
+    if (ids.some((id) => typeof id !== 'string' || !id.trim()) || new Set(ids).size !== ids.length) {
+      throw new Error('Invalid exhibit config: infinite-world model ids must be non-empty and unique.');
+    }
+    const distribution = infiniteWorld.distribution as UnknownRecord;
+    const activePopulation = infiniteWorld.activePopulation as UnknownRecord;
+    const recycling = infiniteWorld.recycling as UnknownRecord;
+    const orientation = infiniteWorld.orientation as UnknownRecord;
+    if (distribution.algorithm !== 'seeded-poisson-disk-annulus') {
+      throw new Error('Invalid exhibit config: unsupported infinite-world distribution algorithm.');
+    }
+    if (activePopulation.count !== models.length) {
+      throw new Error('Invalid exhibit config: activePopulation.count must match the infinite-world models array length.');
+    }
+    if (recycling.strategy !== 'reuse-loaded-instance') {
+      throw new Error('Invalid exhibit config: unsupported infinite-world recycling strategy.');
+    }
+    if (orientation.yaw !== 'uniform-random-[0,2pi)' && orientation.yaw !== 'fixed') {
+      throw new Error('Invalid exhibit config: unsupported infinite-world yaw rule.');
+    }
+  }
   const modules = graph.modules === undefined ? {} : object(graph.modules, 'sceneGraph.modules');
   for (const kind of ['audio', 'video']) {
     const module = modules[kind];
@@ -81,20 +120,47 @@ export async function compileExhibitConfigV3(
   const interactions = Array.isArray(manifest.interactions) ? manifest.interactions : [];
   const audioZones = portableRoutes(interactions, 'location_audio_route');
   const lightZones = portableRoutes(interactions, 'location_light_profile');
+  const world = graph.proceduralRecipe?.infiniteWorld as UnknownRecord | undefined;
+  const worldVisitor = world?.visitor as UnknownRecord | undefined;
+  const worldBackground = world?.background as UnknownRecord | undefined;
+  const sourceScene = worldVisitor ? {
+    ...graph.sourceScene,
+    spawn: {
+      ...(graph.sourceScene.spawn || {}),
+      ...(Array.isArray(worldVisitor.spawnPosition) ? { position: worldVisitor.spawnPosition as [number, number, number] } : {}),
+      ...(typeof worldVisitor.spawnDirection === 'string' ? { direction: worldVisitor.spawnDirection } : {})
+    },
+    background: {
+      ...(graph.sourceScene.background || {}),
+      ...(typeof worldBackground?.color === 'string' ? { color: worldBackground.color } : {})
+    }
+  } : graph.sourceScene;
+  const profileParams = (viewer as UnknownRecord).params;
+  const adaptedParams = {
+    ...(profileParams && typeof profileParams === 'object' ? profileParams as UnknownRecord : {}),
+    ...(worldVisitor && typeof worldVisitor.walkingSpeed === 'number' ? { visitorSpeed: worldVisitor.walkingSpeed } : {}),
+    ...(worldVisitor && typeof worldVisitor.eyeHeight === 'number' ? { heightOffset: [0, worldVisitor.eyeHeight, 0] } : {}),
+    ...(worldVisitor && typeof worldVisitor.gravity === 'number' ? { gravity: worldVisitor.gravity } : {}),
+    ...(worldVisitor && typeof worldVisitor.movementAcceleration === 'number' ? { movementAcceleration: worldVisitor.movementAcceleration } : {}),
+    ...(worldVisitor && typeof worldVisitor.movementDeceleration === 'number' ? { movementDeceleration: worldVisitor.movementDeceleration } : {})
+  };
   return compileRuntimeScene({
     id: manifest.id,
     metadata: manifest.metadata,
     assets: manifest.assets,
-    sourceScene: graph.sourceScene,
+    sourceScene,
     nodes: graph.nodes,
     media: manifest.content.media,
     modules: graph.modules,
     viewer: {
       ...profile,
       ...viewer,
+      ...(worldVisitor && graph.sourceScene.camera ? { camera: graph.sourceScene.camera } : {}),
+      ...(worldVisitor ? { params: adaptedParams } : {}),
       ...(audioZones.length ? { audioZones } : {}),
       ...(lightZones.length ? { lightZones } : {})
     },
+    proceduralRecipe: graph.proceduralRecipe as UnknownRecord | undefined,
     sidebar: manifest.content.sidebar,
     thumbnailCapture: manifest.previews?.capture?.r3fCurrent
   }, signal, onOptionalUpdate);

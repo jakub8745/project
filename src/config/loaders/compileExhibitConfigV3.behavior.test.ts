@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import vectaiV3 from '../../../public/configs/vectai_krakow_032026_config_v3.json';
+import milkmaidV3 from '../../../public/configs/milkmaid_pitchers_config_v3.json';
 import { compileExhibitConfigV3 } from './compileExhibitConfigV3';
 import { parseAudioFloorRoutes } from '../../r3f/useSceneAudioRouting';
 import { parseLightZoneRoutes } from '../../r3f/useSceneLightZones';
@@ -22,6 +23,21 @@ describe('V3 native runtime behavior', () => {
     const config = await compileExhibitConfigV3(vectaiV3);
     const modelPaths = (config.models || []).map((model) => model.path);
     expect(modelPaths.every((path) => typeof path === 'string' && path.startsWith(ORACLE_PREFIX))).toBe(true);
+  });
+
+  it('compiles procedural-world model asset references through the central resolver', async () => {
+    const source = structuredClone(milkmaidV3);
+    const rawWorld = source.sceneGraph.proceduralRecipe.infiniteWorld;
+    rawWorld.orientation.visibleYawRadiansPerSecond = 0.12;
+    const firstAsset = (source.assets as Record<string, { sourceUri: string; ipfsUri: string | null }>)[rawWorld.models[0].asset];
+    firstAsset.ipfsUri = 'ipfs://bafkrei-example';
+    const oracleUri = firstAsset.sourceUri;
+    const config = await compileExhibitConfigV3(source);
+    const runtimeWorld = config.infiniteWorld as { visibleYawRadiansPerSecond: number; models: Array<{ path: string; asset: RuntimeAsset }> };
+    expect(runtimeWorld.visibleYawRadiansPerSecond).toBe(0.12);
+    expect(runtimeWorld.models[0].path).toBe(oracleUri);
+    expect(runtimeAssetCandidates(runtimeWorld.models[0].asset)[0]).toBe(oracleUri);
+    expect(runtimeAssetCandidates(runtimeWorld.models[0].asset).some((url) => url.startsWith('https://ipfs.io/ipfs/'))).toBe(true);
   });
 
   it('uses portable VECT_AI zone behavior when it conflicts with the current R3F profile', async () => {

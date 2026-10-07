@@ -3,8 +3,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateManifest } from './lib/validateManifest.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const inventory = JSON.parse(await fs.readFile(path.join(root,'scripts/exhibit-migrations.json'),'utf8'));
-const files = process.argv.slice(2).length ? process.argv.slice(2) : [...inventory.map((entry) => `public/configs/${entry.v3}`),'example_of_gallery_config_v3.json'];
+const configDirectory = path.join(root, 'public/configs');
+const activeManifests = (await fs.readdir(configDirectory))
+  .filter((name) => name.endsWith('_config_v3.json'))
+  .map((name) => `public/configs/${name}`)
+  .sort();
+const files = process.argv.slice(2).length ? process.argv.slice(2) : [...activeManifests, 'example_of_gallery_config_v3.json'];
 const seen = new Set();
 let failures = 0;
 for (const file of files) {

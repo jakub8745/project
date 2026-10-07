@@ -51,6 +51,29 @@ For XR playback, audio is no longer selected by searching exhibit IDs or labels 
 
 ## Files and checks
 
+### Milkmaid reproducibility contract (2026-10-06)
+
+`public/configs/milkmaid_pitchers_config_v3.json` is the single runtime scene
+input for Milkmaid. Its `infiniteWorld` declaration includes camera projection
+and clipping planes, display color space/tone mapping/exposure, fixed and
+visitor-following lighting, model order, placement and recycling rules, and
+the portable PRNG recipe. The generic V3 adapter passes those declarations to
+the active field renderer; the Milkmaid scene does not rely on hidden camera,
+light, placement-budget, or recycling constants. The manifest distinguishes
+the declared placement-radius proxy from each loaded model's measured geometry
+bounds: the proxy controls deterministic field spacing, while measured bounds
+are used for runtime visibility and hidden-only recycling.
+
+All 199 models and 199 thumbnails use the hybrid delivery order: their
+corresponding Oracle Cloud object URL is tried first, followed by the canonical
+IPFS CID through the shared IPFS gateway list. Oracle is a delivery mirror for
+viewer performance; the CID remains the stable identity and archive fallback.
+
+The browser screenshot confirms the scene can enter and render, but it also
+shows fragmented source geometry and the captured console includes gateway
+429/CORS failures. Therefore the screenshot is the current observed baseline,
+not proof that every source GLB is intact or that remote delivery is durable.
+
 The implementation changes are in `src/config/assetResolution.ts`, `src/config/manifestShape.ts`, `src/config/loaders/loadExhibitConfigV2.ts`, `src/config/loaders/shared.ts`, `src/r3f/useConfiguredGLTFs.ts`, `src/r3f/ScenePresentation.tsx`, audio/video runtime adapters, and the gallery metadata adapter. `docs/exhibit-config-v3.md` documents the source policy and precedence.
 
 ## Verification and remaining limits
@@ -71,3 +94,51 @@ The ten default v3 manifests now use a light neutral (`#e2ddd1`) background fall
 - Asset resolution and scene/media loading: `src/config/assetResolution.ts`, `src/config/assetResolution.test.ts`, `src/utils/ipfs.ts`, `src/r3f/useConfiguredGLTFs.ts`, `src/r3f/ScenePresentation.tsx`, `src/r3f/Modal.tsx`, `src/r3f/useSceneInteractionMetadata.ts`, `src/modules/audioMeshManager.ts`, `src/modules/applyVideoMeshes.js`.
 - Viewer behavior and archive metadata: `src/App.tsx`, `src/components/GalleryGrid.tsx`, `src/components/InfoButtons.tsx`, `src/data/galleryConfig.ts`, `src/r3f/R3FViewer.tsx`, `src/r3f/ThumbnailRecorderMode.tsx`, `src/r3f/useExhibitConfig.ts`, `src/r3f/useSceneAudioRouting.ts`, `src/r3f/useSceneReadiness.ts`, `src/r3f/useXrSessionControls.ts`.
 - Schema, validation, and documentation: `public/configs/schemas/exhibit_manifest_v3.schema.json`, `scripts/lib/validateManifest.mjs`, `README.md`, `docs/exhibit-config-v3.md`, `docs/migrations/missing-assets.md`, `docs/migrations/v3-migration-status.md`, and this audit.
+# Milkmaid Pitchers scene workflow (current 2026-10-06)
+
+## One active scene input
+
+`public/configs/milkmaid_pitchers_config_v3.json` is the sole Milkmaid scene
+manifest and is registered at `/#milkmaid_pitchers` by
+`src/data/galleryConfig.ts`. It contains the 199 selected models, thumbnail
+references, item metadata, scene object index, spatial recipe, creator-asserted
+provenance, and CC BY 4.0 rights. The other 12 objects in the source inventory
+are not scene members.
+
+The app fetches and validates this V3 file through the shared manifest loader.
+The generic compiler resolves the declared assets and translates the portable
+scene recipe to runtime values. `InfiniteWorldScene` renders that recipe; it is
+not a second Milkmaid-specific scene configuration. The app does not read the
+per-item metadata files to construct the scene.
+
+The model loader tries ordered sources sequentially and caps active model fetches
+at six. Model CIDs remain the canonical content identities; gateway URLs are
+delivery locations. The browser rendered the scene on 2026-10-06, although the
+captured console also showed HTTP 429 and CORS errors. The visible render had
+fragmented models, so successful scene entry is not proof that every model
+loaded or rendered correctly.
+
+## Preserved source and audit material
+
+`archive/milkmaid_pitchers/source-metadata/` retains the earlier per-item
+metadata batch and object listing. `archive/milkmaid_pitchers/audits/` retains
+the 211-object source index and byte, geometry, and IPFS audit reports. These
+are research/provenance records, not runtime scene dependencies. Historical
+audit scripts are kept in `archive/milkmaid_pitchers/tools/`; they do not
+participate in app startup or generate/select a scene.
+
+## Known limits
+
+The archive manifest has not yet been minted or published as an immutable
+snapshot. Thumbnail CIDs have not been independently retrieval- and
+checksum-verified. One selected GLB has degenerate zero-size geometry; static
+bounds do not diagnose the fragmented appearance visible in several other
+models. Gateway availability remains intermittent. Review these limitations
+before treating the current browser render as a verified archival presentation.
+
+## Historical inventory note
+
+The 2026-10-03 audit covered the broader 211-object source bucket before scene
+membership was narrowed to 199. Its inventory and reports are retained under
+`archive/milkmaid_pitchers/`; those 211-object counts and draft conclusions do
+not describe the current scene.

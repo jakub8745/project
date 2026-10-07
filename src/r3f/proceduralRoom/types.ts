@@ -1,4 +1,5 @@
 import type { Vector3Tuple, Object3D } from 'three';
+import type { RuntimeAsset } from '../../config/assetResolution';
 
 export type ProceduralPatternType = 'chevrons' | 'carpet' | 'silhouettes' | 'concrete' | 'plaster';
 
@@ -41,6 +42,7 @@ export type ProceduralModelSpec = {
   id?: string;
   path: string;
   pathCandidates?: string[];
+  asset?: RuntimeAsset;
   position: Vector3Tuple;
   rotation: Vector3Tuple;
   scale: number;

@@ -60,6 +60,8 @@ import { XrAudioSubtitlePanel } from './XrAudioSubtitlePanel';
 import { clearConfiguredGLTF, useConfiguredGLTFs } from './useConfiguredGLTFs';
 import { GenerateMeshBVHWorker } from 'three-mesh-bvh/worker';
 import { GeneratedExhibitScene } from './proceduralRoom/ProceduralRoomScene';
+import { InfiniteWorldScene } from './InfiniteWorldScene';
+import { VisitorFollowSpotlight, type VisitorFollowSpotlightSettings } from './VisitorFollowSpotlight';
 import {
   getProceduralRoomBounds,
   parseProceduralModels,
@@ -574,14 +576,36 @@ function R3FViewerInner({
   onPhysicsCollision
 }: R3FViewerProps & { transitionId: string; onRetry: () => void }) {
   const modelPath = config?.modelPath;
+  const sceneCamera = config?.camera && typeof config.camera === 'object'
+    ? config.camera as Record<string, unknown>
+    : undefined;
   const modelPathCandidates = runtimeAssetCandidates(config?.modelAsset);
   const proceduralRoom = config?.proceduralRoom as Record<string, unknown> | undefined;
   const useProceduralRoom = !modelPath && Boolean(proceduralRoom);
+  const infiniteWorld = config?.infiniteWorld as Record<string, unknown> | undefined;
+  const useInfiniteWorld = !modelPath && Boolean(infiniteWorld);
+  const infiniteWorldLighting = infiniteWorld?.lighting && typeof infiniteWorld.lighting === 'object'
+    ? infiniteWorld.lighting as Record<string, unknown>
+    : undefined;
+  const visitorFollowSpotlight = infiniteWorldLighting?.visitorFollowSpotlight
+    && typeof infiniteWorldLighting.visitorFollowSpotlight === 'object'
+      ? infiniteWorldLighting.visitorFollowSpotlight as VisitorFollowSpotlightSettings
+      : undefined;
+  const infiniteWorldSource = useMemo(() => infiniteWorld ? {
+    ...infiniteWorld,
+    backgroundColor: typeof infiniteWorld.backgroundColor === 'string'
+      ? infiniteWorld.backgroundColor
+      : config?.backgroundColor
+  } : undefined, [infiniteWorld, config?.backgroundColor]);
   const objectRegistry = useMemo(
     () => normalizeObjectRegistry(config?.objects ?? config?.objectRegistry),
     [config?.objects, config?.objectRegistry]
   );
   const proceduralModels = useMemo(() => parseProceduralModels(config?.models), [config?.models]);
+  const infiniteWorldModels = useMemo(
+    () => parseProceduralModels(infiniteWorld?.models) || [],
+    [infiniteWorld?.models]
+  );
   const proceduralObjects = useMemo(
     () => parseProceduralObjects(config?.proceduralObjects),
     [config?.proceduralObjects]
@@ -713,8 +737,10 @@ function R3FViewerInner({
     ? typeof thumbnailCaptureRecord?.backgroundColor === 'string'
       ? thumbnailCaptureRecord.backgroundColor
       : '#c8ced6'
-    : typeof config?.backgroundColor === 'string'
-      ? config.backgroundColor
+    : useInfiniteWorld && typeof infiniteWorld?.backgroundColor === 'string'
+      ? infiniteWorld.backgroundColor
+      : typeof config?.backgroundColor === 'string'
+        ? config.backgroundColor
       : undefined;
   const [collider, setCollider] = useState<Mesh | null>(null);
   const [visitorInstance, setVisitorInstance] = useState<Visitor | null>(null);
@@ -729,7 +755,7 @@ function R3FViewerInner({
     transitionId,
     configUrl,
     modelPath,
-    useProceduralRoom,
+    useProceduralRoom: useProceduralRoom || useInfiniteWorld,
     collider,
     visitor: visitorInstance,
     thumbnailModeActive,
@@ -918,13 +944,23 @@ function R3FViewerInner({
   }, [modelPath, useProceduralRoom]);
 
   const sceneInteractionsLocked = !sceneReadyForVisitor || isVideoPlayerModalOpen || isMaterialModalOpen;
-  const missingSceneDefinition = Boolean(config) && !loading && !error && !modelPath && !useProceduralRoom;
+  const missingSceneDefinition = Boolean(config)
+    && !loading
+    && !error
+    && !modelPath
+    && !useProceduralRoom
+    && !useInfiniteWorld;
 
   return (
     <div className="relative h-full w-full bg-gallery-dark">
       <Canvas
         shadows={useShadows}
-        camera={{ position: [10, 6, -10], fov: 60, near: 0.1, far: 2000 }}
+        camera={{
+          position: coerceVector(sceneCamera?.position, [10, 6, -10]),
+          fov: typeof sceneCamera?.fov === 'number' ? sceneCamera.fov : 60,
+          near: typeof sceneCamera?.near === 'number' ? sceneCamera.near : 0.1,
+          far: typeof sceneCamera?.far === 'number' ? sceneCamera.far : 2000
+        }}
         dpr={typeof window !== 'undefined' ? [1, Math.min(effectiveMaxDpr, window.devicePixelRatio || 1)] : [1, effectiveMaxDpr]}
         gl={{
           antialias: useAntialias,
@@ -980,10 +1016,25 @@ function R3FViewerInner({
               onSceneReady={handleSceneReady}
               objectRegistry={objectRegistry}
             />
+          ) : useInfiniteWorld ? (
+            <InfiniteWorldScene
+              key={transitionId}
+              source={infiniteWorldSource}
+              models={infiniteWorldModels}
+              visitor={visitorInstance}
+              onColliderReady={setCollider}
+              onSceneReady={handleSceneReady}
+              objectRegistry={objectRegistry}
+            />
           ) : (
-            <Html center className="text-white">Missing modelPath or proceduralRoom in config</Html>
+            <Html center className="text-white">Missing scene model or procedural scene configuration</Html>
           )}
         </Suspense>
+
+        <VisitorFollowSpotlight
+          settings={visitorFollowSpotlight}
+          active={useInfiniteWorld && !thumbnailModeActive}
+        />
 
         {DEBUG_COLLIDER && collider ? <primitive object={collider} /> : null}
 
@@ -1007,7 +1058,7 @@ function R3FViewerInner({
           disabled={sceneInteractionsLocked}
           onCloseSidebar={onRequestSidebarClose}
           popupCallback={(payload) => {
-            if (payload.type === 'Image') {
+            if (payload.type === 'Image' || payload.type === 'Pitcher') {
               showLegacyModal({
                 ...payload.userData,
                 name: payload.key
@@ -1092,7 +1143,7 @@ function R3FViewerInner({
       {!error && missingSceneDefinition && (
         <SceneFailureOverlay
           title="The exhibit has no scene to display"
-          message="The configuration does not define a model or procedural room."
+          message="The configuration does not define a model or procedural scene."
           onRetry={onRetry}
         />
       )}

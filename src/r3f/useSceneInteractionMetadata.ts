@@ -73,11 +73,40 @@ export function useSceneInteractionMetadata(config: ExhibitConfig | null) {
       const pdfOpenPath = typeof record.pdfOpenPath === 'string' ? record.pdfOpenPath : undefined;
       const pdfOpenLabel = typeof record.pdfOpenLabel === 'string' ? record.pdfOpenLabel : undefined;
       const pdfExternalUrl = typeof record.pdfExternalUrl === 'string' ? record.pdfExternalUrl : undefined;
+      const attributes = Array.isArray(record.attributes)
+        ? record.attributes.filter((entry): entry is { trait_type: string; value: string | number | boolean } => {
+            if (!entry || typeof entry !== 'object') return false;
+            const attribute = entry as Record<string, unknown>;
+            return typeof attribute.trait_type === 'string'
+              && ['string', 'number', 'boolean'].includes(typeof attribute.value);
+          })
+        : undefined;
+      const externalUrl = typeof record.externalUrl === 'string' ? record.externalUrl : undefined;
+      const externalLinks = Array.isArray(record.externalLinks)
+        ? record.externalLinks.flatMap((entry) => {
+            if (!entry || typeof entry !== 'object') return [];
+            const link = entry as Record<string, unknown>;
+            if (typeof link.url !== 'string') return [];
+            return [{ ...(typeof link.name === 'string' ? { name: link.name } : {}), url: link.url }];
+          })
+        : undefined;
+      const license = record.license && typeof record.license === 'object'
+        ? record.license as { name?: unknown; url?: unknown }
+        : undefined;
       result[key] = {
         title,
         ...(author ? { author } : {}),
         ...(description ? { description } : {}),
         ...(imageAsset ? { imageAsset } : {}),
+        ...(attributes?.length ? { attributes } : {}),
+        ...(externalUrl ? { externalUrl } : {}),
+        ...(externalLinks?.length ? { externalLinks } : {}),
+        ...(license ? {
+          license: {
+            ...(typeof license.name === 'string' ? { name: license.name } : {}),
+            ...(typeof license.url === 'string' ? { url: license.url } : {})
+          }
+        } : {}),
         ...(pdfAsset ? { pdfAsset } : {}),
         ...(pdfOpenPath ? { pdfOpenPath } : {}),
         ...(pdfOpenLabel ? { pdfOpenLabel } : {}),

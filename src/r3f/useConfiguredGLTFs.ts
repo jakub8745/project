@@ -7,17 +7,35 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import type { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { getKtx2Loader } from '../loaders/ktx2Loader';
-import { loadRuntimeAssetWithFallback } from '../config/assetResolution';
+import { loadRuntimeAssetWithRetries } from '../config/assetResolution';
 
 let sharedDracoLoader: DRACOLoader | null = null;
 const ktx2SupportedRenderers = new WeakSet<WebGLRenderer>();
 const modelLeases = new Map<string, { refs: number; gltf: GLTF; disposeTimer: number | null }>();
 const MODEL_SOURCE_TIMEOUT_MS = 20_000;
+const MAX_CONCURRENT_MODEL_FETCHES = 6;
+let activeModelFetches = 0;
+const queuedModelFetches: Array<() => void> = [];
+
+async function withModelFetchSlot<T>(load: () => Promise<T>): Promise<T> {
+  if (activeModelFetches >= MAX_CONCURRENT_MODEL_FETCHES) {
+    await new Promise<void>((resolve) => queuedModelFetches.push(resolve));
+  } else {
+    activeModelFetches += 1;
+  }
+  try {
+    return await load();
+  } finally {
+    const next = queuedModelFetches.shift();
+    if (next) next();
+    else activeModelFetches -= 1;
+  }
+}
 
 function installAssetFallbacks(loader: GLTFLoader, sourceMap: Map<string, string[]>) {
   loader.load = ((url, onLoad, onProgress, onError) => {
     const candidates = sourceMap.get(url) || [url];
-    const loadCandidate = async (candidate: string): Promise<GLTF> => {
+    const loadCandidate = async (candidate: string): Promise<GLTF> => withModelFetchSlot(async () => {
       const controller = new AbortController();
       const timer = window.setTimeout(() => controller.abort(), MODEL_SOURCE_TIMEOUT_MS);
       try {
@@ -39,8 +57,11 @@ function installAssetFallbacks(loader: GLTFLoader, sourceMap: Map<string, string
       } finally {
         window.clearTimeout(timer);
       }
-    };
-    void loadRuntimeAssetWithFallback(candidates, loadCandidate, `model ${url}`)
+    });
+    void loadRuntimeAssetWithRetries(candidates, loadCandidate, `model ${url}`, {
+      maxRetries: 1,
+      retryDelayMs: 10_000
+    })
       .then(onLoad)
       .catch((error) => onError?.(error instanceof Error ? error : new Error(String(error))));
   }) as GLTFLoader['load'];

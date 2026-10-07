@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode, type SyntheticEvent } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode, type SyntheticEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { MaterialModalContext, type MaterialModalContextValue } from './materialModalContext';
 import { InlineFormattedText } from '../components/InlineFormattedText';
 import type { RuntimeAsset } from '../config/assetResolution';
 import { materialModalCandidates } from './materialModalSources';
+import { toSafeExternalUrl } from '../utils/url';
 
 const IMAGE_SOURCE_TIMEOUT_MS = 10_000;
 
@@ -12,6 +13,10 @@ export type ModalImageMeta = {
   description?: string;
   author?: string;
   imageAsset?: RuntimeAsset;
+  attributes?: Array<{ trait_type: string; value: string | number | boolean }>;
+  externalUrl?: string;
+  externalLinks?: Array<{ name?: string; url: string }>;
+  license?: { name?: string; url?: string };
   pdfAsset?: RuntimeAsset;
   pdfOpenPath?: string;
   pdfOpenLabel?: string;
@@ -38,6 +43,10 @@ type ModalState = {
   contentWidth: number | null;
   status: 'idle' | 'loading' | 'ready' | 'error';
   message: string | null;
+  attributes: Array<{ trait_type: string; value: string | number | boolean }>;
+  externalUrl: string | null;
+  externalLinks: Array<{ name?: string; url: string }>;
+  license: { name?: string; url?: string } | null;
 };
 
 type MaterialModalProviderProps = {
@@ -60,7 +69,11 @@ const defaultState = (): ModalState => ({
   pendingSources: [],
   contentWidth: null,
   status: 'idle',
-  message: null
+  message: null,
+  attributes: [],
+  externalUrl: null,
+  externalLinks: [],
+  license: null
 });
 
 function isZenodoUrl(url: string) {
@@ -276,6 +289,12 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
     if (!name) return;
     const meta = images?.[name];
     if (!meta) return;
+    const externalUrl = toSafeExternalUrl(meta.externalUrl);
+    const externalLinks = (meta.externalLinks ?? []).flatMap((link) => {
+      const url = toSafeExternalUrl(link.url);
+      return url ? [{ name: link.name, url }] : [];
+    });
+    const safeLicenseUrl = toSafeExternalUrl(meta.license?.url);
 
     activeNameRef.current = name;
 
@@ -310,6 +329,10 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
       pendingSources: nextSources,
       contentWidth: mediaType === 'pdf' ? pdfWidth : initialWidth,
       status: mediaType === 'pdf' ? (hasSource ? 'ready' : 'error') : (hasSource ? 'loading' : 'error'),
+      attributes: meta.attributes ?? [],
+      externalUrl,
+      externalLinks,
+      license: meta.license ? { ...meta.license, url: safeLicenseUrl ?? undefined } : null,
       message: !hasSource
         ? `⚠️ Could not load ${mediaType === 'pdf' ? 'PDF' : 'image'}.`
         : isZenodoPdf
@@ -463,6 +486,25 @@ export function MaterialModalProvider({ children, initialImages }: MaterialModal
                           <em>{state.author}</em>
                         </p>
                       ) : null}
+                      {state.attributes.length ? (
+                        <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+                          {state.attributes.map(({ trait_type, value }) => (
+                            <Fragment key={trait_type}>
+                              <dt className="font-medium">{trait_type}</dt>
+                              <dd>{String(value)}</dd>
+                            </Fragment>
+                          ))}
+                        </dl>
+                      ) : null}
+                      {state.externalUrl ? (
+                        <p><a href={state.externalUrl} target="_blank" rel="noreferrer noopener">Open artwork record</a></p>
+                      ) : null}
+                      {state.externalLinks.map((link) => (
+                        <p key={link.url}><a href={link.url} target="_blank" rel="noreferrer noopener">{link.name ?? 'Related record'}</a></p>
+                      ))}
+                      {state.license?.url ? (
+                        <p><a href={state.license.url} target="_blank" rel="noreferrer noopener">{state.license.name ?? 'License'}</a></p>
+                      ) : state.license?.name ? <p>{state.license.name}</p> : null}
                       {state.message ? (
                         <p className={state.status === 'loading' ? 'loading-msg animate-flash' : ''} style={state.status === 'error' ? { color: 'red' } : undefined}>
                           {state.message}

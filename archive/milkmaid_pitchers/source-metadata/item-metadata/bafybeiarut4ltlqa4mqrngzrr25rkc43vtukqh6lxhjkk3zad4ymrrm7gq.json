@@ -1,0 +1,66 @@
+{
+  "name": "Milkmaid's Pitcher Snapshot (871aa12d)",
+  "description": "A digital sherd of Milkmaid's Pitcher, an interactive sculpture from the Dystopia of Imitation art project. Created through a WebGL/WebXR installation, each sherd captures a unique state of an animated virtual pitcher as it is manipulated by a participant.\nLike an archaeological fragment, the resulting 3D model preserves only a momentary part of a larger, mutable object—a record of interaction, transformation, and place within the digital sculpture.\nThis sherd was captured in San Francisco at 37.790272, -122.411509.",
+  "image": "ipfs://bafkreicafha5eoana7damh3mg3cr7jrv44smocb7qsvux66dol3j5tuc3i",
+  "animation_url": "ipfs://bafybeiarut4ltlqa4mqrngzrr25rkc43vtukqh6lxhjkk3zad4ymrrm7gq",
+  "external_url": "https://pitcher.bluepointart.uk/",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Jarek Solecki @ Dystopia of imitation"
+    },
+    {
+      "trait_type": "Asset CID",
+      "value": "bafybeiarut4ltlqa4mqrngzrr25rkc43vtukqh6lxhjkk3zad4ymrrm7gq"
+    },
+    {
+      "trait_type": "Asset Filename",
+      "value": "bafybeiarut4ltlqa4mqrngzrr25rkc43vtukqh6lxhjkk3zad4ymrrm7gq.glb"
+    },
+    {
+      "trait_type": "Latitude",
+      "value": 37.790272
+    },
+    {
+      "trait_type": "Longitude",
+      "value": -122.411509
+    },
+    {
+      "trait_type": "Capture City",
+      "value": "San Francisco"
+    },
+    {
+      "trait_type": "Capture Timestamp",
+      "value": "2024-05-30T13:49:27-07:00"
+    }
+  ],
+  "properties": {
+    "category": "3d",
+    "files": [
+      {
+        "uri": "ipfs://bafkreicafha5eoana7damh3mg3cr7jrv44smocb7qsvux66dol3j5tuc3i",
+        "type": "image/png",
+        "name": "bafkreicafha5eoana7damh3mg3cr7jrv44smocb7qsvux66dol3j5tuc3i.png",
+        "role": "thumbnail"
+      },
+      {
+        "uri": "ipfs://bafybeiarut4ltlqa4mqrngzrr25rkc43vtukqh6lxhjkk3zad4ymrrm7gq",
+        "type": "model/gltf-binary",
+        "name": "bafybeiarut4ltlqa4mqrngzrr25rkc43vtukqh6lxhjkk3zad4ymrrm7gq.glb",
+        "role": "3d-model"
+      }
+    ],
+    "location": {
+      "city": "San Francisco",
+      "latitude": 37.790272,
+      "longitude": -122.411509
+    },
+    "captured_at": "2024-05-30T13:49:27-07:00"
+  },
+  "external_links": [
+    {
+      "name": "Milkmaid's Pitchers Archive",
+      "url": "https://archive.bluepointart.uk/#milkmaid_pitchers"
+    }
+  ]
+}

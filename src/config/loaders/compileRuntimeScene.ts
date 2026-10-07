@@ -26,6 +26,7 @@ export interface SceneRuntimeSources {
   viewer?: ViewerCompatConfig | Record<string, unknown>;
   sidebar?: SidebarDefinition;
   thumbnailCapture?: ThumbnailCaptureDefinition;
+  proceduralRecipe?: UnknownRecord;
 }
 
 type SubtitleTrack = {
@@ -163,8 +164,13 @@ function toImageRecord(media: MediaDescriptor, manifest: SceneRuntimeSources): U
       title: media.title,
       tooltipLabel: media.tooltipLabel,
       description: media.description,
+      author: media.author,
       imageAsset,
-      imagePath: imageAsset.candidates[0]
+      imagePath: imageAsset.candidates[0],
+      attributes: media.metadata?.attributes,
+      externalUrl: media.metadata?.externalUrl,
+      externalLinks: media.metadata?.externalLinks,
+      license: media.metadata?.license
     } satisfies UnknownRecord;
   }
   if (media.kind === 'document') {
@@ -405,6 +411,7 @@ function mapViewerExtensions(manifest: SceneRuntimeSources): UnknownRecord {
   const viewer = manifest.viewer && typeof manifest.viewer === 'object' ? manifest.viewer : {};
   const viewerRecord = viewer as unknown as UnknownRecord;
   const rawModels = viewerRecord.models;
+  const rawInfiniteWorld = manifest.proceduralRecipe?.infiniteWorld;
   const rawRoom = viewerRecord.proceduralRoom;
   const room = rawRoom && typeof rawRoom === 'object' && !Array.isArray(rawRoom)
     ? rawRoom as UnknownRecord : undefined;
@@ -423,7 +430,107 @@ function mapViewerExtensions(manifest: SceneRuntimeSources): UnknownRecord {
     : rawModels;
   return {
     ...(viewer as UnknownRecord),
+    ...(rawInfiniteWorld && typeof rawInfiniteWorld === 'object' && (rawInfiniteWorld as UnknownRecord).camera
+      ? { camera: (() => {
+          const camera = (rawInfiniteWorld as UnknownRecord).camera as UnknownRecord;
+          return {
+            ...((viewerRecord.camera && typeof viewerRecord.camera === 'object') ? viewerRecord.camera as UnknownRecord : {}),
+            fov: camera.fieldOfViewDegrees,
+            near: camera.nearClipMeters,
+            far: camera.farClipMeters
+          };
+        })() }
+      : {}),
+    ...(rawInfiniteWorld && typeof rawInfiniteWorld === 'object' && (rawInfiniteWorld as UnknownRecord).lighting
+      ? { lights: (() => {
+          const lighting = (rawInfiniteWorld as UnknownRecord).lighting as UnknownRecord;
+          return {
+            ambientColor: lighting.ambientColor,
+            ambientIntensity: lighting.ambientIntensity,
+            hemisphereSkyColor: lighting.hemisphereSkyColor,
+            hemisphereGroundColor: lighting.hemisphereGroundColor,
+            hemisphereIntensity: lighting.hemisphereIntensity,
+            directionalColor: lighting.directionalColor,
+            directionalIntensity: lighting.directionalIntensity,
+            directionalPosition: lighting.directionalPosition,
+            directionalCastShadow: lighting.shadows,
+            directionalShadowCameraSize: lighting.shadowCameraSize,
+            directionalShadowMapSize: lighting.shadowMapSize
+          };
+        })() }
+      : {}),
     ...(models ? { models } : {}),
+    ...(rawInfiniteWorld && typeof rawInfiniteWorld === 'object' ? {
+      infiniteWorld: (() => {
+        const world = rawInfiniteWorld as UnknownRecord;
+        const visitor = world.visitor as UnknownRecord;
+        const floor = world.floor as UnknownRecord;
+        const fog = world.fog as UnknownRecord;
+        const distribution = world.distribution as UnknownRecord;
+        const scale = world.scale as UnknownRecord;
+        const orientation = world.orientation as UnknownRecord;
+        const recycling = world.recycling as UnknownRecord;
+        const background = world.background as UnknownRecord;
+        const sourceNormalization = scale.sourceNormalization && typeof scale.sourceNormalization === 'object'
+          ? scale.sourceNormalization as UnknownRecord
+          : {};
+        const lighting = world.lighting as UnknownRecord;
+        return {
+        ...world,
+        seed: world.seed,
+        seedAlgorithm: world.seedAlgorithm,
+        recycleSeedXor: recycling.randomStreamSeedXor,
+        floorY: floor.height,
+        floorVisible: floor.visible,
+        floorCollision: floor.collision,
+        floorColor: typeof floor.color === 'string' ? floor.color : background.color,
+        clearRadius: visitor.clearRadius,
+        fogStart: fog.start,
+        fogEnd: fog.end,
+        fogColor: fog.color,
+        recycleRadius: recycling.radius,
+        placementRadius: (world.activePopulation as UnknownRecord).radius,
+        minSpacing: distribution.minSpacing,
+        density: distribution.density,
+        candidateBudgetPerModel: distribution.candidateBudgetPerModel,
+        minimumCandidateAttempts: distribution.minimumCandidateAttempts,
+        minScale: scale.minimum,
+        maxScale: scale.maximum,
+        randomRotation: typeof orientation.yaw === 'string' && orientation.yaw.startsWith('uniform-random'),
+        fixedPitch: orientation.pitch,
+        fixedRoll: orientation.roll,
+        visibleYawRadiansPerSecond: typeof orientation.visibleYawRadiansPerSecond === 'number'
+          ? orientation.visibleYawRadiansPerSecond
+          : 0,
+        recyclingEnabled: recycling.enabled,
+        forwardBiasProbability: recycling.forwardBiasProbability,
+        forwardBiasHalfAngleRadians: recycling.forwardBiasHalfAngleRadians,
+        replacementYawIncrementRadians: recycling.replacementYawIncrementRadians,
+        maxReplacementsPerFrame: recycling.maximumReplacementsPerFrame,
+        hiddenSafetyMarginMeters: recycling.hiddenSafetyMarginMeters,
+        destinationSearchDepthMeters: recycling.destinationSearchDepthMeters,
+        backgroundColor: background.color,
+        debug: false,
+        models: Array.isArray((rawInfiniteWorld as UnknownRecord).models)
+          ? ((rawInfiniteWorld as UnknownRecord).models as UnknownRecord[]).map((entry) => {
+              if (!entry || typeof entry !== 'object') return entry;
+              const item = entry as UnknownRecord;
+              const asset = typeof item.asset === 'string' ? manifest.assets[item.asset] : undefined;
+              const compiledAsset = compileRuntimeAsset(asset);
+              const bounds = asset && typeof asset === 'object' ? (asset as UnknownRecord).geometryBounds as UnknownRecord | undefined : undefined;
+              const sourceRadius = typeof bounds?.centeredGroundedBoundingSphereRadius === 'number'
+                ? bounds.centeredGroundedBoundingSphereRadius : undefined;
+              const targetRadius = typeof sourceNormalization.targetRadius === 'number' ? sourceNormalization.targetRadius : undefined;
+              const normalized = sourceNormalization.mode === 'bounding-sphere-radius' && sourceRadius && targetRadius
+                ? targetRadius / sourceRadius : 1;
+              const collisionRadius = sourceRadius === undefined ? 0 : sourceNormalization.mode === 'bounding-sphere-radius' && targetRadius ? targetRadius : sourceRadius;
+              return { ...item, scale: item.scale ?? normalized, collisionRadius: item.collisionRadius ?? collisionRadius, path: compiledAsset.candidates[0] || item.path, asset: compiledAsset };
+          }).filter((entry) => Boolean((entry as UnknownRecord)?.path))
+          : [],
+        lighting: { ...lighting }
+      };
+      })()
+    } : {}),
     ...(room && wallTextureAsset ? {
       proceduralRoom: { ...room, wallTexture: wallTextureAsset.candidates[0] || wallTexture, wallTextureAsset }
     } : {})
@@ -554,12 +661,22 @@ export async function compileRuntimeScene(
   const spawnParams = mapSceneSpawnParams(manifest);
   const existingParams = runtime.params && typeof runtime.params === 'object' ? runtime.params : {};
   const backgroundParams = mapSceneBackgroundParams(manifest);
+  const infiniteWorld = manifest.proceduralRecipe?.infiniteWorld as UnknownRecord | undefined;
+  const worldPresentation = infiniteWorld?.presentation as UnknownRecord | undefined;
+  const presentationParams = {
+    ...(typeof worldPresentation?.toneMapping === 'string' ? { toneMapping: worldPresentation.toneMapping } : {}),
+    ...(typeof worldPresentation?.colorSpace === 'string' ? { colorSpace: worldPresentation.colorSpace } : {}),
+    ...(typeof worldPresentation?.exposure === 'number' ? { exposure: worldPresentation.exposure } : {}),
+    ...(typeof worldPresentation?.antialiasing === 'boolean' ? { antialias: worldPresentation.antialiasing } : {}),
+    ...(typeof worldPresentation?.shadows === 'boolean' ? { shadows: worldPresentation.shadows } : {})
+  };
   if (Object.keys(spawnParams).length > 0 || Object.keys(backgroundParams).length > 0 || Object.keys(existingParams).length > 0 || manifest.sourceScene.renderer) {
     runtime.params = {
       ...existingParams,
       ...manifest.sourceScene.renderer,
       ...backgroundParams,
-      ...spawnParams
+      ...spawnParams,
+      ...presentationParams
     };
   }
 

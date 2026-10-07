@@ -1,0 +1,66 @@
+{
+  "name": "Milkmaid's Pitcher Snapshot (689a2c05)",
+  "description": "A digital sherd of Milkmaid's Pitcher, an interactive sculpture from the Dystopia of Imitation art project. Created through a WebGL/WebXR installation, each sherd captures a unique state of an animated virtual pitcher as it is manipulated by a participant.\nLike an archaeological fragment, the resulting 3D model preserves only a momentary part of a larger, mutable object—a record of interaction, transformation, and place within the digital sculpture.\nThis sherd was captured in London at 51.506155, -0.121948.",
+  "image": "ipfs://bafkreigipodkf2ggq3pko3iodi4psrowtntwlzlkzjr42lalrf5yua47bm",
+  "animation_url": "ipfs://bafkreier5bnlmdeznegq7kqftn4dos4mzcfgiszi73enqzx2dxvzsveohq",
+  "external_url": "https://pitcher.bluepointart.uk/",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Jarek Solecki @ Dystopia of imitation"
+    },
+    {
+      "trait_type": "Asset CID",
+      "value": "bafkreier5bnlmdeznegq7kqftn4dos4mzcfgiszi73enqzx2dxvzsveohq"
+    },
+    {
+      "trait_type": "Asset Filename",
+      "value": "bafkreier5bnlmdeznegq7kqftn4dos4mzcfgiszi73enqzx2dxvzsveohq.glb"
+    },
+    {
+      "trait_type": "Latitude",
+      "value": 51.506155
+    },
+    {
+      "trait_type": "Longitude",
+      "value": -0.121948
+    },
+    {
+      "trait_type": "Capture City",
+      "value": "London"
+    },
+    {
+      "trait_type": "Capture Timestamp",
+      "value": "2024-08-06T15:31:31+01:00"
+    }
+  ],
+  "properties": {
+    "category": "3d",
+    "files": [
+      {
+        "uri": "ipfs://bafkreigipodkf2ggq3pko3iodi4psrowtntwlzlkzjr42lalrf5yua47bm",
+        "type": "image/png",
+        "name": "bafkreigipodkf2ggq3pko3iodi4psrowtntwlzlkzjr42lalrf5yua47bm.png",
+        "role": "thumbnail"
+      },
+      {
+        "uri": "ipfs://bafkreier5bnlmdeznegq7kqftn4dos4mzcfgiszi73enqzx2dxvzsveohq",
+        "type": "model/gltf-binary",
+        "name": "bafkreier5bnlmdeznegq7kqftn4dos4mzcfgiszi73enqzx2dxvzsveohq.glb",
+        "role": "3d-model"
+      }
+    ],
+    "location": {
+      "city": "London",
+      "latitude": 51.506155,
+      "longitude": -0.121948
+    },
+    "captured_at": "2024-08-06T15:31:31+01:00"
+  },
+  "external_links": [
+    {
+      "name": "Milkmaid's Pitchers Archive",
+      "url": "https://archive.bluepointart.uk/#milkmaid_pitchers"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
   PCFShadowMap,
+  LinearSRGBColorSpace,
   SRGBColorSpace
 } from 'three';
 
@@ -50,9 +51,10 @@ export function RendererTuning({
   const { gl } = useThree();
   const colorGradeFilter = useMemo(() => createColorGradeFilter(params), [params]);
   const toneMapping = toneMappingValueForName(params?.toneMapping);
+  const outputColorSpace = params?.colorSpace === 'linear-srgb' ? LinearSRGBColorSpace : SRGBColorSpace;
 
   useEffect(() => {
-    gl.outputColorSpace = SRGBColorSpace;
+    gl.outputColorSpace = outputColorSpace;
     gl.shadowMap.enabled = highQualityMode;
     if (highQualityMode) {
       gl.shadowMap.type = PCFShadowMap;
@@ -60,7 +62,7 @@ export function RendererTuning({
     if (typeof window !== 'undefined' && !gl.xr.isPresenting) {
       gl.setPixelRatio(Math.min(maxDpr, window.devicePixelRatio || 1));
     }
-  }, [gl, highQualityMode, maxDpr]);
+  }, [gl, highQualityMode, maxDpr, outputColorSpace]);
 
   useEffect(() => {
     gl.toneMapping = toneMapping;

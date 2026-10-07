@@ -191,10 +191,109 @@
             "type": "boolean"
           },
           "preservation": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "sourceChecksum": {
+                "type": "object",
+                "required": [
+                  "algorithm",
+                  "value",
+                  "reportedBy"
+                ],
+                "properties": {
+                  "algorithm": {
+                    "type": "string"
+                  },
+                  "encoding": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "reportedBy": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "source": {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "namespace",
+                  "bucket",
+                  "objectName",
+                  "uri"
+                ],
+                "additionalProperties": true
+              },
+              "contentChecksum": {
+                "type": "object",
+                "required": [
+                  "algorithm",
+                  "encoding",
+                  "value"
+                ],
+                "properties": {
+                  "algorithm": {
+                    "const": "sha256"
+                  },
+                  "encoding": {
+                    "const": "hex"
+                  },
+                  "value": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "verifiedFromDownloadedBytes": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "geometryStatus": {
+                "enum": [
+                  "degenerate-zero-size-geometry",
+                  "no-scene-mesh-geometry"
+                ]
+              }
+            },
+            "additionalProperties": true
           },
           "rights": {
             "type": "object"
+          },
+          "geometryBounds": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "bounded-static-position-geometry",
+                  "degenerate-zero-size-geometry",
+                  "no-scene-mesh-geometry"
+                ]
+              },
+              "min": {
+                "$ref": "#/$defs/vector3"
+              },
+              "max": {
+                "$ref": "#/$defs/vector3"
+              },
+              "center": {
+                "$ref": "#/$defs/vector3"
+              },
+              "size": {
+                "$ref": "#/$defs/vector3"
+              },
+              "centeredGroundedBoundingSphereRadius": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": true
           }
         },
         "additionalProperties": true
@@ -410,6 +509,598 @@
               "properties": {},
               "additionalProperties": true
             },
+            "infiniteWorld": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "semantics": {
+                  "type": "object",
+                  "required": [
+                    "canonical",
+                    "recommendedParameters",
+                    "implementationFreedoms",
+                    "nonGoals"
+                  ],
+                  "properties": {
+                    "canonical": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "recommendedParameters": {
+                      "type": "object"
+                    },
+                    "implementationFreedoms": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "nonGoals": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 4294967295
+                },
+                "seedSemantics": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "coordinateSystem": {
+                  "type": "object",
+                  "required": [
+                    "handedness",
+                    "upAxis",
+                    "units"
+                  ],
+                  "properties": {
+                    "handedness": {
+                      "enum": [
+                        "right",
+                        "left"
+                      ]
+                    },
+                    "upAxis": {
+                      "enum": [
+                        "X",
+                        "Y",
+                        "Z"
+                      ]
+                    },
+                    "forwardAxis": {
+                      "type": "string"
+                    },
+                    "units": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "camera": {
+                  "type": "object",
+                  "required": ["projection", "fieldOfViewDegrees", "nearClipMeters", "farClipMeters", "pose"],
+                  "properties": {
+                    "projection": { "enum": ["perspective"] },
+                    "fieldOfViewDegrees": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 180 },
+                    "nearClipMeters": { "type": "number", "exclusiveMinimum": 0 },
+                    "farClipMeters": { "type": "number", "exclusiveMinimum": 0 },
+                    "pose": { "type": "string" }
+                  },
+                  "additionalProperties": true
+                },
+                "presentation": {
+                  "type": "object",
+                  "required": ["colorEncoding", "colorSpace", "toneMapping", "exposure", "antialiasing", "shadows"],
+                  "properties": {
+                    "colorEncoding": { "type": "string" },
+                    "colorSpace": { "enum": ["srgb", "linear-srgb"] },
+                    "toneMapping": { "type": "string" },
+                    "exposure": { "type": "number", "exclusiveMinimum": 0 },
+                    "antialiasing": { "type": "boolean" },
+                    "shadows": { "type": "boolean" },
+                    "qualityAdaptation": { "type": "string" }
+                  },
+                  "additionalProperties": true
+                },
+                "visitor": {
+                  "type": "object",
+                  "required": [
+                    "navigation",
+                    "spawnPosition",
+                    "spawnDirection",
+                    "walkingSpeed",
+                    "eyeHeight",
+                    "clearRadius",
+                    "gravity",
+                    "movementAcceleration",
+                    "movementDeceleration"
+                  ],
+                  "properties": {
+                    "navigation": {
+                      "type": "string"
+                    },
+                    "spawnPosition": {
+                      "$ref": "#/$defs/vector3"
+                    },
+                    "spawnDirection": {
+                      "type": "string"
+                    },
+                    "walkingSpeed": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "eyeHeight": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "clearRadius": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "gravity": {
+                      "type": "number"
+                    },
+                    "movementAcceleration": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "movementDeceleration": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "floor": {
+                  "type": "object",
+                  "required": [
+                    "height",
+                    "visible",
+                    "collision",
+                    "extent"
+                  ],
+                  "properties": {
+                    "height": {
+                      "type": "number"
+                    },
+                    "visible": {
+                      "type": "boolean"
+                    },
+                    "collision": {
+                      "type": "boolean"
+                    },
+                    "extent": {
+                      "type": "string"
+                    },
+                    "color": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "background": {
+                  "type": "object",
+                  "required": [
+                    "color"
+                  ],
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "fog": {
+                  "type": "object",
+                  "required": [
+                    "model",
+                    "start",
+                    "end",
+                    "color",
+                    "visibilityRule"
+                  ],
+                  "properties": {
+                    "model": {
+                      "enum": [
+                        "linear"
+                      ]
+                    },
+                    "start": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "color": {
+                      "type": "string"
+                    },
+                    "visibilityRule": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "distribution": {
+                  "type": "object",
+                  "required": [
+                    "algorithm",
+                    "density",
+                    "minSpacing",
+                    "placementRegion",
+                    "densityMeaning",
+                    "seededOrder",
+                    "candidateBudgetPerModel",
+                    "minimumCandidateAttempts",
+                    "candidateBudgetMeaning",
+                    "minSpacingMeaning"
+                  ],
+                  "properties": {
+                    "algorithm": {
+                      "const": "seeded-poisson-disk-annulus"
+                    },
+                    "density": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "minSpacing": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "placementRegion": {
+                      "type": "object",
+                      "required": [
+                        "innerRadius",
+                        "outerRadius"
+                      ],
+                      "properties": {
+                        "innerRadius": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "outerRadius": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "measure": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "densityMeaning": {
+                      "type": "string"
+                    },
+                    "seededOrder": {
+                      "type": "string"
+                    },
+                    "candidateBudgetPerModel": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "minimumCandidateAttempts": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "candidateBudgetMeaning": {
+                      "type": "string"
+                    },
+                    "minSpacingMeaning": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "scale": {
+                  "type": "object",
+                  "required": [
+                    "distribution",
+                    "minimum",
+                    "maximum"
+                  ],
+                  "properties": {
+                    "distribution": {
+                      "type": "string"
+                    },
+                    "minimum": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "maximum": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "sourceNormalization": {
+                      "type": "object",
+                      "required": [
+                        "mode",
+                        "targetRadius",
+                        "unit",
+                        "meaning"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "const": "bounding-sphere-radius"
+                        },
+                        "targetRadius": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "unit": {
+                          "type": "string"
+                        },
+                        "meaning": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "orientation": {
+                  "type": "object",
+                  "required": [
+                    "yaw",
+                    "pitch",
+                    "roll"
+                  ],
+                  "properties": {
+                    "yaw": {
+                      "enum": [
+                        "uniform-random-[0,2pi)",
+                        "fixed"
+                      ]
+                    },
+                    "pitch": {
+                      "type": "number"
+                    },
+                    "roll": {
+                      "type": "number"
+                    },
+                    "visibleYawRadiansPerSecond": {
+                      "type": "number",
+                      "minimum": -6.283185307179586,
+                      "maximum": 6.283185307179586
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "grounding": {
+                  "type": "object",
+                  "required": [
+                    "rule"
+                  ],
+                  "properties": {
+                    "rule": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "activePopulation": {
+                  "type": "object",
+                  "required": [
+                    "count",
+                    "radius"
+                  ],
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "radius": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "recycling": {
+                  "type": "object",
+                  "required": [
+                    "enabled",
+                    "trigger",
+                    "radius",
+                    "strategy",
+                    "destination",
+                    "stability",
+                    "selection",
+                    "forwardBiasProbability",
+                    "forwardBiasHalfAngleRadians",
+                    "replacementYawIncrementRadians",
+                    "maximumReplacementsPerFrame",
+                    "randomStreamSeedXor",
+                    "hiddenSafetyMarginMeters",
+                    "destinationSearchDepthMeters",
+                    "randomStreamSemantics"
+                  ],
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "trigger": {
+                      "type": "string"
+                    },
+                    "radius": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "stability": {
+                      "type": "string"
+                    },
+                    "forwardBiasProbability": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "forwardBiasHalfAngleRadians": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 3.141592653589793
+                    },
+                    "replacementYawIncrementRadians": {
+                      "type": "number"
+                    },
+                    "maximumReplacementsPerFrame": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "randomStreamSeedXor": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 4294967295
+                    },
+                    "selection": {
+                      "type": "string"
+                    },
+                    "hiddenSafetyMarginMeters": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "destinationSearchDepthMeters": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "randomStreamSemantics": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "lighting": {
+                  "type": "object",
+                  "properties": {
+                    "visitorFollowSpotlight": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "color",
+                        "intensity",
+                        "rangeMeters",
+                        "coneAngleRadians",
+                        "penumbra",
+                        "attenuationExponent",
+                        "castsShadows",
+                        "aimDistanceMeters"
+                      ],
+                      "properties": {
+                        "enabled": { "type": "boolean" },
+                        "color": { "type": "string" },
+                        "intensity": { "type": "number", "minimum": 0 },
+                        "rangeMeters": { "type": "number", "minimum": 0 },
+                        "coneAngleRadians": { "type": "number", "exclusiveMinimum": 0, "maximum": 1.5707963267948966 },
+                        "penumbra": { "type": "number", "minimum": 0, "maximum": 1 },
+                        "attenuationExponent": { "type": "number", "minimum": 0 },
+                        "castsShadows": { "type": "boolean" },
+                        "aimDistanceMeters": { "type": "number", "exclusiveMinimum": 0 }
+                      },
+                      "additionalProperties": true
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "models": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "asset",
+                      "collisionRadius"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "asset": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "displayName": { "type": "string", "minLength": 1 },
+                      "description": { "type": "string", "minLength": 1 },
+                      "objectProfile": { "type": "string", "minLength": 1 },
+                      "grounding": {
+                        "type": "string"
+                      },
+                      "placement": {
+                        "type": "string"
+                      },
+                      "collisionRadius": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "objectProfiles": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": ["description", "interaction", "lifecycle"],
+                    "properties": {
+                      "description": { "type": "string", "minLength": 1 },
+                      "render": { "type": "object" },
+                      "collision": { "type": "object" },
+                      "interaction": { "type": "object" },
+                      "lifecycle": { "type": "object" }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "seedAlgorithm": {
+                  "const": "mulberry32"
+                }
+              },
+              "required": [
+                "mode",
+                "semantics",
+                "seed",
+                "seedSemantics",
+                "coordinateSystem",
+                "camera",
+                "presentation",
+                "visitor",
+                "floor",
+                "background",
+                "fog",
+                "distribution",
+                "scale",
+                "orientation",
+                "grounding",
+                "activePopulation",
+                "recycling",
+                "lighting",
+                "models",
+                "seedAlgorithm"
+              ],
+              "additionalProperties": true
+            },
             "models": {
               "type": "array",
               "items": {
@@ -495,6 +1186,14 @@
         },
         "reconstructionPrompt": {
           "type": "string"
+        },
+        "prompts": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "visualTone": {
           "type": "string"

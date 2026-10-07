@@ -88,3 +88,57 @@ Current implementation evidence and remaining acceptance work are recorded in [m
 - VECT_AI's portable `main_room_light` values still differ from its `r3fCurrent` profile. The runtime now follows the portable interaction values; the validator continues to report the manifest-level discrepancy for archival review.
 - The generated room's live chat and persisted prints depend on the configured API. Browser smoke checks do not send messages or create prints. Optional service failures must not prevent room entry.
 - V2 runtime support was deliberately retired before browser acceptance. Browser acceptance remains outstanding; archival V2 sources are still available in `archive/v2/`.
+
+# Portable procedural infinite-world scenes
+
+V3 manifests can declare `sceneGraph.proceduralRecipe.infiniteWorld`. Its
+structured semantics include seed meaning, coordinate system, visitor and
+spawn, ground, background, fog envelope, candidate distribution and spacing,
+scale/orientation, grounding, active population, recycling, and lighting.
+The `semantics` block separates required experience, recommended parameters,
+renderer freedoms, and prohibited interpretations. Required fields are
+validated by the V3 schema; the adapter maps them to the current viewer's
+runtime structure. Rendering code must not supply exhibition-specific values
+when the manifest omits them.
+The optional `orientation.visibleYawRadiansPerSecond` field rotates visible
+instances in place around the up axis; zero or omission keeps them stationary.
+
+Each entry in `models` references a manifest asset ID. Asset delivery always
+uses the central resolver. Keep original object names and source-reported
+integrity facts in the asset's preservation record. Do not infer IPFS or
+Arweave identities from a filename or an Oracle checksum.
+
+## Milkmaid Pitchers archive
+
+The canonical manifest and registered route are
+`public/configs/milkmaid_pitchers_config_v3.json` and `/#milkmaid_pitchers`.
+It is the sole scene authority and contains the 199 selected model identities,
+their thumbnail CIDs and item metadata, the complete procedural field recipe,
+rights, provenance, and technology-neutral reconstruction intent. The gallery
+loads this V3 manifest through the shared validator and compiler; it does not
+depend on a generated `scene.json` or on the per-item staging metadata files.
+
+The recipe records the 199 model order, stable asset CIDs, spawn and camera,
+source-preserving model preparation, placement-radius proxies, scale and
+spacing, deterministic random procedure and attempt budget, floor, fog,
+background, fixed and visitor-following lights, display color response, and
+hidden-only recycling. The viewer adapter consumes these values; it does not
+choose Milkmaid-specific defaults. A future implementation can rebuild the
+field from this manifest plus the referenced assets without preserving the
+current React or Three.js code. For byte-for-byte placement reproduction, use
+the stated unsigned 32-bit PRNG, seed, manifest order, and draw sequence.
+
+The broader 211-object source listing and audit reports are kept under
+`archive/milkmaid_pitchers/`; they are provenance evidence, not scene inputs.
+The other 12 objects are excluded from this exhibit. All 199 selected model
+CIDs were verified in the 2026-10-03 retrieval audit. Runtime delivery uses the
+declared Oracle Cloud mirror first (`milkmaid-pitchers` for GLBs and
+`milkmaid-pitchers-thumbs` for PNG thumbnails), then the canonical IPFS CID
+through the shared gateway sequence. The CIDs remain the content identities;
+Oracle is a delivery mirror for faster, more reliable viewing. Thumbnail CIDs
+are recorded from item metadata, but their bytes and durable pinning have not
+yet been independently verified. The manifest records the creator's authorship
+assertion and CC BY 4.0 for creator-authored artwork, models, metadata, prompts,
+and archive descriptions. A browser render was observed on 2026-10-06, with
+gateway 429/CORS errors and visibly fragmented models; visual integrity and
+reliable remote delivery still need review.

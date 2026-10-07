@@ -79,7 +79,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({
         return (
           <div
             key={item.slug}
-            ref={(el) => (tileRefs.current[item.slug] = el)}
+            ref={(el) => { tileRefs.current[item.slug] = el; }}
             className={`${base} ${isSelected ? selected : unselected}`}
             role="button"
             tabIndex={0}

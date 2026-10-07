@@ -1,0 +1,66 @@
+{
+  "name": "Milkmaid's Pitcher Snapshot (1615ddcb)",
+  "description": "A digital sherd of Milkmaid's Pitcher, an interactive sculpture from the Dystopia of Imitation art project. Created through a WebGL/WebXR installation, each sherd captures a unique state of an animated virtual pitcher as it is manipulated by a participant.\nLike an archaeological fragment, the resulting 3D model preserves only a momentary part of a larger, mutable object—a record of interaction, transformation, and place within the digital sculpture.\nThis sherd was captured in Florence at 43.771887, 11.25947.",
+  "image": "ipfs://bafkreicadwet7wyxmx3jldfkkomzvy366vzdau4tz44uduv4vmlcjmgdrq",
+  "animation_url": "ipfs://bafkreiaqx4g3lf3ip5x5kcwrxwwxqwcd2w3t5dmllkvl3umhjkchhwqcfy",
+  "external_url": "https://pitcher.bluepointart.uk/",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Jarek Solecki @ Dystopia of imitation"
+    },
+    {
+      "trait_type": "Asset CID",
+      "value": "bafkreiaqx4g3lf3ip5x5kcwrxwwxqwcd2w3t5dmllkvl3umhjkchhwqcfy"
+    },
+    {
+      "trait_type": "Asset Filename",
+      "value": "bafkreiaqx4g3lf3ip5x5kcwrxwwxqwcd2w3t5dmllkvl3umhjkchhwqcfy.glb"
+    },
+    {
+      "trait_type": "Latitude",
+      "value": 43.771887
+    },
+    {
+      "trait_type": "Longitude",
+      "value": 11.25947
+    },
+    {
+      "trait_type": "Capture City",
+      "value": "Florence"
+    },
+    {
+      "trait_type": "Capture Timestamp",
+      "value": "2025-11-07T19:28:23+01:00"
+    }
+  ],
+  "properties": {
+    "category": "3d",
+    "files": [
+      {
+        "uri": "ipfs://bafkreicadwet7wyxmx3jldfkkomzvy366vzdau4tz44uduv4vmlcjmgdrq",
+        "type": "image/png",
+        "name": "bafkreicadwet7wyxmx3jldfkkomzvy366vzdau4tz44uduv4vmlcjmgdrq.png",
+        "role": "thumbnail"
+      },
+      {
+        "uri": "ipfs://bafkreiaqx4g3lf3ip5x5kcwrxwwxqwcd2w3t5dmllkvl3umhjkchhwqcfy",
+        "type": "model/gltf-binary",
+        "name": "bafkreiaqx4g3lf3ip5x5kcwrxwwxqwcd2w3t5dmllkvl3umhjkchhwqcfy.glb",
+        "role": "3d-model"
+      }
+    ],
+    "location": {
+      "city": "Florence",
+      "latitude": 43.771887,
+      "longitude": 11.25947
+    },
+    "captured_at": "2025-11-07T19:28:23+01:00"
+  },
+  "external_links": [
+    {
+      "name": "Milkmaid's Pitchers Archive",
+      "url": "https://archive.bluepointart.uk/#milkmaid_pitchers"
+    }
+  ]
+}

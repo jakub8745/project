@@ -1,5 +1,16 @@
 # Codex Engineering Instructions
 
+## Principle: Preserve future-proof archives
+
+Treat an archive as the durable source of truth for reconstructing the work,
+not as a snapshot of the current app. Keep its structure, object index,
+metadata, provenance, rights, and reconstruction intent together in one
+authoritative, technology-neutral configuration wherever practical. Reference
+preserved assets by stable content identifiers. Do not make current software,
+services, or a generated runtime file the only place where essential meaning
+or reconstruction rules exist. A future implementation should be able to use
+the archive with different tools and recover the intended work and experience.
+
 ## Core principle: FIX the problem
 
 When asked to fix a bug, regression, or incorrect behavior, you must fix the

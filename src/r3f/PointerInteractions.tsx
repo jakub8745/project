@@ -25,9 +25,9 @@ import type { VideoPlaybackMode } from '../modules/videoPlaybackMode.js';
 import { resolveObjectRuntimeData, type ObjectRegistry } from '../modules/objectRegistry.js';
 
 type MetaRecord = Record<string, Record<string, unknown>>;
-const CLICKABLE_TYPES = ['Image', 'Wall', 'Walls', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
-const PRIMARY_CLICKABLE_TYPES = new Set(['Image', 'Video', 'VideoControl', 'Link']);
-const HOVERABLE_TYPES = new Set(['Link', 'Image', 'Video', 'Sculpture', 'Floor', 'Wall', 'Walls']);
+const CLICKABLE_TYPES = ['Image', 'Pitcher', 'Wall', 'Walls', 'visitorLocation', 'Room', 'Floor', 'Video', 'VideoControl', 'Link'];
+const PRIMARY_CLICKABLE_TYPES = new Set(['Image', 'Pitcher', 'Video', 'VideoControl', 'Link']);
+const HOVERABLE_TYPES = new Set(['Link', 'Image', 'Pitcher', 'Video', 'Sculpture', 'Floor', 'Wall', 'Walls']);
 const TARGET_CACHE_MS = 250;
 const OCCLUSION_EPSILON = 0.04;
 
@@ -602,7 +602,7 @@ export function PointerInteractions({
           return;
         }
         displayText = linkInfo.label || linkInfo.url;
-      } else if (type === 'Image') {
+      } else if (type === 'Image' || type === 'Pitcher') {
         const imageInfo = resolveImageMeta(key);
         if (!imageInfo) {
           hideHoverTooltip();
@@ -692,7 +692,7 @@ export function PointerInteractions({
 
       const { type, elementID, key, userData } = resolveHitRuntime(hit.object as Mesh);
 
-      if (type === 'Image' && popupCallback) {
+      if ((type === 'Image' || type === 'Pitcher') && popupCallback) {
         const meta = key ? imagesMeta?.[key] : undefined;
         popupCallback({
           type,

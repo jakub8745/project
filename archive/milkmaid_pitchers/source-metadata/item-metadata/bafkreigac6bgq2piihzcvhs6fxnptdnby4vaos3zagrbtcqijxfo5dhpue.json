@@ -1,0 +1,66 @@
+{
+  "name": "Milkmaid's Pitcher Snapshot (71f1f9d4)",
+  "description": "A digital sherd of Milkmaid's Pitcher, an interactive sculpture from the Dystopia of Imitation art project. Created through a WebGL/WebXR installation, each sherd captures a unique state of an animated virtual pitcher as it is manipulated by a participant.\nLike an archaeological fragment, the resulting 3D model preserves only a momentary part of a larger, mutable object—a record of interaction, transformation, and place within the digital sculpture.\nThis sherd was captured in Amsterdam at 52.376951, 4.89686.",
+  "image": "ipfs://bafkreic3vda5osbknvinktijrpy5zhenuwnbfebgnj6uucglnbsuklxebu",
+  "animation_url": "ipfs://bafkreigac6bgq2piihzcvhs6fxnptdnby4vaos3zagrbtcqijxfo5dhpue",
+  "external_url": "https://pitcher.bluepointart.uk/",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "Jarek Solecki @ Dystopia of imitation"
+    },
+    {
+      "trait_type": "Asset CID",
+      "value": "bafkreigac6bgq2piihzcvhs6fxnptdnby4vaos3zagrbtcqijxfo5dhpue"
+    },
+    {
+      "trait_type": "Asset Filename",
+      "value": "bafkreigac6bgq2piihzcvhs6fxnptdnby4vaos3zagrbtcqijxfo5dhpue.glb"
+    },
+    {
+      "trait_type": "Latitude",
+      "value": 52.376951
+    },
+    {
+      "trait_type": "Longitude",
+      "value": 4.89686
+    },
+    {
+      "trait_type": "Capture City",
+      "value": "Amsterdam"
+    },
+    {
+      "trait_type": "Capture Timestamp",
+      "value": "2024-06-02T19:15:38+02:00"
+    }
+  ],
+  "properties": {
+    "category": "3d",
+    "files": [
+      {
+        "uri": "ipfs://bafkreic3vda5osbknvinktijrpy5zhenuwnbfebgnj6uucglnbsuklxebu",
+        "type": "image/png",
+        "name": "bafkreic3vda5osbknvinktijrpy5zhenuwnbfebgnj6uucglnbsuklxebu.png",
+        "role": "thumbnail"
+      },
+      {
+        "uri": "ipfs://bafkreigac6bgq2piihzcvhs6fxnptdnby4vaos3zagrbtcqijxfo5dhpue",
+        "type": "model/gltf-binary",
+        "name": "bafkreigac6bgq2piihzcvhs6fxnptdnby4vaos3zagrbtcqijxfo5dhpue.glb",
+        "role": "3d-model"
+      }
+    ],
+    "location": {
+      "city": "Amsterdam",
+      "latitude": 52.376951,
+      "longitude": 4.89686
+    },
+    "captured_at": "2024-06-02T19:15:38+02:00"
+  },
+  "external_links": [
+    {
+      "name": "Milkmaid's Pitchers Archive",
+      "url": "https://archive.bluepointart.uk/#milkmaid_pitchers"
+    }
+  ]
+}

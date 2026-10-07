@@ -1,0 +1,6398 @@
+{
+  "schemaVersion": "1.0",
+  "manifestId": "milkmaid_pitchers",
+  "source": {
+    "namespace": "lrbcisjgkyhb",
+    "bucket": "milkmaid-pitchers",
+    "objectCount": 211
+  },
+  "method": "Downloaded every declared sourceUri; verified HTTP success, byteSize, and base64 MD5 against the Oracle listing; computed SHA-256 hex and static transformed POSITION bounds from downloaded GLB bytes.",
+  "verifiedObjectCount": 211,
+  "distinctSha256ContentGroups": 203,
+  "duplicateContentGroups": [
+    {
+      "sha256": "3948305dfaab48e5af795b14c3f1f7784690e04947426937fc44c5e141d609f8",
+      "names": [
+        "bafkreibzjayf36vljds266k3ctb7d53yi2ioaskhijutp7ceyxqudvqj7a.glb",
+        "bafkreibzjayf36vljds266k3ctb7d53yi2ioaskhijutp7ceyxqudvqj7a(1).glb"
+      ]
+    },
+    {
+      "sha256": "83e1caf57d4d1e93aab4f7438a80cb316ce61cebd4cbec1ec09626c13f7465e1",
+      "names": [
+        "bafkreied4hfpk7knd2j2vnhxiofibszrnttbz26uzpwb5qewe3at65df4e.glb",
+        "bafkreied4hfpk7knd2j2vnhxiofibszrnttbz26uzpwb5qewe3at65df4e(1).glb"
+      ]
+    },
+    {
+      "sha256": "4d135090e93035abc8aaebc30cd6604c9c2d9aa0f2739327ad9d126d8f176190",
+      "names": [
+        "bafybeiedtkxgnknh3pr4hgudnvbwzulevuztyobkza7zu4ljtg6rxmirie.glb",
+        "bafybeiedtkxgnknh3pr4hgudnvbwzulevuztyobkza7zu4ljtg6rxmirie(1).glb"
+      ]
+    },
+    {
+      "sha256": "6b715085ba9f33e2bbe403696d0ad0b9c6e1d7d1c2b3c122e40ca61389060252",
+      "names": [
+        "bafybeiewc6gczhavay4orhv55o63etx2dtmn6f4rb2eduf5lavit7vm65m.glb",
+        "bafybeiewc6gczhavay4orhv55o63etx2dtmn6f4rb2eduf5lavit7vm65m(1).glb"
+      ]
+    },
+    {
+      "sha256": "8ce40b23d258b8b35d28745e686df2706931c35e79cf1b4fec5854ef897f6f2d",
+      "names": [
+        "bafybeiffww6hnkipyzj3wky3juqhnnv7slgspdyu5gybkue3orjhrngnay.glb",
+        "bafybeiffww6hnkipyzj3wky3juqhnnv7slgspdyu5gybkue3orjhrngnay2.glb"
+      ]
+    },
+    {
+      "sha256": "8e777ec56b93f38057baf944ed2e89958249c0a6b060a32cc63b1904a80e35c2",
+      "names": [
+        "bafybeifml7kmozb5akqwkemn5x63oardqpeeh5yi5ylkcbg3khujjcdfny.glb",
+        "bafybeifml7kmozb5akqwkemn5x63oardqpeeh5yi5ylkcbg3khujjcdfny(1).glb"
+      ]
+    },
+    {
+      "sha256": "6673afd5568b5cfd737eee886d7e31d3ddd6a66a7ab6c840f93f3f3f99d0c14a",
+      "names": [
+        "bafybeifpaycgmsjs4vgxl36xasjnwsez2sas3p4f7msdggwlztbbgwy5dy.glb",
+        "bafybeifpaycgmsjs4vgxl36xasjnwsez2sas3p4f7msdggwlztbbgwy5dy2.glb"
+      ]
+    },
+    {
+      "sha256": "4fdb68debb12154d9db5d26186669c383580f86314b658fd2a413f5e151fcf2d",
+      "names": [
+        "bafybeigyzt5hetht26ek4ljyfgbqxypn5qeimb4jdadax4lfwkkduk7rpe.glb",
+        "bafybeigyzt5hetht26ek4ljyfgbqxypn5qeimb4jdadax4lfwkkduk7rpe1.glb"
+      ]
+    }
+  ],
+  "geometrySummary": {
+    "units": "glTF metres",
+    "boundedObjectCount": 209,
+    "minimumBoundingRadius": 0.5773079084219168,
+    "medianBoundingRadius": 0.9965240241607191,
+    "maximumBoundingRadius": 22.84110171110964,
+    "geometryExceptions": [
+      {
+        "name": "bafkreihpokaichojce6kk6sarcjeyi7pqugwlrbnlpgrcpjbb74aqeydau.glb",
+        "status": "degenerate-zero-size-geometry"
+      },
+      {
+        "name": "bafybeifbpbspc7xtfb7bir6u744xrvy54ayeo7vq4lkmg45zzgazownrpa.glb",
+        "status": "no-scene-mesh-geometry"
+      }
+    ]
+  },
+  "objects": [
+    {
+      "name": "bafkreia2wgvc7656exok7y36xac3ujrspsudo5m3hrsh2ipdhf6pwa3nca.glb",
+      "byteSize": 203752,
+      "oracleMd5Base64": "vNrBL9QFqyF0ZMB6rPS3kw==",
+      "sha256": "1ab1aa2ffbbe25dcafe37eb805ba26327ca837759b3c647d21e3397cfb036d10",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.03250198811292648,
+          -0.6714582443237305,
+          -3.268674850463867
+        ],
+        "max": [
+          0.7695639133453369,
+          0.6075884103775024,
+          -2.2650351524353027
+        ],
+        "center": [
+          0.3685309626162052,
+          -0.031934916973114014,
+          -2.766855001449585
+        ],
+        "size": [
+          0.8020659014582634,
+          1.279046654701233,
+          1.0036396980285645
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9064439721575928
+      }
+    },
+    {
+      "name": "bafkreia3klforxvovdluz556kocewc4e2n5zbpeabqbg4p4oj3gd74jmdu.glb",
+      "byteSize": 152560,
+      "oracleMd5Base64": "7fPHq60+L9aiAsBtrkl9xA==",
+      "sha256": "1b52cae8deaea8d74cf7be53844b0b84d37b90bc800c026e3f8e4ecc3ff12c1d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5110684037208557,
+          -0.07312553375959396,
+          -3.173452138900757
+        ],
+        "max": [
+          0.2716767489910126,
+          0.7635140419006348,
+          -2.3262248039245605
+        ],
+        "center": [
+          -0.11969582736492157,
+          0.3451942540705204,
+          -2.7498384714126587
+        ],
+        "size": [
+          0.7827451527118683,
+          0.8366395756602287,
+          0.8472273349761963
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7124692819318109
+      }
+    },
+    {
+      "name": "bafkreia7e3l3obwgdoashsivnkq7n4dvoic3yix7qg2frmkzeiwkmm4fle.glb",
+      "byteSize": 164220,
+      "oracleMd5Base64": "L9JU2l/tzUch/olYLMX2rA==",
+      "sha256": "1f26d7b706c61b8123c9156aa1f6f0757205bc22ff81b458b159222ca6338559",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5820218920707703,
+          -0.03219061717391014,
+          -3.226986885070801
+        ],
+        "max": [
+          0.2814086377620697,
+          0.7576784491539001,
+          -2.329810380935669
+        ],
+        "center": [
+          -0.15030662715435028,
+          0.362743915989995,
+          -2.778398633003235
+        ],
+        "size": [
+          0.86343052983284,
+          0.7898690663278103,
+          0.8971765041351318
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7372806625297319
+      }
+    },
+    {
+      "name": "bafkreiaavlom2dtskqwpdnjgtw3l3xpc5n5mbykis2m3h74lgcse3nafuq.glb",
+      "byteSize": 199284,
+      "oracleMd5Base64": "f34FY20FdI2BbOyIErTd1Q==",
+      "sha256": "00aadccd0e72542cf1b5269db6bddde2eb7ac0e1489699b3ff8b30a44db405a4",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6061199903488159,
+          -0.05337342619895935,
+          -3.174422264099121
+        ],
+        "max": [
+          0.2656531035900116,
+          1.1107139587402344,
+          -2.262383222579956
+        ],
+        "center": [
+          -0.17023344337940216,
+          0.5286702662706375,
+          -2.7184027433395386
+        ],
+        "size": [
+          0.8717730939388275,
+          1.1640873849391937,
+          0.912039041519165
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8583272948510731
+      }
+    },
+    {
+      "name": "bafkreiahgs3zwoxgayg3az7hw5us4umks54n6o7ndn4mbzwsm6jbipmcna.glb",
+      "byteSize": 164508,
+      "oracleMd5Base64": "O1P4x+TNlPd2FKpkTLhCyQ==",
+      "sha256": "0734b79b3ae6060db067e7b7692e518a9778df3bed1b78c0e6d26792143d8268",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.4728398323059082,
+          -0.11642361432313919,
+          -3.231961488723755
+        ],
+        "max": [
+          0.2820091247558594,
+          1.0076789855957031,
+          -2.323030471801758
+        ],
+        "center": [
+          -0.09541535377502441,
+          0.44562768563628197,
+          -2.7774959802627563
+        ],
+        "size": [
+          0.7548489570617676,
+          1.1241025999188423,
+          0.9089310169219971
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8154077502459114
+      }
+    },
+    {
+      "name": "bafkreialgdqnqmuntzldsl6cccqg6s6clj5e7qzs34awpwwl5ukk5thyda.glb",
+      "byteSize": 121744,
+      "oracleMd5Base64": "46ITYDzjnS4sotMrXXnFJw==",
+      "sha256": "0b30e0d8328d9e56392fc210a06f4bc25a7a4fc332df0167dacbed14aeccf818",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.17734836041927338,
+          -0.07039446383714676,
+          -3.2189149856567383
+        ],
+        "max": [
+          0.7170126438140869,
+          0.3880523145198822,
+          -2.2666478157043457
+        ],
+        "center": [
+          0.26983214169740677,
+          0.15882892534136772,
+          -2.742781400680542
+        ],
+        "size": [
+          0.8943610042333603,
+          0.45844677835702896,
+          0.9522671699523926
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.692254977852883
+      }
+    },
+    {
+      "name": "bafkreiapmy5jdublxwwwnmfek6uynw4jhy4w7jjw3exgbtb2tf3ybnt3tm.glb",
+      "byteSize": 152200,
+      "oracleMd5Base64": "O4aPzzujpQnPwp7azvSXiw==",
+      "sha256": "0f663a91d02bbdad66b0a457a986db893e396fa536d92e60cc3a997780b67b9b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6656627655029297,
+          0.0072712465189397335,
+          -3.120509386062622
+        ],
+        "max": [
+          0.2759634852409363,
+          0.9987950325012207,
+          -2.3868885040283203
+        ],
+        "center": [
+          -0.1948496401309967,
+          0.5030331395100802,
+          -2.753698945045471
+        ],
+        "size": [
+          0.941626250743866,
+          0.991523785982281,
+          0.7336208820343018
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7758832084816911
+      }
+    },
+    {
+      "name": "bafkreiaqc46lm23wkzimm7owztt2m7u25cs5wyopeqslsu2j7p5uuq6ekm.glb",
+      "byteSize": 123400,
+      "oracleMd5Base64": "ukf0860o66g1BS7KolQ/Dg==",
+      "sha256": "10173cb66b765650c67dd6cce7a67e9ae8a5db61cf2424b95349fbfb4a43c453",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.20327302813529968,
+          0.026314010843634605,
+          -3.191091775894165
+        ],
+        "max": [
+          0.7199838757514954,
+          0.4067651629447937,
+          -2.2819063663482666
+        ],
+        "center": [
+          0.25835542380809784,
+          0.21653958689421415,
+          -2.736499071121216
+        ],
+        "size": [
+          0.923256903886795,
+          0.3804511521011591,
+          0.9091854095458984
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.6752341258113501
+      }
+    },
+    {
+      "name": "bafkreiaqx4g3lf3ip5x5kcwrxwwxqwcd2w3t5dmllkvl3umhjkchhwqcfy.glb",
+      "byteSize": 147520,
+      "oracleMd5Base64": "LA4A8ByJi3uaJtOlqc8rBw==",
+      "sha256": "10bf0db597687f6fd50ad1bdad785843d5b73e8d8b5aaabdd1874a8473da022e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5288121700286865,
+          -0.08622036129236221,
+          -3.19417405128479
+        ],
+        "max": [
+          0.28011515736579895,
+          0.9892955422401428,
+          -2.3111987113952637
+        ],
+        "center": [
+          -0.12434850633144379,
+          0.4515375904738903,
+          -2.752686381340027
+        ],
+        "size": [
+          0.8089273273944855,
+          1.075515903532505,
+          0.8829753398895264
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8047893094794982
+      }
+    },
+    {
+      "name": "bafkreiarq64u5qx7abteljnegzt5ggbb7azdkl2m5eufsef7bs33lj5sau.glb",
+      "byteSize": 155796,
+      "oracleMd5Base64": "X/yWze3yd2iKlNQBCbni2w==",
+      "sha256": "1187b94ec2ff006645a5a43667d31821f832352f4ce9285910bf0cb7b5a7b205",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.557513952255249,
+          -0.17558826506137848,
+          -3.1562960147857666
+        ],
+        "max": [
+          0.2711205780506134,
+          0.6252230405807495,
+          -2.435673475265503
+        ],
+        "center": [
+          -0.1431966871023178,
+          0.22481738775968552,
+          -2.7959847450256348
+        ],
+        "size": [
+          0.8286345303058624,
+          0.800811305642128,
+          0.7206225395202637
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.6795643414210498
+      }
+    },
+    {
+      "name": "bafkreiay4w7ian7t2ekbvsz2rs5yu4ynvshjelktsaprvv5iwe4vevth3e.glb",
+      "byteSize": 156736,
+      "oracleMd5Base64": "Gk5yTffEmKv2J6hsV7heOg==",
+      "sha256": "18e5be8037f3d1141acb3a8cbb8a730dac8e922d53901f1ad7a8b139525667d9",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5706621408462524,
+          -0.06311165541410446,
+          -3.1625075340270996
+        ],
+        "max": [
+          0.2748861014842987,
+          0.7556600570678711,
+          -2.326967477798462
+        ],
+        "center": [
+          -0.14788801968097687,
+          0.3462742008268833,
+          -2.7447375059127808
+        ],
+        "size": [
+          0.8455482423305511,
+          0.8187717124819756,
+          0.8355400562286377
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7217108376682981
+      }
+    },
+    {
+      "name": "bafkreiay7xgpc5g7puiuaprb7uo2ysn3eytue5fjc5zhk277ro5z6tnmli.glb",
+      "byteSize": 175668,
+      "oracleMd5Base64": "GBa0gcqBpwqA3+aHzmB2kg==",
+      "sha256": "18fdccf174df7d11403e21fd1dac49bb26274274a91772756bff8bbb9f4dac5a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7474505305290222,
+          0.011826598085463047,
+          -3.158081293106079
+        ],
+        "max": [
+          0.2821956276893616,
+          1.0934574604034424,
+          -2.400970697402954
+        ],
+        "center": [
+          -0.23262745141983032,
+          0.5526420292444527,
+          -2.7795259952545166
+        ],
+        "size": [
+          1.0296461582183838,
+          1.0816308623179793,
+          0.757110595703125
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8371548523986697
+      }
+    },
+    {
+      "name": "bafkreiayfco6slwge54hfp7o2yaeu7ds2wwwkte6oincqrbcc6qynhzeku.glb",
+      "byteSize": 153280,
+      "oracleMd5Base64": "eb/MrFIGyC1pmkswO0QK5g==",
+      "sha256": "18289de92ec6277872bfeed6004a7c72d5ad654c9e721a28442217a1869f2455",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6702973246574402,
+          -0.007163633592426777,
+          -3.101508855819702
+        ],
+        "max": [
+          0.2745189368724823,
+          0.9040070176124573,
+          -2.2859015464782715
+        ],
+        "center": [
+          -0.19788919389247894,
+          0.44842169201001525,
+          -2.693705201148987
+        ],
+        "size": [
+          0.9448162615299225,
+          0.911170651204884,
+          0.8156073093414307
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7726779741133559
+      }
+    },
+    {
+      "name": "bafkreib4mlit5w3q74edxixlee4qatswtowbhqapnqawe4cvx6gjr6nvra.glb",
+      "byteSize": 233920,
+      "oracleMd5Base64": "OgJ1BEPrs+0tjF7c8rOT5Q==",
+      "sha256": "3c62d13edb70ff083ba2eb2139004e569bac13c00f6c01627055bf8c98f9b588",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.2490689903497696,
+          -0.5735475420951843,
+          -3.270188093185425
+        ],
+        "max": [
+          0.7917985916137695,
+          0.5933002829551697,
+          -2.200383424758911
+        ],
+        "center": [
+          0.27136480063199997,
+          0.009876370429992676,
+          -2.735285758972168
+        ],
+        "size": [
+          1.0408675819635391,
+          1.166847825050354,
+          1.0698046684265137
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9472883930718418
+      }
+    },
+    {
+      "name": "bafkreib6uzl6cld5rq2jis5khi6prpvydgptrqvxmdef73mdnfrodlees4.glb",
+      "byteSize": 122176,
+      "oracleMd5Base64": "LxdS8IiGf5/nKnEk6mKVDw==",
+      "sha256": "3ea657e12c7d8c34944baa3a3cf8beb8199f38c2b760c85fed836962e1ac8497",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.17379137873649597,
+          0.023883642628788948,
+          -3.1936094760894775
+        ],
+        "max": [
+          0.7516078948974609,
+          0.3854161202907562,
+          -2.209833860397339
+        ],
+        "center": [
+          0.2889082580804825,
+          0.2046498814597726,
+          -2.701721668243408
+        ],
+        "size": [
+          0.9253992736339569,
+          0.3615324776619673,
+          0.9837756156921387
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.6990858334419855
+      }
+    },
+    {
+      "name": "bafkreiba4tnjckxldo2fb62jjbpacaierel7j64ba5lzvsfq6ewqtgp65i.glb",
+      "byteSize": 157456,
+      "oracleMd5Base64": "nmVSZtO6d8N3LZA+kKBNcw==",
+      "sha256": "20e4da912aeb1bb450fb49485e0101048917f4fb8107579ac8b0f12d0999feea",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6533285975456238,
+          -0.023880280554294586,
+          -3.1567728519439697
+        ],
+        "max": [
+          0.27265673875808716,
+          0.814734935760498,
+          -2.3436429500579834
+        ],
+        "center": [
+          -0.1903359293937683,
+          0.39542732760310173,
+          -2.7502079010009766
+        ],
+        "size": [
+          0.9259853363037109,
+          0.8386152163147926,
+          0.8131299018859863
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7453027172607981
+      }
+    },
+    {
+      "name": "bafkreibbcx6fhihe3dunr35d4vu5n22wn7stlql6c7eebrzd7bjy7hjw5a.glb",
+      "byteSize": 203752,
+      "oracleMd5Base64": "eiFTwVcRLOKqjjK50kh73A==",
+      "sha256": "2115fc53a0e4d8e8d8efa3e569d6eb566fe535c17e17c840c723f8538f9d36e8",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5526149868965149,
+          -0.15799488127231598,
+          -3.174860954284668
+        ],
+        "max": [
+          0.24464038014411926,
+          1.1263245344161987,
+          -2.164891481399536
+        ],
+        "center": [
+          -0.15398730337619781,
+          0.4841648265719414,
+          -2.669876217842102
+        ],
+        "size": [
+          0.7972553670406342,
+          1.2843194156885147,
+          1.0099694728851318
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9090009375613227
+      }
+    },
+    {
+      "name": "bafkreibds2xhjhmy5q2eanrzf4cuj7trobbsvjtmo457jnkaj7ai5cs52m.glb",
+      "byteSize": 154428,
+      "oracleMd5Base64": "6QzVcdXFc8wUlpcZ01BhqA==",
+      "sha256": "2396ae749d98ec344036392f0544fe7170432aa66c773bf4b5404fc08e8a5dd3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.54947829246521,
+          -0.08083058893680573,
+          -3.168149709701538
+        ],
+        "max": [
+          0.2744442820549011,
+          0.7539659142494202,
+          -2.3277604579925537
+        ],
+        "center": [
+          -0.13751700520515442,
+          0.3365676626563072,
+          -2.747955083847046
+        ],
+        "size": [
+          0.8239225745201111,
+          0.8347965031862259,
+          0.8403892517089844
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.721454729162507
+      }
+    },
+    {
+      "name": "bafkreibjtzs47n5e6ybjn7pw25hyzc2rlep3hlbghxxx2zj7lr3wtv5g2e.glb",
+      "byteSize": 201232,
+      "oracleMd5Base64": "zj1X8ECA0BSCSxW9hgWnjw==",
+      "sha256": "299e65cfb7a4f60296fdf6d74f8c8b51591fb3ac263def7d653f5c7769d7a6d1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6206258535385132,
+          -0.17409847676753998,
+          -3.188304901123047
+        ],
+        "max": [
+          0.26652997732162476,
+          0.594139814376831,
+          -2.3095884323120117
+        ],
+        "center": [
+          -0.1770479381084442,
+          0.21002066880464554,
+          -2.7489466667175293
+        ],
+        "size": [
+          0.8871558308601379,
+          0.768238291144371,
+          0.8787164688110352
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7330378866009075
+      }
+    },
+    {
+      "name": "bafkreibplnkdjick7z6ccnpha5tz3rcjweudlkgesnkmb6fxytluapks5a.glb",
+      "byteSize": 153856,
+      "oracleMd5Base64": "JkCWbuTdbvr7H2j8Hi1q8Q==",
+      "sha256": "2f5b5434a04afe7c2135e707679dc449b12835a8c49354c0f8b7c4d7403d52e8",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5335785746574402,
+          -0.06837859004735947,
+          -3.1659152507781982
+        ],
+        "max": [
+          0.2727801501750946,
+          0.7526776790618896,
+          -2.320890188217163
+        ],
+        "center": [
+          -0.1303992122411728,
+          0.3421495445072651,
+          -2.7434027194976807
+        ],
+        "size": [
+          0.8063587248325348,
+          0.8210562691092491,
+          0.8450250625610352
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7138653841084873
+      }
+    },
+    {
+      "name": "bafkreibs3n3bt6lbwzfsxxwvdtgfymfs6la3kpno6ycmymqiyqte42frp4.glb",
+      "byteSize": 153132,
+      "oracleMd5Base64": "DA6hnhL0M9GZ2la1JJk6dA==",
+      "sha256": "32db7619f961b64b2bded51ccc5c30b2f2c1b53daef604cc3208c4264e68b17f",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6066669225692749,
+          -0.06450308859348297,
+          -3.163821220397949
+        ],
+        "max": [
+          0.2746281325817108,
+          0.7578458189964294,
+          -2.327482223510742
+        ],
+        "center": [
+          -0.16601939499378204,
+          0.34667136520147324,
+          -2.7456517219543457
+        ],
+        "size": [
+          0.8812950551509857,
+          0.8223489075899124,
+          0.836338996887207
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7335532730760256
+      }
+    },
+    {
+      "name": "bafkreibuemcn6ldkklugv2p5wcxadbm67l3siyvisjbc5tumnsaj5fumde.glb",
+      "byteSize": 218872,
+      "oracleMd5Base64": "504GbvcQXlUJCG3sCzY8ag==",
+      "sha256": "342304df2c6a52e86ae9fdb0ae01859efaf72462a892422ece8c6c809e968c19",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.17980819940567017,
+          -0.6728447079658508,
+          -3.2453086376190186
+        ],
+        "max": [
+          0.7955150008201599,
+          0.6350948214530945,
+          -2.0473103523254395
+        ],
+        "center": [
+          0.3078534007072449,
+          -0.018874943256378174,
+          -2.646309494972229
+        ],
+        "size": [
+          0.9753232002258301,
+          1.3079395294189453,
+          1.197998285293579
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0120722613877138
+      }
+    },
+    {
+      "name": "bafkreibxj3zwu62zp3bdj4tohnrr3uh5wphuwmwpph5eoixsrhdaizilha.glb",
+      "byteSize": 157384,
+      "oracleMd5Base64": "y7C4nP8b3JlSzK1WDQZ2oQ==",
+      "sha256": "374ef36a7b597ec234f26e3b631dd0fdb3cf4b32cf79fa4722f289c604650b38",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5606803297996521,
+          -0.06563404202461243,
+          -3.1640212535858154
+        ],
+        "max": [
+          0.27433523535728455,
+          0.7566995620727539,
+          -2.3269155025482178
+        ],
+        "center": [
+          -0.14317254722118378,
+          0.34553276002407074,
+          -2.7454683780670166
+        ],
+        "size": [
+          0.8350155651569366,
+          0.8223336040973663,
+          0.8371057510375977
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7201092953334137
+      }
+    },
+    {
+      "name": "bafkreibyluwmpbdukmax4fdzm2u4enebtrloiw7vmm35toivaxdqhgq5zi.glb",
+      "byteSize": 180204,
+      "oracleMd5Base64": "uh+91pqQ7KJQNfmAwAjuxA==",
+      "sha256": "385d2cc7847453017e147966a9c234819c56e45bf56337d9b91505c7039a1dca",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6131527423858643,
+          -0.14966264367103577,
+          -3.252126693725586
+        ],
+        "max": [
+          0.2795032858848572,
+          0.8552042841911316,
+          -2.3948113918304443
+        ],
+        "center": [
+          -0.16682472825050354,
+          0.3527708202600479,
+          -2.823469042778015
+        ],
+        "size": [
+          0.8926560282707214,
+          1.0048669278621674,
+          0.8573153018951416
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7971169698329673
+      }
+    },
+    {
+      "name": "bafkreibzjayf36vljds266k3ctb7d53yi2ioaskhijutp7ceyxqudvqj7a.glb",
+      "byteSize": 210088,
+      "oracleMd5Base64": "AQIAjPZVH0RyLwH1kirgPQ==",
+      "sha256": "3948305dfaab48e5af795b14c3f1f7784690e04947426937fc44c5e141d609f8",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.536505401134491,
+          -0.1765403002500534,
+          -3.174882650375366
+        ],
+        "max": [
+          0.270402193069458,
+          0.6055015325546265,
+          -2.3097567558288574
+        ],
+        "center": [
+          -0.13305160403251648,
+          0.21448061615228653,
+          -2.742319703102112
+        ],
+        "size": [
+          0.806907594203949,
+          0.7820418328046799,
+          0.8651258945465088
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.70907194755811
+      }
+    },
+    {
+      "name": "bafkreibzjayf36vljds266k3ctb7d53yi2ioaskhijutp7ceyxqudvqj7a(1).glb",
+      "byteSize": 210088,
+      "oracleMd5Base64": "AQIAjPZVH0RyLwH1kirgPQ==",
+      "sha256": "3948305dfaab48e5af795b14c3f1f7784690e04947426937fc44c5e141d609f8",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.536505401134491,
+          -0.1765403002500534,
+          -3.174882650375366
+        ],
+        "max": [
+          0.270402193069458,
+          0.6055015325546265,
+          -2.3097567558288574
+        ],
+        "center": [
+          -0.13305160403251648,
+          0.21448061615228653,
+          -2.742319703102112
+        ],
+        "size": [
+          0.806907594203949,
+          0.7820418328046799,
+          0.8651258945465088
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.70907194755811
+      }
+    },
+    {
+      "name": "bafkreic2mvxf5puuznxbyvk4et7slz2guaefatojjrkttlgyc5ntfycrj4.glb",
+      "byteSize": 173728,
+      "oracleMd5Base64": "aD6QAKra3+SLyxEKjZDz9g==",
+      "sha256": "5a656e5ebe94cb6e1c555c24ff25e746a008504dc94c5539acd8175b32e0514f",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6613469123840332,
+          0.02434786967933178,
+          -3.0559864044189453
+        ],
+        "max": [
+          0.2725139856338501,
+          1.1686252355575562,
+          -2.4140241146087646
+        ],
+        "center": [
+          -0.19441646337509155,
+          0.596486552618444,
+          -2.735005259513855
+        ],
+        "size": [
+          0.9338608980178833,
+          1.1442773658782244,
+          0.6419622898101807
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8052301609549759
+      }
+    },
+    {
+      "name": "bafkreic54etjjuqvtc2oshssl2iukynhkgjl4xirtfhfqukov2gcfzagoa.glb",
+      "byteSize": 228812,
+      "oracleMd5Base64": "3/XSmDRWNHCNBUmijAQFWQ==",
+      "sha256": "5de12694d21598b4e91e525e914561a75192be5d11994e58514eae8c22e40670",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6607531309127808,
+          -0.16038866341114044,
+          -3.2683582305908203
+        ],
+        "max": [
+          0.29553908109664917,
+          1.1476484537124634,
+          -2.1573235988616943
+        ],
+        "center": [
+          -0.1826070249080658,
+          0.49362989515066147,
+          -2.7128409147262573
+        ],
+        "size": [
+          0.9562922120094299,
+          1.3080371171236038,
+          1.111034631729126
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9823255376177991
+      }
+    },
+    {
+      "name": "bafkreic54mtdghzvi2wnq43pk7ruzjr5iyvgmvql2sztg3gbbab5mujkki.glb",
+      "byteSize": 156372,
+      "oracleMd5Base64": "t9bt8RZV42DJzS7CCYuBvg==",
+      "sha256": "5de326331f3546acd8736f57e34ca63d462a66560bd4b3336cc10803d6512a52",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.554486870765686,
+          -0.054961685091257095,
+          -3.156451940536499
+        ],
+        "max": [
+          0.27633434534072876,
+          0.7460724115371704,
+          -2.3288257122039795
+        ],
+        "center": [
+          -0.13907626271247864,
+          0.34555536322295666,
+          -2.7426388263702393
+        ],
+        "size": [
+          0.8308212161064148,
+          0.8010340966284275,
+          0.8276262283325195
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7100853277807138
+      }
+    },
+    {
+      "name": "bafkreic5jq4lrnwqogjoimaj7rtnfb5cdjgxfvyvki7cusc2qjptxopupe.glb",
+      "byteSize": 202528,
+      "oracleMd5Base64": "Q6wk2EVYSkooysxLvYfJsA==",
+      "sha256": "5d4c38b8b6d07192e43009fc66d287a21a4d72d715523e2a485a825f3bb9f479",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.544757068157196,
+          -0.16009566187858582,
+          -3.186117649078369
+        ],
+        "max": [
+          0.26861995458602905,
+          1.0187981128692627,
+          -2.192333936691284
+        ],
+        "center": [
+          -0.1380685567855835,
+          0.42935122549533844,
+          -2.6892257928848267
+        ],
+        "size": [
+          0.8133770227432251,
+          1.1788937747478485,
+          0.993783712387085
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8716333489879389
+      }
+    },
+    {
+      "name": "bafkreic7eoywxobregp5nqvvk3e5jb2nenxjozuihxnu7d56xhhco52kbe.glb",
+      "byteSize": 215056,
+      "oracleMd5Base64": "l/2wfooHPWahUzBGL8Mnng==",
+      "sha256": "5f23b16bb831219fd6c2b556c9d4874d236e9766883ddb4f8fbeb9ce27774a09",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6723524928092957,
+          -0.18137505650520325,
+          -3.2740299701690674
+        ],
+        "max": [
+          0.2805452346801758,
+          1.2410173416137695,
+          -2.1825809478759766
+        ],
+        "center": [
+          -0.19590362906455994,
+          0.5298211425542831,
+          -2.728305459022522
+        ],
+        "size": [
+          0.9528977274894714,
+          1.4223923981189728,
+          1.0914490222930908
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0151939693410548
+      }
+    },
+    {
+      "name": "bafkreic7khjkiek3d5huw2r77xkashkbafimomkxybkdxmxlzjtzc6o7ka.glb",
+      "byteSize": 154576,
+      "oracleMd5Base64": "YnVMEmlQhonUXoRUIHdQ/g==",
+      "sha256": "5f51d2a4115b1f4f4b6a3ffdd4091d410150c73157c0543bb2ebca679179df50",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6090160012245178,
+          -0.023587025701999664,
+          -3.156402349472046
+        ],
+        "max": [
+          0.28421905636787415,
+          0.7660302519798279,
+          -2.328157901763916
+        ],
+        "center": [
+          -0.16239847242832184,
+          0.3712216131389141,
+          -2.742280125617981
+        ],
+        "size": [
+          0.893235057592392,
+          0.7896172776818275,
+          0.8282444477081299
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7258362725995942
+      }
+    },
+    {
+      "name": "bafkreicimitwr74jjsxjemiydqbo3s24nytiy4swynwu7icjfbpom6ezy4.glb",
+      "byteSize": 156732,
+      "oracleMd5Base64": "gvZDM8zDt8kXBupeVJHsVA==",
+      "sha256": "48622768ff894cae9231181c02edcb5c6e268c7256c36d4fa049285ee67899c7",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6614561080932617,
+          -0.02369568683207035,
+          -3.1536319255828857
+        ],
+        "max": [
+          0.28145840764045715,
+          0.7940129637718201,
+          -2.336508274078369
+        ],
+        "center": [
+          -0.18999885022640228,
+          0.38515863846987486,
+          -2.7450700998306274
+        ],
+        "size": [
+          0.9429145157337189,
+          0.8177086506038904,
+          0.8171236515045166
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.745893136297329
+      }
+    },
+    {
+      "name": "bafkreickqdxa3mj6gj56m7fg52w4os7jymj3wsnkskjm5skrzpy7lobbga.glb",
+      "byteSize": 155368,
+      "oracleMd5Base64": "sz9yqSPFCMxv62j0AakmVg==",
+      "sha256": "4a80ee0db13e327be67ca6eeadc74be9c313bb49aa9292cec951cbf1f5b82130",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5065780282020569,
+          -0.07772251963615417,
+          -3.1823976039886475
+        ],
+        "max": [
+          0.27201879024505615,
+          0.9175005555152893,
+          -2.3109865188598633
+        ],
+        "center": [
+          -0.11727961897850037,
+          0.41988901793956757,
+          -2.7466920614242554
+        ],
+        "size": [
+          0.778596818447113,
+          0.9952230751514435,
+          0.8714110851287842
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7674697476603211
+      }
+    },
+    {
+      "name": "bafkreicrkrioflzyyfwidwjvkwoswo5qikweg4xz63hq3tkrw7lgphyxxi.glb",
+      "byteSize": 156448,
+      "oracleMd5Base64": "zhlvdKaVBSCLVjwy8ghQ4w==",
+      "sha256": "515450e2af38c16c81d935559d2b3bb042ac4372f9f6cf0dcd51b7d6679f17ba",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5505940914154053,
+          -0.05164990946650505,
+          -3.156930923461914
+        ],
+        "max": [
+          0.27869442105293274,
+          0.7452404499053955,
+          -2.326249361038208
+        ],
+        "center": [
+          -0.13594983518123627,
+          0.34679527021944523,
+          -2.741590142250061
+        ],
+        "size": [
+          0.829288512468338,
+          0.7968903593719006,
+          0.830681562423706
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7093633659702401
+      }
+    },
+    {
+      "name": "bafkreicvfxsbnau3cftjlhz2hul75n3rwfemg2jy5nepo7sz47z53zjdbq.glb",
+      "byteSize": 226576,
+      "oracleMd5Base64": "o199OC2kjbKxXwwXpEc3BA==",
+      "sha256": "552de416829b1166959f3a3d17feb771b148c36938eb48f77e59e7f3dde5230c",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6676945090293884,
+          -0.14499837160110474,
+          -3.273083209991455
+        ],
+        "max": [
+          0.2950473725795746,
+          1.2429786920547485,
+          -2.182508945465088
+        ],
+        "center": [
+          -0.18632356822490692,
+          0.5489901602268219,
+          -2.7277960777282715
+        ],
+        "size": [
+          0.962741881608963,
+          1.3879770636558533,
+          1.0905742645263672
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0053238888892868
+      }
+    },
+    {
+      "name": "bafkreicwbhlfpudebppdk4zbdlcbfthf7o6gx7zewcjaujeael52gayqde.glb",
+      "byteSize": 157456,
+      "oracleMd5Base64": "5t0sc/8FOKFJ/EkCPKnwyg==",
+      "sha256": "5609d657d0640bde3573211ac412cce5fbbc6bff24b0920a248022fba3031019",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5132505893707275,
+          -0.07292264699935913,
+          -3.1723313331604004
+        ],
+        "max": [
+          0.27143117785453796,
+          0.7633857727050781,
+          -2.3253262042999268
+        ],
+        "center": [
+          -0.12090970575809479,
+          0.3452315628528595,
+          -2.7488287687301636
+        ],
+        "size": [
+          0.7846817672252655,
+          0.8363084197044373,
+          0.8470051288604736
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7128385050276547
+      }
+    },
+    {
+      "name": "bafkreicwcxa4vl44rseh7xpsgowzjuvva4c4gaae2nckflfehgskm42j7i.glb",
+      "byteSize": 161632,
+      "oracleMd5Base64": "o2sVpg+oSW5pLfBWEmRpCg==",
+      "sha256": "5615c1caaf9c8c887fddf233ad94d2b50705c30004d344a2aca439a4a67349fa",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.16715925931930542,
+          -0.6765303015708923,
+          -3.191422700881958
+        ],
+        "max": [
+          0.7381163835525513,
+          0.3494625687599182,
+          -2.3447513580322266
+        ],
+        "center": [
+          0.2854785621166229,
+          -0.16353386640548706,
+          -2.7680870294570923
+        ],
+        "size": [
+          0.9052756428718567,
+          1.0259928703308105,
+          0.8466713428497314
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8045243505248422
+      }
+    },
+    {
+      "name": "bafkreicxzxzd7p5c3utiujz4mvu2dxgmlsv7m43v4ajyjkyopaecx5fc2a.glb",
+      "byteSize": 139468,
+      "oracleMd5Base64": "N44N5OffmmiBvBpBs7wQMw==",
+      "sha256": "57cdf23fbfa2dd268a273c6569a1dccc5cabf67375e01384ab0e78082bf4a2d0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -10.897899627685547,
+          0.11309999972581863,
+          3.4856998920440674
+        ],
+        "max": [
+          10.8927001953125,
+          34.93299865722656,
+          23.475900650024414
+        ],
+        "center": [
+          -0.0025997161865234375,
+          17.52304932847619,
+          13.48080027103424
+        ],
+        "size": [
+          21.790599822998047,
+          34.819898657500744,
+          19.990200757980347
+        ],
+        "centeredGroundedBoundingSphereRadius": 22.84110171110964
+      }
+    },
+    {
+      "name": "bafkreid2q4jj5nwavsr2q5oqmbfgbbt5n7ghj7w2c2mtnbdrxxonhrohga.glb",
+      "byteSize": 228664,
+      "oracleMd5Base64": "3nuFed8iFYWjedEsBPDn+w==",
+      "sha256": "7a87129eb6c0aca3a875d0604a60867d6fcc74feda1699368471bddcd3c5c730",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6806261539459229,
+          -0.14510880410671234,
+          -3.2731525897979736
+        ],
+        "max": [
+          0.29364004731178284,
+          1.216646671295166,
+          -2.185129165649414
+        ],
+        "center": [
+          -0.19349305331707,
+          0.5357689335942268,
+          -2.729140877723694
+        ],
+        "size": [
+          0.9742662012577057,
+          1.3617554754018784,
+          1.0880234241485596
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.998419698473051
+      }
+    },
+    {
+      "name": "bafkreid2zjfd25rblrzx2o4v7ktjhntjlu6ftgcyfmgzn2xzjjnelnvuzy.glb",
+      "byteSize": 159544,
+      "oracleMd5Base64": "HKMq0l0J0ssll4YX9Eb0zA==",
+      "sha256": "7aca4a3d76215c737d3b95faa693b6695d3c5998582b0d96eaf94a5a45b6b4ce",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.608963668346405,
+          -0.023659290745854378,
+          -3.1562864780426025
+        ],
+        "max": [
+          0.2842489778995514,
+          0.7660667300224304,
+          -2.328171968460083
+        ],
+        "center": [
+          -0.16235734522342682,
+          0.371203719638288,
+          -2.7422292232513428
+        ],
+        "size": [
+          0.8932126462459564,
+          0.7897260207682848,
+          0.8281145095825195
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7258218893560098
+      }
+    },
+    {
+      "name": "bafkreid5a2mzwcfz2nty636l2anzuhqoyclzgwdwwx7t6dnqijlqfocpcu.glb",
+      "byteSize": 173944,
+      "oracleMd5Base64": "bzikZwamD2pr72nKnlAyeg==",
+      "sha256": "7d06999b08b9d3678f6fcbd01b9a1e0ec097935876b5ff3f0db0425702b84f15",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6678516268730164,
+          0.023514501750469208,
+          -3.042358636856079
+        ],
+        "max": [
+          0.2688938081264496,
+          1.1420392990112305,
+          -2.4170076847076416
+        ],
+        "center": [
+          -0.1994789093732834,
+          0.5827769003808498,
+          -2.7296831607818604
+        ],
+        "size": [
+          0.9367454349994659,
+          1.1185247972607613,
+          0.6253509521484375
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7936708299781029
+      }
+    },
+    {
+      "name": "bafkreid5rymzltexf25uvbl4uqaqm5tk4rdpkyssujx4vjugjrqcimoouy.glb",
+      "byteSize": 153924,
+      "oracleMd5Base64": "0Mup9yO/ZF4D/f0AYw52eQ==",
+      "sha256": "7d8e1995cc972ebb4a857ca40106766ae446f56252a26fcaa6864c602431cea6",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5343988537788391,
+          -0.06818559765815735,
+          -3.166581153869629
+        ],
+        "max": [
+          0.2730987071990967,
+          0.7528674602508545,
+          -2.3223326206207275
+        ],
+        "center": [
+          -0.13065007328987122,
+          0.34234093129634857,
+          -2.7444568872451782
+        ],
+        "size": [
+          0.8074975609779358,
+          0.8210530579090118,
+          0.8442485332489014
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7139565849510696
+      }
+    },
+    {
+      "name": "bafkreid7lyvbj4rq2oendnnexin77onhv7lyrru7cvhlwjczavpoquqey4.glb",
+      "byteSize": 157380,
+      "oracleMd5Base64": "Z5tKxdL6h8Wi0KlNq5lXvQ==",
+      "sha256": "7f5e2a14f230d388d1b5a4ba1bffb9a7afd788c69f154ebb2459055ee85204c7",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.505370020866394,
+          -0.07508043199777603,
+          -3.1825995445251465
+        ],
+        "max": [
+          0.2714260220527649,
+          0.7829145789146423,
+          -2.325399875640869
+        ],
+        "center": [
+          -0.11697199940681458,
+          0.35391707345843315,
+          -2.753999710083008
+        ],
+        "size": [
+          0.7767960429191589,
+          0.8579950109124184,
+          0.8571996688842773
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7201317246484805
+      }
+    },
+    {
+      "name": "bafkreidamp7pceuabrvgztobefneqpuk2qioko66himz5ttvm7lut6inhe.glb",
+      "byteSize": 8864,
+      "oracleMd5Base64": "SgKLnbDHuc+j06zMgZjIIw==",
+      "sha256": "6063fef112800c6a6ccdc1215a483e8ad410e53bde3a199ece7567d749f90d39",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.9271551966667175,
+          -0.008789845063793043,
+          -0.957533489361652
+        ],
+        "max": [
+          0.9385430812835693,
+          2.4971656672638307,
+          0.914996009563331
+        ],
+        "center": [
+          0.005693942308425903,
+          1.244187911100019,
+          -0.02126873989916045
+        ],
+        "size": [
+          1.8656982779502869,
+          2.5059555123276236,
+          1.872529498924983
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.8211953367538667
+      }
+    },
+    {
+      "name": "bafkreidbmihveynuc7ooviwxzyflqrhwqqmduikk5th7uwlnbpqwsetxba.glb",
+      "byteSize": 153856,
+      "oracleMd5Base64": "aNcA898UwXbN+mehcVa70g==",
+      "sha256": "61620f5261b417dceaa2d7ce0ab844f684183a214aeccffa596d0be169127708",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5350191593170166,
+          -0.0692468136548996,
+          -3.1655004024505615
+        ],
+        "max": [
+          0.2717261016368866,
+          0.7537853717803955,
+          -2.3273613452911377
+        ],
+        "center": [
+          -0.131646528840065,
+          0.34226927906274796,
+          -2.7464308738708496
+        ],
+        "size": [
+          0.8067452609539032,
+          0.8230321854352951,
+          0.8381390571594238
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.712512626812688
+      }
+    },
+    {
+      "name": "bafkreiddjej775nvcibsdcddcmykndmmwj5oqixdzqfplj4lzdhniimpee.glb",
+      "byteSize": 225568,
+      "oracleMd5Base64": "xwgXFh/5waTJsdV6AaIaPw==",
+      "sha256": "634913fff5b512032188631330a68d8cb27ae822e3cc0af5a78bc8ced4218f21",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.19725555181503296,
+          -0.6731177568435669,
+          -3.270636796951294
+        ],
+        "max": [
+          0.7938695549964905,
+          0.6707949042320251,
+          -2.1975131034851074
+        ],
+        "center": [
+          0.29830700159072876,
+          -0.001161426305770874,
+          -2.7340749502182007
+        ],
+        "size": [
+          0.9911251068115234,
+          1.343912661075592,
+          1.0731236934661865
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9924747703883892
+      }
+    },
+    {
+      "name": "bafkreideynburjxmjbntn5jkfk3umc6aocaruqwpvl3eq5no5a2uc3gyrm.glb",
+      "byteSize": 125920,
+      "oracleMd5Base64": "P1yYbKMDY/1gm4t0rCoMTA==",
+      "sha256": "64c34348a6ec485b36f52a2ab7460bc070811a42cfaaf64875aee835416cd88b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          0.02800936810672283,
+          -0.10166636109352112,
+          -2.9176599979400635
+        ],
+        "max": [
+          0.7663881778717041,
+          0.4386371970176697,
+          -2.2133827209472656
+        ],
+        "center": [
+          0.39719877298921347,
+          0.16848541796207428,
+          -2.5655213594436646
+        ],
+        "size": [
+          0.7383788097649813,
+          0.5403035581111908,
+          0.7042772769927979
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.5773079084219168
+      }
+    },
+    {
+      "name": "bafkreidgwbvswz27bne5caertuczjc6323dpfklulmhwwh2oopg33s646i.glb",
+      "byteSize": 129228,
+      "oracleMd5Base64": "NDjdE4EKn2qjocPl4qPOlQ==",
+      "sha256": "66b06b2b675f0b49d100919d05948bdbd6c6f2a9745b0f6b1f4e73cdbdcbdcf2",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.2558751404285431,
+          0.1463342010974884,
+          -2.8122963905334473
+        ],
+        "max": [
+          0.7078096866607666,
+          0.7245677709579468,
+          -2.1947805881500244
+        ],
+        "center": [
+          0.22596727311611176,
+          0.4354509860277176,
+          -2.503538489341736
+        ],
+        "size": [
+          0.9636848270893097,
+          0.5782335698604584,
+          0.6175158023834229
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.6411646187737133
+      }
+    },
+    {
+      "name": "bafkreidhy73acvukmxjnek2znsofmwpwiisp2xpcdqz2guj5f4wihibapu.glb",
+      "byteSize": 198996,
+      "oracleMd5Base64": "VpoKcHs48t6OxCz+pB8zKQ==",
+      "sha256": "67c7f601568a65d2d22b596c9c5659f64224fd5de21c33a3513d2f2c83a0207d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5393109917640686,
+          -0.04629574716091156,
+          -3.231433391571045
+        ],
+        "max": [
+          0.2801956534385681,
+          0.744103193283081,
+          -2.321636199951172
+        ],
+        "center": [
+          -0.12955766916275024,
+          0.34890372306108475,
+          -2.7765347957611084
+        ],
+        "size": [
+          0.8195066452026367,
+          0.7903989404439926,
+          0.909797191619873
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7287064835147404
+      }
+    },
+    {
+      "name": "bafkreidrfoprzdl5krdceihbutiomi7rhrbmv4emuyvoxxpecb5vbgjhey.glb",
+      "byteSize": 150756,
+      "oracleMd5Base64": "iKLDdB+G2dU0prZcxpn9tA==",
+      "sha256": "712b9f1c8d7d54462220e1a4d0e623f13c42caf08ca62aebdde4107b50992726",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6358855962753296,
+          -0.0242233294993639,
+          -3.1557774543762207
+        ],
+        "max": [
+          0.2845925986766815,
+          0.7564997673034668,
+          -2.325183153152466
+        ],
+        "center": [
+          -0.17564649879932404,
+          0.36613821890205145,
+          -2.7404803037643433
+        ],
+        "size": [
+          0.9204781949520111,
+          0.7807230968028307,
+          0.8305943012237549
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7325802949999564
+      }
+    },
+    {
+      "name": "bafkreidrgyip6iopgk4q2v6qaumpfxfrh3ci67wlgiqsaxjnfarmxjwuve.glb",
+      "byteSize": 180204,
+      "oracleMd5Base64": "iE6do10MBfmZTP93ETq+0Q==",
+      "sha256": "713610ff21cf32b90d57d00518f2dcb13ec48f7ecb3221205d2d2822cba6d4a9",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6485580205917358,
+          -0.14854322373867035,
+          -3.2540063858032227
+        ],
+        "max": [
+          0.2800224721431732,
+          0.848775327205658,
+          -2.430227518081665
+        ],
+        "center": [
+          -0.1842677742242813,
+          0.3501160517334938,
+          -2.842116951942444
+        ],
+        "size": [
+          0.9285804927349091,
+          0.9973185509443283,
+          0.8237788677215576
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7961654423626588
+      }
+    },
+    {
+      "name": "bafkreidxx5j5yt65fw53x334lgvgpqw3bxzokvnlrfbi3vcdhmehts25ga.glb",
+      "byteSize": 155152,
+      "oracleMd5Base64": "MulASIPGDB1m62+cG7X1rg==",
+      "sha256": "77bf53dc4fdd2dbbbbef7c59aa67c2db0df2e555ab89428dd4433b0879cb5d30",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6663687825202942,
+          -0.008100070059299469,
+          -3.1778013706207275
+        ],
+        "max": [
+          0.27138009667396545,
+          1.221563458442688,
+          -2.3384647369384766
+        ],
+        "center": [
+          -0.19749434292316437,
+          0.6067316941916943,
+          -2.758133053779602
+        ],
+        "size": [
+          0.9377488791942596,
+          1.2296635285019875,
+          0.839336633682251
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8797629422746649
+      }
+    },
+    {
+      "name": "bafkreidzf5g564i44av4vgs4syf6seh36bdzevy723na3wt2gvx22sdj2e.glb",
+      "byteSize": 203824,
+      "oracleMd5Base64": "IqpdAYOAknN4atN52HR+Ew==",
+      "sha256": "792f4ddf711ce02bca9a5c960be910fbf04792571fd6da0dda7a356fad4869d1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6711459755897522,
+          -0.17623648047447205,
+          -3.211592674255371
+        ],
+        "max": [
+          0.26015421748161316,
+          0.6030591130256653,
+          -2.309502601623535
+        ],
+        "center": [
+          -0.20549587905406952,
+          0.21341131627559662,
+          -2.760547637939453
+        ],
+        "size": [
+          0.9313001930713654,
+          0.7792955935001373,
+          0.9020900726318359
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7563709689703203
+      }
+    },
+    {
+      "name": "bafkreidzl37eszfcvg5ifzgvwkzkjxn6tclvrleryb4444ji5ddlggkkea.glb",
+      "byteSize": 153996,
+      "oracleMd5Base64": "TYUg8LG6JWDh0npY1AgOvw==",
+      "sha256": "795efe4964a2a9ba82e4d5b2b2a4ddbe989758ac91c079ce7128e8c6b3194a20",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5699650049209595,
+          -0.05870523676276207,
+          -3.1540687084198
+        ],
+        "max": [
+          0.27547648549079895,
+          1.017527461051941,
+          -2.327791452407837
+        ],
+        "center": [
+          -0.14724425971508026,
+          0.4794111121445894,
+          -2.7409300804138184
+        ],
+        "size": [
+          0.8454414904117584,
+          1.076232697814703,
+          0.8262772560119629
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7993407029167582
+      }
+    },
+    {
+      "name": "bafkreie6b5bhtjz2f5ofhdxr3njkd5ppvyroekey6iy6gydzvvwtjl4l4e.glb",
+      "byteSize": 200728,
+      "oracleMd5Base64": "5h8aHtLvexHqz2AtEskv3Q==",
+      "sha256": "9e0f4279a73a2f5c538ef1db52a1f5efae22e22898f231e36079ad6d34af8be1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5645416975021362,
+          -0.16713184118270874,
+          -3.1745665073394775
+        ],
+        "max": [
+          0.22934867441654205,
+          0.9831613302230835,
+          -2.190070867538452
+        ],
+        "center": [
+          -0.1675965115427971,
+          0.4080147445201874,
+          -2.682318687438965
+        ],
+        "size": [
+          0.7938903719186783,
+          1.1502931714057922,
+          0.9844956398010254
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8547906128981534
+      }
+    },
+    {
+      "name": "bafkreiea2qetla5kpg4k6vg7ddarrjffuba53cfjxq3ywgfk5ynchtwuly.glb",
+      "byteSize": 224416,
+      "oracleMd5Base64": "90Tz8PZMbkvQwxegQFlVpA==",
+      "sha256": "80d4093583aa79b8af54df18c118a4a5a041dd88a9bc378b18aaee1a23ced45e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.25852617621421814,
+          -0.6741652488708496,
+          -3.2708866596221924
+        ],
+        "max": [
+          0.7920456528663635,
+          0.652639627456665,
+          -2.0578877925872803
+        ],
+        "center": [
+          0.2667597383260727,
+          -0.010762810707092285,
+          -2.6643872261047363
+        ],
+        "size": [
+          1.0505718290805817,
+          1.3268048763275146,
+          1.212998867034912
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0410906059671479
+      }
+    },
+    {
+      "name": "bafkreieblw6p5k6sxkcjxfmbqn33iwwxsi5tgka4g7kmyv2zjfuo2ddf2i.glb",
+      "byteSize": 249980,
+      "oracleMd5Base64": "XxzmCQlBV17HbrwxYjeeQw==",
+      "sha256": "815dbcfeabd2ba849b95818377b45ad7923b33281c37d4cc57594968ed0c65d2",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.13442523777484894,
+          -0.9934038519859314,
+          -3.3201091289520264
+        ],
+        "max": [
+          0.9549328088760376,
+          0.3051442801952362,
+          -2.425493001937866
+        ],
+        "center": [
+          0.41025378555059433,
+          -0.3441297858953476,
+          -2.8728010654449463
+        ],
+        "size": [
+          1.0893580466508865,
+          1.2985481321811676,
+          0.8946161270141602
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9582883464944215
+      }
+    },
+    {
+      "name": "bafkreiecigsocgepigo57hwlqh2a3ftf5csba2da4jji7zk6hpyygprq4m.glb",
+      "byteSize": 206344,
+      "oracleMd5Base64": "lYUT/nPUihJiHQLcPelHVw==",
+      "sha256": "8241a4e1188f419ddf9ecb81f40d9665e8a4106860e2528fe55e3bf1833e30e3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5297551155090332,
+          -0.17769257724285126,
+          -3.1752607822418213
+        ],
+        "max": [
+          0.2641528248786926,
+          0.6579184532165527,
+          -2.309619665145874
+        ],
+        "center": [
+          -0.1328011453151703,
+          0.24011293798685074,
+          -2.7424402236938477
+        ],
+        "size": [
+          0.7939079403877258,
+          0.835611030459404,
+          0.8656411170959473
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.720740965195407
+      }
+    },
+    {
+      "name": "bafkreied4hfpk7knd2j2vnhxiofibszrnttbz26uzpwb5qewe3at65df4e.glb",
+      "byteSize": 198208,
+      "oracleMd5Base64": "XmjxJnx5eut5RT4S9uqXag==",
+      "sha256": "83e1caf57d4d1e93aab4f7438a80cb316ce61cebd4cbec1ec09626c13f7465e1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6358059048652649,
+          -0.05905015766620636,
+          -3.1748485565185547
+        ],
+        "max": [
+          0.24463695287704468,
+          1.0951595306396484,
+          -2.263770580291748
+        ],
+        "center": [
+          -0.1955844759941101,
+          0.518054686486721,
+          -2.7193095684051514
+        ],
+        "size": [
+          0.8804428577423096,
+          1.1542096883058548,
+          0.9110779762268066
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8569484682718789
+      }
+    },
+    {
+      "name": "bafkreied4hfpk7knd2j2vnhxiofibszrnttbz26uzpwb5qewe3at65df4e(1).glb",
+      "byteSize": 198208,
+      "oracleMd5Base64": "XmjxJnx5eut5RT4S9uqXag==",
+      "sha256": "83e1caf57d4d1e93aab4f7438a80cb316ce61cebd4cbec1ec09626c13f7465e1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6358059048652649,
+          -0.05905015766620636,
+          -3.1748485565185547
+        ],
+        "max": [
+          0.24463695287704468,
+          1.0951595306396484,
+          -2.263770580291748
+        ],
+        "center": [
+          -0.1955844759941101,
+          0.518054686486721,
+          -2.7193095684051514
+        ],
+        "size": [
+          0.8804428577423096,
+          1.1542096883058548,
+          0.9110779762268066
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8569484682718789
+      }
+    },
+    {
+      "name": "bafkreiedpxkfdnkt6iqjsgazt75yxiose4x5nqwc7zyvqzslznsqwmrwem.glb",
+      "byteSize": 173508,
+      "oracleMd5Base64": "IuuFZ72oLYvZDzecD+qzMQ==",
+      "sha256": "837dd451b553f2209918199ffb8ba1d2272fd6c2c2fe7158664bcb650b323623",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6680429577827454,
+          -0.00615073274821043,
+          -3.1778013706207275
+        ],
+        "max": [
+          0.26538726687431335,
+          1.208432674407959,
+          -2.342918634414673
+        ],
+        "center": [
+          -0.201327845454216,
+          0.6011409708298743,
+          -2.7603600025177
+        ],
+        "size": [
+          0.9334302246570587,
+          1.2145834071561694,
+          0.8348827362060547
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8722863664613424
+      }
+    },
+    {
+      "name": "bafkreieomogczqqxocxeyrmarr6ej2ytvmk55ulsxmiad6uaqotceyw7uy.glb",
+      "byteSize": 222040,
+      "oracleMd5Base64": "bReJLqMm4Gbe86NzcM6R7Q==",
+      "sha256": "8e638c2cc21770ae4c45808c7c44eb13ab15ded172bb1001fa8083a62262dfa6",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.25949162244796753,
+          -0.6728514432907104,
+          -3.273059129714966
+        ],
+        "max": [
+          0.7914235591888428,
+          0.6665975451469421,
+          -2.2156803607940674
+        ],
+        "center": [
+          0.2659659683704376,
+          -0.0031269490718841553,
+          -2.7443697452545166
+        ],
+        "size": [
+          1.0509151816368103,
+          1.3394489884376526,
+          1.0573787689208984
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0020723742058324
+      }
+    },
+    {
+      "name": "bafkreier5bnlmdeznegq7kqftn4dos4mzcfgiszi73enqzx2dxvzsveohq.glb",
+      "byteSize": 226360,
+      "oracleMd5Base64": "lZm5Bv+Nx71fRQQCXzgRnQ==",
+      "sha256": "91e85ab60c99690d0faa059b78374b8cc88a644b28fec8d866fa1deb99548e3c",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.721644937992096,
+          -0.1797461062669754,
+          -3.268686056137085
+        ],
+        "max": [
+          0.29336437582969666,
+          1.1299493312835693,
+          -2.1933436393737793
+        ],
+        "center": [
+          -0.21414028108119965,
+          0.47510161250829697,
+          -2.731014847755432
+        ],
+        "size": [
+          1.0150093138217926,
+          1.3096954375505447,
+          1.0753424167633057
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9876623106578541
+      }
+    },
+    {
+      "name": "bafkreiewz2hxosuvj6yszylr6foa6tvs4eof4a3mop3nmxeuudblirbbpy.glb",
+      "byteSize": 108708,
+      "oracleMd5Base64": "PtOo/5AEO4qp1Z4NWCWm1g==",
+      "sha256": "96ce8f774a954fb12ce171f15c0f4eb2e11c5e036c73f6d65c94a0c2b444217e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.2289682924747467,
+          0.055266931653022766,
+          -3.159959554672241
+        ],
+        "max": [
+          0.647137463092804,
+          0.4285973906517029,
+          -2.3534531593322754
+        ],
+        "center": [
+          0.20908458530902863,
+          0.24193216115236282,
+          -2.7567063570022583
+        ],
+        "size": [
+          0.8761057555675507,
+          0.3733304589986801,
+          0.8065063953399658
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.6239770613329907
+      }
+    },
+    {
+      "name": "bafkreieymqkudeg4gysexntjlsky64cd47supmpw4k5a3q6w2jpmgz4muq.glb",
+      "byteSize": 200512,
+      "oracleMd5Base64": "8aPb4csoYx5pndY7rioIBQ==",
+      "sha256": "9864154190dc36244bb6695c958f7043e7e547b1f6e2ba0dc3d6d25ec3678ca4",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.689631998538971,
+          -0.01660747453570366,
+          -3.1743857860565186
+        ],
+        "max": [
+          0.2676980495452881,
+          0.8921817541122437,
+          -2.2863917350769043
+        ],
+        "center": [
+          -0.21096697449684143,
+          0.43778713978827,
+          -2.7303887605667114
+        ],
+        "size": [
+          0.957330048084259,
+          0.9087892286479473,
+          0.8879940509796143
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7954420339733635
+      }
+    },
+    {
+      "name": "bafkreif2t77js23qo36td6hdcn4humwugarycnci7nvuhctk3cy33h5v6y.glb",
+      "byteSize": 158032,
+      "oracleMd5Base64": "sy+JhPu1tnd7DRGM0/gr4A==",
+      "sha256": "ba9ffe996b7076fd31f8e313787a32d43023813448fb6b438a6ad8b1bd9fb5f6",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6578707098960876,
+          0.0074487305246293545,
+          -3.1497952938079834
+        ],
+        "max": [
+          0.28066736459732056,
+          1.1060646772384644,
+          -2.3965959548950195
+        ],
+        "center": [
+          -0.18860167264938354,
+          0.5567567038815469,
+          -2.7731956243515015
+        ],
+        "size": [
+          0.9385380744934082,
+          1.098615946713835,
+          0.7531993389129639
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8147269419545816
+      }
+    },
+    {
+      "name": "bafkreif3iu7da5q6qf772jgxiejt2iundeh2d2zaf5n5365dn34jgswf4u.glb",
+      "byteSize": 153716,
+      "oracleMd5Base64": "cjYUGY1GYL/Ob5vY0x+43A==",
+      "sha256": "bb453e30761e817ffd24d741133d228d190fa1eb202f5bddfba36ef8934ac5e5",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6664320230484009,
+          -0.0053008561953902245,
+          -3.1186470985412598
+        ],
+        "max": [
+          0.27413755655288696,
+          1.0102983713150024,
+          -2.3858368396759033
+        ],
+        "center": [
+          -0.19614723324775696,
+          0.5024987575598061,
+          -2.7522419691085815
+        ],
+        "size": [
+          0.9405695796012878,
+          1.0155992275103927,
+          0.7328102588653564
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7831225639210889
+      }
+    },
+    {
+      "name": "bafkreif4wh7ezv2zpxhmu2v2xm2u2lnzual5pxwl7rvvkeqhxx3c5fbq2a.glb",
+      "byteSize": 157524,
+      "oracleMd5Base64": "8iVG1GunaC3Z1ZFDNaajxA==",
+      "sha256": "bcb1fe4cd7597dceca6ababb354d2db9a017d7decbfc6b551207bdf62e9430d0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6633040308952332,
+          0.00729176914319396,
+          -3.1311681270599365
+        ],
+        "max": [
+          0.2801399528980255,
+          1.0277652740478516,
+          -2.39127779006958
+        ],
+        "center": [
+          -0.19158203899860382,
+          0.5175285215955228,
+          -2.7612229585647583
+        ],
+        "size": [
+          0.9434439837932587,
+          1.0204735049046576,
+          0.7398903369903564
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7872246241606956
+      }
+    },
+    {
+      "name": "bafkreif7wdbwj5ou4ieqxkd2jaeksrynayuny276whbf65b6kgij7g6ktm.glb",
+      "byteSize": 200512,
+      "oracleMd5Base64": "Mixk/ftMb0mjaLfcz8XFyg==",
+      "sha256": "bfb0c364f5d4e2090ba87a4808a9470d0628dc6bfeb1c25f743e51909f9bca9b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6094979643821716,
+          -0.07610045373439789,
+          -3.1743857860565186
+        ],
+        "max": [
+          0.2586366832256317,
+          0.9436887502670288,
+          -2.250025987625122
+        ],
+        "center": [
+          -0.17543064057826996,
+          0.43379414826631546,
+          -2.7122058868408203
+        ],
+        "size": [
+          0.8681346476078033,
+          1.0197892040014267,
+          0.9243597984313965
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8136443977455877
+      }
+    },
+    {
+      "name": "bafkreifbn7t7sisiosidkgp2nctdxx7jrpffbewb4qyfmwovvctkaqm22a.glb",
+      "byteSize": 142044,
+      "oracleMd5Base64": "M+/WlC0u27pL7h/xEzDL9g==",
+      "sha256": "a16fe7f9224874903519fa68a63bdfe98bca5092c1e4305659d5a8a6a0419ad0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7760681509971619,
+          -0.0219185221940279,
+          -3.016420602798462
+        ],
+        "max": [
+          0.28287121653556824,
+          0.7670853734016418,
+          -2.329324960708618
+        ],
+        "center": [
+          -0.24659846723079681,
+          0.372583425603807,
+          -2.67287278175354
+        ],
+        "size": [
+          1.05893936753273,
+          0.7890038955956697,
+          0.6870956420898438
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7443084294757476
+      }
+    },
+    {
+      "name": "bafkreifdmj3sk73sh4wbw6hyrx3o65yaxmlx3qaipwbuofdz5vt4asha5e.glb",
+      "byteSize": 157024,
+      "oracleMd5Base64": "h1FMuS27G8miyWR9tZW2sQ==",
+      "sha256": "a36277257f723f2c1b78f88df6ef7700bb177dc0087d83471479ed67c048e0e9",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5495615005493164,
+          -0.04056659713387489,
+          -3.156165361404419
+        ],
+        "max": [
+          0.27982619404792786,
+          0.7486336827278137,
+          -2.322383403778076
+        ],
+        "center": [
+          -0.13486765325069427,
+          0.3540335427969694,
+          -2.7392743825912476
+        ],
+        "size": [
+          0.8293876945972443,
+          0.7892002798616886,
+          0.8337819576263428
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7081513578583176
+      }
+    },
+    {
+      "name": "bafkreiflztzwi6cyko3jh342wf2ecob72d3tqxoux6zeh2ybwv2mwpdccy.glb",
+      "byteSize": 158172,
+      "oracleMd5Base64": "CHPOdrmGyYFODUneoNHvVw==",
+      "sha256": "abccf364785853b693ef9ab17441383fd0f7385dd4bfb243eb01b574cb3c6216",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5060397386550903,
+          -0.07503249496221542,
+          -3.1820857524871826
+        ],
+        "max": [
+          0.2718832492828369,
+          0.780914843082428,
+          -2.312819719314575
+        ],
+        "center": [
+          -0.11707824468612671,
+          0.3529411740601063,
+          -2.747452735900879
+        ],
+        "size": [
+          0.7779229879379272,
+          0.8559473380446434,
+          0.8692660331726074
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7234351140730633
+      }
+    },
+    {
+      "name": "bafkreifmksrsrlz56wsbcwnxtdylypskd5h54vw5xkx7d5fsr7dbjo5pj4.glb",
+      "byteSize": 224920,
+      "oracleMd5Base64": "OHWggx8NvSSw5Z10PuMYFw==",
+      "sha256": "ac54a328af3df5a41159b798f0bc3e4a1f4fde56ddbaaff1f4b28fc614bbaf4f",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7710034847259521,
+          -0.17509984970092773,
+          -3.2739150524139404
+        ],
+        "max": [
+          0.2914659380912781,
+          1.136209487915039,
+          -2.190997362136841
+        ],
+        "center": [
+          -0.23976877331733704,
+          0.48055481910705566,
+          -2.7324562072753906
+        ],
+        "size": [
+          1.0624694228172302,
+          1.3113093376159668,
+          1.0829176902770996
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0026320582915116
+      }
+    },
+    {
+      "name": "bafkreifndzpvi2vz3ylutqvsdezqkw236sppfjhbjezsjtmjyzk52tjmpe.glb",
+      "byteSize": 155008,
+      "oracleMd5Base64": "eFG1KtlITQMmDB1CPt4wQQ==",
+      "sha256": "ad1e5f546ab9de1749c2b21933055b5bf49ef2a4e1493324cd89c655dd4d2c79",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5615831613540649,
+          -0.037748269736766815,
+          -3.156451940536499
+        ],
+        "max": [
+          0.2823328375816345,
+          0.7514737844467163,
+          -2.3237576484680176
+        ],
+        "center": [
+          -0.1396251618862152,
+          0.35686275735497475,
+          -2.7401047945022583
+        ],
+        "size": [
+          0.8439159989356995,
+          0.7892220541834831,
+          0.8326942920684814
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7121175198154912
+      }
+    },
+    {
+      "name": "bafkreifodtobqjybarctuft7lqr2eufd5xhzyl2fvlnqdivlzh754gys2m.glb",
+      "byteSize": 155368,
+      "oracleMd5Base64": "Df9D5PAqGXCidgN7VpTlWw==",
+      "sha256": "ae1cdc18270104453a167f5c23a250a3edcf9c2f45aadb01a2abc9ffde1b12d3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5381908416748047,
+          -0.045773956924676895,
+          -3.1557443141937256
+        ],
+        "max": [
+          0.2796277105808258,
+          0.7446187138557434,
+          -2.321058988571167
+        ],
+        "center": [
+          -0.12928156554698944,
+          0.34942237846553326,
+          -2.7384016513824463
+        ],
+        "size": [
+          0.8178185522556305,
+          0.7903926707804203,
+          0.8346853256225586
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7053806332836439
+      }
+    },
+    {
+      "name": "bafkreifpvp7sjjeuqvvua2ne32rv46btckq7mikhfbnhn4hoags5ijhrsy.glb",
+      "byteSize": 153276,
+      "oracleMd5Base64": "W4gg2tVO+Udz+m0+llQVWQ==",
+      "sha256": "afabff24a494856b4069a4dea35e783312a1f62147285a76f0ee01a5d424f196",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7480244040489197,
+          -0.021439911797642708,
+          -3.1570217609405518
+        ],
+        "max": [
+          0.2821213901042938,
+          0.768884003162384,
+          -2.330268144607544
+        ],
+        "center": [
+          -0.23295150697231293,
+          0.37372204568237066,
+          -2.743644952774048
+        ],
+        "size": [
+          1.0301457941532135,
+          0.7903239149600267,
+          0.8267536163330078
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7696320208205031
+      }
+    },
+    {
+      "name": "bafkreifqawatnlcr6hpba3w3qmwjrop5r7i7etfodfyr2ly5vazdupvakm.glb",
+      "byteSize": 203752,
+      "oracleMd5Base64": "sBh7GqErhqA6NnH3RvVLaw==",
+      "sha256": "b0058136ac51f1de106edb832c98b9fd8fd1f24cae19711d2f1da8323a3ea053",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5783573389053345,
+          -0.04360241815447807,
+          -3.174860954284668
+        ],
+        "max": [
+          0.24580557644367218,
+          1.164502501487732,
+          -2.2601115703582764
+        ],
+        "center": [
+          -0.16627588123083115,
+          0.5604500416666269,
+          -2.717486262321472
+        ],
+        "size": [
+          0.8241629153490067,
+          1.20810491964221,
+          0.9147493839263916
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8624860061609692
+      }
+    },
+    {
+      "name": "bafkreifymobdvagwsouvjmd5aqc3giu3jb4i2s6vkx7jljzvx644nq5gbi.glb",
+      "byteSize": 232768,
+      "oracleMd5Base64": "PvOrca/O3Dy3XXwizPL7KQ==",
+      "sha256": "b863823a80d693a954b07d0405b3229b48788d4bd555fe95a735bfb9c6c3a60a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.3338582217693329,
+          -0.6640737056732178,
+          -3.241568088531494
+        ],
+        "max": [
+          0.7919852137565613,
+          0.5910037755966187,
+          -2.291891098022461
+        ],
+        "center": [
+          0.2290634959936142,
+          -0.03653496503829956,
+          -2.7667295932769775
+        ],
+        "size": [
+          1.1258434355258942,
+          1.2550774812698364,
+          0.9496769905090332
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9675522352319899
+      }
+    },
+    {
+      "name": "bafkreifyvkgfbemuwmwunt6fonhhco6m3uncdic7terl7eyj4wmec5tr5u.glb",
+      "byteSize": 231256,
+      "oracleMd5Base64": "inl9488hTIMG0f+MBERH4w==",
+      "sha256": "b8aa8c509194b32d46cfc5734e713bccdd1a21a05f9922bf9309e598417671ed",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.4551602602005005,
+          -0.7791300415992737,
+          -4.088985919952393
+        ],
+        "max": [
+          0.5784497261047363,
+          0.19988086819648743,
+          -2.8231184482574463
+        ],
+        "center": [
+          0.06164473295211792,
+          -0.2896245867013931,
+          -3.4560521841049194
+        ],
+        "size": [
+          1.0336099863052368,
+          0.9790109097957611,
+          1.2658674716949463
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9525272202389273
+      }
+    },
+    {
+      "name": "bafkreig2gckhjvz33hgrmbtb64hhs574wy5khzsu6lhogydmxf44yehts4.glb",
+      "byteSize": 225424,
+      "oracleMd5Base64": "SmdfV5njTaKxyiT54mOV4Q==",
+      "sha256": "da309474d73bd9cd160661f70e7977fcb63aa3e654f2cee3606cb979cc10f397",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.2580588757991791,
+          -0.673861026763916,
+          -3.2706024646759033
+        ],
+        "max": [
+          0.794075608253479,
+          0.6617286205291748,
+          -2.0749354362487793
+        ],
+        "center": [
+          0.26800836622714996,
+          -0.0060662031173706055,
+          -2.6727689504623413
+        ],
+        "size": [
+          1.052134484052658,
+          1.3355896472930908,
+          1.195667028427124
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0392793562556923
+      }
+    },
+    {
+      "name": "bafkreig6palf7esmijhkqb2dcusspibmofo6hzywkycqi77hy5bra5eibq.glb",
+      "byteSize": 203608,
+      "oracleMd5Base64": "2JZ71WJUsfl3JKNNItVWPA==",
+      "sha256": "de78165f924c424ea80743152527a02c715de3e7165605047fe7c7431074880c",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6492578387260437,
+          -0.1779114305973053,
+          -3.2311062812805176
+        ],
+        "max": [
+          0.2643016576766968,
+          0.6054400205612183,
+          -2.3095498085021973
+        ],
+        "center": [
+          -0.19247809052467346,
+          0.21376429498195648,
+          -2.7703280448913574
+        ],
+        "size": [
+          0.9135594964027405,
+          0.7833514511585236,
+          0.9215564727783203
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.757874788804096
+      }
+    },
+    {
+      "name": "bafkreigac6bgq2piihzcvhs6fxnptdnby4vaos3zagrbtcqijxfo5dhpue.glb",
+      "byteSize": 173152,
+      "oracleMd5Base64": "Bh5An8Q3lJH95JeFLlZn5Q==",
+      "sha256": "c017826869e841f22a9e5e2ddaf98da1c72a074b7901a2198a084dcaee8cefa1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6686832308769226,
+          -0.0035496901255100965,
+          -3.039206027984619
+        ],
+        "max": [
+          0.2671951651573181,
+          0.8900023102760315,
+          -2.3642454147338867
+        ],
+        "center": [
+          -0.20074403285980225,
+          0.4432263100752607,
+          -2.701725721359253
+        ],
+        "size": [
+          0.9358783960342407,
+          0.8935520004015416,
+          0.6749606132507324
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7297046284328037
+      }
+    },
+    {
+      "name": "bafkreigc2mxpfdu2z2t72oscug7lwp6nt76bljzw3bq5m2fhfyl2ht3eha.glb",
+      "byteSize": 200508,
+      "oracleMd5Base64": "dQ3NZwUGNMEiDbCJrwRm/w==",
+      "sha256": "c2d32ef28e9acea7fd3a42a1bebb3fcd9ffc15a736d861d668a72e17a3cf6438",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6030207276344299,
+          -0.05546789616346359,
+          -3.1743857860565186
+        ],
+        "max": [
+          0.24316874146461487,
+          1.111043095588684,
+          -2.2638065814971924
+        ],
+        "center": [
+          -0.17992599308490753,
+          0.5277875997126102,
+          -2.7190961837768555
+        ],
+        "size": [
+          0.8461894690990448,
+          1.1665109917521477,
+          0.9105792045593262
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8523407474813988
+      }
+    },
+    {
+      "name": "bafkreigg724eu742r5uxzyabd2m7ffzewlwi62bnpinqg5msh2mi5lpo3a.glb",
+      "byteSize": 201520,
+      "oracleMd5Base64": "MFq7vHyN1IWEyNc4iKykJg==",
+      "sha256": "c6feb84a7f9a8f697ce0011e99f29724b2ec8f682d7a1b0375923e988eadeed8",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6679545044898987,
+          -0.1786496490240097,
+          -3.21737003326416
+        ],
+        "max": [
+          0.25446659326553345,
+          0.6142268776893616,
+          -2.309591293334961
+        ],
+        "center": [
+          -0.20674395561218262,
+          0.21778861433267593,
+          -2.7634806632995605
+        ],
+        "size": [
+          0.9224210977554321,
+          0.7928765267133713,
+          0.9077787399291992
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.758876819527524
+      }
+    },
+    {
+      "name": "bafkreiggqktxq3wdmoc6mrd6x7lpvhzkzfyfe7x4qwjcjg7n4kb24lsmxu.glb",
+      "byteSize": 211956,
+      "oracleMd5Base64": "U1whgrZ244lK6zSOyUDIMQ==",
+      "sha256": "c682a7786ec36385e6447ebfd6fa9f2ac970527efc8592249bede283ae2e4cbd",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.2564432919025421,
+          -0.6740005016326904,
+          -3.270678758621216
+        ],
+        "max": [
+          0.7940816879272461,
+          0.6610189080238342,
+          -2.073106050491333
+        ],
+        "center": [
+          0.268819198012352,
+          -0.006490796804428101,
+          -2.6718924045562744
+        ],
+        "size": [
+          1.0505249798297882,
+          1.3350194096565247,
+          1.1975727081298828
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0392376952198634
+      }
+    },
+    {
+      "name": "bafkreigmm3d4gre4i2bcgvyrladd7kj5v5iseagyea2hnppwsdt3zmr7tu.glb",
+      "byteSize": 157596,
+      "oracleMd5Base64": "7A/eC54uwL4Qt1oRmcDx9g==",
+      "sha256": "cc66c7c3449c468223571158063fa93daf512200d8203476bdf690e7bcb23f9d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5518416166305542,
+          -0.05201329290866852,
+          -3.1550164222717285
+        ],
+        "max": [
+          0.2776018977165222,
+          0.7457719445228577,
+          -2.3263912200927734
+        ],
+        "center": [
+          -0.137119859457016,
+          0.3468793258070946,
+          -2.740703821182251
+        ],
+        "size": [
+          0.8294435143470764,
+          0.7977852374315262,
+          0.8286252021789551
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7090588047267694
+      }
+    },
+    {
+      "name": "bafkreign5bxrapmtujwmuupib4pqolz35f5btzrdn5ggxood36ejgxvmym.glb",
+      "byteSize": 155220,
+      "oracleMd5Base64": "PioCOiBj8sPqwEbUGgy8JA==",
+      "sha256": "cde86f103d93a26cca51e80f1f072f3be97a19e6236f4c6bb9c3df88935eacc3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6598025560379028,
+          -0.02373225800693035,
+          -3.156205415725708
+        ],
+        "max": [
+          0.2765447497367859,
+          0.804584801197052,
+          -2.339719772338867
+        ],
+        "center": [
+          -0.19162890315055847,
+          0.3904262715950608,
+          -2.7479625940322876
+        ],
+        "size": [
+          0.9363473057746887,
+          0.8283170592039824,
+          0.8164856433868408
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7465762240817536
+      }
+    },
+    {
+      "name": "bafkreigrgaa4sd7g3mcua2dgi4gxb46l6jaoyml6gbr6ihh7jw7n3simky.glb",
+      "byteSize": 228376,
+      "oracleMd5Base64": "wBbqzWmy9eHxXBJsewIL1Q==",
+      "sha256": "d13001c90fe6db05406866470d70f3cbf240ec317e3063e41cff4dbeddc90c56",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7270647287368774,
+          -0.7926185727119446,
+          -3.3528077602386475
+        ],
+        "max": [
+          0.7316361665725708,
+          0.4009816348552704,
+          -1.9834939241409302
+        ],
+        "center": [
+          0.0022857189178466797,
+          -0.1958184689283371,
+          -2.668150842189789
+        ],
+        "size": [
+          1.4587008953094482,
+          1.193600207567215,
+          1.3693138360977173
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.1648508637600061
+      }
+    },
+    {
+      "name": "bafkreigweakiqeopyvrvp2dzy37a43rim4z6xqbg5qectp4dyxkjxyxwse.glb",
+      "byteSize": 155940,
+      "oracleMd5Base64": "q/GF/XnaJ8cxGo4o0Bfa6Q==",
+      "sha256": "d620148811cfc56357e879c6fe0e6e286733ebc026ec0829bf83c5d49be2f691",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6648186445236206,
+          0.007669360376894474,
+          -3.11999773979187
+        ],
+        "max": [
+          0.2763407230377197,
+          0.9992194771766663,
+          -2.3866050243377686
+        ],
+        "center": [
+          -0.19423896074295044,
+          0.5034444187767804,
+          -2.7533013820648193
+        ],
+        "size": [
+          0.9411593675613403,
+          0.9915501167997718,
+          0.7333927154541016
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.775696052644856
+      }
+    },
+    {
+      "name": "bafkreigznolgrzup556zk42k333qi5mdwepfuk22ubigei35qjh5msmx7y.glb",
+      "byteSize": 225712,
+      "oracleMd5Base64": "cA8IGngh2H2xrmk7/R6aZg==",
+      "sha256": "d96b9668e68fef7d95734adef7047583b11e5a2b5aa05062237d824fd64997fe",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6623662710189819,
+          -0.1795203685760498,
+          -3.2696850299835205
+        ],
+        "max": [
+          0.29122310876846313,
+          1.1941841840744019,
+          -2.1379621028900146
+        ],
+        "center": [
+          -0.1855715811252594,
+          0.507331907749176,
+          -2.7038235664367676
+        ],
+        "size": [
+          0.9535893797874451,
+          1.3737045526504517,
+          1.1317229270935059
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0096031010903583
+      }
+    },
+    {
+      "name": "bafkreih5nl7uhfgz3khhqf54iydezwiqpieme5xvef2wtdubh5zqjdpeyi.glb",
+      "byteSize": 155796,
+      "oracleMd5Base64": "/9dUmTiz3nKx0bqyAqD/tw==",
+      "sha256": "fd6aff4394d9da8e7817bc46064cd9107a08c276f52175698e813f73048de4c2",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5626671314239502,
+          -0.17401368916034698,
+          -3.1562960147857666
+        ],
+        "max": [
+          0.27152934670448303,
+          0.6252230405807495,
+          -2.435673475265503
+        ],
+        "center": [
+          -0.14556889235973358,
+          0.22560467571020126,
+          -2.7959847450256348
+        ],
+        "size": [
+          0.8341964781284332,
+          0.7992367297410965,
+          0.7206225395202637
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.68080099125107
+      }
+    },
+    {
+      "name": "bafkreihapxytcpndxoh3urv3i2xj4ipvu7otvsnykhlxoo7colzums7i4e.glb",
+      "byteSize": 200292,
+      "oracleMd5Base64": "onWJmAaBXxlWpt/Ir9l+jA==",
+      "sha256": "e07df1313da3bb8fba46bb46ae9e21f5a7dd3ac9b851d7773be272f3464be8e1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5954299569129944,
+          -0.07734336704015732,
+          -3.1745083332061768
+        ],
+        "max": [
+          0.2586274743080139,
+          0.917172372341156,
+          -2.2508280277252197
+        ],
+        "center": [
+          -0.16840124130249023,
+          0.41991450265049934,
+          -2.7126681804656982
+        ],
+        "size": [
+          0.8540574312210083,
+          0.9945157393813133,
+          0.923680305480957
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8018199546086362
+      }
+    },
+    {
+      "name": "bafkreihbzrzyv6mpktgco3ppwdp5qzhoqpdxbehucdaywfhyyy45aawz34.glb",
+      "byteSize": 142548,
+      "oracleMd5Base64": "S4fhWa1+cTa3oXR+jVW73A==",
+      "sha256": "e1cc738af98f54cc276defb0dfd864ee83c77090f410c18b14f8c639d002d9df",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6685497164726257,
+          -0.02373225800693035,
+          -3.0928142070770264
+        ],
+        "max": [
+          0.2697810232639313,
+          0.870113730430603,
+          -2.366337776184082
+        ],
+        "center": [
+          -0.19938434660434723,
+          0.42319073621183634,
+          -2.729575991630554
+        ],
+        "size": [
+          0.938330739736557,
+          0.8938459884375334,
+          0.7264764308929443
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7428312784245451
+      }
+    },
+    {
+      "name": "bafkreihcgcoqzb36ejfq5iekkpz2z4tavjirztrbj2nkgc5u6wy5qdohea.glb",
+      "byteSize": 153348,
+      "oracleMd5Base64": "Pp9ZLi/cbMLrvUYk7Tt4iA==",
+      "sha256": "e2309d0c877e224b0ea08a53f3acf260aa511cce214e9aa30bb4f5b1d80dc720",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5121381878852844,
+          -0.08366315066814423,
+          -3.1937460899353027
+        ],
+        "max": [
+          0.2752847373485565,
+          0.9785010814666748,
+          -2.281330108642578
+        ],
+        "center": [
+          -0.11842672526836395,
+          0.4474189653992653,
+          -2.7375380992889404
+        ],
+        "size": [
+          0.7874229252338409,
+          1.062164232134819,
+          0.9124159812927246
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8032326316405376
+      }
+    },
+    {
+      "name": "bafkreihfal3qzode4quee7atmkdwt5wb7ftjwklp57fwisz2epehv7x4ru.glb",
+      "byteSize": 156448,
+      "oracleMd5Base64": "xR8oFfMJo7W/FDrUgxtUbw==",
+      "sha256": "e502f70cb864e428427c13628769f6c1f9669b296fefcb644b3a23c87afefc8d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6657436490058899,
+          0.006085786037147045,
+          -3.1189961433410645
+        ],
+        "max": [
+          0.27440547943115234,
+          1.0183418989181519,
+          -2.384699583053589
+        ],
+        "center": [
+          -0.19566908478736877,
+          0.5122138424776495,
+          -2.7518478631973267
+        ],
+        "size": [
+          0.9401491284370422,
+          1.0122561128810048,
+          0.7342965602874756
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7822618264072315
+      }
+    },
+    {
+      "name": "bafkreihgbgkk5s6mcjbgzsf52r63ozca3asvrohcvqjv5qikuejydmraba.glb",
+      "byteSize": 153568,
+      "oracleMd5Base64": "Pd3U9fb/vLMbMmiXEG3hqA==",
+      "sha256": "e60994aecbcc12426cc8bdd47db76440d82558b8e2ac135ec10aa11381b22008",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.5621405839920044,
+          -0.056849099695682526,
+          -3.155893087387085
+        ],
+        "max": [
+          0.27472805976867676,
+          1.042838215827942,
+          -2.327549695968628
+        ],
+        "center": [
+          -0.14370626211166382,
+          0.4929945580661297,
+          -2.7417213916778564
+        ],
+        "size": [
+          0.8368686437606812,
+          1.0996873155236244,
+          0.828343391418457
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8055765160647418
+      }
+    },
+    {
+      "name": "bafkreihjazqr7gyvrw3p4x5wjyy4ovr5qyphjgktwoeiqts5djisocatta.glb",
+      "byteSize": 122104,
+      "oracleMd5Base64": "VdLJ5GMnEdU4O8FbLL3EvQ==",
+      "sha256": "e906611f9b158db6fe5fb64e31c7563d861e749953b388884e5d1a5127081398",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.17936713993549347,
+          -0.3556436002254486,
+          -3.2190141677856445
+        ],
+        "max": [
+          0.7450717091560364,
+          0.38656121492385864,
+          -2.3578431606292725
+        ],
+        "center": [
+          0.28285228461027145,
+          0.015458807349205017,
+          -2.7884286642074585
+        ],
+        "size": [
+          0.9244388490915298,
+          0.7422048151493073,
+          0.8611710071563721
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7326442992522377
+      }
+    },
+    {
+      "name": "bafkreihpokaichojce6kk6sarcjeyi7pqugwlrbnlpgrcpjbb74aqeydau.glb",
+      "byteSize": 231444,
+      "oracleMd5Base64": "01jOTlHRehy2v8Uzr/5PYQ==",
+      "sha256": "ef7280811dc9113ca57a4088924c23ef850d65c42d5bcd113d210ff808130305",
+      "geometryBounds": {
+        "status": "degenerate-zero-size-geometry",
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          0,
+          0,
+          0
+        ],
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          0,
+          0,
+          0
+        ],
+        "centeredGroundedBoundingSphereRadius": 0
+      }
+    },
+    {
+      "name": "bafkreihs6e2y3galtqtsduc5l2gjc3eejw5rjkhyzkhp7kxlr4s2ro4w6m.glb",
+      "byteSize": 156520,
+      "oracleMd5Base64": "sR7OL+qoPCKsCJom9oQJXg==",
+      "sha256": "f2f1358d980b9c2721d05d5e8c916c844dbb14a8f8ca8effaaeb8f25a8bb96f3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6704751253128052,
+          -0.009721160866320133,
+          -3.156930923461914
+        ],
+        "max": [
+          0.2726270258426666,
+          0.8957647085189819,
+          -2.2923436164855957
+        ],
+        "center": [
+          -0.19892404973506927,
+          0.4430217738263309,
+          -2.724637269973755
+        ],
+        "size": [
+          0.9431021511554718,
+          0.9054858693853021,
+          0.8645873069763184
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7837183069437477
+      }
+    },
+    {
+      "name": "bafkreihsz5d3yf7v6bt7qz47v2zjaqkwq5b4mnmyfnhq3bbzurbt4vkc54.glb",
+      "byteSize": 158536,
+      "oracleMd5Base64": "oii1YguJEuC34tF/ofQdFw==",
+      "sha256": "f2cf47bc17f5f067f8679faeb29041568743c635982b4f0d8439a4433e5542ef",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6554366946220398,
+          -0.02349768951535225,
+          -3.1567132472991943
+        ],
+        "max": [
+          0.2724270224571228,
+          0.8128437995910645,
+          -2.3426451683044434
+        ],
+        "center": [
+          -0.1915048360824585,
+          0.3946730550378561,
+          -2.749679207801819
+        ],
+        "size": [
+          0.9278637170791626,
+          0.8363414891064167,
+          0.814068078994751
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.7455040243202753
+      }
+    },
+    {
+      "name": "bafkreihvmatfkhy5ri6n3uo4bebgv4ovhtf2kbeewbwwinfbffz3ivwcoe.glb",
+      "byteSize": 201596,
+      "oracleMd5Base64": "cdwYNPaQ8EJrvB75UUEcVw==",
+      "sha256": "f56026551f1d8a3cddd1dc09026af1d53ccba50484b06d6434a12973b456c271",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8202648162841797,
+          -0.044686004519462585,
+          -3.1751272678375244
+        ],
+        "max": [
+          0.2661263644695282,
+          0.8878531455993652,
+          -2.284047842025757
+        ],
+        "center": [
+          -0.27706922590732574,
+          0.4215835705399513,
+          -2.7295875549316406
+        ],
+        "size": [
+          1.0863911807537079,
+          0.9325391501188278,
+          0.8910794258117676
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8431929801695474
+      }
+    },
+    {
+      "name": "bafkreihxotwmmk42no5vjn3behqplb2p4ouzl4w7owyr4b6smtfpqign7y.glb",
+      "byteSize": 223624,
+      "oracleMd5Base64": "ZCoemYxNlR9jd/A7MS14mQ==",
+      "sha256": "f774ecc62b9a6bbb54b76121e0f5874fe3a995f2df75b11e07d264caf820cdfe",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.28841516375541687,
+          -0.6762295961380005,
+          -3.2696545124053955
+        ],
+        "max": [
+          0.7914772629737854,
+          0.6970531344413757,
+          -2.191380739212036
+        ],
+        "center": [
+          0.25153104960918427,
+          0.010411769151687622,
+          -2.730517625808716
+        ],
+        "size": [
+          1.0798924267292023,
+          1.3732827305793762,
+          1.0782737731933594
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0264925037928039
+      }
+    },
+    {
+      "name": "bafkreihxziychanfod34igrz2bn4hnsu3a5wyymmb6byotkhwfa5vvmtpa.glb",
+      "byteSize": 197992,
+      "oracleMd5Base64": "s1XVZBgXX/FPBkOPAAQ43Q==",
+      "sha256": "f7ca302381a570f7c41a39d05bc3b654d83b6c618c0f83874d47b141dad59378",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7972368597984314,
+          -0.026165377348661423,
+          -3.1744332313537598
+        ],
+        "max": [
+          0.26805830001831055,
+          0.9422348737716675,
+          -2.2868831157684326
+        ],
+        "center": [
+          -0.2645892798900604,
+          0.45803474821150303,
+          -2.730658173561096
+        ],
+        "size": [
+          1.065295159816742,
+          0.9684002511203289,
+          0.8875501155853271
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8456355644682911
+      }
+    },
+    {
+      "name": "bafkreihy2jljvkuiieafbtnyzueglhoas4uzhrtpdxlexbutspvrjayrfy.glb",
+      "byteSize": 140460,
+      "oracleMd5Base64": "Up+ziY7KQlDhGr4m8qrOtQ==",
+      "sha256": "f8d2569aaa88410050cdb8cd08659dc0972993c66f1dd64b869393eb1483112e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6109909415245056,
+          -0.0242233294993639,
+          -3.033646821975708
+        ],
+        "max": [
+          0.28320056200027466,
+          0.7663778066635132,
+          -2.3280510902404785
+        ],
+        "center": [
+          -0.16389518976211548,
+          0.37107723858207464,
+          -2.6808489561080933
+        ],
+        "size": [
+          0.8941915035247803,
+          0.7906011361628771,
+          0.7055957317352295
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.6932701382074872
+      }
+    },
+    {
+      "name": "bafkreihyisfdfimhhtwf4dxizs3ehs6mcm5f5woxs572eq3oror65lckua.glb",
+      "byteSize": 253220,
+      "oracleMd5Base64": "59ue3ILIZ6wcei+IagjZyw==",
+      "sha256": "f8448a32a1873cec5e0ee8ccb643cbcc133a5ed9d7977fa2436e8ba3eeac4aa0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8148952722549438,
+          -0.17258687317371368,
+          -3.2695300579071045
+        ],
+        "max": [
+          0.29317691922187805,
+          1.1397424936294556,
+          -2.2010788917541504
+        ],
+        "center": [
+          -0.2608591765165329,
+          0.48357781022787094,
+          -2.7353044748306274
+        ],
+        "size": [
+          1.108072191476822,
+          1.3123293668031693,
+          1.068451166152954
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0113876906201527
+      }
+    },
+    {
+      "name": "bafybeia5wfm5kbgqg2erkno2yg2hy27fg4hp7q647ly266kszkaqp2h67e.glb",
+      "byteSize": 285400,
+      "oracleMd5Base64": "Hti4KJCZfQ+MQmo5VHI6nA==",
+      "sha256": "9a47534bf512975fafcc8da763e83f8ea3d4c0486828a5220642432e67dc6767",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6672930717468262,
+          -0.18022575974464417,
+          -3.2746477127075195
+        ],
+        "max": [
+          0.2938272953033447,
+          1.2411330938339233,
+          -2.17739200592041
+        ],
+        "center": [
+          -0.18673288822174072,
+          0.5304536670446396,
+          -2.726019859313965
+        ],
+        "size": [
+          0.9611203670501709,
+          1.4213588535785675,
+          1.0972557067871094
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.018329936302782
+      }
+    },
+    {
+      "name": "bafybeiaaf6asrcwlu6zluhlixczncgpat6fyhx5b2wuqwi3z7d77ftkaqu.glb",
+      "byteSize": 328892,
+      "oracleMd5Base64": "N24pCxc1wb51a6tKY7VEUg==",
+      "sha256": "0e4455a501dcda70b011bc8b9083c31480ccfa199459b61264ff3b8f14a2e158",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7042481303215027,
+          -0.17781341075897217,
+          -3.273259401321411
+        ],
+        "max": [
+          0.2917395830154419,
+          1.1296128034591675,
+          -2.1721596717834473
+        ],
+        "center": [
+          -0.2062542736530304,
+          0.47589969635009766,
+          -2.722709536552429
+        ],
+        "size": [
+          0.9959877133369446,
+          1.3074262142181396,
+          1.1010997295379639
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9891632126615291
+      }
+    },
+    {
+      "name": "bafybeiaafx3ufov7iadjylqerj5rcyne4soj3ze3kicu52a5fy2d7ox3le.glb",
+      "byteSize": 299080,
+      "oracleMd5Base64": "f6DpmQG3mQa6lt73hBMMcg==",
+      "sha256": "b47e9214ce09879e47254ebe0d069bcf37b48b2efb7cf6a6b7d728319dbd4997",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.671296238899231,
+          -0.1814461350440979,
+          -3.2717125415802
+        ],
+        "max": [
+          0.29367735981941223,
+          1.2429341077804565,
+          -2.181428909301758
+        ],
+        "center": [
+          -0.18880943953990936,
+          0.5307439863681793,
+          -2.726570725440979
+        ],
+        "size": [
+          0.9649735987186432,
+          1.4243802428245544,
+          1.0902836322784424
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0184242143118971
+      }
+    },
+    {
+      "name": "bafybeiab4t7z67fbxgror5dhhshfnosbeelhqymgiku4dwammeqsagc37m.glb",
+      "byteSize": 314488,
+      "oracleMd5Base64": "bx1qlGdKsKF/xUFtdWM5iA==",
+      "sha256": "601368da8b965442f99a4dd1be3711ca298b89a2ef1a05e2ae0deaefb6a6b720",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6633058786392212,
+          -0.17962121963500977,
+          -3.273273468017578
+        ],
+        "max": [
+          0.2961699068546295,
+          1.2207001447677612,
+          -2.145226001739502
+        ],
+        "center": [
+          -0.18356798589229584,
+          0.5205394625663757,
+          -2.70924973487854
+        ],
+        "size": [
+          0.9594757854938507,
+          1.400321364402771,
+          1.1280474662780762
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.019066336497319
+      }
+    },
+    {
+      "name": "bafybeiagkqd3s5gxete3pgqdrhj3dqvee2i32zjcvwiygmtk3w5ddaknfu.glb",
+      "byteSize": 295840,
+      "oracleMd5Base64": "wqDEN/GW9B9gurOIXWHBHA==",
+      "sha256": "7e66b56b860797b349458401349e469ccd97b57f3ce891011b70aa62824a146e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.816364586353302,
+          -0.17767779529094696,
+          -3.2695703506469727
+        ],
+        "max": [
+          0.2928087115287781,
+          1.1384607553482056,
+          -2.200824022293091
+        ],
+        "center": [
+          -0.26177793741226196,
+          0.4803914800286293,
+          -2.7351971864700317
+        ],
+        "size": [
+          1.10917329788208,
+          1.3161385506391525,
+          1.0687463283538818
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0130035542364895
+      }
+    },
+    {
+      "name": "bafybeiagpzjkynlfwbzrytrh5q2ufuq763ikpzjri5ndfqs6lrkvskxim4.glb",
+      "byteSize": 274316,
+      "oracleMd5Base64": "axO0HPHwj1/BQWcKPnLiQg==",
+      "sha256": "dbad328adac82c3472dde1290f85bf15dc0afd1a0025a6dd082a7423f701e3d0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.17995113134384155,
+          -0.6738244295120239,
+          -3.2724106311798096
+        ],
+        "max": [
+          0.7939386963844299,
+          0.6718347072601318,
+          -2.139472484588623
+        ],
+        "center": [
+          0.3069937825202942,
+          -0.000994861125946045,
+          -2.7059415578842163
+        ],
+        "size": [
+          0.9738898277282715,
+          1.3456591367721558,
+          1.1329381465911865
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0053368531159668
+      }
+    },
+    {
+      "name": "bafybeiai34tlogm2odmeqbxotjieywab6lwvyk7ahzfnyaflbeg4aeg7ri.glb",
+      "byteSize": 313988,
+      "oracleMd5Base64": "ZrFQpi48lN/71tvLoy8gRA==",
+      "sha256": "ab1a22dac5f639d958c060d07421b39b9f9a1a30d70965cc82d223e9894bc297",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6770474314689636,
+          -0.17333371937274933,
+          -3.270217180252075
+        ],
+        "max": [
+          0.29140403866767883,
+          1.1429442167282104,
+          -2.048200845718384
+        ],
+        "center": [
+          -0.1928216964006424,
+          0.48480524867773056,
+          -2.6592090129852295
+        ],
+        "size": [
+          0.9684514701366425,
+          1.3162779361009598,
+          1.2220163345336914
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0202707700585154
+      }
+    },
+    {
+      "name": "bafybeiai3kjmeuaj6mhgu5gjkcwadqkqavh7dbfax4qp3456amzqwd64oa.glb",
+      "byteSize": 315428,
+      "oracleMd5Base64": "lsXKpHN/dYUUxeKN+S9kdg==",
+      "sha256": "80746196cc62636bcd4306f218bf7757f38a338b3d3544b3582ce003ad2fa835",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6828857660293579,
+          -0.17725852131843567,
+          -3.273343324661255
+        ],
+        "max": [
+          0.2946024239063263,
+          1.1301771402359009,
+          -2.080183982849121
+        ],
+        "center": [
+          -0.1941416710615158,
+          0.4764593094587326,
+          -2.676763653755188
+        ],
+        "size": [
+          0.9774881899356842,
+          1.3074356615543365,
+          1.1931593418121338
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0110020259031793
+      }
+    },
+    {
+      "name": "bafybeiaqxr27jvfnmbzm4c2qs3py5yg33t6uhqqiroxwvql4y3bdfft44u.glb",
+      "byteSize": 304340,
+      "oracleMd5Base64": "+2h0wOGMgdhXnZjyWEpAfg==",
+      "sha256": "e2b7efd476d595e15f2423df33a2a079ccc997d0e9e3b7dceea9ba767180c641",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6683614253997803,
+          -0.18026140332221985,
+          -3.272387742996216
+        ],
+        "max": [
+          0.2950403690338135,
+          1.2431883811950684,
+          -2.1820647716522217
+        ],
+        "center": [
+          -0.1866605281829834,
+          0.5314634889364243,
+          -2.7272262573242188
+        ],
+        "size": [
+          0.9634017944335938,
+          1.4234497845172882,
+          1.0903229713439941
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.017737255926177
+      }
+    },
+    {
+      "name": "bafybeiarut4ltlqa4mqrngzrr25rkc43vtukqh6lxhjkk3zad4ymrrm7gq.glb",
+      "byteSize": 294548,
+      "oracleMd5Base64": "QCe+DTl8lnh2wlIx83dQ7A==",
+      "sha256": "57ccd70201a3f4ab3a8cacb95a30509ac225db831e2b42d39d9a9243704b31a5",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7720814347267151,
+          -0.1763618439435959,
+          -3.2753162384033203
+        ],
+        "max": [
+          0.29136285185813904,
+          1.1609514951705933,
+          -2.200914144515991
+        ],
+        "center": [
+          -0.24035929143428802,
+          0.4922948256134987,
+          -2.7381151914596558
+        ],
+        "size": [
+          1.0634442865848541,
+          1.3373133391141891,
+          1.074402093887329
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0091655683028662
+      }
+    },
+    {
+      "name": "bafybeib2wefr2tedasb3pfn66taej45gdpijolgiluklvea6iillefktoi.glb",
+      "byteSize": 316004,
+      "oracleMd5Base64": "5xb5r6itCY1Hf4SBQc3OFw==",
+      "sha256": "f650daa00c8c1d18aa620e8185428e0161dab4c24770793ec0d14c8f6d4d318e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6793422102928162,
+          -0.17567192018032074,
+          -3.276378870010376
+        ],
+        "max": [
+          0.29348263144493103,
+          1.1341004371643066,
+          -2.0420656204223633
+        ],
+        "center": [
+          -0.19292978942394257,
+          0.47921425849199295,
+          -2.6592222452163696
+        ],
+        "size": [
+          0.9728248417377472,
+          1.3097723573446274,
+          1.2343132495880127
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.022915074538778
+      }
+    },
+    {
+      "name": "bafybeib5pn4p6wsrndkbrpoznq6ih5k64snjncitrji7avamhl2kmbtxem.glb",
+      "byteSize": 320320,
+      "oracleMd5Base64": "3pDUgivUpi5LaEVdK/F9mA==",
+      "sha256": "164300a5acc199bd76654534c4bec9dceaa4d9a401880b1b8b3426386b7715d0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7991559505462646,
+          -0.17570050060749054,
+          -3.269929885864258
+        ],
+        "max": [
+          0.2927095890045166,
+          1.1370364427566528,
+          -2.190812349319458
+        ],
+        "center": [
+          -0.253223180770874,
+          0.48066797107458115,
+          -2.730371117591858
+        ],
+        "size": [
+          1.0918655395507812,
+          1.3127369433641434,
+          1.0791175365447998
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0099434757215462
+      }
+    },
+    {
+      "name": "bafybeibbypxko3ngzanf24hpkxtz2pw2qtwlj7w37s73tsdgz7askky7x4.glb",
+      "byteSize": 295844,
+      "oracleMd5Base64": "1ZhxqRsElcjfjoOk6TlZWQ==",
+      "sha256": "224a98f088cb7347eecf07d849af33dd3fba368300b5c88ceab9a2fba0ecd1dd",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6786301136016846,
+          -0.17525890469551086,
+          -3.2749898433685303
+        ],
+        "max": [
+          0.29495424032211304,
+          1.1346076726913452,
+          -2.041874408721924
+        ],
+        "center": [
+          -0.19183793663978577,
+          0.4796743839979172,
+          -2.658432126045227
+        ],
+        "size": [
+          0.9735843539237976,
+          1.309866577386856,
+          1.2331154346466064
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.022764711446878
+      }
+    },
+    {
+      "name": "bafybeibkhfkbslynz5kih3237dfzb4sm7airsqdj7eoe5rxk2wm6fkjffe.glb",
+      "byteSize": 297136,
+      "oracleMd5Base64": "WkdS2e3CEDsjd651D0rFEQ==",
+      "sha256": "1bb0158450c2405660cec88341b8300b84e22f4e61df30c823ea0b0b13857a0b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6668090224266052,
+          -0.18066701292991638,
+          -3.274754285812378
+        ],
+        "max": [
+          0.292634516954422,
+          1.2397735118865967,
+          -2.1721363067626953
+        ],
+        "center": [
+          -0.1870872527360916,
+          0.5295532494783401,
+          -2.7234452962875366
+        ],
+        "size": [
+          0.9594435393810272,
+          1.420440524816513,
+          1.1026179790496826
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.019062019398796
+      }
+    },
+    {
+      "name": "bafybeibp44foljtkbfxs7pcxjciqwjg452vnebau7epom22nnr7uwp22zy.glb",
+      "byteSize": 283388,
+      "oracleMd5Base64": "81evqfB6QHVMR3aJxVcAVQ==",
+      "sha256": "92b4a94e94e74495f157948b899bf3c6ade6fb75aa3185814db985210a7a7ca4",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6704179644584656,
+          -0.16824649274349213,
+          -3.2703120708465576
+        ],
+        "max": [
+          0.29443690180778503,
+          1.2432361841201782,
+          -2.181448221206665
+        ],
+        "center": [
+          -0.18799053132534027,
+          0.537494845688343,
+          -2.7258801460266113
+        ],
+        "size": [
+          0.9648548662662506,
+          1.4114826768636703,
+          1.0888638496398926
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.013515261737151
+      }
+    },
+    {
+      "name": "bafybeibvtww73dryekwf7kvomtentix2oziddlnuerodz7oyo7uf5v5i4u.glb",
+      "byteSize": 325432,
+      "oracleMd5Base64": "pRDo+Hc3D1dXEEoR3jFkQQ==",
+      "sha256": "622823d7cf41bfe07f0206d3e204b2ba1da0f2f3deb48834a3c281e95ebc4e30",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6835143566131592,
+          -0.17773693799972534,
+          -3.272111415863037
+        ],
+        "max": [
+          0.2900061011314392,
+          1.1313070058822632,
+          -2.106515407562256
+        ],
+        "center": [
+          -0.19675412774085999,
+          0.4767850339412689,
+          -2.6893134117126465
+        ],
+        "size": [
+          0.9735204577445984,
+          1.3090439438819885,
+          1.1655960083007812
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0024909205608896
+      }
+    },
+    {
+      "name": "bafybeibztrqi6lvpl2cs3h43okdibm7tyjwhzqlssrnhkmxmbxnvphl4pm.glb",
+      "byteSize": 326300,
+      "oracleMd5Base64": "SgfoFEZNrv5N9GFgR/2+vw==",
+      "sha256": "a22d95d064f33044e526d8330cc01a87d1d7a89fc9c552d2e80ee3c09badc36b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7456297278404236,
+          -0.17370019853115082,
+          -3.2761995792388916
+        ],
+        "max": [
+          0.29375243186950684,
+          1.1333045959472656,
+          -2.1882364749908447
+        ],
+        "center": [
+          -0.22593864798545837,
+          0.4798021987080574,
+          -2.732218027114868
+        ],
+        "size": [
+          1.0393821597099304,
+          1.3070047944784164,
+          1.0879631042480469
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9965240241607191
+      }
+    },
+    {
+      "name": "bafybeic45yugmhrnf4gqpewuxnnspw3isqc2qf2q37nhe4zaovtfdo2ua4.glb",
+      "byteSize": 327236,
+      "oracleMd5Base64": "d+6YLio+l74PAh8Pseg37g==",
+      "sha256": "c0c5169d8fba8322dbd34cb63634be73d731f1927b973fa1f4447d86756b20a1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7225344777107239,
+          -0.1799430102109909,
+          -3.268249750137329
+        ],
+        "max": [
+          0.29353901743888855,
+          1.1303106546401978,
+          -2.1929962635040283
+        ],
+        "center": [
+          -0.21449773013591766,
+          0.4751838222146034,
+          -2.7306230068206787
+        ],
+        "size": [
+          1.0160734951496124,
+          1.3102536648511887,
+          1.0752534866333008
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9880966645929171
+      }
+    },
+    {
+      "name": "bafybeic4ak4ojtalttigww3cselpctolyjhnhg57655ztd7vjmuu3sn5lm.glb",
+      "byteSize": 316868,
+      "oracleMd5Base64": "6Fsxs9levZJOVtHt4m8vUA==",
+      "sha256": "ec1dc8a83098362077c01062f91d2c82594cf8e9b56866df9573016057cebdac",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6793619394302368,
+          -0.1756504774093628,
+          -3.276794910430908
+        ],
+        "max": [
+          0.2934488356113434,
+          1.1347992420196533,
+          -2.0414674282073975
+        ],
+        "center": [
+          -0.19295655190944672,
+          0.47957438230514526,
+          -2.659131169319153
+        ],
+        "size": [
+          0.9728107750415802,
+          1.3104497194290161,
+          1.2353274822235107
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0234345679530843
+      }
+    },
+    {
+      "name": "bafybeic5ouxlodn2557k6yovwfpkzzxonzvnhug5qluufyaq65djveq2sq.glb",
+      "byteSize": 294620,
+      "oracleMd5Base64": "WzUZohHsEJx4LZA6sl6New==",
+      "sha256": "09bbb6ca674506f9f8e5db2d1210c780548e73553c0659f92b1d280f65022078",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6624253392219543,
+          -0.1783425211906433,
+          -3.2728562355041504
+        ],
+        "max": [
+          0.29503878951072693,
+          1.2026419639587402,
+          -2.1386702060699463
+        ],
+        "center": [
+          -0.1836932748556137,
+          0.5121497213840485,
+          -2.7057632207870483
+        ],
+        "size": [
+          0.9574641287326813,
+          1.3809844851493835,
+          1.134186029434204
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.013685559653099
+      }
+    },
+    {
+      "name": "bafybeic5yodukx7w6daaf3bok2rn3uchh7fowc52mlno756sck6c6d64zm.glb",
+      "byteSize": 320180,
+      "oracleMd5Base64": "I9v91B3zwIRnH4u0zwc4Bw==",
+      "sha256": "e2301bc8c8f9fd25a73bc96c96273744d172b992a25930c4ada5a54bcabbc7ad",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7050504088401794,
+          -0.18104487657546997,
+          -3.2735331058502197
+        ],
+        "max": [
+          0.2873726189136505,
+          1.1975561380386353,
+          -2.186753273010254
+        ],
+        "center": [
+          -0.20883889496326447,
+          0.5082556307315826,
+          -2.730143189430237
+        ],
+        "size": [
+          0.99242302775383,
+          1.3786010146141052,
+          1.0867798328399658
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0082825284337202
+      }
+    },
+    {
+      "name": "bafybeicdv6jxw7wdc5cdnpl5wedh63pmwscw2xpjbhjmaj6fmychpqii4e.glb",
+      "byteSize": 325868,
+      "oracleMd5Base64": "nwEe1iUuHITq9BzW/BuTqg==",
+      "sha256": "cf75440f91f3a91fa585de9f2fe863f1793dbffea0095d1115c53eb8af7b1fb5",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6649276614189148,
+          -0.18048790097236633,
+          -3.27264666557312
+        ],
+        "max": [
+          0.29076939821243286,
+          1.2333115339279175,
+          -2.157838821411133
+        ],
+        "center": [
+          -0.18707913160324097,
+          0.5264118164777756,
+          -2.7152427434921265
+        ],
+        "size": [
+          0.9556970596313477,
+          1.4137994349002838,
+          1.1148078441619873
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.019188677492723
+      }
+    },
+    {
+      "name": "bafybeichicskatfj5cdzsyxdna7nvgiqjncr2f3mlwqko3hiv7ioxdeaum.glb",
+      "byteSize": 284160,
+      "oracleMd5Base64": "llagm/cusAlACG+wejVrgQ==",
+      "sha256": "b08631a177d6dabdeea72729fe5e3d3af8cbf2f9b56f449275918b6ca5917d04",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8117862343788147,
+          -0.15034492313861847,
+          -3.26247501373291
+        ],
+        "max": [
+          0.2797996401786804,
+          0.8904949426651001,
+          -2.281520128250122
+        ],
+        "center": [
+          -0.26599329710006714,
+          0.3700750097632408,
+          -2.771997570991516
+        ],
+        "size": [
+          1.0915858745574951,
+          1.0408398658037186,
+          0.9809548854827881
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8996082251641967
+      }
+    },
+    {
+      "name": "bafybeicsj6kkbxn4ebyob6x2msfximwwcdus4qbypmzioapte7vkyddyka.glb",
+      "byteSize": 311324,
+      "oracleMd5Base64": "KLrPKLHAabFjSb8o9E9/dw==",
+      "sha256": "4dff52b5c69492b1fe01aad6e7d202cc6bf43a1684a05e26e67b86fb6721f854",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6709228157997131,
+          -0.17510057985782623,
+          -3.2718303203582764
+        ],
+        "max": [
+          0.2921838164329529,
+          1.1712654829025269,
+          -2.1251306533813477
+        ],
+        "center": [
+          -0.18936949968338013,
+          0.4980824515223503,
+          -2.698480486869812
+        ],
+        "size": [
+          0.963106632232666,
+          1.346366062760353,
+          1.1466996669769287
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0068758719733482
+      }
+    },
+    {
+      "name": "bafybeicxi2krfyrzv3pme53ksfuvxmvvyxz57ytjpglrdirfj4fwxawcdi.glb",
+      "byteSize": 302684,
+      "oracleMd5Base64": "tLlCGOhfPbGM4BXsBL4y8A==",
+      "sha256": "3db6fdcd30bf5ae625b0ca3638430ebe735d03242e72ca026697c2ffefd463a7",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6837643980979919,
+          -0.1778540462255478,
+          -3.2721543312072754
+        ],
+        "max": [
+          0.29288020730018616,
+          1.1310070753097534,
+          -2.090707540512085
+        ],
+        "center": [
+          -0.1954420953989029,
+          0.4765765145421028,
+          -2.68143093585968
+        ],
+        "size": [
+          0.9766446053981781,
+          1.3088611215353012,
+          1.1814467906951904
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0078155386731213
+      }
+    },
+    {
+      "name": "bafybeicy6znpulcrykswgclwrvlmgrkewfub65mtc7kfxdfnufph247am4.glb",
+      "byteSize": 299804,
+      "oracleMd5Base64": "2P5KUnrC7cW7J5z8QMKHyg==",
+      "sha256": "3b02410f6b7e39ecaf600c58e6fcc036c11f5f2772cb9ac7d232f0ed5aa8d018",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6622776985168457,
+          -0.18027296662330627,
+          -3.269968032836914
+        ],
+        "max": [
+          0.28919559717178345,
+          1.1886913776397705,
+          -2.1386029720306396
+        ],
+        "center": [
+          -0.18654105067253113,
+          0.5042092055082321,
+          -2.704285502433777
+        ],
+        "size": [
+          0.9514732956886292,
+          1.3689643442630768,
+          1.1313650608062744
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0073916454246334
+      }
+    },
+    {
+      "name": "bafybeid2fwarx5tj46shd2yvphlrbcr44cyyp7bptonj2gpaiodazdrwue.glb",
+      "byteSize": 296708,
+      "oracleMd5Base64": "pJ7YK5hPD6ir5FsK9zjJYg==",
+      "sha256": "eed4805489d03830f4e13d66ab463d6947c8fdbfbd812cfc65c383083e207bd2",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7763941287994385,
+          -0.17691628634929657,
+          -3.275407552719116
+        ],
+        "max": [
+          0.29222163558006287,
+          1.1595609188079834,
+          -2.200943946838379
+        ],
+        "center": [
+          -0.2420862466096878,
+          0.4913223162293434,
+          -2.7381757497787476
+        ],
+        "size": [
+          1.0686157643795013,
+          1.33647720515728,
+          1.0744636058807373
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0102701386445654
+      }
+    },
+    {
+      "name": "bafybeid4zl4jbomvogx2epop3aokgeijrm2vohukwee22z4h65tzps24qq.glb",
+      "byteSize": 300812,
+      "oracleMd5Base64": "ziNdq1Hqt8TomGeFGagcMQ==",
+      "sha256": "b84b7893cadd393460b84ed4bb0c7e152b3f11c612058536c3932baf3d6c2515",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.681097686290741,
+          -0.1745849847793579,
+          -3.2730677127838135
+        ],
+        "max": [
+          0.2951621115207672,
+          1.1312496662139893,
+          -2.0637824535369873
+        ],
+        "center": [
+          -0.19296778738498688,
+          0.4783323407173157,
+          -2.6684250831604004
+        ],
+        "size": [
+          0.9762597978115082,
+          1.3058346509933472,
+          1.2092852592468262
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0149702171479649
+      }
+    },
+    {
+      "name": "bafybeidaol46zsxbvhb5f63f4jfgotyksfear77yzsdva3jrpwhq5yqm3a.glb",
+      "byteSize": 320736,
+      "oracleMd5Base64": "2b9uHrPFCztFPALEwfD/sA==",
+      "sha256": "0442fd23fb95e11ce1a51bfadf87846cd035ab5c058eab346d740da0c9218680",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8321157097816467,
+          -0.1708495169878006,
+          -3.2758564949035645
+        ],
+        "max": [
+          0.2964366674423218,
+          1.1385606527328491,
+          -2.201338529586792
+        ],
+        "center": [
+          -0.2678395211696625,
+          0.48385556787252426,
+          -2.7385975122451782
+        ],
+        "size": [
+          1.1285523772239685,
+          1.3094101697206497,
+          1.0745179653167725
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.017690316168704
+      }
+    },
+    {
+      "name": "bafybeidc3mtja23q3lfcutefrnu4dh76y4b5blzrae4g6ax3ymbo3sqym4.glb",
+      "byteSize": 281732,
+      "oracleMd5Base64": "imFa1De6xydaoCtliueDYw==",
+      "sha256": "6911b4701a1c7330f5277d632db4196f7bc26f27bc3f29f3bbbfa841eb0ebf33",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.21137313544750214,
+          -0.6766748428344727,
+          -3.2747745513916016
+        ],
+        "max": [
+          0.7920194268226624,
+          0.6758432984352112,
+          -2.1840572357177734
+        ],
+        "center": [
+          0.2903231456875801,
+          -0.0004157721996307373,
+          -2.7294158935546875
+        ],
+        "size": [
+          1.0033925622701645,
+          1.3525181412696838,
+          1.0907173156738281
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.003215607333913
+      }
+    },
+    {
+      "name": "bafybeidlk3vxkeqait2g5u4ch777buj5t4gmvsmsvuclj43z4akgdytwvq.glb",
+      "byteSize": 318164,
+      "oracleMd5Base64": "TGFwcR3KDpP0ayuP2el88g==",
+      "sha256": "b8448091ab18aff56cb339ea212619a9ef802215162ce6f08ffee8988c1611c3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6793498992919922,
+          -0.17563985288143158,
+          -3.276813507080078
+        ],
+        "max": [
+          0.2935570180416107,
+          1.1348462104797363,
+          -2.041440725326538
+        ],
+        "center": [
+          -0.19289644062519073,
+          0.4796031787991524,
+          -2.659127116203308
+        ],
+        "size": [
+          0.9729069173336029,
+          1.310486063361168,
+          1.23537278175354
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0234827187057074
+      }
+    },
+    {
+      "name": "bafybeidludyirhgfl67xj5pn55vyfikvos3admkicw7i6bd6vmyf32ifke.glb",
+      "byteSize": 318808,
+      "oracleMd5Base64": "Err76EgVUyjB+EWY5Mnl+A==",
+      "sha256": "ee96f436f1bf54133ca217382edb086c702d1bf6f142e2a958c8e6ea4c9d88f6",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6706413626670837,
+          -0.17557919025421143,
+          -3.269345998764038
+        ],
+        "max": [
+          0.290046751499176,
+          1.1691402196884155,
+          -2.1044414043426514
+        ],
+        "center": [
+          -0.19029730558395386,
+          0.49678051471710205,
+          -2.6868937015533447
+        ],
+        "size": [
+          0.9606881141662598,
+          1.344719409942627,
+          1.1649045944213867
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0109642251683324
+      }
+    },
+    {
+      "name": "bafybeidncc33u762ylytrywz6zuqkytpvdbe6pgol5uasf4fi23rqeinsm.glb",
+      "byteSize": 298216,
+      "oracleMd5Base64": "81ljxAAl4s5IJXLB+7/CKg==",
+      "sha256": "410360665735069a265de66429e7c8cebc0d7a5b77ee6ad2411b7ff17f9e3c5b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6747970581054688,
+          -0.17389559745788574,
+          -3.2709877490997314
+        ],
+        "max": [
+          0.29107093811035156,
+          1.1504569053649902,
+          -2.055150032043457
+        ],
+        "center": [
+          -0.1918630599975586,
+          0.48828065395355225,
+          -2.6630688905715942
+        ],
+        "size": [
+          0.9658679962158203,
+          1.324352502822876,
+          1.2158377170562744
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0204253882650844
+      }
+    },
+    {
+      "name": "bafybeidqytnjebbhu423bdeme3bi5pnvdcsktkljn3vgvfimuwbo3jeq2a.glb",
+      "byteSize": 317152,
+      "oracleMd5Base64": "Ju4lhiOymbDFqdPwNbxW2Q==",
+      "sha256": "e0db136857826810fa7aced8eb5617c8afd384729874dfd38ec0e25a6523d05c",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6775239109992981,
+          -0.17494167387485504,
+          -3.2734150886535645
+        ],
+        "max": [
+          0.2948693633079529,
+          1.139482855796814,
+          -2.0428693294525146
+        ],
+        "center": [
+          -0.1913272738456726,
+          0.48227059096097946,
+          -2.6581422090530396
+        ],
+        "size": [
+          0.972393274307251,
+          1.314424529671669,
+          1.2305457592010498
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0231695105905292
+      }
+    },
+    {
+      "name": "bafybeidrguk43tdydeary4lmlxqttthazcuangxsetq2tgbrzvh6gvzbta.glb",
+      "byteSize": 283460,
+      "oracleMd5Base64": "enMfh2pFM/2eAj3RDA3WwQ==",
+      "sha256": "8ed3f17b63fb99099cba45e48a903a371190a9bef5330f65e78278b00930d949",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6837489008903503,
+          -0.1778751015663147,
+          -3.271333694458008
+        ],
+        "max": [
+          0.29031363129615784,
+          1.1313155889511108,
+          -2.1018548011779785
+        ],
+        "center": [
+          -0.19671763479709625,
+          0.47672024369239807,
+          -2.686594247817993
+        ],
+        "size": [
+          0.9740625321865082,
+          1.3091906905174255,
+          1.1694788932800293
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0038001497527493
+      }
+    },
+    {
+      "name": "bafybeidttbo3tjf6x3h2f2h5mytzhftqwbwmkjqzlslmfgflnx6dqwrrm4.glb",
+      "byteSize": 297860,
+      "oracleMd5Base64": "vuZq16ud1D6it5k39D875Q==",
+      "sha256": "e641f5b303b1cb25c9eeb711b0b9b8121795a191f5d168b883c196465e025239",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6623334288597107,
+          -0.1785108596086502,
+          -3.273038148880005
+        ],
+        "max": [
+          0.2952710688114166,
+          1.2037235498428345,
+          -2.1388492584228516
+        ],
+        "center": [
+          -0.18353118002414703,
+          0.5126063451170921,
+          -2.7059437036514282
+        ],
+        "size": [
+          0.9576044976711273,
+          1.3822344094514847,
+          1.1341888904571533
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0141453021963982
+      }
+    },
+    {
+      "name": "bafybeie2xcr4kehfk7th6ovm34tf6cgrell5wkotbaznuzh3bq2fuz4h7i.glb",
+      "byteSize": 315640,
+      "oracleMd5Base64": "XkTGnz93eQ6Lirynn7wZbw==",
+      "sha256": "f0c5fc04ddfe92ed2b09956931b787e388b0a480bcd43e5b2108278a84d441b7",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7270194888114929,
+          -0.17679283022880554,
+          -3.270824670791626
+        ],
+        "max": [
+          0.28869208693504333,
+          1.1513956785202026,
+          -2.1907434463500977
+        ],
+        "center": [
+          -0.2191637009382248,
+          0.48730142414569855,
+          -2.730784058570862
+        ],
+        "size": [
+          1.0157115757465363,
+          1.3281885087490082,
+          1.0800812244415283
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9952801328356677
+      }
+    },
+    {
+      "name": "bafybeie3qhor4vg6gtz75stxqk6qzsqp2s77afpcat4xdnhatokz7leeke.glb",
+      "byteSize": 317440,
+      "oracleMd5Base64": "KbGGe4KSZDHJyxLbatJ4cg==",
+      "sha256": "2e7a2a01ff30fa2248cbe5c8a9189ec8df0f23237366ecf7e972dd74d5574745",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6723328232765198,
+          -0.1814235895872116,
+          -3.273916244506836
+        ],
+        "max": [
+          0.2906779944896698,
+          1.2412261962890625,
+          -2.1824283599853516
+        ],
+        "center": [
+          -0.190827414393425,
+          0.5299013033509254,
+          -2.7281723022460938
+        ],
+        "size": [
+          0.9630108177661896,
+          1.422649785876274,
+          1.0914878845214844
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0176772634835785
+      }
+    },
+    {
+      "name": "bafybeie42ojtd2njyiwsbgzpj6yhtd7nzch6qlvj32xnmq4z5vdl7bauke.glb",
+      "byteSize": 316292,
+      "oracleMd5Base64": "tfaPdAXOSjjckVqTGmbRSg==",
+      "sha256": "50566b495ad6d9c119eb582e0760fe715600be6b9dcbc0785607aed5a4722f7f",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7282652854919434,
+          -0.17916589975357056,
+          -3.272213935852051
+        ],
+        "max": [
+          0.29019615054130554,
+          1.134393334388733,
+          -2.1930971145629883
+        ],
+        "center": [
+          -0.2190345674753189,
+          0.4776137173175812,
+          -2.7326555252075195
+        ],
+        "size": [
+          1.018461436033249,
+          1.3135592341423035,
+          1.0791168212890625
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9908575417632487
+      }
+    },
+    {
+      "name": "bafybeiebdywq2credn23nv457sq4467co4524ttrzx4k5i4vtt4uudegia.glb",
+      "byteSize": 329824,
+      "oracleMd5Base64": "Bae6R3gYSgQSRVT2HK0m6g==",
+      "sha256": "a428482b870ef6b982c892fbecbd3764c5d7cfb8a0e11c03d77fedead3c5e67a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.687099277973175,
+          -0.17519110441207886,
+          -3.2741260528564453
+        ],
+        "max": [
+          0.29312634468078613,
+          1.129730224609375,
+          -2.137612819671631
+        ],
+        "center": [
+          -0.19698646664619446,
+          0.47726956009864807,
+          -2.705869436264038
+        ],
+        "size": [
+          0.9802256226539612,
+          1.3049213290214539,
+          1.1365132331848145
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9943998536110441
+      }
+    },
+    {
+      "name": "bafybeiedtkxgnknh3pr4hgudnvbwzulevuztyobkza7zu4ljtg6rxmirie.glb",
+      "byteSize": 275176,
+      "oracleMd5Base64": "zLF7qzCBI4Go1WbvlA//zg==",
+      "sha256": "4d135090e93035abc8aaebc30cd6604c9c2d9aa0f2739327ad9d126d8f176190",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.16630969941616058,
+          -0.6808332204818726,
+          -3.2746105194091797
+        ],
+        "max": [
+          0.7932365536689758,
+          0.7386364340782166,
+          -2.1686928272247314
+        ],
+        "center": [
+          0.3134634271264076,
+          0.028901606798171997,
+          -2.7216516733169556
+        ],
+        "size": [
+          0.9595462530851364,
+          1.4194696545600891,
+          1.1059176921844482
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0196417329034302
+      }
+    },
+    {
+      "name": "bafybeiedtkxgnknh3pr4hgudnvbwzulevuztyobkza7zu4ljtg6rxmirie(1).glb",
+      "byteSize": 275176,
+      "oracleMd5Base64": "zLF7qzCBI4Go1WbvlA//zg==",
+      "sha256": "4d135090e93035abc8aaebc30cd6604c9c2d9aa0f2739327ad9d126d8f176190",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.16630969941616058,
+          -0.6808332204818726,
+          -3.2746105194091797
+        ],
+        "max": [
+          0.7932365536689758,
+          0.7386364340782166,
+          -2.1686928272247314
+        ],
+        "center": [
+          0.3134634271264076,
+          0.028901606798171997,
+          -2.7216516733169556
+        ],
+        "size": [
+          0.9595462530851364,
+          1.4194696545600891,
+          1.1059176921844482
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0196417329034302
+      }
+    },
+    {
+      "name": "bafybeieeotisrzqs23chkkuluujdva5r3m6dmspi4wtauwrtjib5lot32q.glb",
+      "byteSize": 295052,
+      "oracleMd5Base64": "o4l/CZdKnbgrlkBJZ48DJg==",
+      "sha256": "f8da639cf56c480e65ec5a1bbb412000738f4626a46e74a92a99a90c3e324f80",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8240336775779724,
+          -0.17370189726352692,
+          -3.275015115737915
+        ],
+        "max": [
+          0.2902439832687378,
+          1.1375190019607544,
+          -2.1951496601104736
+        ],
+        "center": [
+          -0.2668948471546173,
+          0.48190855234861374,
+          -2.7350823879241943
+        ],
+        "size": [
+          1.1142776608467102,
+          1.3112208992242813,
+          1.0798654556274414
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0157539508023106
+      }
+    },
+    {
+      "name": "bafybeieffertgpplrwicjck4rysxxpnuttibus57r27kqn5zfn2qausb3m.glb",
+      "byteSize": 298508,
+      "oracleMd5Base64": "YH8TzzjDYrVpxstzKCbYKQ==",
+      "sha256": "ddbc5e5e846f94e843c4913c7abde509e22794a5c9d0a70ad13638366a755e51",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6738424897193909,
+          -0.18061532080173492,
+          -3.2721564769744873
+        ],
+        "max": [
+          0.2946874797344208,
+          1.2327252626419067,
+          -2.1837565898895264
+        ],
+        "center": [
+          -0.18957750499248505,
+          0.5260549709200859,
+          -2.727956533432007
+        ],
+        "size": [
+          0.9685299694538116,
+          1.4133405834436417,
+          1.088399887084961
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0149133239771722
+      }
+    },
+    {
+      "name": "bafybeiehzltyroarxgsclbc7lxcfi4gaqvhksjgrntl534szyw4ydqjpdm.glb",
+      "byteSize": 270068,
+      "oracleMd5Base64": "X9e+JVxFo6WS1zy3N3WfWw==",
+      "sha256": "d6e4248395c22134b45e167466426cb629ae61a6537f314f719a4ac0d3467021",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.17601920664310455,
+          -0.6523022651672363,
+          -3.2745914459228516
+        ],
+        "max": [
+          0.7961655855178833,
+          0.725909411907196,
+          -2.186357259750366
+        ],
+        "center": [
+          0.3100731894373894,
+          0.03680357336997986,
+          -2.730474352836609
+        ],
+        "size": [
+          0.9721847921609879,
+          1.3782116770744324,
+          1.0882341861724854
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0036015570045607
+      }
+    },
+    {
+      "name": "bafybeieincj5wz3qzy6xtogpew2psjz3utuzzu5x5pxrlewj7ewdmloaya.glb",
+      "byteSize": 326152,
+      "oracleMd5Base64": "K1wRDQ7JxtHGSIAMOjribA==",
+      "sha256": "ab5fc7b1a59389e796c91b1ad0293fc9ad0c0b944587f854a677a79223faa8dc",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6649494767189026,
+          -0.1804458647966385,
+          -3.2725274562835693
+        ],
+        "max": [
+          0.2909703850746155,
+          1.2330701351165771,
+          -2.157470703125
+        ],
+        "center": [
+          -0.18698954582214355,
+          0.5263121351599693,
+          -2.7149990797042847
+        ],
+        "size": [
+          0.9559198617935181,
+          1.4135159999132156,
+          1.1150567531585693
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0192107028169552
+      }
+    },
+    {
+      "name": "bafybeieip4rf2jipf4w6lejkfjrchusuimbb73u7zupdcau2tvgfug44xy.glb",
+      "byteSize": 300520,
+      "oracleMd5Base64": "W0NpZAQLxSzSYweHcHEDtw==",
+      "sha256": "606f23e26ed27e43ba9ab247f48af4230779d7af39fdb88a05865e5bc9550d5d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7074292302131653,
+          -0.1812501698732376,
+          -3.273541212081909
+        ],
+        "max": [
+          0.28794699907302856,
+          1.1948682069778442,
+          -2.1872472763061523
+        ],
+        "center": [
+          -0.20974111557006836,
+          0.5068090185523033,
+          -2.7303942441940308
+        ],
+        "size": [
+          0.9953762292861938,
+          1.3761183768510818,
+          1.0862939357757568
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0080315148642975
+      }
+    },
+    {
+      "name": "bafybeiekcwj6ucmes75anijijgntycmwgrhunlott7f4m4v6pgj7yuw2ua.glb",
+      "byteSize": 301892,
+      "oracleMd5Base64": "OyYixudnUWK4DeAVgqL0mg==",
+      "sha256": "c1141d36459a89b47cb8527fc7170209af926ba0b733b56c60fb4e940118f7ec",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.664877712726593,
+          -0.18055565655231476,
+          -3.272845506668091
+        ],
+        "max": [
+          0.29041317105293274,
+          1.2337225675582886,
+          -2.1584837436676025
+        ],
+        "center": [
+          -0.18723227083683014,
+          0.5265834555029869,
+          -2.7156646251678467
+        ],
+        "size": [
+          0.9552908837795258,
+          1.4142782241106033,
+          1.1143617630004883
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0191375896638375
+      }
+    },
+    {
+      "name": "bafybeiemrzccuthjxfmraa3q2ad2vk74ylnllgdg3sdu3e2dvflmaplzcy.glb",
+      "byteSize": 290804,
+      "oracleMd5Base64": "hOMkpw78bb8mFyBGCa5mnQ==",
+      "sha256": "fa726b419e03b4f176dbec440018593fdf2b3e907700b6cd1fab9869c0974d8a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7195745706558228,
+          -0.18082208931446075,
+          -3.270815372467041
+        ],
+        "max": [
+          0.28864407539367676,
+          1.1760212182998657,
+          -2.1865081787109375
+        ],
+        "center": [
+          -0.215465247631073,
+          0.4975995644927025,
+          -2.7286617755889893
+        ],
+        "size": [
+          1.0082186460494995,
+          1.3568433076143265,
+          1.0843071937561035
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0041477344109915
+      }
+    },
+    {
+      "name": "bafybeieocji7kmvezxbxmqngafeaverpxpiwhpoajdm7hr6luyxb66nl5i.glb",
+      "byteSize": 310532,
+      "oracleMd5Base64": "XNSGnoyryxStvuHbpRsZxg==",
+      "sha256": "808c1c674d06e0f28da3d7451cb0ef2ce72642bbb9bb5344fa305d541055ee4e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6628859043121338,
+          -0.17942991852760315,
+          -3.2738382816314697
+        ],
+        "max": [
+          0.2964126765727997,
+          1.2102774381637573,
+          -2.1408650875091553
+        ],
+        "center": [
+          -0.18323661386966705,
+          0.5154237598180771,
+          -2.7073516845703125
+        ],
+        "size": [
+          0.9592985808849335,
+          1.3897073566913605,
+          1.1329731941223145
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0167556937546078
+      }
+    },
+    {
+      "name": "bafybeier7vwdulfcqdv65ey7fipremymxaexicloti2wzmkpna6hurklma.glb",
+      "byteSize": 299804,
+      "oracleMd5Base64": "vFItbmLpCe0dR8YMNgVmOg==",
+      "sha256": "0de84f6d69e8a678168c9c97402c133f453a24e7ada4a77ed0fd8e93b79e0aa1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6606833338737488,
+          -0.1754525750875473,
+          -3.2684149742126465
+        ],
+        "max": [
+          0.295382022857666,
+          1.1465758085250854,
+          -2.1580233573913574
+        ],
+        "center": [
+          -0.18265065550804138,
+          0.4855616167187691,
+          -2.713219165802002
+        ],
+        "size": [
+          0.9560653567314148,
+          1.3220283836126328,
+          1.110391616821289
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9867610597462784
+      }
+    },
+    {
+      "name": "bafybeieshjcvbgbkxnpuzxisdtrgmm3c76ntvrmqhuc2mkczgsmyrrvely.glb",
+      "byteSize": 286340,
+      "oracleMd5Base64": "3bmQeLfJ/NzYzNbKBP0vKA==",
+      "sha256": "f45d921bcd20a46aef892f6e5ce486cd7259546cee5c9499e9199722f521c095",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7279710173606873,
+          -0.17012754082679749,
+          -3.272073268890381
+        ],
+        "max": [
+          0.2918075621128082,
+          1.1322180032730103,
+          -2.192338228225708
+        ],
+        "center": [
+          -0.21808172762393951,
+          0.4810452312231064,
+          -2.7322057485580444
+        ],
+        "size": [
+          1.0197785794734955,
+          1.3023455440998077,
+          1.0797350406646729
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9876588512017632
+      }
+    },
+    {
+      "name": "bafybeiesn6vkjq4jjko23qrjqv2hdliywdkqllpr6ljlkblb6fo5y3go4a.glb",
+      "byteSize": 300884,
+      "oracleMd5Base64": "bxee8MOfWGXbhwK69HE/8A==",
+      "sha256": "499822549701542ce402ce5efbeca9755a2de6231de761cf4387ece5df1c0bf1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7273390889167786,
+          -0.1802191287279129,
+          -3.271608352661133
+        ],
+        "max": [
+          0.29276248812675476,
+          1.1320772171020508,
+          -2.1920201778411865
+        ],
+        "center": [
+          -0.2172883003950119,
+          0.47592904418706894,
+          -2.7318142652511597
+        ],
+        "size": [
+          1.0201015770435333,
+          1.3122963458299637,
+          1.0795881748199463
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9909893483252535
+      }
+    },
+    {
+      "name": "bafybeievvoy6rnmmupugdsp3rztftfcj5sze4o4gvlrofz3p5an2b4pr7q.glb",
+      "byteSize": 317444,
+      "oracleMd5Base64": "OyXKg4YctjTh4UuB2KJ4hA==",
+      "sha256": "23bb9b1612e84f811a6b27bc6af453b77b5677bac06c85784e65ad265d081eea",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6677727699279785,
+          -0.1799793839454651,
+          -3.2728164196014404
+        ],
+        "max": [
+          0.29506027698516846,
+          1.2430765628814697,
+          -2.1823155879974365
+        ],
+        "center": [
+          -0.18635624647140503,
+          0.5315485894680023,
+          -2.7275660037994385
+        ],
+        "size": [
+          0.962833046913147,
+          1.4230559468269348,
+          1.090500831604004
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0175126249531972
+      }
+    },
+    {
+      "name": "bafybeiewc6gczhavay4orhv55o63etx2dtmn6f4rb2eduf5lavit7vm65m.glb",
+      "byteSize": 321836,
+      "oracleMd5Base64": "ZQevVpBQ0HAT3Vn4VH+3uA==",
+      "sha256": "6b715085ba9f33e2bbe403696d0ad0b9c6e1d7d1c2b3c122e40ca61389060252",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6621948480606079,
+          -0.17902012169361115,
+          -3.273541212081909
+        ],
+        "max": [
+          0.29594287276268005,
+          1.2059619426727295,
+          -2.1396443843841553
+        ],
+        "center": [
+          -0.18312598764896393,
+          0.5134709104895592,
+          -2.7065927982330322
+        ],
+        "size": [
+          0.958137720823288,
+          1.3849820643663406,
+          1.133896827697754
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.015126251574641
+      }
+    },
+    {
+      "name": "bafybeiewc6gczhavay4orhv55o63etx2dtmn6f4rb2eduf5lavit7vm65m(1).glb",
+      "byteSize": 321836,
+      "oracleMd5Base64": "ZQevVpBQ0HAT3Vn4VH+3uA==",
+      "sha256": "6b715085ba9f33e2bbe403696d0ad0b9c6e1d7d1c2b3c122e40ca61389060252",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6621948480606079,
+          -0.17902012169361115,
+          -3.273541212081909
+        ],
+        "max": [
+          0.29594287276268005,
+          1.2059619426727295,
+          -2.1396443843841553
+        ],
+        "center": [
+          -0.18312598764896393,
+          0.5134709104895592,
+          -2.7065927982330322
+        ],
+        "size": [
+          0.958137720823288,
+          1.3849820643663406,
+          1.133896827697754
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.015126251574641
+      }
+    },
+    {
+      "name": "bafybeieyrjgfcpgpy4mlv6oizpxdollujmv4d4ub5wnjlpx3hyjkgobham.glb",
+      "byteSize": 278920,
+      "oracleMd5Base64": "v23Iy7VrHgpJuMLkdTCuvA==",
+      "sha256": "e4d835697ffbd219898d1ec2fe1638172ab7d3ff0ab106df214e09e0d4066bb0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.22288691997528076,
+          -0.6622076630592346,
+          -3.2665083408355713
+        ],
+        "max": [
+          0.781475305557251,
+          0.6701340079307556,
+          -2.173039436340332
+        ],
+        "center": [
+          0.2792941927909851,
+          0.003963172435760498,
+          -2.7197738885879517
+        ],
+        "size": [
+          1.0043622255325317,
+          1.3323416709899902,
+          1.0934689044952393
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9974407317519021
+      }
+    },
+    {
+      "name": "bafybeieyrkeysdzruguhjuq7lgav6mrg2s2p4h7u42jgz6cm3djialkbja.glb",
+      "byteSize": 317584,
+      "oracleMd5Base64": "C0hFTLXDZAvoEMRukJEXHA==",
+      "sha256": "9c81502e36a81ae8a0ada3f301f36ea967f44c64411719498ea7bf1a8dbb6266",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6672959327697754,
+          -0.18022292852401733,
+          -3.274646043777466
+        ],
+        "max": [
+          0.29383233189582825,
+          1.2411391735076904,
+          -2.177419662475586
+        ],
+        "center": [
+          -0.18673180043697357,
+          0.5304581224918365,
+          -2.726032853126526
+        ],
+        "size": [
+          0.9611282646656036,
+          1.4213621020317078,
+          1.0972263813018799
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0183250338246537
+      }
+    },
+    {
+      "name": "bafybeif2ytan5bhtz2jr5ivvma64x5tjcchgb4a3nh6uj2ym5pxqvzhsiq.glb",
+      "byteSize": 278204,
+      "oracleMd5Base64": "1l4+7a96OmCdUviYVgndMg==",
+      "sha256": "562cbf99001e75fc566f3f6cfa18f4a15559065ebc0079e712f1d7613d5d9606",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6762358546257019,
+          -0.17880074679851532,
+          -3.274555206298828
+        ],
+        "max": [
+          0.29585134983062744,
+          1.2236597537994385,
+          -2.186964273452759
+        ],
+        "center": [
+          -0.19019225239753723,
+          0.5224295035004616,
+          -2.7307597398757935
+        ],
+        "size": [
+          0.9720872044563293,
+          1.4024605005979538,
+          1.0875909328460693
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0117686279498599
+      }
+    },
+    {
+      "name": "bafybeifbpbspc7xtfb7bir6u744xrvy54ayeo7vq4lkmg45zzgazownrpa.glb",
+      "byteSize": 283456,
+      "oracleMd5Base64": "BwDT9VuI8VESlZoTaOS88Q==",
+      "sha256": "cde54e7f9aeb3c78be12a767fce1a28fa73ca2f906a3147144bb7b2bc946293e",
+      "geometryBounds": {
+        "status": "no-scene-mesh-geometry"
+      }
+    },
+    {
+      "name": "bafybeifckvjqpwremns62ypmln64546jbi3ykyquahf5ceg6tn4qbacree.glb",
+      "byteSize": 297640,
+      "oracleMd5Base64": "MLcavaRkYDBODicBg+4toA==",
+      "sha256": "517be6bf9d0710f88a9e4dfc1a6a3c0cab61410fb509f86ef830c1a01f536856",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.570608913898468,
+          -1.638297200202942,
+          -3.431741952896118
+        ],
+        "max": [
+          0.7198108434677124,
+          0.17344842851161957,
+          -2.4065613746643066
+        ],
+        "center": [
+          0.07460096478462219,
+          -0.7324243858456612,
+          -2.9191516637802124
+        ],
+        "size": [
+          1.2904197573661804,
+          1.8117456287145615,
+          1.0251805782318115
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.2246020365154373
+      }
+    },
+    {
+      "name": "bafybeiff7gre3taueoopawkyuygwqino56q56fbvhsjpm6yjoaj2vvc5vy.glb",
+      "byteSize": 311968,
+      "oracleMd5Base64": "ertBjTJbLsQIor8FvbCusA==",
+      "sha256": "166bfe7ef353f678ccc5d7b1383b154b28e1c97b282320728c94aec7b98ec1af",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7505543828010559,
+          -0.1729857623577118,
+          -3.2760279178619385
+        ],
+        "max": [
+          0.293599009513855,
+          1.1339741945266724,
+          -2.188521146774292
+        ],
+        "center": [
+          -0.22847768664360046,
+          0.4804942160844803,
+          -2.7322745323181152
+        ],
+        "size": [
+          1.0441533923149109,
+          1.3069599568843842,
+          1.0875067710876465
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9976311458579576
+      }
+    },
+    {
+      "name": "bafybeiffvmrswjiaa3pl4zl54xmnjepshwln663fs4kpaqjs7uo5d7jija.glb",
+      "byteSize": 283528,
+      "oracleMd5Base64": "gJW0baw12LjaTuKaBPRDhw==",
+      "sha256": "cd05084bce8f9d3bfeefb2e2782a7a077641ae91a189f561147d1f8894f1049e",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.2088078111410141,
+          -0.6767812371253967,
+          -3.274515151977539
+        ],
+        "max": [
+          0.791726291179657,
+          0.6946184635162354,
+          -2.183694362640381
+        ],
+        "center": [
+          0.29145924001932144,
+          0.008918613195419312,
+          -2.72910475730896
+        ],
+        "size": [
+          1.000534102320671,
+          1.371399700641632,
+          1.0908207893371582
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0089221505245995
+      }
+    },
+    {
+      "name": "bafybeiffww6hnkipyzj3wky3juqhnnv7slgspdyu5gybkue3orjhrngnay.glb",
+      "byteSize": 316796,
+      "oracleMd5Base64": "VQkGFVHrmxh1hzeaC5M2Cg==",
+      "sha256": "8ce40b23d258b8b35d28745e686df2706931c35e79cf1b4fec5854ef897f6f2d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8346793055534363,
+          -0.17217783629894257,
+          -3.275070905685425
+        ],
+        "max": [
+          0.29777848720550537,
+          1.1369497776031494,
+          -2.1986091136932373
+        ],
+        "center": [
+          -0.26845040917396545,
+          0.4823859706521034,
+          -2.736840009689331
+        ],
+        "size": [
+          1.1324577927589417,
+          1.309127613902092,
+          1.0764617919921875
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0191964667668927
+      }
+    },
+    {
+      "name": "bafybeiffww6hnkipyzj3wky3juqhnnv7slgspdyu5gybkue3orjhrngnay2.glb",
+      "byteSize": 316796,
+      "oracleMd5Base64": "VQkGFVHrmxh1hzeaC5M2Cg==",
+      "sha256": "8ce40b23d258b8b35d28745e686df2706931c35e79cf1b4fec5854ef897f6f2d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8346793055534363,
+          -0.17217783629894257,
+          -3.275070905685425
+        ],
+        "max": [
+          0.29777848720550537,
+          1.1369497776031494,
+          -2.1986091136932373
+        ],
+        "center": [
+          -0.26845040917396545,
+          0.4823859706521034,
+          -2.736840009689331
+        ],
+        "size": [
+          1.1324577927589417,
+          1.309127613902092,
+          1.0764617919921875
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0191964667668927
+      }
+    },
+    {
+      "name": "bafybeifhabnly42eexypddcs7v4uvj5vfouaav3m5t3csr3qlsh2x7nwna.glb",
+      "byteSize": 320104,
+      "oracleMd5Base64": "3jWKJovV+A4V8Ubn+daJyg==",
+      "sha256": "dce65b2793fae70676df5edb1422a4a1cc8ad203708166bb9608517e8e945f41",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8099074363708496,
+          -0.1783505380153656,
+          -3.270703077316284
+        ],
+        "max": [
+          0.294062077999115,
+          1.1436200141906738,
+          -2.202094554901123
+        ],
+        "center": [
+          -0.2579226791858673,
+          0.4826347380876541,
+          -2.7363988161087036
+        ],
+        "size": [
+          1.1039695143699646,
+          1.3219705522060394,
+          1.0686085224151611
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.013444498201124
+      }
+    },
+    {
+      "name": "bafybeiflzc5vrly74uh3rrux54jaafrdriucmeme3ob3d4jmf6ojf7rrri.glb",
+      "byteSize": 320320,
+      "oracleMd5Base64": "12JsBTWbKeMwLsioaALwAw==",
+      "sha256": "d97eab25dbb8d8175b29db5bcf08866960983db12009c2168fce2cc55ebed883",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8015026450157166,
+          -0.17858894169330597,
+          -3.27310848236084
+        ],
+        "max": [
+          0.29461386799812317,
+          1.1489336490631104,
+          -2.2034964561462402
+        ],
+        "center": [
+          -0.2534443885087967,
+          0.4851723536849022,
+          -2.73830246925354
+        ],
+        "size": [
+          1.0961165130138397,
+          1.3275225907564163,
+          1.0696120262145996
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0133925110357225
+      }
+    },
+    {
+      "name": "bafybeifm75ly3anetjlpekv4g2g4gf3otfsyfs3ljl5m2ojzti4dcj3ts4.glb",
+      "byteSize": 325288,
+      "oracleMd5Base64": "jyXFido5IE1AFUNV4jU1iQ==",
+      "sha256": "a115a39bc13d7245ebb202f82516ea6899f78bc332c83ffc614bf8f24f87c22c",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8090822696685791,
+          -0.1753854751586914,
+          -3.2728798389434814
+        ],
+        "max": [
+          0.29267987608909607,
+          1.1363080739974976,
+          -2.1912989616394043
+        ],
+        "center": [
+          -0.2582011967897415,
+          0.4804612994194031,
+          -2.732089400291443
+        ],
+        "size": [
+          1.1017621457576752,
+          1.311693549156189,
+          1.0815808773040771
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.012945826151672
+      }
+    },
+    {
+      "name": "bafybeifml7kmozb5akqwkemn5x63oardqpeeh5yi5ylkcbg3khujjcdfny.glb",
+      "byteSize": 299948,
+      "oracleMd5Base64": "YMJFuKhJ4A3VflpGoXSw3Q==",
+      "sha256": "8e777ec56b93f38057baf944ed2e89958249c0a6b060a32cc63b1904a80e35c2",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6790516376495361,
+          -0.17551153898239136,
+          -3.2757184505462646
+        ],
+        "max": [
+          0.29441389441490173,
+          1.1340916156768799,
+          -2.0424160957336426
+        ],
+        "center": [
+          -0.1923188716173172,
+          0.47929003834724426,
+          -2.6590672731399536
+        ],
+        "size": [
+          0.9734655320644379,
+          1.3096031546592712,
+          1.233302354812622
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0227084461367
+      }
+    },
+    {
+      "name": "bafybeifml7kmozb5akqwkemn5x63oardqpeeh5yi5ylkcbg3khujjcdfny(1).glb",
+      "byteSize": 299948,
+      "oracleMd5Base64": "YMJFuKhJ4A3VflpGoXSw3Q==",
+      "sha256": "8e777ec56b93f38057baf944ed2e89958249c0a6b060a32cc63b1904a80e35c2",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6790516376495361,
+          -0.17551153898239136,
+          -3.2757184505462646
+        ],
+        "max": [
+          0.29441389441490173,
+          1.1340916156768799,
+          -2.0424160957336426
+        ],
+        "center": [
+          -0.1923188716173172,
+          0.47929003834724426,
+          -2.6590672731399536
+        ],
+        "size": [
+          0.9734655320644379,
+          1.3096031546592712,
+          1.233302354812622
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0227084461367
+      }
+    },
+    {
+      "name": "bafybeifnu7x3nw3l34zkzwtumizffxhox26vpxtavtl5vcps6nwmpprjb4.glb",
+      "byteSize": 323632,
+      "oracleMd5Base64": "k/YTwjTv/fTPMNuF+9beNQ==",
+      "sha256": "d169c531f65c80cad5e5d0917524b919988c94128ca6dbe5cb01306d47585c9c",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6645797491073608,
+          -0.1808285415172577,
+          -3.2738306522369385
+        ],
+        "max": [
+          0.2909131646156311,
+          1.23600435256958,
+          -2.162548780441284
+        ],
+        "center": [
+          -0.18683329224586487,
+          0.5275879055261612,
+          -2.7181897163391113
+        ],
+        "size": [
+          0.9554929137229919,
+          1.4168328940868378,
+          1.1112818717956543
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0192312736227964
+      }
+    },
+    {
+      "name": "bafybeifpaycgmsjs4vgxl36xasjnwsez2sas3p4f7msdggwlztbbgwy5dy.glb",
+      "byteSize": 313268,
+      "oracleMd5Base64": "TKCjZcbwG6naKZE22V0oVg==",
+      "sha256": "6673afd5568b5cfd737eee886d7e31d3ddd6a66a7ab6c840f93f3f3f99d0c14a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7092026472091675,
+          -0.18135890364646912,
+          -3.2734642028808594
+        ],
+        "max": [
+          0.28830811381340027,
+          1.1927106380462646,
+          -2.1869261264801025
+        ],
+        "center": [
+          -0.2104472666978836,
+          0.5056758671998978,
+          -2.730195164680481
+        ],
+        "size": [
+          0.9975107610225677,
+          1.3740695416927338,
+          1.0865380764007568
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0079260656457099
+      }
+    },
+    {
+      "name": "bafybeifpaycgmsjs4vgxl36xasjnwsez2sas3p4f7msdggwlztbbgwy5dy2.glb",
+      "byteSize": 313268,
+      "oracleMd5Base64": "TKCjZcbwG6naKZE22V0oVg==",
+      "sha256": "6673afd5568b5cfd737eee886d7e31d3ddd6a66a7ab6c840f93f3f3f99d0c14a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7092026472091675,
+          -0.18135890364646912,
+          -3.2734642028808594
+        ],
+        "max": [
+          0.28830811381340027,
+          1.1927106380462646,
+          -2.1869261264801025
+        ],
+        "center": [
+          -0.2104472666978836,
+          0.5056758671998978,
+          -2.730195164680481
+        ],
+        "size": [
+          0.9975107610225677,
+          1.3740695416927338,
+          1.0865380764007568
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0079260656457099
+      }
+    },
+    {
+      "name": "bafybeifpc34psqj4iqn7mywmy56fgao2ve7ot7hdxo6qabdgciqmmd5poy.glb",
+      "byteSize": 277844,
+      "oracleMd5Base64": "Es7KAEIDy/tdlMSl87lCwQ==",
+      "sha256": "4d39dbe0959726ad223fdd9f331c0bfd6b1ef73069b324f6d5886243c7f3a429",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6769185662269592,
+          -0.1737368255853653,
+          -3.2739624977111816
+        ],
+        "max": [
+          0.29541489481925964,
+          1.1376813650131226,
+          -2.0418412685394287
+        ],
+        "center": [
+          -0.1907518357038498,
+          0.48197226971387863,
+          -2.657901883125305
+        ],
+        "size": [
+          0.9723334610462189,
+          1.3114181905984879,
+          1.232121229171753
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0226647487664813
+      }
+    },
+    {
+      "name": "bafybeifsex6sawjmru6bnbt3rzxhocn25qfwwgkhmeq4fyr6xvyxcbdk4y.glb",
+      "byteSize": 325148,
+      "oracleMd5Base64": "ONUabIFxZhohead6KUS0gA==",
+      "sha256": "fc540ad94515927ae02854bf6a7bc21a4eefa12dee5538c37c6f5a04b9a5f94d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6832234263420105,
+          -0.13187463581562042,
+          -3.1863858699798584
+        ],
+        "max": [
+          0.27993106842041016,
+          0.9636803865432739,
+          -2.266639232635498
+        ],
+        "center": [
+          -0.20164617896080017,
+          0.41590287536382675,
+          -2.7265125513076782
+        ],
+        "size": [
+          0.9631544947624207,
+          1.0955550223588943,
+          0.9197466373443604
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.8622414488852745
+      }
+    },
+    {
+      "name": "bafybeifu23ridasubid2if26izpjjzzqkhhpeejedeppnbxcuhtbewt5pu.glb",
+      "byteSize": 329396,
+      "oracleMd5Base64": "HOpwVtpXGeUwWWgZTbVpKg==",
+      "sha256": "373debcaf7fadbf5d7d6fa4c79a5ccdae8a2554af2175340aaa92d190580e3cb",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6834471225738525,
+          -0.17769643664360046,
+          -3.2722623348236084
+        ],
+        "max": [
+          0.2901676893234253,
+          1.1312955617904663,
+          -2.1075387001037598
+        ],
+        "center": [
+          -0.19663971662521362,
+          0.4767995625734329,
+          -2.689900517463684
+        ],
+        "size": [
+          0.9736148118972778,
+          1.3089919984340668,
+          1.1647236347198486
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0022433585693145
+      }
+    },
+    {
+      "name": "bafybeifveuumh2ljtr6f7idx3mxfnatvwdh77smrnj622k372wtngc4viy.glb",
+      "byteSize": 285252,
+      "oracleMd5Base64": "V6xIk3xbpPaxwf53VNflGw==",
+      "sha256": "4b77199cd66bff4d781ee794ed0bf1e211a6ceb9c6e52c8be6a2fe40170918a6",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6597983837127686,
+          -0.18007749319076538,
+          -3.2706151008605957
+        ],
+        "max": [
+          0.29524877667427063,
+          1.1722745895385742,
+          -2.143798828125
+        ],
+        "center": [
+          -0.18227480351924896,
+          0.4960985481739044,
+          -2.707206964492798
+        ],
+        "size": [
+          0.9550471603870392,
+          1.3523520827293396,
+          1.1268162727355957
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0013348773921078
+      }
+    },
+    {
+      "name": "bafybeifvgr5oy5ww5qsgjlwtjivjbvz66yk3c7ecg2mqtesyfbdt3foxma.glb",
+      "byteSize": 296132,
+      "oracleMd5Base64": "XmBMYkFNuFmKlYowtNWiOA==",
+      "sha256": "0adf68cb3cb1391e5f618dcbcb41b1a4ba8bf284faef81e3ec67673189bfba8b",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7855799794197083,
+          -0.17612987756729126,
+          -3.2705559730529785
+        ],
+        "max": [
+          0.29099637269973755,
+          1.1370810270309448,
+          -2.1916682720184326
+        ],
+        "center": [
+          -0.24729180335998535,
+          0.4804755747318268,
+          -2.7311121225357056
+        ],
+        "size": [
+          1.0765763521194458,
+          1.313210904598236,
+          1.078887701034546
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0059247229964747
+      }
+    },
+    {
+      "name": "bafybeifxdz3k6ukouvsrkxaebtb4ldy4ypbgabahptax6epob7dwkgnd6a.glb",
+      "byteSize": 322988,
+      "oracleMd5Base64": "8870nVu/t9ldEpmbrEFiHA==",
+      "sha256": "ed9095c475a0ab3a059b557f3d962147f297cfbe68e429f60b2cd49c73ad21e6",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7237979769706726,
+          -0.18017850816249847,
+          -3.2687149047851562
+        ],
+        "max": [
+          0.2936905324459076,
+          1.130813479423523,
+          -2.1925532817840576
+        ],
+        "center": [
+          -0.2150537222623825,
+          0.47531748563051224,
+          -2.730634093284607
+        ],
+        "size": [
+          1.0174885094165802,
+          1.3109919875860214,
+          1.0761616230010986
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9889523114298637
+      }
+    },
+    {
+      "name": "bafybeifzm25uqidbgewzrbwthxk6xufx6crgqqe7qgzvho6ylqcik7kmum.glb",
+      "byteSize": 328456,
+      "oracleMd5Base64": "Wkds1NWn8nWlzHzNXs6q3A==",
+      "sha256": "4ebbaaca1fe921f34566329593c6ee6dd0991500a77bccb46e26b4ddfb77f671",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8325875401496887,
+          -0.17054924368858337,
+          -3.275953769683838
+        ],
+        "max": [
+          0.29677262902259827,
+          1.1389487981796265,
+          -2.20146107673645
+        ],
+        "center": [
+          -0.2679074555635452,
+          0.48419977724552155,
+          -2.738707423210144
+        ],
+        "size": [
+          1.129360169172287,
+          1.3094980418682098,
+          1.0744926929473877
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.017935909152298
+      }
+    },
+    {
+      "name": "bafybeig35eg2ny3d4io3masrzyqhvtntrvktwrzv5hbj7c3dku7xsapxwm.glb",
+      "byteSize": 301892,
+      "oracleMd5Base64": "UyDdixHakQJEICjBLXAWyw==",
+      "sha256": "da6ba2f5e2e1b8865bc0f61fe6db73e247bea88a4636104b4a6e013404cab3d0",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.24894371628761292,
+          -0.639625608921051,
+          -3.627588987350464
+        ],
+        "max": [
+          1.2267919778823853,
+          0.29858875274658203,
+          -2.582266330718994
+        ],
+        "center": [
+          0.48892413079738617,
+          -0.1705184280872345,
+          -3.104927659034729
+        ],
+        "size": [
+          1.4757356941699982,
+          0.9382143616676331,
+          1.0453226566314697
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.018668430348399
+      }
+    },
+    {
+      "name": "bafybeig45d27i6bxt2dowvjzbanq47matd22avuntvuatxwb5hl43ywnhq.glb",
+      "byteSize": 315860,
+      "oracleMd5Base64": "eNpyLRAih+e/EhQgOilCFw==",
+      "sha256": "e9290b06fc2fa99fd243129fcf1bc54d5d10d41cb62c4355bd3c2c0fd61ef003",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8280413150787354,
+          -0.17418548464775085,
+          -3.2744200229644775
+        ],
+        "max": [
+          0.29354241490364075,
+          1.1361292600631714,
+          -2.2001121044158936
+        ],
+        "center": [
+          -0.2672494500875473,
+          0.48097188770771027,
+          -2.7372660636901855
+        ],
+        "size": [
+          1.121583729982376,
+          1.3103147447109222,
+          1.074307918548584
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.015998560213574
+      }
+    },
+    {
+      "name": "bafybeig5ou32zs7p75hu346ut3hes3kantkin5mcuan2hhei2fyr5pt6ly.glb",
+      "byteSize": 317588,
+      "oracleMd5Base64": "ylmJcMETtH1+Wp5q/ddk4A==",
+      "sha256": "2acab5afdb9f2a5c539daf835a390d541c3b001fe3d813ab83399e7491912695",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8339442014694214,
+          -0.1707974225282669,
+          -3.2758266925811768
+        ],
+        "max": [
+          0.2977433204650879,
+          1.1404608488082886,
+          -2.1995303630828857
+        ],
+        "center": [
+          -0.26810044050216675,
+          0.48483171314001083,
+          -2.7376785278320312
+        ],
+        "size": [
+          1.1316875219345093,
+          1.3112582713365555,
+          1.076296329498291
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0196235445425796
+      }
+    },
+    {
+      "name": "bafybeigiklfdpwsk6nevxngd2jdbfsoee5c75wmzxlsdn5g3ofsr5rvhz4.glb",
+      "byteSize": 301892,
+      "oracleMd5Base64": "m/PVdjxGK4+V67rBAm4ekg==",
+      "sha256": "b9ff9e12a2b23cba1a3902487401a47306e994d04946ca6b3647b336de2bc332",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6987772583961487,
+          -0.578421950340271,
+          -3.839202880859375
+        ],
+        "max": [
+          0.49877238273620605,
+          0.43621933460235596,
+          -2.6595311164855957
+        ],
+        "center": [
+          -0.10000243782997131,
+          -0.07110130786895752,
+          -3.2493669986724854
+        ],
+        "size": [
+          1.1975496411323547,
+          1.014641284942627,
+          1.1796717643737793
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9817392158494793
+      }
+    },
+    {
+      "name": "bafybeigldxudryheavmxabcgxrbygw4taozzt2i4uwlckr5gn33fvnueoq.glb",
+      "byteSize": 364240,
+      "oracleMd5Base64": "fr8OUUWrV1xhsUc7ZLvZ1w==",
+      "sha256": "0eaba7b4cbaab5cf4c925ff0fbe6a67b2475fcfbf5c3c3cc4a0e13be6962b091",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.9780949354171753,
+          -0.482638955116272,
+          -4.090261936187744
+        ],
+        "max": [
+          0.5587150454521179,
+          0.7658354043960571,
+          -2.8012073040008545
+        ],
+        "center": [
+          -0.2096899449825287,
+          0.14159822463989258,
+          -3.4457346200942993
+        ],
+        "size": [
+          1.5368099808692932,
+          1.248474359512329,
+          1.2890546321868896
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.181327112659918
+      }
+    },
+    {
+      "name": "bafybeiglvvq63ysonsv7nq3ezzbtkds5ljxdecgh52ovqri6mnywm2t5ua.glb",
+      "byteSize": 319316,
+      "oracleMd5Base64": "4OqvPwivJOfu0ojq9/utGQ==",
+      "sha256": "2ef43074ee63bfb3d36af34718b17ed4a99cbe32ccb25aa9f0487aacf6b7d7b4",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6728407144546509,
+          -0.16974696516990662,
+          -3.2729475498199463
+        ],
+        "max": [
+          0.2937765419483185,
+          1.2337909936904907,
+          -2.183547258377075
+        ],
+        "center": [
+          -0.1895320862531662,
+          0.532022014260292,
+          -2.7282474040985107
+        ],
+        "size": [
+          0.9666172564029694,
+          1.4035379588603973,
+          1.089400291442871
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0113185350489018
+      }
+    },
+    {
+      "name": "bafybeignfeqtooq5uafmnwt5t2zrq7xti5ic3be2xbrzypffbqwxs25yg4.glb",
+      "byteSize": 281588,
+      "oracleMd5Base64": "YC4X6Fwa+9H0X8Up0HJmiA==",
+      "sha256": "f260c230f8b25886c0b4761af6630506cf2c993eb32c5f36ba32d906db73fa16",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7078303098678589,
+          -0.1812782883644104,
+          -3.2735302448272705
+        ],
+        "max": [
+          0.28803402185440063,
+          1.194392442703247,
+          -2.1871702671051025
+        ],
+        "center": [
+          -0.20989814400672913,
+          0.5065570771694183,
+          -2.7303502559661865
+        ],
+        "size": [
+          0.9958643317222595,
+          1.3756707310676575,
+          1.086359977722168
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0080170793083512
+      }
+    },
+    {
+      "name": "bafybeignhjxnkcbgdqbtvxbisq2kzhulp7hiutstfdwprx7oip46dm7v2u.glb",
+      "byteSize": 295340,
+      "oracleMd5Base64": "yWu2+ZxHs+RDTcO3KURJ/Q==",
+      "sha256": "84807a01c3a71e3a3c26bc3d25530dc981ea8cc86edc7263cb9dba0f1930ebc5",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6711337566375732,
+          -0.17503874003887177,
+          -3.271907091140747
+        ],
+        "max": [
+          0.2923443913459778,
+          1.1713312864303589,
+          -2.1262404918670654
+        ],
+        "center": [
+          -0.18939468264579773,
+          0.49814627319574356,
+          -2.6990737915039062
+        ],
+        "size": [
+          0.963478147983551,
+          1.3463700264692307,
+          1.1456665992736816
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0066720352860574
+      }
+    },
+    {
+      "name": "bafybeignnv572x6zgmttcoyehk4gy7hjcrh4bssixs7grzs6hjmgh5aitq.glb",
+      "byteSize": 371228,
+      "oracleMd5Base64": "0fLExnqq0HO/eq7EELIeww==",
+      "sha256": "8157bf94cc35c7a1fd12a182cc158affd470fd320b473aef39c2877cb3cba401",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.37843257188796997,
+          -1.5103888511657715,
+          -3.521979331970215
+        ],
+        "max": [
+          1.5916022062301636,
+          -0.06537747383117676,
+          -2.5134389400482178
+        ],
+        "center": [
+          0.6065848171710968,
+          -0.7878831624984741,
+          -3.0177091360092163
+        ],
+        "size": [
+          1.9700347781181335,
+          1.4450113773345947,
+          1.008540391921997
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.3215756344000484
+      }
+    },
+    {
+      "name": "bafybeignxdeqmfnpn5fdt3n3omml6l7p54ftwisrkbnqowwnx4qungox3e.glb",
+      "byteSize": 318956,
+      "oracleMd5Base64": "WkuY2Niiv3kGY+MYhD92Tg==",
+      "sha256": "680602d399818c878ba6cae1c9646104ee88fadcb2ce251e53dfb46d62734d9d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.672261118888855,
+          -0.17460569739341736,
+          -3.2722465991973877
+        ],
+        "max": [
+          0.29316145181655884,
+          1.201319932937622,
+          -2.1319942474365234
+        ],
+        "center": [
+          -0.18954983353614807,
+          0.5133571177721024,
+          -2.7021204233169556
+        ],
+        "size": [
+          0.9654225707054138,
+          1.3759256303310394,
+          1.1402523517608643
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0155524981414672
+      }
+    },
+    {
+      "name": "bafybeigolq445zwjrggx553swd2fcrtub2dry73xrhoepfex6vnhkaml2e.glb",
+      "byteSize": 278132,
+      "oracleMd5Base64": "dSZC/CfBIuW3n20xh6TX8w==",
+      "sha256": "651086d84da0752872c284ad0ad10a3ed808371d151e8968a4519f0ccbb9932a",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7906395196914673,
+          -0.17820395529270172,
+          -3.274797201156616
+        ],
+        "max": [
+          0.2941526770591736,
+          1.1542766094207764,
+          -2.2017996311187744
+        ],
+        "center": [
+          -0.24824342131614685,
+          0.4880363270640373,
+          -2.7382984161376953
+        ],
+        "size": [
+          1.0847921967506409,
+          1.332480564713478,
+          1.0729975700378418
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0128675074728857
+      }
+    },
+    {
+      "name": "bafybeigpdvhd7dhrq7dhvn5lw4ofggtgg6mbndjrzmjq32wjum7nzjf4ji.glb",
+      "byteSize": 301964,
+      "oracleMd5Base64": "p2Sys/YT96uT+XIgZgImYg==",
+      "sha256": "5f7a97d2eeac43948e03c274d7acc6f99fbfcde3db954798c8b2263a144752c5",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6609404683113098,
+          -0.18054723739624023,
+          -3.270904779434204
+        ],
+        "max": [
+          0.2931736409664154,
+          1.180010199546814,
+          -2.1408438682556152
+        ],
+        "center": [
+          -0.1838834136724472,
+          0.49973148107528687,
+          -2.7058743238449097
+        ],
+        "size": [
+          0.9541141092777252,
+          1.3605574369430542,
+          1.1300609111785889
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.004799474487032
+      }
+    },
+    {
+      "name": "bafybeigpssqdcbbgy2auzzfl3wcnwqjnnnukd6gsmsxcjtcrjrrdbyw75u.glb",
+      "byteSize": 305200,
+      "oracleMd5Base64": "H2adM8oDQBdUAtV00tPEIg==",
+      "sha256": "ef05a8b3028a5ad66cfe51bc82715bf248eb08e08a6510e28c55201096ab5f0f",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6753814816474915,
+          -0.18038690090179443,
+          -3.2738521099090576
+        ],
+        "max": [
+          0.2959457337856293,
+          1.2298204898834229,
+          -2.184854745864868
+        ],
+        "center": [
+          -0.1897178739309311,
+          0.5247167944908142,
+          -2.729353427886963
+        ],
+        "size": [
+          0.9713272154331207,
+          1.4102073907852173,
+          1.0889973640441895
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0146522437960583
+      }
+    },
+    {
+      "name": "bafybeigyto4azsovvmbhtqnrwcpzpjulcd4wvluv4eae7kigwjytdxh4c4.glb",
+      "byteSize": 291524,
+      "oracleMd5Base64": "C0jic6kCKNGG3610o/xcDw==",
+      "sha256": "7a2d2a56c3e5f8d252a6ba91bb92e7ea06446b4ebb5be3646923d07bbc6f188f",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6637712121009827,
+          -0.17947536706924438,
+          -3.2728092670440674
+        ],
+        "max": [
+          0.2957671880722046,
+          1.2228950262069702,
+          -2.146723747253418
+        ],
+        "center": [
+          -0.18400201201438904,
+          0.5217098295688629,
+          -2.7097665071487427
+        ],
+        "size": [
+          0.9595384001731873,
+          1.4023703932762146,
+          1.1260855197906494
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0192430106734582
+      }
+    },
+    {
+      "name": "bafybeigyv5w4xfw3ipciik3p4tzlhltmzqlsekw2mik2us3r77mir4ofx4.glb",
+      "byteSize": 329900,
+      "oracleMd5Base64": "K9IXXG2jY34BgZMCY0pkVw==",
+      "sha256": "f83501a6fadc5ab5087caa16f24487bccc6463b79e50777374bc8e523a830c31",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6832053065299988,
+          -0.17754943668842316,
+          -3.272686243057251
+        ],
+        "max": [
+          0.2906201183795929,
+          1.1312400102615356,
+          -2.1107020378112793
+        ],
+        "center": [
+          -0.19629259407520294,
+          0.47684528678655624,
+          -2.691694140434265
+        ],
+        "size": [
+          0.9738254249095917,
+          1.3087894469499588,
+          1.1619842052459717
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0014331065888822
+      }
+    },
+    {
+      "name": "bafybeigyzt5hetht26ek4ljyfgbqxypn5qeimb4jdadax4lfwkkduk7rpe.glb",
+      "byteSize": 296560,
+      "oracleMd5Base64": "1I+Tf7CbHVYp1w/UH7OXfQ==",
+      "sha256": "4fdb68debb12154d9db5d26186669c383580f86314b658fd2a413f5e151fcf2d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6807958483695984,
+          -0.17588259279727936,
+          -3.2735650539398193
+        ],
+        "max": [
+          0.29535505175590515,
+          1.130576491355896,
+          -2.0697450637817383
+        ],
+        "center": [
+          -0.19272039830684662,
+          0.4773469492793083,
+          -2.671655058860779
+        ],
+        "size": [
+          0.9761509001255035,
+          1.3064590841531754,
+          1.203819990158081
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0135196701453784
+      }
+    },
+    {
+      "name": "bafybeigyzt5hetht26ek4ljyfgbqxypn5qeimb4jdadax4lfwkkduk7rpe1.glb",
+      "byteSize": 296560,
+      "oracleMd5Base64": "1I+Tf7CbHVYp1w/UH7OXfQ==",
+      "sha256": "4fdb68debb12154d9db5d26186669c383580f86314b658fd2a413f5e151fcf2d",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.6807958483695984,
+          -0.17588259279727936,
+          -3.2735650539398193
+        ],
+        "max": [
+          0.29535505175590515,
+          1.130576491355896,
+          -2.0697450637817383
+        ],
+        "center": [
+          -0.19272039830684662,
+          0.4773469492793083,
+          -2.671655058860779
+        ],
+        "size": [
+          0.9761509001255035,
+          1.3064590841531754,
+          1.203819990158081
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0135196701453784
+      }
+    },
+    {
+      "name": "bafybeihadgqlb77rygkg45ckzkqkowzxhs6gp2dnnz6clhm6o5qobkldtu.glb",
+      "byteSize": 317588,
+      "oracleMd5Base64": "KCb/yUgN66hzL2JRddJofQ==",
+      "sha256": "60f34759ecd25fd1b371bd8e52392e2e4d2b30f37d1058faf19cd2d6fd8f79b1",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8248454332351685,
+          -0.17562992870807648,
+          -3.2729973793029785
+        ],
+        "max": [
+          0.29127565026283264,
+          1.1379997730255127,
+          -2.1999666690826416
+        ],
+        "center": [
+          -0.2667848914861679,
+          0.4811849221587181,
+          -2.73648202419281
+        ],
+        "size": [
+          1.116121083498001,
+          1.3136297017335892,
+          1.073030710220337
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.015227089298423
+      }
+    },
+    {
+      "name": "bafybeihd4xd2opbnxyneirqcgyb2xgrxuxdcstl2doyixaekpcvtwygf3q.glb",
+      "byteSize": 267116,
+      "oracleMd5Base64": "ZCqlg9qUb3SLFT8hacv/JQ==",
+      "sha256": "4b4907a1e55dada371700a28752b128c85bfd73fb1ee21fc709d34f545d055d3",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7895480394363403,
+          -0.1755555123090744,
+          -3.2694480419158936
+        ],
+        "max": [
+          0.29165345430374146,
+          1.1371725797653198,
+          -2.1912801265716553
+        ],
+        "center": [
+          -0.24894729256629944,
+          0.4808085337281227,
+          -2.7303640842437744
+        ],
+        "size": [
+          1.0812014937400818,
+          1.3127280920743942,
+          1.0781679153442383
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0068140055969628
+      }
+    },
+    {
+      "name": "bafybeihhyuff2mwsde6mx3nu5dkebe4zoilc2elt2ydwqhog7luwcebine.glb",
+      "byteSize": 297356,
+      "oracleMd5Base64": "KWEyzhW5ePwxY6mN3w6/sg==",
+      "sha256": "afe04b54f12ad5260a2e15ceea98908fc1b79b144087cdafdab297dfdb48f4dd",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8361784815788269,
+          -0.17474117875099182,
+          -3.271651029586792
+        ],
+        "max": [
+          0.2958739995956421,
+          1.1417758464813232,
+          -2.1982381343841553
+        ],
+        "center": [
+          -0.2701522409915924,
+          0.4835173338651657,
+          -2.7349445819854736
+        ],
+        "size": [
+          1.132052481174469,
+          1.316517025232315,
+          1.0734128952026367
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0206585057509592
+      }
+    },
+    {
+      "name": "bafybeihjo75zcqz6yx762vf6jykoto25g4jtg2vemt6sijpfi3umutowdq.glb",
+      "byteSize": 267108,
+      "oracleMd5Base64": "pOV0OGsKl9Gn+cXCtLymwA==",
+      "sha256": "403818c5e79558a0108a24829f975530cb19c1101748565d896380874a0e6502",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.712507963180542,
+          -0.1465264856815338,
+          -3.273092746734619
+        ],
+        "max": [
+          0.288796991109848,
+          1.1882669925689697,
+          -2.186479091644287
+        ],
+        "center": [
+          -0.21185548603534698,
+          0.520870253443718,
+          -2.729785919189453
+        ],
+        "size": [
+          1.00130495429039,
+          1.3347934782505035,
+          1.086613655090332
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9956172051164203
+      }
+    },
+    {
+      "name": "bafybeihn4clfyd7rr4xzwzenurvabunceepqatslm4tulkcclfzcdk33ze.glb",
+      "byteSize": 271436,
+      "oracleMd5Base64": "5BfjZHvHPs4hHM7Ai2yMmw==",
+      "sha256": "d093d21e2fe645ffc5487dc3642068567c92254c8fbb8f1bf44e19823cf6aeef",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.677092432975769,
+          -0.17357559502124786,
+          -3.275733232498169
+        ],
+        "max": [
+          0.29610109329223633,
+          1.1357483863830566,
+          -2.0429389476776123
+        ],
+        "center": [
+          -0.19049566984176636,
+          0.4810863956809044,
+          -2.6593360900878906
+        ],
+        "size": [
+          0.9731935262680054,
+          1.3093239814043045,
+          1.2327942848205566
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0224011781752556
+      }
+    },
+    {
+      "name": "bafybeihom4wchnwmjo2fetnj2nuuntvkxc3qy7vjel5xvfiq7ggtmpuhve.glb",
+      "byteSize": 299300,
+      "oracleMd5Base64": "Pcsd8B5p8+OFxcbAKCtkAg==",
+      "sha256": "3fd4b227532abdab2aed8470c4a4000b70406143d29c6c290e71973f2940bd32",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.7168487310409546,
+          -0.17639975249767303,
+          -3.2752654552459717
+        ],
+        "max": [
+          0.29257768392562866,
+          1.133954405784607,
+          -2.1849074363708496
+        ],
+        "center": [
+          -0.21213552355766296,
+          0.47877732664346695,
+          -2.7300864458084106
+        ],
+        "size": [
+          1.0094264149665833,
+          1.31035415828228,
+          1.090358018875122
+        ],
+        "centeredGroundedBoundingSphereRadius": 0.9905617492974922
+      }
+    },
+    {
+      "name": "bafybeihuq7pe53wkcnidwtswosdu2u6zxs7x2bis2dfz2fpzlxvoahqk4i.glb",
+      "byteSize": 316652,
+      "oracleMd5Base64": "mVfjapjO+VFbMasR6JRe4A==",
+      "sha256": "2e9647698e8c62cbf0855504ec5e9848789cbc3f4f5ba2958b22a06dcded4665",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.666516900062561,
+          -0.18078775703907013,
+          -3.274681568145752
+        ],
+        "max": [
+          0.2919681668281555,
+          1.2390552759170532,
+          -2.1698873043060303
+        ],
+        "center": [
+          -0.18727436661720276,
+          0.5291337594389915,
+          -2.722284436225891
+        ],
+        "size": [
+          0.9584850668907166,
+          1.4198430329561234,
+          1.1047942638397217
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0192176199295833
+      }
+    },
+    {
+      "name": "bafybeihx3pov266hjad3exnkwcny5c6uhsiqdzqg6kz7qi7msf5fklblc4.glb",
+      "byteSize": 302180,
+      "oracleMd5Base64": "uwBkXKpe3mIf3+dv1aRzqw==",
+      "sha256": "1c9bc4918537f432667589219a7f642924b7d7b9fd9d8982ad0bdd8dcbd9ca99",
+      "geometryBounds": {
+        "status": "bounded-static-position-geometry",
+        "min": [
+          -0.8142268061637878,
+          -0.17796123027801514,
+          -3.269500255584717
+        ],
+        "max": [
+          0.2933265268802643,
+          1.1403024196624756,
+          -2.201202392578125
+        ],
+        "center": [
+          -0.2604501396417618,
+          0.4811705946922302,
+          -2.735351324081421
+        ],
+        "size": [
+          1.1075533330440521,
+          1.3182636499404907,
+          1.0682978630065918
+        ],
+        "centeredGroundedBoundingSphereRadius": 1.0131329824356554
+      }
+    }
+  ]
+}
